@@ -1,0 +1,96 @@
+DIARIO DEL DESARROLLADOR: PROYECTO SAVP: TIS-3
+
+Fecha de Registro: 09 de Marzo de 2026 03:54:12 (UTC -04:00)
+Ubicación: La Paz, Bolivia - Proyecto de Grado / UNIFRANZ
+Sistema: Sistema Web de Orientación Educativa y Profesional basado en Análisis del Rendimiento Académico y Perfil Cognitivo del Estudiante para la U.E. Franz Tamayo 3 (SAVP: TIS-3)
+🎯 1. El Inicio: De la Idea a la Estructura
+
+Comenzamos el proyecto desde cero absoluto, definiendo una identidad sólida y profesional. En lugar de utilizar las convenciones genéricas de Laravel en inglés, tomamos la decisión arquitectónica de aplicar un modelado de datos estrictamente normalizado bajo nuestras propias reglas de negocio.
+
+Acciones y Archivos Creados:
+
+    Inicialización: Creación del proyecto Laravel y primer commit en Git (feat: initial commit - estructura base de SAVP: TIS-3).
+
+    Destrucción de genéricos: Eliminamos el archivo nativo de migraciones users para reemplazarlo con nuestra estructura personalizada.
+
+    database/migrations/..._create_generos_table.php: Creación de la tabla catálogo independiente. Implementa la regla de 3 letras (cod_gen, nom_gen).
+
+    database/migrations/..._create_roles_table.php: Creación del catálogo de permisos (cod_rol, nom_rol) para la futura gestión de Administradores, Docentes y Estudiantes.
+
+    database/migrations/0001_01_01_000000_create_users_table.php (Modificado): Se sobreescribió para crear la tabla usuarios fuertemente tipada (cod_usu, nom_usu, app_usu, fec_usu, cor_usu, cla_usu). Se enlazó con cod_gen como llave foránea, pero se mantuvieron intactas las tablas sessions y password_reset_tokens nativas para no romper el ecosistema de seguridad de Laravel.
+
+    database/migrations/..._create_usuarios_roles_table.php: Creación de la tabla pivote para resolver la relación de muchos a muchos.
+
+🚧 2. Registro de Fallos y Soluciones (Troubleshooting)
+
+El desarrollo no fue lineal; nos enfrentamos a problemas severos de infraestructura entre Linux (Ubuntu 24.04), PHP 8.3 y las políticas de Microsoft. Aquí documentamos cada caída y cómo nos levantamos:
+
+Fallo 1: El error de vendor/autoload.php al intentar crear migraciones.
+
+    Causa: Laravel no encontraba su núcleo porque las dependencias no se habían descargado completamente.
+
+    Solución: Ejecución del comando composer install para descargar todas las librerías del framework.
+
+Fallo 2: Conflicto de Docker Compose y Python (ModuleNotFoundError: No module named 'distutils').
+
+    Causa: Ubuntu 24.04 utiliza Python 3.12, el cual eliminó la librería obsoleta distutils que requería la versión antigua de docker-compose instalada por defecto.
+
+    Solución: Descargamos e instalamos manualmente el binario oficial más reciente desde el repositorio de GitHub de Docker, saltándonos los repositorios de Ubuntu y otorgándole permisos de ejecución con chmod +x.
+
+Fallo 3: El silencio sepulcral de la terminal (could not find driver).
+
+    Causa: PHP en Linux no tiene soporte nativo para interactuar con bases de datos de Microsoft. Faltaban los drivers ODBC.
+
+    Solución: Tuvimos que añadir las llaves de Microsoft al sistema operativo (microsoft.asc), instalar msodbcsql18 y compilar las extensiones sqlsrv y pdo_sqlsrv utilizando PECL. Finalmente, inyectamos estas extensiones en los archivos .ini de PHP 8.3 CLI.
+
+Fallo 4: El Jefe Final (Login timeout expired / self-signed certificate).
+
+    Causa: Los nuevos drivers de Microsoft bloqueaban la conexión porque el contenedor de Docker utilizaba un certificado SSL autofirmado (no comercial), por lo que PHP rechazaba la entrada por seguridad.
+
+    Solución: Implementamos un bypass temporal en el archivo config/database.php, añadiendo la directiva 'trust_server_certificate' => true para forzar a Laravel a confiar en el entorno de desarrollo local.
+
+🏗️ 3. Despliegue de Infraestructura y Conexión
+
+Para evitar ensuciar el sistema operativo con instalaciones pesadas y hacer el proyecto 100% portable (incluso si mañana se abre en Windows), optamos por la contenerización.
+
+    docker-compose.yml: Diseñamos el plano para descargar e instanciar un contenedor de Microsoft SQL Server 2022 (mcr.microsoft.com/mssql/server:2022-latest), mapeando el puerto 1433 y estableciendo credenciales robustas (sa / PasswordSeguro123!).
+
+    El archivo .env: Configuramos la conexión maestro del sistema cambiando el DB_CONNECTION genérico por sqlsrv, apuntando al puerto 1433 local.
+
+Tras limpiar la caché de configuración (php artisan config:clear), el comando php artisan migrate se ejecutó con éxito rotundo, materializando nuestra arquitectura normalizada dentro del contenedor SQL Server.
+⚠️ IMPORTANTE NO OLVIDAR (Checklist de Supervivencia)
+
+Si se necesita reinstalar este proyecto en otra computadora Linux, estos son los pasos vitales que no vienen con Laravel:
+
+    Instalación del Binario de Docker (Si falla el de Ubuntu):
+    Bash
+
+    sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+
+    Encendido del Motor de BD: El comando mágico siempre debe ejecutarse dentro de la carpeta del proyecto (savp-tis3):
+    sudo docker-compose up -d (Revisar que esté vivo con sudo docker ps).
+
+    Drivers de Microsoft Obligatorios para PHP 8.3:
+    Se deben compilar las herramientas con PECL:
+    Bash
+
+    sudo pecl install sqlsrv
+    sudo pecl install pdo_sqlsrv
+
+    Y luego registrar las extensiones en /etc/php/8.3/cli/conf.d/.
+
+    El Bypass del Certificado (¡VITAL!):
+    En el archivo config/database.php, dentro del arreglo 'sqlsrv', jamás olvidar agregar la línea:
+    'trust_server_certificate' => true,
+
+    Regla de Oro de la Memoria de Laravel:
+    Si modificas el .env o cualquier archivo dentro de la carpeta config/, Laravel NO se enterará a menos que borres su memoria. Siempre ejecutar:
+    php artisan config:clear
+
+MI VERSION: 
+Este proyecto es un avance de lo que quiero demostrar como futuro ingeniero queriendo que todo esto este documentado
+se que ahora es solo un inicio pero sera mucho mas y podra llegar a muchos lugares, recuerda que tienes mucho por aprender
+pero sobre todo ten en cuenta que todo podra ser mejor, el proyecto aun es muy pequeno pero llegara a mucho mas
+recuerda que todo puede ser mejor y que no hay limite para aprender y mejorar, no te rindas y sigue adelante. 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
