@@ -2,30 +2,38 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\UpdatesUserPasswords;
 
 class UpdateUserPassword implements UpdatesUserPasswords
 {
-    use PasswordValidationRules;
-
     /**
      * Validate and update the user's password.
      *
      * @param  array<string, string>  $input
-     *
-     * @throws ValidationException
      */
-    public function update(User $user, array $input): void
+    public function update($user, array $input): void
     {
         Validator::make($input, [
             'current_password' => ['required', 'string', 'current_password:web'],
-            'password' => $this->passwordRules(),
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+                'regex:/[A-Za-z]/',      // al menos una letra
+                'regex:/[0-9]/',         // al menos un número
+                'regex:/[^A-Za-z0-9]/',  // al menos un carácter especial
+            ],
         ], [
-            'current_password.current_password' => __('The provided password does not match your current password.'),
+            'current_password.required' => 'Debes ingresar tu contraseña actual.',
+            'current_password.current_password' => 'La contraseña actual no es correcta.',
+
+            'password.required' => 'Debes ingresar una nueva contraseña.',
+            'password.min' => 'La nueva contraseña debe tener al menos 8 caracteres.',
+            'password.confirmed' => 'La confirmación de la contraseña no coincide.',
+            'password.regex' => 'La contraseña debe incluir letras, números y al menos un carácter especial.',
         ])->validateWithBag('updatePassword');
 
         $user->forceFill([

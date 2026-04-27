@@ -17,6 +17,8 @@ class Persona extends Model
         'ape_pat_per',
         'ape_mat_per',
         'ci_per',
+        'com_per',
+        'exp_per',
         'fec_nac_per',
         'gen_per',
         'tel_per',

@@ -1,0 +1,204 @@
+🧠 DIARIO DEL DESARROLLADOR: PROYECTO SAVP: TIS-3 (Sistema de Analítica Vocacional Predictiva Tamayo Intelligence System - 3)
+
+📅 Fecha de Registro: 09 de Abril de 2026 02:03:45 AM
+📍 Ubicación: La Paz, Bolivia – UNIFRANZ
+💻 Sistema: SAVP: TIS-3
+🔧 Stack: Laravel + Sail (Docker) + PostgreSQL + Jetstream + Spatie
+
+🚀 1. EVOLUCIÓN DEL PROYECTO: DE LA IDEA AL MODELO REAL
+
+Después de haber definido la base inicial del sistema , se tomó una decisión crítica:
+
+👉 reconstruir completamente la base de datos bajo un modelo relacional sólido, normalizado y orientado al negocio real.
+
+🔥 Decisión Arquitectónica Clave
+
+Se abandonó completamente el enfoque genérico de Laravel (id, user_id, etc.) para implementar:
+
+Claves primarias personalizadas (cod_XXX)
+Formato estructurado (XXX_0001)
+Nombres en español
+Modelo en 3FN (Tercera Forma Normal)
+🧱 2. DISEÑO COMPLETO DE BASE DE DATOS (FASE 1)
+
+Se diseñó e implementó la base estructural del sistema educativo, cubriendo:
+
+🔹 Núcleo del sistema
+persona
+users
+estudiante
+personal_institucional
+docente
+secretaria_general
+🔹 Estructura académica
+curso
+paralelo
+turno
+gestion_academica
+🔹 Gestión académica
+asignatura
+plan_asignatura
+periodo_evaluacion
+calificacion
+🔹 Flujo del estudiante
+inscripcion_estudiante
+tipo_vinculacion_estudiante
+institucion_procedencia
+🔹 Control del sistema
+bitacora
+🧠 Logro importante
+
+Se logró modelar correctamente un caso real complejo:
+
+👉 coexistencia de:
+
+estudiantes internos
+estudiantes externos
+
+Sin duplicar estructuras ni romper el modelo.
+
+🔗 3. RELACIONES Y NORMALIZACIÓN
+
+Se implementó correctamente:
+
+Relaciones 1:N
+Relaciones N:M (mediante tablas puente como plan_asignatura)
+Eliminación de redundancias
+Separación de conceptos:
+tipo vs procedencia
+persona vs usuario
+docente vs personal
+
+👉 Resultado:
+
+✔ Base de datos en 3FN real
+✔ Escalable
+✔ Sin duplicidad
+
+⚙️ 4. IMPLEMENTACIÓN EN LARAVEL (MIGRATIONS + MODELS)
+
+Se desarrolló:
+
+🔹 Migraciones personalizadas
+Sin uso de id()
+Claves primarias tipo string
+Foreign keys explícitas
+Compatibilidad con PostgreSQL
+🔹 Modelos Eloquent
+PK personalizada (cod_xxx)
+$incrementing = false
+
+Generación automática tipo:
+
+XXX_0001
+Relaciones correctamente definidas:
+belongsTo
+hasMany
+🧠 5. PROBLEMAS REALES Y SOLUCIONES
+🚨 Problema 1: Orden de migraciones (FK error)
+relation "persona" does not exist
+✔ Causa
+
+Laravel ejecuta migraciones por timestamp
+
+✔ Solución
+
+Reordenamiento completo de migraciones según dependencias:
+
+persona → users → resto del sistema
+🚨 Problema 2: Integración con Spatie (roles)
+✔ Causa
+
+Spatie usa model_id (int)
+Sistema usa cod_usu (string)
+
+✔ Solución
+Configuración:
+'model_morph_key' => 'cod_usu'
+Modificación de migraciones:
+unsignedBigInteger → string(20)
+
+👉 Resultado:
+✔ Spatie adaptado al sistema
+✔ Roles funcionando con PK personalizada
+
+🚨 Problema 3: Error en sesiones
+column "user_id" does not exist
+✔ Causa
+
+Laravel espera user_id en tabla sessions
+
+✔ Solución
+
+Mantener:
+
+$table->string('user_id')
+
+👉 aunque internamente se guarde cod_usu
+
+🧠 6. CONVIVENCIA CON LARAVEL (DISEÑO HÍBRIDO)
+
+Se definió una estrategia clave:
+
+Tipo	Ejemplo	Estrategia
+Negocio	estudiante, docente	Personalizado
+Framework	sessions, cache	Mantener
+Seguridad	roles, tokens	Adaptar
+
+👉 Esto evita romper Laravel mientras se mantiene control del modelo.
+
+📊 7. RESULTADO ACTUAL
+
+Actualmente el sistema cuenta con:
+
+✔ 30+ tablas funcionando
+✔ Migraciones estables
+✔ Relaciones coherentes
+✔ Integración con Spatie
+✔ Compatible con PostgreSQL
+✔ Base lista para CRUD
+
+🔥 8. NIVEL ALCANZADO
+
+Este punto del proyecto ya representa:
+
+Diseño profesional de BD
+Arquitectura escalable
+Adaptación avanzada de framework
+Resolución de problemas reales de backend
+
+👉 Ya no es un proyecto básico
+👉 Es un sistema en construcción real
+
+🚀 9. SIGUIENTE ETAPA
+
+Con la base ya establecida, el proyecto está listo para:
+
+Seeders (roles, admin)
+CRUD completo
+Interfaz con Livewire
+Módulo de evaluación (instrumentos)
+Sistema de orientación vocacional (fase innovadora)
+💬 REFLEXIÓN DEL DESARROLLADOR (ACTUALIZADA)
+
+Este proyecto dejó de ser una simple idea para convertirse en una arquitectura real.
+
+Cada error solucionado representó un aprendizaje profundo:
+no solo de código, sino de cómo funcionan realmente los sistemas en producción.
+
+Lo que hoy parece complejo, mañana será la base de algo mucho más grande.
+
+El sistema aún está en construcción,
+pero la base que se ha logrado es sólida, escalable y con propósito.
+
+No se trata solo de terminar un proyecto,
+sino de entender cómo construir soluciones reales.
+
+Y esto… recién comienza 🚀
+----------------------------------------------------------------------------------------------------------------------------------------------------------------
+Ahora vamos con mi version, en aca aprendi mucho lo que es como crear una tabla porque al inicio empece a ver mi proyecto como algo pequeño pero por ende pasa el
+tiempo me doy cuenta que es algo grande y que va a ayudar a muchos estudiantes y docentes porque este proyecto fue para colaborar a quienes no pueden identificaar sus ideas
+quienes necesitan un empujon en la direccion correcta, aprendi que creando las tablas de manera correcta puedo manejar muy bien lo que va a hacer mi sistema porque
+en un inicio crei que solo necesitaba 3 tablas de roles: estudiante, docente y administrador pero me di cuenta que necesitaba mas tablas para que mi sistema sea mas completo
+y si este va a ser un sistema serio necesito crecer y al igual que hacer crecer mi sistema, aprendi de docker y es lo que voy a usar apesar que aun lo este llevando
+se que va a salir porque cada persona que me ayuda hasta ahora me demuestra que no hay proyecto pequeño sino mal explicado. 

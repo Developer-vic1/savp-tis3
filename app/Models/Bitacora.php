@@ -14,6 +14,7 @@ class Bitacora extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        
         'cod_bit', // Código bitácora
         'acc_bit', // Acción realizada
         'tab_bit', // Tabla afectada

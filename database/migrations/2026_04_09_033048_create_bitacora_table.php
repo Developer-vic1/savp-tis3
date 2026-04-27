@@ -9,6 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bitacora', function (Blueprint $table) {
+            
 
             $table->string('cod_bit', 20)->primary(); // Código bitácora
 

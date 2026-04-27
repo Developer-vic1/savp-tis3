@@ -1,0 +1,24 @@
+Para levantar lo que es el servidor de laravel con docker se debe ejecutar el siguiente comando:
+
+ sail artisan serve
+
+ y para levantar lo que es el servidor de laravel con docker se debe ejecutar el siguiente comando:
+
+ sail npm run dev
+
+ y para levantar lo que es el servidor de laravel con docker se debe ejecutar el siguiente comando:
+
+ sail npm run dev
+
+y no podemos olvidar en la terminal ejecutar lo que es el comando para entrar a la terminal de docker:
+
+ ./vendor/bin/sail up -d
+
+para verificar que los contenedores se esten ejecutando correctamente se debe ejecutar el siguiente comando:
+
+ docker ps
+
+por ultimo para apagar los contenedores se debe ejecutar el siguiente comando:
+
+ ./vendor/bin/sail down
+ 

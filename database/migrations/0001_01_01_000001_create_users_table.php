@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-
             // 🔑 PK personalizada
             $table->string('cod_usu', 20)->primary();
 
@@ -28,10 +27,13 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
 
+            // ✅ ESTADO DE LA CUENTA
+            $table->enum('est_usu', ['ACTIVO', 'INACTIVO'])->default('ACTIVO');
+
             // 🔁 SESIÓN
             $table->rememberToken();
 
-            // ⚙️ Jetstream (puedes mantenerlos)
+            // ⚙️ Jetstream
             $table->unsignedBigInteger('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();
 
@@ -47,12 +49,32 @@ return new class extends Migration
 
         // 🔁 Sesiones
         Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary(); // Código sesión
-            $table->string('user_id', 20)->nullable()->index(); // Usuario
-            $table->string('ip_address', 45)->nullable(); // Dirección IP
-            $table->text('user_agent')->nullable(); // Agente de usuario
-            $table->longText('payload'); // Contenido sesión
-            $table->integer('last_activity')->index(); // Última actividad
+            $table->string('id')->primary();
+            $table->string('user_id', 20)->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
+
+        // 📝 Historial de cambios de estado
+        Schema::create('user_status_logs', function (Blueprint $table) {
+            $table->id();
+            $table->string('cod_usu', 20);
+            $table->enum('est_usu', ['ACTIVO', 'INACTIVO']);
+            $table->string('motivo')->nullable();
+            $table->string('cod_usu_admin', 20)->nullable();
+            $table->timestamps();
+
+            $table->foreign('cod_usu')
+                ->references('cod_usu')
+                ->on('users')
+                ->cascadeOnDelete();
+
+            $table->foreign('cod_usu_admin')
+                ->references('cod_usu')
+                ->on('users')
+                ->nullOnDelete();
         });
     }
 
@@ -61,6 +83,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_status_logs');
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('users');
