@@ -31,7 +31,6 @@ class ParaleloSeeder extends Seeder
                 $data[] = [
                     'cod_par' => 'PAR_' . str_pad($contador, 4, '0', STR_PAD_LEFT),
                     'nom_par' => $paralelo,
-                    'cod_cur' => $codCur,
                     'est_par' => 'ACTIVO',
                     'created_at' => $now,
                     'updated_at' => $now,

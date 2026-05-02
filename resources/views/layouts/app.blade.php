@@ -8,6 +8,21 @@
 
     <title>@yield('title', config('app.name', 'SAVP - TIS 3'))</title>
 
+    {{-- Evita parpadeo visual al cargar el tema --}}
+    <script>
+        (function () {
+            const theme = localStorage.getItem('savp-theme') || 'light';
+
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.dataset.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap" rel="stylesheet" />
 
@@ -24,46 +39,55 @@
             background:
                 radial-gradient(circle at top left, rgba(16, 185, 129, 0.10), transparent 24%),
                 radial-gradient(circle at top right, rgba(14, 165, 233, 0.10), transparent 24%),
-                linear-gradient(to bottom, #f8fafc, #eef4f1);
+                linear-gradient(to bottom, var(--ui-bg), var(--ui-bg-soft));
+            color: var(--ui-text);
             position: relative;
+            transition:
+                background-color 180ms ease,
+                color 180ms ease;
         }
 
         .dashboard-bg::before {
             content: "";
             position: absolute;
             inset: 0;
-            opacity: .06;
+            opacity: .055;
             background-image:
-                linear-gradient(rgba(15, 23, 42, 0.9) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(15, 23, 42, 0.9) 1px, transparent 1px);
+                linear-gradient(var(--ui-muted) 1px, transparent 1px),
+                linear-gradient(90deg, var(--ui-muted) 1px, transparent 1px);
             background-size: 28px 28px;
             pointer-events: none;
         }
 
         .soft-panel {
-            background: rgba(255, 255, 255, 0.86);
-            border: 1px solid rgba(226, 232, 240, 0.95);
+            background: color-mix(in srgb, var(--ui-surface) 88%, transparent);
+            border: 1px solid var(--ui-border);
+            color: var(--ui-text);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+            transition:
+                background-color 180ms ease,
+                border-color 180ms ease,
+                color 180ms ease;
         }
 
         .card-shadow {
-            box-shadow:
-                0 20px 40px rgba(15, 23, 42, 0.07),
-                0 8px 20px rgba(15, 23, 42, 0.04);
+            box-shadow: var(--ui-shadow-md);
         }
 
         .topbar-shadow {
-            box-shadow:
-                0 10px 30px rgba(15, 23, 42, 0.05),
-                0 4px 12px rgba(15, 23, 42, 0.03);
+            box-shadow: var(--ui-shadow-sm);
+        }
+
+        .topbar-search::placeholder {
+            color: var(--ui-muted);
         }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="font-sans antialiased text-slate-800">
+<body class="font-sans antialiased ui-page">
     <x-banner />
 
     <div x-data="{ sidebarOpen: true, openUser: false }" class="dashboard-bg relative">
@@ -75,14 +99,19 @@
                 :class="sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'">
 
                 @php
-                    $persona = Auth::user()->persona;
+                    $user = Auth::user();
+                    $persona = $user?->persona;
+
                     $nombreCompleto = trim(
                         ($persona->nom_per ?? '') . ' ' .
                         ($persona->ape_pat_per ?? '') . ' ' .
                         ($persona->ape_mat_per ?? '')
                     );
-                    $inicial = strtoupper(substr($persona->nom_per ?? 'U', 0, 1));
-                    $rol = Auth::user()->getRoleNames()->first() ?? 'Sin rol asignado';
+
+                    $nombreUsuario = $nombreCompleto ?: ($user->name ?? $user->email ?? 'Usuario');
+                    $correoUsuario = $user->email ?? 'correo@ejemplo.com';
+                    $inicial = strtoupper(substr($persona->nom_per ?? $user->name ?? $user->email ?? 'U', 0, 1));
+                    $rol = $user?->getRoleNames()->first() ?? 'Sin rol asignado';
                 @endphp
 
                 {{-- TOPBAR OPERATIVA --}}
@@ -91,55 +120,77 @@
                         <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-center">
 
                             {{-- FECHA --}}
-                            <div
-                                class="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-medium text-slate-600 shadow-sm">
-                                {{ now()->format('d/m/Y') }}
+                            <div class="ui-card-soft px-5 py-3 text-sm font-medium">
+                                <span class="ui-muted">{{ now()->format('d/m/Y') }}</span>
                             </div>
 
                             {{-- BUSCADOR --}}
-                            <div
-                                class="flex w-full items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm xl:w-[800px]">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 shrink-0"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div class="flex w-full items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm xl:w-[800px]"
+                                style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0"
+                                    style="color: var(--ui-muted);" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                         d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
 
                                 <input type="text" placeholder="Buscar módulos, registros o información..."
-                                    class="w-full border-none bg-transparent p-0 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-0">
+                                    class="topbar-search w-full border-none bg-transparent p-0 text-sm focus:outline-none focus:ring-0"
+                                    style="color: var(--ui-text);">
                             </div>
+
+                            {{-- BOTÓN MODO CLARO / OSCURO --}}
+                            <button type="button" onclick="window.themeManager.toggle()"
+                                class="inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-2xl border shadow-sm transition hover:-translate-y-0.5"
+                                style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);"
+                                title="Cambiar tema">
+
+                                {{-- Luna: visible en modo claro --}}
+                                <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                                </svg>
+
+                                {{-- Sol: visible en modo oscuro --}}
+                                <svg class="hidden h-5 w-5 dark:block" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3m15.364-6.364-1.591 1.591M7.227 16.773l-1.591 1.591m12.728 0-1.591-1.591M7.227 7.227 5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                                </svg>
+                            </button>
 
                             {{-- USUARIO --}}
                             <div class="relative">
-                                <button @click="openUser = !openUser"
-                                    class="flex min-w-[290px] items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm transition hover:bg-slate-50">
+                                <button type="button" @click="openUser = !openUser"
+                                    class="flex min-w-[290px] items-center justify-between gap-4 rounded-2xl border px-4 py-3 shadow-sm transition hover:-translate-y-0.5"
+                                    style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
 
-                                    <div class="flex items-center gap-3 min-w-0">
+                                    <div class="flex min-w-0 items-center gap-3">
                                         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-                                            <img class="h-11 w-11 rounded-full object-cover shrink-0"
-                                                src="{{ Auth::user()->profile_photo_url }}"
-                                                alt="{{ $nombreCompleto ?: 'Usuario' }}">
+                                            <img class="h-11 w-11 shrink-0 rounded-full object-cover ring-2"
+                                                style="--tw-ring-color: var(--ui-border);"
+                                                src="{{ $user->profile_photo_url }}" alt="{{ $nombreUsuario }}">
                                         @else
-                                            <div
-                                                class="flex h-11 w-11 items-center justify-center rounded-full bg-slate-200 text-sm font-bold text-slate-700 shrink-0">
+                                            <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-bold"
+                                                style="background: var(--ui-surface-muted); color: var(--ui-text-soft);">
                                                 {{ $inicial }}
                                             </div>
                                         @endif
 
                                         <div class="min-w-0 text-left">
-                                            <p class="truncate text-sm font-bold text-slate-900">
-                                                {{ $nombreCompleto ?: 'Usuario' }}
+                                            <p class="truncate text-sm font-bold" style="color: var(--ui-text);">
+                                                {{ $nombreUsuario }}
                                             </p>
-                                            <p class="truncate text-xs text-slate-500">
+                                            <p class="truncate text-xs" style="color: var(--ui-muted);">
                                                 {{ $rol }}
                                             </p>
                                         </div>
                                     </div>
 
                                     <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="h-4 w-4 text-slate-500 transition-transform duration-300 shrink-0"
-                                        :class="{ 'rotate-180': openUser }" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
+                                        class="h-4 w-4 shrink-0 transition-transform duration-300"
+                                        style="color: var(--ui-muted);" :class="{ 'rotate-180': openUser }" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                             d="M19 9l-7 7-7-7" />
                                     </svg>
@@ -147,33 +198,63 @@
 
                                 {{-- Dropdown usuario --}}
                                 <div x-show="openUser" @click.outside="openUser = false" x-transition x-cloak
-                                    class="absolute right-0 mt-3 w-72 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+                                    class="absolute right-0 mt-3 w-72 overflow-hidden rounded-2xl border shadow-xl"
+                                    style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
 
-                                    <div class="border-b border-slate-100 px-4 py-4">
-                                        <p class="text-sm font-bold text-slate-900">
-                                            {{ $nombreCompleto ?: 'Usuario' }}
+                                    <div class="border-b px-4 py-4" style="border-color: var(--ui-border);">
+                                        <p class="text-sm font-bold" style="color: var(--ui-text);">
+                                            {{ $nombreUsuario }}
                                         </p>
-                                        <p class="mt-1 text-xs text-slate-500">
-                                            {{ Auth::user()->email ?? 'correo@ejemplo.com' }}
+
+                                        <p class="mt-1 text-xs" style="color: var(--ui-muted);">
+                                            {{ $correoUsuario }}
                                         </p>
-                                        <p
-                                            class="mt-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+
+                                        <p class="mt-2 inline-flex rounded-full px-3 py-1 text-xs font-semibold ring-1"
+                                            style="background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);">
                                             {{ $rol }}
                                         </p>
                                     </div>
 
                                     <div class="p-2">
                                         <a href="{{ route('profile.show') }}"
-                                            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-slate-700 transition hover:bg-slate-50">
-                                            <span>👤</span>
+                                            class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition hover:bg-[var(--ui-surface-muted)]"
+                                            style="color: var(--ui-text-soft);">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                                    d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 1 1 15 0" />
+                                            </svg>
                                             <span>Mi perfil</span>
                                         </a>
 
+                                        <button type="button" onclick="window.themeManager.toggle()"
+                                            class="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition hover:bg-[var(--ui-surface-muted)]"
+                                            style="color: var(--ui-text-soft);">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path class="dark:hidden" stroke-linecap="round" stroke-linejoin="round"
+                                                    stroke-width="1.8"
+                                                    d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                                                <path class="hidden dark:block" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="1.8"
+                                                    d="M12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3m15.364-6.364-1.591 1.591M7.227 16.773l-1.591 1.591m12.728 0-1.591-1.591M7.227 7.227 5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                                            </svg>
+                                            <span>Cambiar tema</span>
+                                        </button>
+
                                         <form method="POST" action="{{ route('logout') }}">
                                             @csrf
+
                                             <button type="submit"
-                                                class="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-red-600 transition hover:bg-red-50">
-                                                <span>⏻</span>
+                                                class="mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition"
+                                                style="color: var(--ui-danger);"
+                                                onmouseover="this.style.background='var(--ui-danger-soft)'"
+                                                onmouseout="this.style.background='transparent'">
+                                                <svg class="h-5 w-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="1.8"
+                                                        d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                                                </svg>
                                                 <span>Cerrar sesión</span>
                                             </button>
                                         </form>

@@ -53,4 +53,26 @@ class PersonalInstitucional extends Model
     {
         return $this->hasOne(SecretariaGeneral::class, 'cod_pin', 'cod_pin');
     }
+
+    public function administrador()
+    {
+        return $this->hasOne(Administrador::class, 'cod_pin', 'cod_pin');
+    }
+
+    public function director()
+    {
+        return $this->hasOne(Director::class, 'cod_pin', 'cod_pin');
+    }
+
+    public function usuario()
+    {
+        return $this->hasOneThrough(
+            User::class,
+            Persona::class,
+            'cod_per',
+            'cod_per',
+            'cod_per',
+            'cod_per'
+        );
+    }
 }

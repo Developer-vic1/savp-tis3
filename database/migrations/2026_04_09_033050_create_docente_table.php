@@ -20,9 +20,11 @@ return new class extends Migration
 
             $table->string('esp_doc', 150)->nullable(); // Especialidad docente
 
-            $table->string('est_doc', 20)->default('ACTIVO'); // Estado docente
+            $table->integer('num_mod_doc')->default(0); // Número de modificaciones del docente
 
-            $table->timestamps(); // Fecha de creación y actualización
+            $table->string('est_doc', 20)->default('ACTIVO'); // Estado del docente
+
+            $table->timestamps();
         });
     }
 

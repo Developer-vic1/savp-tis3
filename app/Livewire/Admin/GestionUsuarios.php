@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Administrador;
+use App\Models\Bitacora;
 use App\Models\Director;
 use App\Models\Docente;
 use App\Models\Estudiante;
@@ -502,6 +503,12 @@ class GestionUsuarios extends Component
             $this->dispatch('usuarios-reactivados');
         }
 
+        $this->registrarBitacora(
+            'ACCION_REGISTROS_USUARIOS',
+            'users',
+            'Acción de lote aplicada: ' . $this->accionLote
+        );
+
         $this->selected = [];
         $this->selectAll = false;
         $this->accionLote = '';
@@ -645,6 +652,12 @@ class GestionUsuarios extends Component
             'est_usu' => 'INACTIVO',
         ]);
 
+        $this->registrarBitacora(
+            'DESACTIVAR_USUARIO',
+            'users',
+            'Usuario desactivado: ' . $usuario->cod_usu
+        );
+
         $this->dispatch('usuario-desactivado');
     }
 
@@ -667,6 +680,12 @@ class GestionUsuarios extends Component
         $usuario->update([
             'est_usu' => 'ACTIVO',
         ]);
+
+        $this->registrarBitacora(
+            'REACTIVAR_USUARIO',
+            'users',
+            'Usuario reactivado: ' . $usuario->cod_usu
+        );
 
         $this->dispatch('usuario-reactivado');
     }
@@ -742,6 +761,12 @@ class GestionUsuarios extends Component
                     $sincronizados++;
                 }
             }
+
+            $this->registrarBitacora(
+                'SINCRONIZAR_DATOS_USUARIOS',
+                'users',
+                'Registros sincronizados: ' . $sincronizados
+            );
 
             DB::commit();
 
@@ -825,6 +850,18 @@ class GestionUsuarios extends Component
 
             default => null,
         };
+    }
+
+    private function registrarBitacora(string $accion, string $tabla, ?string $registro = null): void
+    {
+        Bitacora::create([
+            'acc_bit' => $accion,
+            'tab_bit' => $tabla,
+            'reg_bit' => $registro,
+            'cod_usu' => Auth::user()?->cod_usu,
+            'fec_bit' => now(),
+            'est_bit' => 'ACTIVO',
+        ]);
     }
 
     /*

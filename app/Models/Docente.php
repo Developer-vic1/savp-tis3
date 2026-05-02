@@ -16,6 +16,7 @@ class Docente extends Model
         'cod_pin', // Código personal institucional
         'esp_doc', // Especialidad docente
         'est_doc', // Estado docente
+        'num_mod_doc', // Numero de modificaciones
     ];
 
     protected static function booted(): void
@@ -47,5 +48,10 @@ class Docente extends Model
     public function planAsignaturas()
     {
         return $this->hasMany(PlanAsignatura::class, 'cod_doc', 'cod_doc');
+    }
+
+    public function planEspecialidades()
+    {
+        return $this->hasMany(PlanEspecialidad::class, 'cod_doc', 'cod_doc');
     }
 }

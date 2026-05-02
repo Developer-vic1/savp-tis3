@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Admin\GestionPersonaController;
+use App\Http\Controllers\Admin\GestionPersonalInstitucional;
+use App\Http\Controllers\Admin\GestionUsuarioController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\GestionUsuarioController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,8 +29,17 @@ Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
-])->group(function () {
-    Route::get('/admin/gestion-usuarios', [GestionUsuarioController::class, 'index'])
-        ->name('admin.gestion-usuarios')
+])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/gestion-usuarios', [GestionUsuarioController::class, 'index'])
+        ->name('gestion-usuarios')
         ->middleware('can:Gestion_Usuarios');
+
+    Route::get('/gestion-personas', [GestionPersonaController::class, 'index'])
+        ->name('gestion-personas')
+        ->middleware('can:Registro_Personas');
+
+    Route::get('/personal-institucional', [GestionPersonalInstitucional::class, 'index'])
+        ->name('personal-institucional')
+        ->middleware('can:Personal_Institucional');
 });

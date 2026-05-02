@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Persona extends Model
 {
@@ -43,5 +44,10 @@ class Persona extends Model
                 $persona->cod_per = 'PER_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
+    }
+
+    public function usuario()
+    {
+        return $this->hasOne(User::class, 'cod_per', 'cod_per');
     }
 }

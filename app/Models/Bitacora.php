@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Bitacora extends Model
 {
@@ -14,22 +15,26 @@ class Bitacora extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        
-        'cod_bit', // Código bitácora
-        'acc_bit', // Acción realizada
-        'tab_bit', // Tabla afectada
-        'reg_bit', // Registro afectado
-        'cod_usu', // Código usuario
-        'fec_bit', // Fecha y hora
-        'est_bit', // Estado registro
+        'cod_bit',
+        'acc_bit',
+        'tab_bit',
+        'reg_bit',
+        'cod_usu',
+        'fec_bit',
+        'est_bit',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'fec_bit' => 'datetime',
+        ];
+    }
 
     protected static function booted(): void
     {
         static::creating(function ($bitacora) {
-
             if (!$bitacora->cod_bit) {
-
                 $ultimo = self::where('cod_bit', 'like', 'BIT_%')
                     ->orderByDesc('cod_bit')
                     ->value('cod_bit');
@@ -42,8 +47,6 @@ class Bitacora extends Model
             }
         });
     }
-
-    // 🔗 Relaciones
 
     public function usuario()
     {

@@ -3,9 +3,9 @@
         <x-slot name="logo">
             <div class="text-center">
                 <div
-                    class="relative mx-auto flex h-24 w-24 items-center justify-center rounded-3xl bg-white shadow-[0_20px_50px_rgba(16,185,129,0.18)] ring-4 ring-white/70 animate-[floatLogo_5s_ease-in-out_infinite]">
+                    class="relative mx-auto flex h-24 w-24 items-center justify-center rounded-[1.7rem] bg-white shadow-[0_24px_60px_rgba(16,185,129,0.18)] ring-4 ring-white/70 dark:bg-slate-900 dark:ring-slate-700/80">
                     <img src="{{ asset('image/LOGO FT3 A.jpg') }}" alt="Logo Franz Tamayo N°3"
-                        class="h-16 w-16 object-contain rounded-2xl">
+                        class="h-16 w-16 rounded-2xl object-contain">
 
                     <span
                         class="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-sky-400 shadow-lg shadow-sky-400/60 animate-pulse"></span>
@@ -14,10 +14,10 @@
                 </div>
 
                 <div class="mt-4">
-                    <p class="font-display text-sm font-bold text-slate-900">
+                    <p class="font-display text-base font-black text-slate-950 dark:text-white">
                         Franz Tamayo N°3
                     </p>
-                    <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-600">
+                    <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">
                         Sistema SAVP – TIS 3
                     </p>
                 </div>
@@ -25,208 +25,31 @@
         </x-slot>
 
         <style>
-            .auth-bg {
-                position: fixed;
-                inset: 0;
-                overflow: hidden;
-                z-index: -1;
-                background:
-                    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.16), transparent 26%),
-                    radial-gradient(circle at 80% 18%, rgba(14, 165, 233, 0.14), transparent 24%),
-                    radial-gradient(circle at 75% 80%, rgba(59, 130, 246, 0.12), transparent 22%),
-                    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 45%, #eef2f7 100%);
-            }
-
-            .auth-bg::before {
-                content: "";
-                position: absolute;
-                inset: 0;
-                opacity: .06;
-                background-image:
-                    linear-gradient(rgba(15, 23, 42, 0.8) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(15, 23, 42, 0.8) 1px, transparent 1px);
-                background-size: 36px 36px;
-                mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
-                pointer-events: none;
-            }
-
-            .bg-blob {
-                position: absolute;
-                border-radius: 9999px;
-                filter: blur(60px);
-                opacity: .55;
-                animation: blobFloat 16s ease-in-out infinite;
-                will-change: transform;
-            }
-
-            .bg-blob.one {
-                width: 340px;
-                height: 340px;
-                left: -80px;
-                top: 8%;
-                background: rgba(16, 185, 129, 0.22);
-                animation-delay: 0s;
-            }
-
-            .bg-blob.two {
-                width: 300px;
-                height: 300px;
-                right: -60px;
-                top: 14%;
-                background: rgba(14, 165, 233, 0.18);
-                animation-delay: -3s;
-            }
-
-            .bg-blob.three {
-                width: 360px;
-                height: 360px;
-                left: 10%;
-                bottom: -120px;
-                background: rgba(45, 212, 191, 0.14);
-                animation-delay: -6s;
-            }
-
-            .bg-blob.four {
-                width: 320px;
-                height: 320px;
-                right: 8%;
-                bottom: -90px;
-                background: rgba(59, 130, 246, 0.16);
-                animation-delay: -9s;
-            }
-
-            .bg-orbit {
-                position: absolute;
-                border: 1px solid rgba(148, 163, 184, 0.18);
-                border-radius: 9999px;
-                animation: spinSlow linear infinite;
-                transform-origin: center;
-            }
-
-            .bg-orbit.one {
-                width: 520px;
-                height: 520px;
-                left: 8%;
-                top: 12%;
-                animation-duration: 32s;
-            }
-
-            .bg-orbit.two {
-                width: 680px;
-                height: 680px;
-                right: 4%;
-                bottom: 4%;
-                animation-duration: 40s;
-                animation-direction: reverse;
-            }
-
-            .bg-orbit::after {
-                content: "";
-                position: absolute;
-                top: 18%;
-                left: 85%;
-                width: 14px;
-                height: 14px;
-                border-radius: 9999px;
-                background: linear-gradient(135deg, #10b981, #38bdf8);
-                box-shadow: 0 0 18px rgba(16, 185, 129, .35);
-            }
-
-            .bg-particle {
-                position: absolute;
-                border-radius: 9999px;
-                pointer-events: none;
-                opacity: .7;
-                animation: particleFloat linear infinite;
-            }
-
-            .bg-particle.p1 {
-                width: 8px;
-                height: 8px;
-                left: 12%;
-                top: 22%;
-                background: rgba(16, 185, 129, .45);
-                animation-duration: 10s;
-            }
-
-            .bg-particle.p2 {
-                width: 10px;
-                height: 10px;
-                right: 18%;
-                top: 30%;
-                background: rgba(14, 165, 233, .38);
-                animation-duration: 13s;
-            }
-
-            .bg-particle.p3 {
-                width: 6px;
-                height: 6px;
-                left: 22%;
-                bottom: 18%;
-                background: rgba(52, 211, 153, .42);
-                animation-duration: 9s;
-            }
-
-            .bg-particle.p4 {
-                width: 12px;
-                height: 12px;
-                right: 10%;
-                bottom: 20%;
-                background: rgba(56, 189, 248, .30);
-                animation-duration: 14s;
-            }
-
-            .bg-particle.p5 {
-                width: 7px;
-                height: 7px;
-                left: 50%;
-                top: 12%;
-                background: rgba(16, 185, 129, .30);
-                animation-duration: 11s;
-            }
-
-            .bg-particle.p6 {
-                width: 9px;
-                height: 9px;
-                right: 36%;
-                bottom: 12%;
-                background: rgba(59, 130, 246, .28);
-                animation-duration: 12s;
-            }
-
-            .bg-wave {
-                position: absolute;
-                left: -10%;
-                width: 120%;
-                height: 220px;
-                border-radius: 50%;
-                filter: blur(10px);
-                opacity: .18;
-                background: linear-gradient(90deg, rgba(16, 185, 129, .12), rgba(14, 165, 233, .12));
-                animation: waveMove 18s ease-in-out infinite;
-            }
-
-            .bg-wave.one {
-                bottom: 8%;
-            }
-
-            .bg-wave.two {
-                bottom: 2%;
-                animation-delay: -7s;
-            }
-
             .login-stage {
                 position: relative;
                 overflow: hidden;
-                border-radius: 1.75rem;
+                border-radius: 2.2rem;
+                width: min(100%, 46rem);
+                min-height: 620px;
                 background:
-                    radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 28%),
-                    radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 28%),
-                    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.96));
-                border: 1px solid rgba(226, 232, 240, 0.9);
+                    radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 30%),
+                    radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 30%),
+                    linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(248, 250, 252, 0.97));
+                border: 1px solid rgba(226, 232, 240, 0.95);
                 box-shadow:
-                    0 20px 60px rgba(15, 23, 42, 0.10),
-                    0 8px 24px rgba(15, 23, 42, 0.06);
+                    0 28px 90px rgba(15, 23, 42, 0.14),
+                    0 10px 28px rgba(15, 23, 42, 0.08);
+            }
+
+            html.dark .login-stage {
+                background:
+                    radial-gradient(circle at top left, rgba(52, 211, 153, 0.13), transparent 30%),
+                    radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 30%),
+                    linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(30, 41, 59, 0.97));
+                border-color: rgba(71, 85, 105, 0.86);
+                box-shadow:
+                    0 28px 95px rgba(0, 0, 0, 0.40),
+                    0 10px 28px rgba(0, 0, 0, 0.24);
             }
 
             .login-stage::before {
@@ -236,9 +59,110 @@
                 background-image:
                     linear-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px),
                     linear-gradient(90deg, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-                background-size: 26px 26px;
+                background-size: 28px 28px;
                 pointer-events: none;
-                opacity: .45;
+                opacity: .55;
+            }
+
+            html.dark .login-stage::before {
+                background-image:
+                    linear-gradient(rgba(148, 163, 184, 0.055) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(148, 163, 184, 0.055) 1px, transparent 1px);
+            }
+
+            .login-back-btn {
+                position: absolute;
+                left: 1.25rem;
+                top: 1.25rem;
+                z-index: 20;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.8rem;
+                height: 2.8rem;
+                border-radius: 1rem;
+                border: 1px solid rgba(203, 213, 225, .8);
+                background: rgba(255, 255, 255, .84);
+                color: #334155;
+                box-shadow: 0 12px 26px rgba(15, 23, 42, .08);
+                backdrop-filter: blur(12px);
+                transition: transform .22s ease, color .22s ease, border-color .22s ease, background .22s ease;
+            }
+
+            html.dark .login-back-btn {
+                background: rgba(15, 23, 42, .78);
+                color: #cbd5e1;
+                border-color: rgba(71, 85, 105, .86);
+            }
+
+            .login-back-btn:hover {
+                transform: translateY(-2px);
+                color: #059669;
+                border-color: rgba(16, 185, 129, .48);
+            }
+
+            .login-theme-btn {
+                position: absolute;
+                right: 1.25rem;
+                top: 1.25rem;
+                z-index: 20;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 2.8rem;
+                height: 2.8rem;
+                border-radius: 1rem;
+                border: 1px solid rgba(203, 213, 225, .8);
+                background: rgba(255, 255, 255, .84);
+                color: #334155;
+                box-shadow: 0 12px 26px rgba(15, 23, 42, .08);
+                backdrop-filter: blur(12px);
+                transition: transform .22s ease, color .22s ease, border-color .22s ease, background .22s ease;
+            }
+
+            html.dark .login-theme-btn {
+                background: rgba(15, 23, 42, .78);
+                color: #cbd5e1;
+                border-color: rgba(71, 85, 105, .86);
+            }
+
+            .login-theme-btn:hover {
+                transform: translateY(-2px);
+                color: #0284c7;
+                border-color: rgba(14, 165, 233, .48);
+            }
+
+            .login-input {
+                transition: all .22s ease;
+            }
+
+            .login-input:focus {
+                transform: translateY(-1px);
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.13);
+            }
+
+            .login-input.input-valid {
+                border-color: rgb(16 185 129) !important;
+            }
+
+            .login-input.input-invalid {
+                border-color: rgb(248 113 113) !important;
+            }
+
+            .login-btn {
+                transition: all .22s ease;
+            }
+
+            .login-btn:hover {
+                transform: translateY(-1px) scale(1.01);
+                box-shadow: 0 18px 38px rgba(16, 185, 129, 0.24);
+            }
+
+            .login-btn:disabled {
+                cursor: not-allowed;
+                opacity: .55;
+                box-shadow: none;
+                transform: none !important;
             }
 
             .particle {
@@ -254,7 +178,7 @@
                 width: 10px;
                 height: 10px;
                 left: 8%;
-                top: 12%;
+                top: 14%;
                 background: rgba(16, 185, 129, 0.38);
                 animation-duration: 7s;
             }
@@ -263,7 +187,7 @@
                 width: 8px;
                 height: 8px;
                 right: 12%;
-                top: 18%;
+                top: 20%;
                 background: rgba(14, 165, 233, 0.35);
                 animation-duration: 9s;
             }
@@ -271,8 +195,8 @@
             .particle.three {
                 width: 12px;
                 height: 12px;
-                left: 14%;
-                bottom: 18%;
+                left: 12%;
+                bottom: 16%;
                 background: rgba(52, 211, 153, 0.25);
                 animation-duration: 11s;
             }
@@ -280,26 +204,17 @@
             .particle.four {
                 width: 7px;
                 height: 7px;
-                right: 16%;
-                bottom: 12%;
+                right: 15%;
+                bottom: 14%;
                 background: rgba(56, 189, 248, 0.30);
                 animation-duration: 8s;
-            }
-
-            .particle.five {
-                width: 6px;
-                height: 6px;
-                left: 48%;
-                top: 10%;
-                background: rgba(16, 185, 129, 0.28);
-                animation-duration: 10s;
             }
 
             .shine-line {
                 position: absolute;
                 inset: 0;
                 overflow: hidden;
-                border-radius: 1.75rem;
+                border-radius: 2.2rem;
                 pointer-events: none;
             }
 
@@ -307,48 +222,22 @@
                 content: "";
                 position: absolute;
                 top: -20%;
-                left: -35%;
-                width: 35%;
+                left: -40%;
+                width: 34%;
                 height: 140%;
                 transform: rotate(18deg);
                 background: linear-gradient(to right,
                         transparent,
-                        rgba(255, 255, 255, .45),
+                        rgba(255, 255, 255, .48),
                         transparent);
                 animation: sweep 6s infinite;
             }
 
-            .login-input {
-                transition: all .22s ease;
-            }
-
-            .login-input.input-valid {
-                border-color: rgb(16 185 129) !important;
-            }
-
-            .login-input.input-invalid {
-                border-color: rgb(248 113 113) !important;
-            }
-
-            .login-btn:disabled {
-                cursor: not-allowed;
-                opacity: .55;
-                box-shadow: none;
-                transform: none !important;
-            }
-
-            .login-input:focus {
-                transform: translateY(-1px);
-                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12);
-            }
-
-            .login-btn {
-                transition: all .22s ease;
-            }
-
-            .login-btn:hover {
-                transform: translateY(-1px) scale(1.01);
-                box-shadow: 0 14px 30px rgba(16, 185, 129, 0.22);
+            html.dark .shine-line::after {
+                background: linear-gradient(to right,
+                        transparent,
+                        rgba(255, 255, 255, .12),
+                        transparent);
             }
 
             .fade-up {
@@ -371,70 +260,10 @@
                 animation-delay: .32s;
             }
 
-            @keyframes blobFloat {
-
-                0%,
-                100% {
-                    transform: translate3d(0, 0, 0) scale(1);
-                }
-
-                25% {
-                    transform: translate3d(30px, -20px, 0) scale(1.04);
-                }
-
-                50% {
-                    transform: translate3d(-18px, 26px, 0) scale(0.98);
-                }
-
-                75% {
-                    transform: translate3d(22px, 12px, 0) scale(1.02);
-                }
-            }
-
-            @keyframes spinSlow {
-                from {
-                    transform: rotate(0deg);
-                }
-
-                to {
-                    transform: rotate(360deg);
-                }
-            }
-
-            @keyframes particleFloat {
-
-                0%,
-                100% {
-                    transform: translateY(0px) translateX(0px);
-                }
-
-                20% {
-                    transform: translateY(-10px) translateX(6px);
-                }
-
-                50% {
-                    transform: translateY(-22px) translateX(-5px);
-                }
-
-                80% {
-                    transform: translateY(-8px) translateX(8px);
-                }
-            }
-
-            @keyframes waveMove {
-
-                0%,
-                100% {
-                    transform: translateX(0) scaleX(1);
-                }
-
-                50% {
-                    transform: translateX(3%) scaleX(1.03);
-                }
-            }
-
             @keyframes floatY {
-                0% {
+
+                0%,
+                100% {
                     transform: translateY(0px) translateX(0px);
                 }
 
@@ -449,19 +278,15 @@
                 75% {
                     transform: translateY(-8px) translateX(6px);
                 }
-
-                100% {
-                    transform: translateY(0px) translateX(0px);
-                }
             }
 
             @keyframes sweep {
                 0% {
-                    left: -40%;
+                    left: -42%;
                 }
 
                 100% {
-                    left: 130%;
+                    left: 135%;
                 }
             }
 
@@ -491,10 +316,6 @@
 
             @media (prefers-reduced-motion: reduce) {
 
-                .bg-blob,
-                .bg-orbit,
-                .bg-particle,
-                .bg-wave,
                 .particle,
                 .shine-line::after,
                 .fade-up,
@@ -504,68 +325,65 @@
             }
         </style>
 
-        <div class="auth-bg" aria-hidden="true">
-            <div class="bg-blob one"></div>
-            <div class="bg-blob two"></div>
-            <div class="bg-blob three"></div>
-            <div class="bg-blob four"></div>
+        <div class="login-stage px-7 pb-8 pt-20 sm:px-10 sm:pb-10 sm:pt-22">
+            {{-- Botón volver al welcome --}}
+            <a href="{{ url('/') }}" class="login-back-btn" title="Volver al inicio" aria-label="Volver al inicio">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </a>
 
-            <div class="bg-orbit one"></div>
-            <div class="bg-orbit two"></div>
+            {{-- Botón tema --}}
+            <button type="button" id="loginThemeToggle" class="login-theme-btn" title="Cambiar tema"
+                aria-label="Cambiar tema">
+                <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                </svg>
 
-            <div class="bg-particle p1"></div>
-            <div class="bg-particle p2"></div>
-            <div class="bg-particle p3"></div>
-            <div class="bg-particle p4"></div>
-            <div class="bg-particle p5"></div>
-            <div class="bg-particle p6"></div>
+                <svg class="hidden h-5 w-5 dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                        d="M12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3m15.364-6.364-1.591 1.591M7.227 16.773l-1.591 1.591m12.728 0-1.591-1.591M7.227 7.227 5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                </svg>
+            </button>
 
-            <div class="bg-wave one"></div>
-            <div class="bg-wave two"></div>
-        </div>
-
-        <div class="login-stage px-6 py-7 sm:px-8 sm:py-8">
             <div class="particle one"></div>
             <div class="particle two"></div>
             <div class="particle three"></div>
             <div class="particle four"></div>
-            <div class="particle five"></div>
             <div class="shine-line"></div>
 
             <div class="relative z-10">
                 <div class="fade-up">
                     <div
-                        class="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 shadow-sm">
+                        class="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700 shadow-sm dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
                         <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         Acceso institucional
                     </div>
 
-                    <h1 class="text-center text-3xl font-black tracking-tight text-slate-900">
+                    <h1 class="text-center text-4xl font-black tracking-tight text-slate-950 dark:text-white">
                         Bienvenido
                     </h1>
 
-                    <p class="mx-auto mt-2 max-w-md text-center text-sm leading-6 text-slate-600">
+                    <p class="mx-auto mt-3 max-w-lg text-center text-base leading-7 text-slate-600 dark:text-slate-300">
                         Inicia sesión para acceder al sistema de la
-                        <span class="font-semibold text-emerald-700">Unidad Educativa Franz Tamayo N°3</span>.
+                        <span class="font-bold text-emerald-700 dark:text-emerald-300">
+                            Unidad Educativa Franz Tamayo N°3
+                        </span>.
                     </p>
                 </div>
 
-                <div class="fade-up delay-2 mt-6">
+                <div class="fade-up delay-2 mt-7">
                     <x-validation-errors
-                        class="mb-4 hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700" />
+                        class="mb-4 hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-200" />
 
                     @session('status')
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
-                                let titulo = 'Contraseña actualizada';
-
-                                if (@json($value) === 'Tu contraseña fue restablecida correctamente.') {
-                                    titulo = 'Contraseña actualizada';
-                                }
-
                                 Swal.fire({
                                     icon: 'success',
-                                    title: titulo,
+                                    title: 'Proceso completado',
                                     text: @json($value),
                                     confirmButtonText: 'Entendido',
                                     confirmButtonColor: '#059669'
@@ -589,18 +407,18 @@
                     @endif
                 </div>
 
-                <form method="POST" action="{{ route('login') }}" class="fade-up delay-3 space-y-5" novalidate
+                <form method="POST" action="{{ route('login') }}" class="fade-up delay-3 space-y-6" novalidate
                     id="loginForm">
                     @csrf
 
                     <div>
-                        <label for="email" class="mb-2 block text-sm font-semibold text-slate-700">
+                        <label for="email" class="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                             Correo electrónico
                         </label>
 
                         <div class="relative">
                             <span
-                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 dark:text-slate-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path d="M2.94 5.5A2 2 0 014.75 4h10.5a2 2 0 011.81 1.5L10 9.88 2.94 5.5z" />
@@ -610,24 +428,24 @@
                             </span>
 
                             <x-input id="email"
-                                class="login-input block mt-1 w-full rounded-2xl border-slate-300 bg-white/90 py-3.5 pl-11 pr-4 text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                                class="login-input mt-1 block w-full rounded-2xl border-slate-300 bg-white/95 py-4 pl-11 pr-4 text-base text-slate-800 placeholder-slate-400 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder-slate-500"
                                 type="email" name="email" value="" required autofocus autocomplete="username"
                                 inputmode="email" maxlength="120" placeholder="usuario@gmail.com" />
                         </div>
 
-                        <p id="emailError" class="mt-2 hidden text-xs font-medium text-rose-500">
+                        <p id="emailError" class="mt-2 hidden text-xs font-bold text-rose-500 dark:text-rose-300">
                             Ingresa un correo válido, por ejemplo: usuario@gmail.com
                         </p>
                     </div>
 
                     <div>
-                        <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">
+                        <label for="password" class="mb-2 block text-sm font-bold text-slate-700 dark:text-slate-200">
                             Contraseña
                         </label>
 
                         <div class="relative">
                             <span
-                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+                                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 dark:text-slate-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path fill-rule="evenodd"
@@ -637,18 +455,19 @@
                             </span>
 
                             <x-input id="password"
-                                class="login-input block mt-1 w-full rounded-2xl border-slate-300 bg-white/90 py-3.5 pl-11 pr-12 text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:border-emerald-500 focus:ring-emerald-500"
+                                class="login-input mt-1 block w-full rounded-2xl border-slate-300 bg-white/95 py-4 pl-11 pr-12 text-base text-slate-800 placeholder-slate-400 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder-slate-500"
                                 type="password" name="password" required autocomplete="current-password"
                                 placeholder="Ingresa tu contraseña" />
 
                             <button type="button" id="togglePassword"
-                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 transition hover:text-emerald-600"
+                                class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 transition hover:text-emerald-600 dark:text-slate-500 dark:hover:text-emerald-300"
                                 aria-label="Mostrar u ocultar contraseña">
                                 <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                     fill="currentColor">
                                     <path
                                         d="M10 3c4.5 0 8.27 2.94 9.54 7-.68 2.16-2.02 4-3.83 5.32A9.96 9.96 0 0110 17c-4.5 0-8.27-2.94-9.54-7C1.73 5.94 5.5 3 10 3zm0 3.5A3.5 3.5 0 1013.5 10 3.5 3.5 0 0010 6.5z" />
                                 </svg>
+
                                 <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="hidden h-5 w-5"
                                     viewBox="0 0 20 20" fill="currentColor">
                                     <path
@@ -659,14 +478,15 @@
                     </div>
 
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <label for="remember_me" class="flex items-center text-sm text-slate-600">
+                        <label for="remember_me"
+                            class="flex items-center text-sm font-medium text-slate-600 dark:text-slate-300">
                             <x-checkbox id="remember_me" name="remember"
-                                class="rounded border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500" />
+                                class="rounded border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-900" />
                             <span class="ms-2">Recordarme</span>
                         </label>
 
                         @if (Route::has('password.request'))
-                            <a class="text-sm font-medium text-emerald-700 transition hover:text-emerald-800 hover:underline"
+                            <a class="text-sm font-bold text-emerald-700 transition hover:text-emerald-800 hover:underline dark:text-emerald-300 dark:hover:text-emerald-200"
                                 href="{{ route('password.request') }}">
                                 ¿Olvidaste tu contraseña?
                             </a>
@@ -675,9 +495,10 @@
 
                     <div class="fade-up delay-4 pt-1">
                         <x-button id="loginBtn"
-                            class="group login-btn flex w-full items-center justify-center gap-2 rounded-2xl border-0 bg-gradient-to-r from-emerald-600 via-emerald-500 to-sky-600 px-5 py-3.5 text-sm font-bold tracking-wide text-white shadow-lg shadow-emerald-500/25 transition hover:from-emerald-700 hover:via-emerald-600 hover:to-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            class="group login-btn flex w-full items-center justify-center gap-2 rounded-2xl border-0 bg-gradient-to-r from-emerald-600 via-emerald-500 to-sky-600 px-5 py-4 text-base font-black tracking-wide text-white shadow-lg shadow-emerald-500/25 transition hover:from-emerald-700 hover:via-emerald-600 hover:to-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
                             disabled>
-                            <span>Ingresar</span>
+                            <span>Ingresar al sistema</span>
+
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="h-4 w-4 transition group-hover:translate-x-0.5" viewBox="0 0 20 20"
                                 fill="currentColor">
@@ -689,8 +510,8 @@
                     </div>
                 </form>
 
-                <div class="mt-6 border-t border-slate-200/80 pt-5 text-center">
-                    <p class="text-xs leading-6 text-slate-500">
+                <div class="mt-7 border-t border-slate-200/80 pt-5 text-center dark:border-slate-700/70">
+                    <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
                         Acceso exclusivo para usuarios autorizados del sistema institucional.
                     </p>
                 </div>
@@ -708,6 +529,7 @@
                 const emailError = document.getElementById('emailError');
                 const loginBtn = document.getElementById('loginBtn');
                 const loginForm = document.getElementById('loginForm');
+                const themeToggle = document.getElementById('loginThemeToggle');
 
                 function validateEmail(email) {
                     return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
@@ -737,13 +559,37 @@
                     loginBtn.disabled = !(isEmailValid && hasPassword);
                 }
 
+                function toggleTheme() {
+                    if (window.themeManager && typeof window.themeManager.toggle === 'function') {
+                        window.themeManager.toggle();
+                        return;
+                    }
+
+                    const isDark = document.documentElement.classList.toggle('dark');
+                    document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+                    localStorage.setItem('savp-theme', isDark ? 'dark' : 'light');
+
+                    window.dispatchEvent(new CustomEvent('theme-changed', {
+                        detail: {
+                            theme: isDark ? 'dark' : 'light'
+                        }
+                    }));
+                }
+
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', toggleTheme);
+                }
+
                 if (togglePassword && passwordInput) {
                     togglePassword.addEventListener('click', function () {
                         const isPassword = passwordInput.getAttribute('type') === 'password';
+
                         passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
 
-                        eyeOpen.classList.toggle('hidden');
-                        eyeClosed.classList.toggle('hidden');
+                        if (eyeOpen && eyeClosed) {
+                            eyeOpen.classList.toggle('hidden');
+                            eyeClosed.classList.toggle('hidden');
+                        }
                     });
                 }
 
@@ -762,10 +608,11 @@
                 @if ($errors->any())
                     if (emailInput) emailInput.value = '';
                     if (passwordInput) passwordInput.value = '';
+                    updateFormState();
                 @endif
 
                 if (loginForm && loginBtn) {
-                    loginForm.addEventListener('submit', function (e) {
+                    loginForm.addEventListener('submit', function (event) {
                         const emailValue = emailInput ? emailInput.value.trim() : '';
                         const passwordValue = passwordInput ? passwordInput.value.trim() : '';
 
@@ -773,7 +620,7 @@
                         const hasPassword = passwordValue.length > 0;
 
                         if (!isEmailValid || !hasPassword) {
-                            e.preventDefault();
+                            event.preventDefault();
                             updateFormState();
                             return;
                         }

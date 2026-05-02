@@ -12,18 +12,16 @@ class EspecialidadTecnica extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'cod_esp', // Código especialidad técnica
-        'nom_esp', // Nombre especialidad técnica
-        'des_esp', // Descripción especialidad técnica
-        'est_esp', // Estado especialidad técnica
+        'cod_esp',
+        'nom_esp',
+        'des_esp',
+        'est_esp',
     ];
 
     protected static function booted(): void
     {
         static::creating(function ($especialidad) {
-
             if (!$especialidad->cod_esp) {
-
                 $ultimo = self::where('cod_esp', 'like', 'ESP_%')
                     ->orderByDesc('cod_esp')
                     ->value('cod_esp');
@@ -37,15 +35,13 @@ class EspecialidadTecnica extends Model
         });
     }
 
-    // 🔗 Relaciones
-
     public function estudiantes()
     {
         return $this->hasMany(Estudiante::class, 'cod_esp', 'cod_esp');
     }
 
-    public function planesAsignatura()
+    public function planesEspecialidad()
     {
-        return $this->hasMany(PlanAsignatura::class, 'cod_esp', 'cod_esp');
+        return $this->hasMany(PlanEspecialidad::class, 'cod_esp', 'cod_esp');
     }
 }

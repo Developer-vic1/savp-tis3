@@ -42,37 +42,37 @@ class AdminDashboardController extends Controller
                 'label' => 'Usuarios',
                 'value' => User::count(),
                 'desc' => 'Cuentas registradas en el sistema.',
-                'icon' => '👥',
+                'icon' => 'users',
             ],
             [
                 'label' => 'Estudiantes',
                 'value' => Estudiante::where('est_est', 'ACTIVO')->count(),
                 'desc' => 'Estudiantes activos registrados.',
-                'icon' => '🎓',
+                'icon' => 'academic-cap',
             ],
             [
                 'label' => 'Docentes',
                 'value' => Docente::where('est_doc', 'ACTIVO')->count(),
                 'desc' => 'Docentes activos registrados.',
-                'icon' => '🧑‍🏫',
+                'icon' => 'user-group',
             ],
             [
                 'label' => 'Inscripciones',
                 'value' => InscripcionEstudiante::where('est_ins', 'ACTIVO')->count(),
                 'desc' => 'Inscripciones activas en la gestión.',
-                'icon' => '📝',
+                'icon' => 'clipboard-document',
             ],
             [
                 'label' => 'Especialidades',
                 'value' => EspecialidadTecnica::where('est_esp', 'ACTIVO')->count(),
                 'desc' => 'Especialidades técnicas habilitadas.',
-                'icon' => '🛠️',
+                'icon' => 'wrench-screwdriver',
             ],
             [
                 'label' => 'Periodos',
                 'value' => PeriodoEvaluacion::count(),
                 'desc' => 'Periodos evaluativos registrados.',
-                'icon' => '📅',
+                'icon' => 'calendar-days',
             ],
         ];
 

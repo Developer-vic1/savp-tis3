@@ -14,7 +14,6 @@ class Paralelo extends Model
     protected $fillable = [
         'cod_par', // Código paralelo
         'nom_par', // Nombre paralelo
-        'cod_cur', // Código curso
         'est_par', // Estado paralelo
     ];
 

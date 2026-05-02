@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,15 +8,64 @@
 
     <title>Franz Tamayo N°3 | Acceso</title>
 
+    <script>
+        (function () {
+            const theme = localStorage.getItem('savp-theme') || 'light';
+
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                document.documentElement.dataset.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.dataset.theme = 'light';
+            }
+        })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900|poppins:500,600,700,800,900&display=swap"
+        rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 
     <style>
+        :root {
+            --auth-bg: #f6fbf8;
+            --auth-bg-soft: #f8fafc;
+            --auth-surface: rgba(255, 255, 255, .72);
+            --auth-border: rgba(203, 213, 225, .72);
+            --auth-text: #0f172a;
+            --auth-muted: #64748b;
+            --auth-primary: #059669;
+            --auth-primary-soft: rgba(16, 185, 129, .16);
+            --auth-sky: #0284c7;
+            --auth-sky-soft: rgba(14, 165, 233, .14);
+            --auth-shadow: 0 28px 90px rgba(15, 23, 42, .12);
+        }
+
+        html.dark {
+            --auth-bg: #07111f;
+            --auth-bg-soft: #0f172a;
+            --auth-surface: rgba(15, 23, 42, .72);
+            --auth-border: rgba(71, 85, 105, .72);
+            --auth-text: #f8fafc;
+            --auth-muted: #94a3b8;
+            --auth-primary: #34d399;
+            --auth-primary-soft: rgba(52, 211, 153, .14);
+            --auth-sky: #38bdf8;
+            --auth-sky-soft: rgba(56, 189, 248, .14);
+            --auth-shadow: 0 28px 95px rgba(0, 0, 0, .38);
+        }
+
         body {
-            font-family: 'Figtree', sans-serif;
+            font-family: 'Inter', sans-serif;
+            color: var(--auth-text);
+        }
+
+        .font-display {
+            font-family: 'Poppins', sans-serif;
         }
 
         .auth-shell {
@@ -23,104 +73,104 @@
             min-height: 100vh;
             overflow: hidden;
             background:
-                radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.14), transparent 24%),
-                radial-gradient(circle at 85% 18%, rgba(14, 165, 233, 0.12), transparent 22%),
-                radial-gradient(circle at 80% 85%, rgba(59, 130, 246, 0.10), transparent 24%),
-                linear-gradient(135deg, #f8fafc 0%, #f1f5f9 45%, #eef2f7 100%);
+                radial-gradient(circle at 14% 18%, color-mix(in srgb, var(--auth-primary) 18%, transparent), transparent 27%),
+                radial-gradient(circle at 86% 16%, color-mix(in srgb, var(--auth-sky) 17%, transparent), transparent 26%),
+                radial-gradient(circle at 72% 84%, color-mix(in srgb, var(--auth-primary) 10%, transparent), transparent 28%),
+                linear-gradient(135deg, var(--auth-bg), var(--auth-bg-soft));
         }
 
         .auth-grid {
             position: absolute;
             inset: 0;
-            opacity: .05;
-            background-image:
-                linear-gradient(rgba(15, 23, 42, 0.9) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(15, 23, 42, 0.9) 1px, transparent 1px);
-            background-size: 34px 34px;
-            mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+            opacity: .55;
             pointer-events: none;
+            background-image:
+                linear-gradient(to right, color-mix(in srgb, var(--auth-muted) 12%, transparent) 1px, transparent 1px),
+                linear-gradient(to bottom, color-mix(in srgb, var(--auth-muted) 12%, transparent) 1px, transparent 1px);
+            background-size: 36px 36px;
+            mask-image: radial-gradient(circle at center, black 36%, transparent 86%);
         }
 
-        .auth-noise {
+        .auth-glow {
             position: absolute;
             inset: 0;
-            opacity: .08;
             pointer-events: none;
             background:
-                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.6) 0.5px, transparent 1px),
-                radial-gradient(circle at 80% 30%, rgba(255,255,255,0.5) 0.5px, transparent 1px),
-                radial-gradient(circle at 60% 80%, rgba(255,255,255,0.45) 0.5px, transparent 1px);
-            background-size: 120px 120px, 160px 160px, 140px 140px;
+                radial-gradient(circle at center, color-mix(in srgb, white 42%, transparent), transparent 46%);
+            opacity: .55;
+        }
+
+        html.dark .auth-glow {
+            background:
+                radial-gradient(circle at center, rgba(15, 23, 42, .16), transparent 46%);
         }
 
         .orb {
             position: absolute;
             border-radius: 9999px;
-            filter: blur(60px);
-            opacity: .55;
+            filter: blur(64px);
+            opacity: .58;
             pointer-events: none;
             animation: orbFloat 16s ease-in-out infinite;
-            will-change: transform;
         }
 
         .orb.one {
-            width: 340px;
-            height: 340px;
-            top: -80px;
-            left: -60px;
-            background: rgba(16, 185, 129, 0.18);
-            animation-delay: 0s;
+            width: 360px;
+            height: 360px;
+            top: -90px;
+            left: -80px;
+            background: var(--auth-primary-soft);
         }
 
         .orb.two {
-            width: 300px;
-            height: 300px;
-            top: 8%;
-            right: -70px;
-            background: rgba(14, 165, 233, 0.16);
+            width: 330px;
+            height: 330px;
+            top: 10%;
+            right: -90px;
+            background: var(--auth-sky-soft);
             animation-delay: -4s;
         }
 
         .orb.three {
-            width: 360px;
-            height: 360px;
-            bottom: -110px;
-            left: 10%;
-            background: rgba(45, 212, 191, 0.12);
+            width: 390px;
+            height: 390px;
+            bottom: -130px;
+            left: 12%;
+            background: rgba(45, 212, 191, .13);
             animation-delay: -7s;
         }
 
         .orb.four {
-            width: 320px;
-            height: 320px;
+            width: 340px;
+            height: 340px;
             right: 8%;
-            bottom: -90px;
-            background: rgba(59, 130, 246, 0.14);
+            bottom: -110px;
+            background: rgba(59, 130, 246, .14);
             animation-delay: -10s;
         }
 
         .ring-line {
             position: absolute;
-            border: 1px solid rgba(148, 163, 184, 0.16);
+            border: 1px solid color-mix(in srgb, var(--auth-muted) 20%, transparent);
             border-radius: 9999px;
             pointer-events: none;
             animation: spinSlow linear infinite;
         }
 
         .ring-line.one {
-            width: 540px;
-            height: 540px;
-            top: 6%;
+            width: 560px;
+            height: 560px;
+            top: 4%;
             left: -120px;
-            animation-duration: 34s;
+            animation-duration: 38s;
         }
 
         .ring-line.two {
-            width: 680px;
-            height: 680px;
-            right: -180px;
-            bottom: -40px;
-            animation-duration: 46s;
+            width: 720px;
+            height: 720px;
+            right: -210px;
+            bottom: -70px;
+            animation-duration: 52s;
             animation-direction: reverse;
         }
 
@@ -129,103 +179,11 @@
             position: absolute;
             width: 14px;
             height: 14px;
-            border-radius: 9999px;
             top: 16%;
             left: 84%;
-            background: linear-gradient(135deg, #10b981, #38bdf8);
-            box-shadow: 0 0 18px rgba(16, 185, 129, .25);
-        }
-
-        .floating-dot {
-            position: absolute;
             border-radius: 9999px;
-            pointer-events: none;
-            animation: dotFloat linear infinite;
-        }
-
-        .floating-dot.one {
-            width: 10px;
-            height: 10px;
-            left: 12%;
-            top: 26%;
-            background: rgba(16, 185, 129, 0.35);
-            animation-duration: 10s;
-        }
-
-        .floating-dot.two {
-            width: 8px;
-            height: 8px;
-            right: 18%;
-            top: 32%;
-            background: rgba(14, 165, 233, 0.34);
-            animation-duration: 12s;
-        }
-
-        .floating-dot.three {
-            width: 6px;
-            height: 6px;
-            left: 22%;
-            bottom: 18%;
-            background: rgba(52, 211, 153, 0.30);
-            animation-duration: 9s;
-        }
-
-        .floating-dot.four {
-            width: 12px;
-            height: 12px;
-            right: 12%;
-            bottom: 22%;
-            background: rgba(56, 189, 248, 0.26);
-            animation-duration: 14s;
-        }
-
-        .floating-dot.five {
-            width: 7px;
-            height: 7px;
-            left: 52%;
-            top: 14%;
-            background: rgba(16, 185, 129, 0.22);
-            animation-duration: 11s;
-        }
-
-        .floating-dot.six {
-            width: 9px;
-            height: 9px;
-            right: 34%;
-            bottom: 14%;
-            background: rgba(59, 130, 246, 0.24);
-            animation-duration: 13s;
-        }
-
-        .wave-band {
-            position: absolute;
-            left: -10%;
-            width: 120%;
-            height: 220px;
-            border-radius: 50%;
-            pointer-events: none;
-            filter: blur(10px);
-            opacity: .16;
-            background: linear-gradient(90deg, rgba(16,185,129,.10), rgba(14,165,233,.10));
-            animation: waveMove 18s ease-in-out infinite;
-        }
-
-        .wave-band.one {
-            bottom: 7%;
-        }
-
-        .wave-band.two {
-            bottom: 1%;
-            animation-delay: -7s;
-        }
-
-        .center-glow {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background:
-                radial-gradient(circle at center, rgba(255,255,255,0.45), transparent 45%);
-            opacity: .65;
+            background: linear-gradient(135deg, var(--auth-primary), var(--auth-sky));
+            box-shadow: 0 0 20px color-mix(in srgb, var(--auth-primary) 42%, transparent);
         }
 
         .slot-wrap {
@@ -235,21 +193,26 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2.5rem 1.5rem;
+            padding: 3rem 1.25rem;
         }
 
         @keyframes orbFloat {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translate3d(0, 0, 0) scale(1);
             }
+
             25% {
-                transform: translate3d(24px, -18px, 0) scale(1.03);
+                transform: translate3d(26px, -20px, 0) scale(1.03);
             }
+
             50% {
-                transform: translate3d(-16px, 22px, 0) scale(0.98);
+                transform: translate3d(-18px, 24px, 0) scale(.98);
             }
+
             75% {
-                transform: translate3d(18px, 10px, 0) scale(1.01);
+                transform: translate3d(20px, 10px, 0) scale(1.01);
             }
         }
 
@@ -257,40 +220,16 @@
             from {
                 transform: rotate(0deg);
             }
+
             to {
                 transform: rotate(360deg);
             }
         }
 
-        @keyframes dotFloat {
-            0%, 100% {
-                transform: translateY(0px) translateX(0px);
-            }
-            20% {
-                transform: translateY(-8px) translateX(6px);
-            }
-            50% {
-                transform: translateY(-18px) translateX(-4px);
-            }
-            80% {
-                transform: translateY(-6px) translateX(7px);
-            }
-        }
-
-        @keyframes waveMove {
-            0%, 100% {
-                transform: translateX(0) scaleX(1);
-            }
-            50% {
-                transform: translateX(3%) scaleX(1.03);
-            }
-        }
-
         @media (prefers-reduced-motion: reduce) {
+
             .orb,
-            .ring-line,
-            .floating-dot,
-            .wave-band {
+            .ring-line {
                 animation: none !important;
             }
         }
@@ -300,8 +239,7 @@
 <body>
     <div class="auth-shell">
         <div class="auth-grid"></div>
-        <div class="auth-noise"></div>
-        <div class="center-glow"></div>
+        <div class="auth-glow"></div>
 
         <div class="orb one"></div>
         <div class="orb two"></div>
@@ -311,16 +249,6 @@
         <div class="ring-line one"></div>
         <div class="ring-line two"></div>
 
-        <div class="floating-dot one"></div>
-        <div class="floating-dot two"></div>
-        <div class="floating-dot three"></div>
-        <div class="floating-dot four"></div>
-        <div class="floating-dot five"></div>
-        <div class="floating-dot six"></div>
-
-        <div class="wave-band one"></div>
-        <div class="wave-band two"></div>
-
         <div class="slot-wrap">
             {{ $slot }}
         </div>
@@ -328,4 +256,5 @@
 
     @livewireScripts
 </body>
+
 </html>

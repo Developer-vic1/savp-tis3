@@ -2,6 +2,658 @@
 @tailwind components;
 @tailwind utilities;
 
-[x-cloak] {
-    display: none;
+/*
+|--------------------------------------------------------------------------
+| SISTEMA GLOBAL DE TEMA
+|--------------------------------------------------------------------------
+| Objetivo:
+| - Evitar editar cada vista con dark:bg..., dark:text...
+| - Usar variables semánticas.
+| - Migrar vistas gradualmente con clases ui-*.
+|--------------------------------------------------------------------------
+*/
+
+@layer base {
+    :root {
+        /*
+        |--------------------------------------------------------------------------
+        | BASE CLARA
+        |--------------------------------------------------------------------------
+        */
+        --ui-bg: #f8fafc;
+        --ui-bg-soft: #f1f5f9;
+
+        --ui-surface: #ffffff;
+        --ui-surface-soft: #f8fafc;
+        --ui-surface-muted: #f1f5f9;
+
+        --ui-text: #0f172a;
+        --ui-text-soft: #334155;
+        --ui-muted: #64748b;
+
+        --ui-border: #e2e8f0;
+        --ui-border-soft: #f1f5f9;
+
+        /*
+        |--------------------------------------------------------------------------
+        | COLORES INSTITUCIONALES
+        |--------------------------------------------------------------------------
+        */
+        --ui-primary: #059669;
+        --ui-primary-hover: #047857;
+        --ui-primary-soft: #ecfdf5;
+        --ui-primary-border: #a7f3d0;
+
+        --ui-info: #0284c7;
+        --ui-info-hover: #0369a1;
+        --ui-info-soft: #f0f9ff;
+        --ui-info-border: #bae6fd;
+
+        --ui-violet: #7c3aed;
+        --ui-violet-hover: #6d28d9;
+        --ui-violet-soft: #f5f3ff;
+        --ui-violet-border: #ddd6fe;
+
+        --ui-warning: #d97706;
+        --ui-warning-hover: #b45309;
+        --ui-warning-soft: #fffbeb;
+        --ui-warning-border: #fde68a;
+
+        --ui-danger: #dc2626;
+        --ui-danger-hover: #b91c1c;
+        --ui-danger-soft: #fff1f2;
+        --ui-danger-border: #fecdd3;
+
+        /*
+        |--------------------------------------------------------------------------
+        | SOMBRAS / EFECTOS
+        |--------------------------------------------------------------------------
+        */
+        --ui-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+        --ui-shadow-md: 0 12px 30px rgba(15, 23, 42, 0.08);
+        --ui-shadow-lg: 0 22px 50px rgba(15, 23, 42, 0.12);
+
+        --ui-ring: rgba(5, 150, 105, 0.16);
+    }
+
+    .dark {
+        /*
+        |--------------------------------------------------------------------------
+        | BASE OSCURA
+        |--------------------------------------------------------------------------
+        | No será negro puro para evitar fatiga visual.
+        |--------------------------------------------------------------------------
+        */
+        --ui-bg: #020617;
+        --ui-bg-soft: #0f172a;
+
+        --ui-surface: #0f172a;
+        --ui-surface-soft: #111827;
+        --ui-surface-muted: #1e293b;
+
+        --ui-text: #f8fafc;
+        --ui-text-soft: #e2e8f0;
+        --ui-muted: #94a3b8;
+
+        --ui-border: #334155;
+        --ui-border-soft: #1e293b;
+
+        /*
+        |--------------------------------------------------------------------------
+        | COLORES INSTITUCIONALES EN OSCURO
+        |--------------------------------------------------------------------------
+        */
+        --ui-primary: #34d399;
+        --ui-primary-hover: #6ee7b7;
+        --ui-primary-soft: rgba(6, 78, 59, 0.45);
+        --ui-primary-border: rgba(52, 211, 153, 0.35);
+
+        --ui-info: #38bdf8;
+        --ui-info-hover: #7dd3fc;
+        --ui-info-soft: rgba(8, 47, 73, 0.55);
+        --ui-info-border: rgba(56, 189, 248, 0.35);
+
+        --ui-violet: #a78bfa;
+        --ui-violet-hover: #c4b5fd;
+        --ui-violet-soft: rgba(76, 29, 149, 0.42);
+        --ui-violet-border: rgba(167, 139, 250, 0.35);
+
+        --ui-warning: #fbbf24;
+        --ui-warning-hover: #fcd34d;
+        --ui-warning-soft: rgba(69, 26, 3, 0.45);
+        --ui-warning-border: rgba(251, 191, 36, 0.35);
+
+        --ui-danger: #fb7185;
+        --ui-danger-hover: #fda4af;
+        --ui-danger-soft: rgba(76, 5, 25, 0.45);
+        --ui-danger-border: rgba(251, 113, 133, 0.35);
+
+        --ui-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+        --ui-shadow-md: 0 12px 30px rgba(0, 0, 0, 0.35);
+        --ui-shadow-lg: 0 22px 50px rgba(0, 0, 0, 0.45);
+
+        --ui-ring: rgba(52, 211, 153, 0.18);
+    }
+
+    html {
+        color-scheme: light;
+    }
+
+    html.dark {
+        color-scheme: dark;
+    }
+
+    body {
+        background: var(--ui-bg);
+        color: var(--ui-text);
+        transition:
+            background-color 180ms ease,
+            color 180ms ease;
+    }
+
+    ::selection {
+        background: var(--ui-primary);
+        color: white;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| CLASES REUTILIZABLES UI
+|--------------------------------------------------------------------------
+| Estas clases son para migrar progresivamente las vistas.
+| No necesitas cambiar todo hoy.
+|--------------------------------------------------------------------------
+*/
+
+@layer components {
+
+    /*
+    |--------------------------------------------------------------------------
+    | LAYOUT / CONTENEDORES
+    |--------------------------------------------------------------------------
+    */
+    .ui-page {
+        min-height: 100vh;
+        background: var(--ui-bg);
+        color: var(--ui-text);
+        transition:
+            background-color 180ms ease,
+            color 180ms ease;
+    }
+
+    .ui-surface {
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+    }
+
+    .ui-card {
+        @apply rounded-[2rem] border shadow-sm;
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+        box-shadow: var(--ui-shadow-sm);
+        transition:
+            background-color 180ms ease,
+            border-color 180ms ease,
+            color 180ms ease,
+            box-shadow 180ms ease,
+            transform 180ms ease;
+    }
+
+    .ui-card-hover {
+        @apply transition;
+    }
+
+    .ui-card-hover:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--ui-shadow-md);
+    }
+
+    .ui-card-soft {
+        @apply rounded-2xl border;
+        background: var(--ui-surface-soft);
+        color: var(--ui-text);
+        border-color: var(--ui-border-soft);
+    }
+
+    .ui-panel {
+        @apply rounded-[1.6rem] border p-5 shadow-sm;
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+        box-shadow: var(--ui-shadow-sm);
+    }
+
+    .ui-divider {
+        border-color: var(--ui-border);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TIPOGRAFÍA
+    |--------------------------------------------------------------------------
+    */
+    .ui-title {
+        color: var(--ui-text);
+    }
+
+    .ui-subtitle {
+        color: var(--ui-text-soft);
+    }
+
+    .ui-muted {
+        color: var(--ui-muted);
+    }
+
+    .ui-kicker {
+        @apply text-xs font-semibold uppercase tracking-[0.16em];
+        color: var(--ui-primary);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULARIOS
+    |--------------------------------------------------------------------------
+    */
+    .ui-label {
+        @apply mb-2 block text-sm font-semibold;
+        color: var(--ui-text-soft);
+    }
+
+    .ui-input,
+    .ui-select,
+    .ui-textarea {
+        @apply w-full rounded-2xl border px-4 py-3 text-sm shadow-sm outline-none transition;
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+    }
+
+    .ui-input::placeholder,
+    .ui-textarea::placeholder {
+        color: var(--ui-muted);
+    }
+
+    .ui-input:focus,
+    .ui-select:focus,
+    .ui-textarea:focus {
+        border-color: var(--ui-primary);
+        box-shadow: 0 0 0 4px var(--ui-ring);
+    }
+
+    .ui-input[disabled],
+    .ui-select[disabled],
+    .ui-textarea[disabled] {
+        opacity: 0.65;
+        cursor: not-allowed;
+        background: var(--ui-surface-muted);
+    }
+
+    .ui-field-readonly {
+        @apply rounded-2xl border px-4 py-3 text-sm font-semibold;
+        background: var(--ui-surface-muted);
+        color: var(--ui-text-soft);
+        border-color: var(--ui-border);
+    }
+
+    .ui-error {
+        @apply mt-2 text-sm font-medium;
+        color: var(--ui-danger);
+    }
+
+    .ui-help {
+        @apply mt-2 text-xs;
+        color: var(--ui-muted);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | BOTONES
+    |--------------------------------------------------------------------------
+    */
+    .ui-btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition;
+    }
+
+    .ui-btn:disabled {
+        @apply cursor-not-allowed opacity-60;
+    }
+
+    .ui-btn-primary {
+        @apply ui-btn text-white shadow-sm;
+        background: linear-gradient(135deg, var(--ui-primary), var(--ui-info));
+    }
+
+    .ui-btn-primary:hover:not(:disabled) {
+        filter: brightness(1.04);
+        transform: translateY(-1px);
+        box-shadow: var(--ui-shadow-md);
+    }
+
+    .ui-btn-secondary {
+        @apply ui-btn border;
+        background: var(--ui-surface);
+        color: var(--ui-text-soft);
+        border-color: var(--ui-border);
+    }
+
+    .ui-btn-secondary:hover:not(:disabled) {
+        background: var(--ui-surface-muted);
+    }
+
+    .ui-btn-danger {
+        @apply ui-btn text-white shadow-sm;
+        background: var(--ui-danger);
+    }
+
+    .ui-btn-danger:hover:not(:disabled) {
+        background: var(--ui-danger-hover);
+    }
+
+    .ui-icon-btn {
+        @apply inline-flex items-center justify-center rounded-xl p-2 transition;
+        color: var(--ui-muted);
+    }
+
+    .ui-icon-btn:hover {
+        background: var(--ui-surface-muted);
+        color: var(--ui-text);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | BADGES
+    |--------------------------------------------------------------------------
+    */
+    .ui-badge {
+        @apply inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ring-1;
+    }
+
+    .ui-badge-success {
+        @apply ui-badge;
+        background: var(--ui-primary-soft);
+        color: var(--ui-primary);
+        border-color: var(--ui-primary-border);
+        --tw-ring-color: var(--ui-primary-border);
+    }
+
+    .ui-badge-info {
+        @apply ui-badge;
+        background: var(--ui-info-soft);
+        color: var(--ui-info);
+        --tw-ring-color: var(--ui-info-border);
+    }
+
+    .ui-badge-violet {
+        @apply ui-badge;
+        background: var(--ui-violet-soft);
+        color: var(--ui-violet);
+        --tw-ring-color: var(--ui-violet-border);
+    }
+
+    .ui-badge-warning {
+        @apply ui-badge;
+        background: var(--ui-warning-soft);
+        color: var(--ui-warning);
+        --tw-ring-color: var(--ui-warning-border);
+    }
+
+    .ui-badge-danger {
+        @apply ui-badge;
+        background: var(--ui-danger-soft);
+        color: var(--ui-danger);
+        --tw-ring-color: var(--ui-danger-border);
+    }
+
+    .ui-badge-muted {
+        @apply ui-badge;
+        background: var(--ui-surface-muted);
+        color: var(--ui-muted);
+        --tw-ring-color: var(--ui-border);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | TABLAS
+    |--------------------------------------------------------------------------
+    */
+    .ui-table-wrap {
+        @apply overflow-hidden rounded-[2rem] border shadow-sm;
+        background: var(--ui-surface);
+        border-color: var(--ui-border);
+        box-shadow: var(--ui-shadow-sm);
+    }
+
+    .ui-table {
+        @apply min-w-full border-separate border-spacing-0;
+    }
+
+    .ui-table thead tr {
+        background: var(--ui-surface-soft);
+    }
+
+    .ui-table th {
+        @apply border-b px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.14em];
+        color: var(--ui-muted);
+        border-color: var(--ui-border);
+    }
+
+    .ui-table td {
+        @apply border-b px-4 py-3;
+        border-color: var(--ui-border);
+    }
+
+    .ui-table tbody tr {
+        transition: background-color 160ms ease;
+    }
+
+    .ui-table tbody tr:hover {
+        background: var(--ui-surface-soft);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODALES
+    |--------------------------------------------------------------------------
+    */
+    .ui-modal-backdrop {
+        @apply absolute inset-0 backdrop-blur-sm;
+        background: rgba(15, 23, 42, 0.55);
+    }
+
+    .ui-modal {
+        @apply relative z-10 overflow-hidden rounded-[2rem] border shadow-2xl;
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+        box-shadow: var(--ui-shadow-lg);
+    }
+
+    .ui-modal-header {
+        @apply border-b px-6 py-5;
+        background: linear-gradient(135deg, var(--ui-surface), var(--ui-surface-soft));
+        border-color: var(--ui-border);
+    }
+
+    .ui-modal-footer {
+        @apply border-t px-6 py-5;
+        background: var(--ui-surface-soft);
+        border-color: var(--ui-border);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ALERTAS / BLOQUES INFORMATIVOS
+    |--------------------------------------------------------------------------
+    */
+    .ui-alert {
+        @apply rounded-2xl border px-4 py-3 text-sm font-semibold;
+    }
+
+    .ui-alert-info {
+        @apply ui-alert;
+        background: var(--ui-info-soft);
+        color: var(--ui-info);
+        border-color: var(--ui-info-border);
+    }
+
+    .ui-alert-success {
+        @apply ui-alert;
+        background: var(--ui-primary-soft);
+        color: var(--ui-primary);
+        border-color: var(--ui-primary-border);
+    }
+
+    .ui-alert-warning {
+        @apply ui-alert;
+        background: var(--ui-warning-soft);
+        color: var(--ui-warning);
+        border-color: var(--ui-warning-border);
+    }
+
+    .ui-alert-danger {
+        @apply ui-alert;
+        background: var(--ui-danger-soft);
+        color: var(--ui-danger);
+        border-color: var(--ui-danger-border);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SIDEBAR / TOPBAR BASE
+    |--------------------------------------------------------------------------
+    */
+    .ui-sidebar {
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+    }
+
+    .ui-sidebar-link {
+        @apply flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition;
+        color: var(--ui-muted);
+    }
+
+    .ui-sidebar-link:hover {
+        background: var(--ui-primary-soft);
+        color: var(--ui-primary);
+    }
+
+    .ui-sidebar-link-active {
+        background: var(--ui-primary-soft);
+        color: var(--ui-primary);
+    }
+
+    .ui-topbar {
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| UTILIDADES EXTRA
+|--------------------------------------------------------------------------
+*/
+
+@layer utilities {
+    .ui-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: var(--ui-border) transparent;
+    }
+
+    .ui-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .ui-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--ui-border);
+        border-radius: 999px;
+    }
+
+    .ui-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| FIX GLOBAL PARA SELECTS EN MODO CLARO / OSCURO
+|--------------------------------------------------------------------------
+| Evita que las opciones del select queden invisibles en dark mode.
+|--------------------------------------------------------------------------
+*/
+
+@layer components {
+    .ui-select {
+        color-scheme: light;
+        background-color: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+    }
+
+    html.dark .ui-select {
+        color-scheme: dark;
+        background-color: var(--ui-surface);
+        color: var(--ui-text);
+        border-color: var(--ui-border);
+    }
+
+    .ui-select option {
+        background-color: #ffffff;
+        color: #0f172a;
+    }
+
+    html.dark .ui-select option {
+        background-color: #0f172a;
+        color: #f8fafc;
+    }
+
+    .ui-select option:checked {
+        background-color: var(--ui-primary);
+        color: #ffffff;
+    }
+
+    .ui-select option:hover {
+        background-color: var(--ui-primary-soft);
+        color: var(--ui-text);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FIX PARA INPUTS NATIVOS EN DARK MODE
+    |--------------------------------------------------------------------------
+    */
+
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea,
+    select {
+        color-scheme: light;
+    }
+
+    html.dark input[type="date"],
+    html.dark input[type="time"],
+    html.dark input[type="number"],
+    html.dark input[type="text"],
+    html.dark input[type="email"],
+    html.dark input[type="password"],
+    html.dark textarea,
+    html.dark select {
+        color-scheme: dark;
+    }
+
+    html.dark input[type="date"]::-webkit-calendar-picker-indicator,
+    html.dark input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        opacity: 0.75;
+    }
 }
