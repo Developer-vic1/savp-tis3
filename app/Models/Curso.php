@@ -39,13 +39,18 @@ class Curso extends Model
 
     // 🔗 Relaciones
 
-    public function paralelos()
-    {
-        return $this->hasMany(Paralelo::class, 'cod_cur', 'cod_cur');
-    }
-
     public function inscripciones()
     {
         return $this->hasMany(InscripcionEstudiante::class, 'cod_cur', 'cod_cur');
+    }
+
+    public function planesAsignatura()
+    {
+        return $this->hasMany(PlanAsignatura::class, 'cod_cur', 'cod_cur');
+    }
+
+    public function planesEspecialidad()
+    {
+        return $this->hasMany(PlanEspecialidad::class, 'cod_cur', 'cod_cur');
     }
 }

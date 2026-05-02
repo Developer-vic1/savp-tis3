@@ -16,7 +16,7 @@ class PeriodoEvaluacionSeeder extends Seeder
 
             [
                 'cod_pev' => 'PEV_0001',
-                'nom_pev' => 'Primer Bimestre',
+                'nom_pev' => 'Primer Trimestre',
                 'ord_pev' => 1,
                 'est_pev' => 'ACTIVO',
                 'created_at' => $now,
@@ -25,7 +25,7 @@ class PeriodoEvaluacionSeeder extends Seeder
 
             [
                 'cod_pev' => 'PEV_0002',
-                'nom_pev' => 'Segundo Bimestre',
+                'nom_pev' => 'Segundo Trimestre',
                 'ord_pev' => 2,
                 'est_pev' => 'ACTIVO',
                 'created_at' => $now,
@@ -34,22 +34,12 @@ class PeriodoEvaluacionSeeder extends Seeder
 
             [
                 'cod_pev' => 'PEV_0003',
-                'nom_pev' => 'Tercer Bimestre',
+                'nom_pev' => 'Tercer Trimestre',
                 'ord_pev' => 3,
                 'est_pev' => 'ACTIVO',
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
-
-            [
-                'cod_pev' => 'PEV_0004',
-                'nom_pev' => 'Cuarto Bimestre',
-                'ord_pev' => 4,
-                'est_pev' => 'ACTIVO',
-                'created_at' => $now,
-                'updated_at' => $now,
-            ],
-
         ]);
     }
 }

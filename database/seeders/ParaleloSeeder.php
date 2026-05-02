@@ -12,33 +12,42 @@ class ParaleloSeeder extends Seeder
     {
         $now = Carbon::now();
 
-        $cursos = [
-            'CUR_0001',
-            'CUR_0002',
-            'CUR_0003',
-            'CUR_0004',
-            'CUR_0005',
-            'CUR_0006',
+        $paralelos = [
+            [
+                'cod_par' => 'PAR_0001',
+                'nom_par' => 'A',
+                'est_par' => 'ACTIVO',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'cod_par' => 'PAR_0002',
+                'nom_par' => 'B',
+                'est_par' => 'ACTIVO',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'cod_par' => 'PAR_0003',
+                'nom_par' => 'C',
+                'est_par' => 'ACTIVO',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
+            [
+                'cod_par' => 'PAR_0004',
+                'nom_par' => 'D',
+                'est_par' => 'ACTIVO',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ],
         ];
 
-        $paralelos = ['A', 'B', 'C', 'D'];
-
-        $data = [];
-        $contador = 1;
-
-        foreach ($cursos as $codCur) {
-            foreach ($paralelos as $paralelo) {
-                $data[] = [
-                    'cod_par' => 'PAR_' . str_pad($contador, 4, '0', STR_PAD_LEFT),
-                    'nom_par' => $paralelo,
-                    'est_par' => 'ACTIVO',
-                    'created_at' => $now,
-                    'updated_at' => $now,
-                ];
-                $contador++;
-            }
+        foreach ($paralelos as $paralelo) {
+            DB::table('paralelo')->updateOrInsert(
+                ['cod_par' => $paralelo['cod_par']],
+                $paralelo
+            );
         }
-
-        DB::table('paralelo')->insert($data);
     }
 }

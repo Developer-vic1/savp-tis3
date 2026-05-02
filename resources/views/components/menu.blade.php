@@ -180,9 +180,10 @@
                     @endcan
 
                     @can('Estudiantes')
-                        <a href="#"
+                        <a href="{{ route('admin.gestion-estudiantes') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
+                            style="color: var(--ui-muted);"
+                            onmouseover="this.style.color='var(--ui-primary)'"
                             onmouseout="this.style.color='var(--ui-muted)'">
 
                             {{-- Estudiantes --}}
@@ -196,9 +197,8 @@
                             <span x-show="sidebarOpen" x-cloak>Estudiantes</span>
                         </a>
                     @endcan
-
                     @can('Bitacora')
-                        <a href="#"
+                        <a href="{{ route('admin.bitacora') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
                             style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
                             onmouseout="this.style.color='var(--ui-muted)'">
@@ -249,7 +249,7 @@
                     class="mt-2 space-y-1 pl-3">
 
                     @can('Gestion_Academica')
-                        <a href="#"
+                        <a href="{{ route('admin.gestion-academica') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
                             style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
                             onmouseout="this.style.color='var(--ui-muted)'">

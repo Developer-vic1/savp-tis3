@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Administrador;
-use App\Models\Bitacora;
 use App\Models\Director;
 use App\Models\Docente;
 use App\Models\Estudiante;
@@ -12,10 +11,12 @@ use App\Models\PersonalInstitucional;
 use App\Models\Regente;
 use App\Models\SecretariaGeneral;
 use App\Models\User;
+use App\Services\BitacoraService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Permission\Models\Role;
@@ -45,26 +46,21 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | FILTROS Y TABLA
+    | Filtros y tabla
     |--------------------------------------------------------------------------
     */
     public string $search = '';
-
     public string $rol = '';
-
     public string $estado = '';
-
     public int $perPage = 10;
 
     public array $selected = [];
-
     public bool $selectAll = false;
-
     public string $accionLote = '';
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL CREAR USUARIO
+    | Modal crear usuario
     |--------------------------------------------------------------------------
     */
     public bool $modalCrear = false;
@@ -80,11 +76,10 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL EDITAR USUARIO
+    | Modal editar usuario
     |--------------------------------------------------------------------------
     */
     public bool $modalEditar = false;
-
     public ?User $usuarioDetalle = null;
 
     public array $formEditar = [
@@ -98,7 +93,7 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL VER USUARIO
+    | Modal ver usuario
     |--------------------------------------------------------------------------
     */
     public bool $modalVer = false;
@@ -112,7 +107,7 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | REGLAS
+    | Reglas y mensajes
     |--------------------------------------------------------------------------
     */
     protected function rules(): array
@@ -133,7 +128,7 @@ class GestionUsuarios extends Component
         ];
 
         if (Schema::hasColumn('users', 'est_usu')) {
-            $rules['form.est_usu'] = ['required', 'in:ACTIVO,INACTIVO'];
+            $rules['form.est_usu'] = ['required', Rule::in(['ACTIVO', 'INACTIVO'])];
         }
 
         return $rules;
@@ -145,6 +140,7 @@ class GestionUsuarios extends Component
         'form.cod_per.unique' => 'La persona seleccionada ya tiene una cuenta de usuario.',
         'form.email.required' => 'El correo electrónico es obligatorio.',
         'form.email.email' => 'Debes ingresar un correo electrónico válido.',
+        'form.email.max' => 'El correo electrónico no debe superar los 255 caracteres.',
         'form.email.unique' => 'Ese correo electrónico ya está registrado.',
         'form.password.required' => 'La contraseña es obligatoria.',
         'form.password.min' => 'La contraseña debe tener al menos 8 caracteres.',
@@ -154,44 +150,61 @@ class GestionUsuarios extends Component
         'form.role.exists' => 'El rol seleccionado no existe.',
         'form.est_usu.required' => 'Debes seleccionar un estado.',
         'form.est_usu.in' => 'El estado seleccionado no es válido.',
+
+        'formEditar.cod_usu.required' => 'No se pudo identificar al usuario.',
+        'formEditar.cod_usu.exists' => 'El usuario seleccionado no existe.',
+        'formEditar.email.required' => 'El correo electrónico es obligatorio.',
+        'formEditar.email.email' => 'Debes ingresar un correo electrónico válido.',
+        'formEditar.email.max' => 'El correo electrónico no debe superar los 255 caracteres.',
+        'formEditar.email.unique' => 'Ese correo ya está registrado por otro usuario.',
+        'formEditar.role.required' => 'Debes seleccionar un rol.',
+        'formEditar.role.exists' => 'El rol seleccionado no existe.',
+        'formEditar.est_usu.required' => 'Debes seleccionar un estado.',
+        'formEditar.est_usu.in' => 'El estado seleccionado no es válido.',
+        'formEditar.password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+        'formEditar.password.confirmed' => 'La confirmación de contraseña no coincide.',
+        'formEditar.password.regex' => 'La contraseña debe incluir letras, números y al menos un carácter especial.',
     ];
 
     /*
     |--------------------------------------------------------------------------
-    | ACTUALIZACIONES DE FILTROS
+    | Reactividad de filtros
     |--------------------------------------------------------------------------
     */
     public function updatingSearch(): void
     {
+        $this->limpiarSeleccionTabla();
         $this->resetPage();
-        $this->selected = [];
-        $this->selectAll = false;
     }
 
     public function updatingRol(): void
     {
+        $this->limpiarSeleccionTabla();
         $this->resetPage();
-        $this->selected = [];
-        $this->selectAll = false;
     }
 
     public function updatingEstado(): void
     {
+        $this->limpiarSeleccionTabla();
         $this->resetPage();
-        $this->selected = [];
-        $this->selectAll = false;
     }
 
     public function updatingPerPage(): void
     {
+        $this->limpiarSeleccionTabla();
         $this->resetPage();
+    }
+
+    private function limpiarSeleccionTabla(): void
+    {
         $this->selected = [];
         $this->selectAll = false;
+        $this->accionLote = '';
     }
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL
+    | Modal crear
     |--------------------------------------------------------------------------
     */
     public function abrirModalCrear(): void
@@ -222,7 +235,7 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | CREAR USUARIO
+    | Crear usuario
     |--------------------------------------------------------------------------
     */
     public function guardarUsuario(): void
@@ -232,10 +245,18 @@ class GestionUsuarios extends Component
         DB::beginTransaction();
 
         try {
+            $persona = Persona::where('cod_per', $this->form['cod_per'])->first();
+
+            if (! $persona) {
+                DB::rollBack();
+                $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+                return;
+            }
+
             $data = [
                 'cod_usu' => $this->generarCodigoUsuario(),
                 'cod_per' => $this->form['cod_per'],
-                'email' => $this->form['email'],
+                'email' => $this->limpiarCorreo($this->form['email']),
                 'password' => Hash::make($this->form['password']),
             ];
 
@@ -244,26 +265,62 @@ class GestionUsuarios extends Component
             }
 
             $user = User::create($data);
-
             $user->syncRoles([$this->form['role']]);
+            $user->load(['persona', 'roles']);
 
             $this->sincronizarPerfilUsuario($user);
+
+            $this->registrarBitacora(
+                accion: 'CREAR_USUARIO',
+                tabla: 'users',
+                registro: $user->cod_usu,
+                nombreRegistro: $this->nombreVisibleUsuario($user),
+                descripcion: 'Se creó una cuenta de usuario y se asignó el rol correspondiente.',
+                nivel: 'SUCCESS',
+                resultado: 'EXITOSO',
+                valoresNuevos: [
+                    'cod_usu' => $user->cod_usu,
+                    'cod_per' => $user->cod_per,
+                    'email' => $user->email,
+                    'rol' => $user->roles->first()?->name,
+                    'est_usu' => $user->est_usu ?? null,
+                ]
+            );
 
             DB::commit();
 
             $this->cerrarModalCrear();
             $this->dispatch('usuario-creado');
+            $this->dispatch('success-general', mensaje: 'Usuario creado correctamente.');
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
 
+            $this->registrarBitacora(
+                accion: 'ERROR_CREAR_USUARIO',
+                tabla: 'users',
+                registro: null,
+                nombreRegistro: $this->form['email'] ?? null,
+                descripcion: 'Ocurrió un error al intentar crear una cuenta de usuario.',
+                nivel: 'ERROR',
+                resultado: 'FALLIDO',
+                valoresNuevos: [
+                    'cod_per' => $this->form['cod_per'] ?? null,
+                    'email' => $this->form['email'] ?? null,
+                    'role' => $this->form['role'] ?? null,
+                    'est_usu' => $this->form['est_usu'] ?? null,
+                ],
+                error: $e->getMessage()
+            );
+
             $this->addError('general', 'Ocurrió un error al crear el usuario. Intenta nuevamente.');
+            $this->dispatch('error-general', mensaje: 'No se pudo crear el usuario. Revisa los datos e intenta nuevamente.');
         }
     }
 
     /*
     |--------------------------------------------------------------------------
-    | VER USUARIO
+    | Ver usuario
     |--------------------------------------------------------------------------
     */
     public function abrirModalVer(string $codUsu): void
@@ -273,8 +330,16 @@ class GestionUsuarios extends Component
             ->first();
 
         if (! $this->usuarioDetalle) {
+            $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
             return;
         }
+
+        $this->formVer = [
+            'cod_usu' => $this->usuarioDetalle->cod_usu,
+            'email' => $this->usuarioDetalle->email,
+            'role' => $this->usuarioDetalle->roles->first()?->name ?? '',
+            'est_usu' => $this->usuarioDetalle->est_usu ?? 'ACTIVO',
+        ];
 
         $this->modalVer = true;
     }
@@ -283,23 +348,39 @@ class GestionUsuarios extends Component
     {
         $this->modalVer = false;
         $this->usuarioDetalle = null;
+
+        $this->formVer = [
+            'cod_usu' => '',
+            'email' => '',
+            'role' => '',
+            'est_usu' => 'ACTIVO',
+        ];
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Editar usuario
+    |--------------------------------------------------------------------------
+    */
     public function abrirModalEditar(string $codUsu): void
     {
-        $usuario = User::with('roles')
+        $usuario = User::with(['persona', 'roles'])
             ->where('cod_usu', $codUsu)
             ->first();
 
         if (! $usuario) {
+            $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
             return;
         }
 
-        if ($usuario->est_usu === 'INACTIVO') {
+        if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
+            $this->dispatch('error-general', mensaje: 'No puedes editar un usuario inactivo. Primero debes reactivarlo.');
             return;
         }
 
         $this->resetValidation();
+
+        $this->usuarioDetalle = $usuario;
 
         $this->formEditar = [
             'cod_usu' => $usuario->cod_usu,
@@ -317,6 +398,7 @@ class GestionUsuarios extends Component
     {
         $this->modalEditar = false;
         $this->resetValidation();
+        $this->usuarioDetalle = null;
 
         $this->formEditar = [
             'cod_usu' => '',
@@ -328,18 +410,18 @@ class GestionUsuarios extends Component
         ];
     }
 
-    public function guardarEdicionUsuario(): void
+    private function rulesEditarUsuario(): array
     {
-        $this->validate([
+        return [
             'formEditar.cod_usu' => ['required', 'exists:users,cod_usu'],
             'formEditar.email' => [
                 'required',
                 'email',
                 'max:255',
-                'unique:users,email,' . $this->formEditar['cod_usu'] . ',cod_usu',
+                Rule::unique('users', 'email')->ignore($this->formEditar['cod_usu'], 'cod_usu'),
             ],
             'formEditar.role' => ['required', 'exists:roles,name'],
-            'formEditar.est_usu' => ['required', 'in:ACTIVO,INACTIVO'],
+            'formEditar.est_usu' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])],
             'formEditar.password' => [
                 'nullable',
                 'string',
@@ -349,41 +431,41 @@ class GestionUsuarios extends Component
                 'regex:/[0-9]/',
                 'regex:/[^A-Za-z0-9]/',
             ],
-        ], [
-            'formEditar.email.required' => 'El correo electrónico es obligatorio.',
-            'formEditar.email.email' => 'Debes ingresar un correo electrónico válido.',
-            'formEditar.email.unique' => 'Ese correo ya está registrado por otro usuario.',
-            'formEditar.role.required' => 'Debes seleccionar un rol.',
-            'formEditar.role.exists' => 'El rol seleccionado no existe.',
-            'formEditar.est_usu.required' => 'Debes seleccionar un estado.',
-            'formEditar.est_usu.in' => 'El estado seleccionado no es válido.',
-            'formEditar.password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'formEditar.password.confirmed' => 'La confirmación de contraseña no coincide.',
-            'formEditar.password.regex' => 'La contraseña debe incluir letras, números y al menos un carácter especial.',
-        ]);
+        ];
+    }
+
+    public function guardarEdicionUsuario(): void
+    {
+        $this->validate($this->rulesEditarUsuario(), $this->messages);
 
         DB::beginTransaction();
 
         try {
-            $usuario = User::with('roles')
+            $usuario = User::with(['persona', 'roles'])
                 ->where('cod_usu', $this->formEditar['cod_usu'])
                 ->first();
 
             if (! $usuario) {
                 DB::rollBack();
+                $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
                 return;
             }
+
+            $valoresAnteriores = $this->resumenUsuario($usuario);
 
             $rolAnterior = $usuario->roles->first()?->name;
             $rolNuevo = $this->formEditar['role'];
 
             $data = [
-                'email' => $this->formEditar['email'],
+                'email' => $this->limpiarCorreo($this->formEditar['email']),
                 'est_usu' => $this->formEditar['est_usu'],
             ];
 
+            $passwordCambiada = false;
+
             if (! empty($this->formEditar['password'])) {
                 $data['password'] = Hash::make($this->formEditar['password']);
+                $passwordCambiada = true;
             }
 
             $usuario->update($data);
@@ -393,20 +475,56 @@ class GestionUsuarios extends Component
             }
 
             $usuario->syncRoles([$rolNuevo]);
-
-            $usuario->load('roles');
+            $usuario->load(['persona', 'roles']);
 
             $this->sincronizarPerfilUsuario($usuario);
+
+            $usuarioActualizado = $usuario->fresh(['persona', 'roles']);
+
+            $this->registrarBitacora(
+                accion: 'ACTUALIZAR_USUARIO',
+                tabla: 'users',
+                registro: $usuarioActualizado->cod_usu,
+                nombreRegistro: $this->nombreVisibleUsuario($usuarioActualizado),
+                descripcion: $passwordCambiada
+                    ? 'Se actualizó la cuenta de usuario, incluyendo cambio de contraseña.'
+                    : 'Se actualizó la cuenta de usuario.',
+                nivel: $rolAnterior !== $rolNuevo || $passwordCambiada ? 'WARNING' : 'SUCCESS',
+                resultado: 'EXITOSO',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: $this->resumenUsuario($usuarioActualizado) + [
+                    'password_cambiada' => $passwordCambiada,
+                ]
+            );
 
             DB::commit();
 
             $this->cerrarModalEditar();
             $this->dispatch('usuario-actualizado');
+            $this->dispatch('success-general', mensaje: 'Usuario actualizado correctamente.');
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
 
+            $this->registrarBitacora(
+                accion: 'ERROR_ACTUALIZAR_USUARIO',
+                tabla: 'users',
+                registro: $this->formEditar['cod_usu'] ?? null,
+                nombreRegistro: $this->formEditar['email'] ?? null,
+                descripcion: 'Ocurrió un error al intentar actualizar una cuenta de usuario.',
+                nivel: 'ERROR',
+                resultado: 'FALLIDO',
+                valoresNuevos: [
+                    'cod_usu' => $this->formEditar['cod_usu'] ?? null,
+                    'email' => $this->formEditar['email'] ?? null,
+                    'role' => $this->formEditar['role'] ?? null,
+                    'est_usu' => $this->formEditar['est_usu'] ?? null,
+                ],
+                error: $e->getMessage()
+            );
+
             $this->addError('editar_general', 'Ocurrió un error al actualizar el usuario.');
+            $this->dispatch('error-general', mensaje: 'No se pudo actualizar el usuario.');
         }
     }
 
@@ -417,28 +535,31 @@ class GestionUsuarios extends Component
         }
 
         if ($rolAnterior === 'Estudiante') {
-            Estudiante::where('cod_per', $usuario->cod_per)->update(['est_est' => 'INACTIVO']);
+            Estudiante::where('cod_per', $usuario->cod_per)
+                ->update(['est_est' => 'INACTIVO']);
 
             return;
         }
 
         $personal = PersonalInstitucional::where('cod_per', $usuario->cod_per)->first();
 
-        if ($personal) {
-            match ($rolAnterior) {
-                'Administrador' => Administrador::where('cod_pin', $personal->cod_pin)->update(['est_adm' => 'INACTIVO']),
-                'Director' => Director::where('cod_pin', $personal->cod_pin)->update(['est_dir' => 'INACTIVO']),
-                'Docente' => Docente::where('cod_pin', $personal->cod_pin)->update(['est_doc' => 'INACTIVO']),
-                'Secretaria', 'Secretaria Académica' => SecretariaGeneral::where('cod_pin', $personal->cod_pin)->update(['est_sge' => 'INACTIVO']),
-                'Regente' => Regente::where('cod_pin', $personal->cod_pin)->update(['est_reg' => 'INACTIVO']),
-                default => null,
-            };
+        if (! $personal) {
+            return;
         }
+
+        match ($rolAnterior) {
+            'Administrador' => Administrador::where('cod_pin', $personal->cod_pin)->update(['est_adm' => 'INACTIVO']),
+            'Director' => Director::where('cod_pin', $personal->cod_pin)->update(['est_dir' => 'INACTIVO']),
+            'Docente' => Docente::where('cod_pin', $personal->cod_pin)->update(['est_doc' => 'INACTIVO']),
+            'Secretaria', 'Secretaria Académica' => SecretariaGeneral::where('cod_pin', $personal->cod_pin)->update(['est_sge' => 'INACTIVO']),
+            'Regente' => Regente::where('cod_pin', $personal->cod_pin)->update(['est_reg' => 'INACTIVO']),
+            default => null,
+        };
     }
 
     /*
     |--------------------------------------------------------------------------
-    | SELECCIÓN MÚLTIPLE
+    | Selección múltiple
     |--------------------------------------------------------------------------
     */
     public function updatedSelectAll($value): void
@@ -459,64 +580,99 @@ class GestionUsuarios extends Component
     public function limpiarFiltros(): void
     {
         $this->reset(['search', 'rol', 'estado', 'accionLote']);
-        $this->selected = [];
-        $this->selectAll = false;
+        $this->limpiarSeleccionTabla();
         $this->resetPage();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | ACCIONES MASIVAS
+    | Acciones masivas
     |--------------------------------------------------------------------------
     */
     public function aplicarAccionLote(): void
     {
         if (! Schema::hasColumn('users', 'est_usu')) {
+            $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;
         }
 
         if (empty($this->selected) || empty($this->accionLote)) {
+            $this->dispatch('error-general', mensaje: 'Selecciona usuarios y una acción para continuar.');
             return;
         }
 
-        $usuarios = User::query()
-            ->whereIn('cod_usu', $this->selected)
-            ->get();
+        if (! in_array($this->accionLote, ['activar', 'inactivar'], true)) {
+            $this->dispatch('error-general', mensaje: 'Acción de lote no permitida.');
+            return;
+        }
 
-        $usuarioActual = Auth::user()?->cod_usu;
+        DB::transaction(function () {
+            $usuarioActual = Auth::user()?->cod_usu;
 
-        if ($this->accionLote === 'inactivar') {
+            $usuarios = User::query()
+                ->with(['persona', 'roles'])
+                ->whereIn('cod_usu', $this->selected)
+                ->get();
+
+            $afectados = [];
+            $omitidos = [];
+
             foreach ($usuarios as $usuario) {
-                if ($usuario->cod_usu !== $usuarioActual) {
-                    $usuario->update(['est_usu' => 'INACTIVO']);
+                if ($this->accionLote === 'inactivar' && $usuario->cod_usu === $usuarioActual) {
+                    $omitidos[] = $usuario->cod_usu;
+                    continue;
                 }
+
+                $estadoNuevo = $this->accionLote === 'activar' ? 'ACTIVO' : 'INACTIVO';
+
+                if (($usuario->est_usu ?? null) === $estadoNuevo) {
+                    continue;
+                }
+
+                $usuario->update(['est_usu' => $estadoNuevo]);
+
+                $afectados[] = [
+                    'cod_usu' => $usuario->cod_usu,
+                    'email' => $usuario->email,
+                    'estado_nuevo' => $estadoNuevo,
+                ];
             }
 
-            $this->dispatch('usuarios-desactivados');
-        }
+            $accion = $this->accionLote === 'activar'
+                ? 'ACTIVAR_USUARIOS_LOTE'
+                : 'DESACTIVAR_USUARIOS_LOTE';
 
-        if ($this->accionLote === 'activar') {
-            foreach ($usuarios as $usuario) {
-                $usuario->update(['est_usu' => 'ACTIVO']);
-            }
+            $this->registrarBitacora(
+                accion: $accion,
+                tabla: 'users',
+                registro: 'LOTE',
+                nombreRegistro: 'Acción masiva de usuarios',
+                descripcion: 'Se aplicó una acción masiva sobre cuentas de usuario.',
+                nivel: $this->accionLote === 'inactivar' ? 'WARNING' : 'SUCCESS',
+                resultado: 'EXITOSO',
+                valoresNuevos: [
+                    'accion_lote' => $this->accionLote,
+                    'afectados' => $afectados,
+                    'omitidos' => $omitidos,
+                    'total_afectados' => count($afectados),
+                    'total_omitidos' => count($omitidos),
+                ]
+            );
 
-            $this->dispatch('usuarios-reactivados');
-        }
+            $mensaje = $this->accionLote === 'activar'
+                ? 'Usuarios reactivados correctamente.'
+                : 'Usuarios desactivados correctamente.';
 
-        $this->registrarBitacora(
-            'ACCION_REGISTROS_USUARIOS',
-            'users',
-            'Acción de lote aplicada: ' . $this->accionLote
-        );
+            $this->dispatch($this->accionLote === 'activar' ? 'usuarios-reactivados' : 'usuarios-desactivados');
+            $this->dispatch('success-general', mensaje: $mensaje);
 
-        $this->selected = [];
-        $this->selectAll = false;
-        $this->accionLote = '';
+            $this->limpiarSeleccionTabla();
+        });
     }
 
     /*
     |--------------------------------------------------------------------------
-    | QUERY BASE
+    | Query base
     |--------------------------------------------------------------------------
     */
     private function usuariosQuery()
@@ -527,14 +683,14 @@ class GestionUsuarios extends Component
                 $search = trim($this->search);
 
                 $query->where(function ($q) use ($search) {
-                    $q->where('cod_usu', 'ilike', "%{$search}%")
-                        ->orWhere('email', 'ilike', "%{$search}%")
+                    $q->where('cod_usu', 'ILIKE', "%{$search}%")
+                        ->orWhere('email', 'ILIKE', "%{$search}%")
                         ->orWhereHas('persona', function ($qp) use ($search) {
-                            $qp->where('nom_per', 'ilike', "%{$search}%")
-                                ->orWhere('ape_pat_per', 'ilike', "%{$search}%")
-                                ->orWhere('ape_mat_per', 'ilike', "%{$search}%")
+                            $qp->where('nom_per', 'ILIKE', "%{$search}%")
+                                ->orWhere('ape_pat_per', 'ILIKE', "%{$search}%")
+                                ->orWhere('ape_mat_per', 'ILIKE', "%{$search}%")
                                 ->orWhereRaw(
-                                    "CONCAT(nom_per, ' ', ape_pat_per, ' ', ape_mat_per) ILIKE ?",
+                                    "CONCAT(nom_per, ' ', ape_pat_per, ' ', COALESCE(ape_mat_per, '')) ILIKE ?",
                                     ["%{$search}%"]
                                 );
                         });
@@ -551,7 +707,7 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | DATOS AUXILIARES
+    | Datos auxiliares
     |--------------------------------------------------------------------------
     */
     public function getRolesDisponiblesProperty()
@@ -573,12 +729,30 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | MÉTRICAS
+    | Métricas
     |--------------------------------------------------------------------------
     */
     public function getTotalUsuariosProperty(): int
     {
         return User::count();
+    }
+
+    public function getTotalActivosProperty(): int
+    {
+        if (! Schema::hasColumn('users', 'est_usu')) {
+            return User::count();
+        }
+
+        return User::where('est_usu', 'ACTIVO')->count();
+    }
+
+    public function getTotalInactivosProperty(): int
+    {
+        if (! Schema::hasColumn('users', 'est_usu')) {
+            return 0;
+        }
+
+        return User::where('est_usu', 'INACTIVO')->count();
     }
 
     public function getTotalEstudiantesProperty(): int
@@ -600,7 +774,7 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | GENERAR CÓDIGO
+    | Generar código
     |--------------------------------------------------------------------------
     */
     private function generarCodigoUsuario(): string
@@ -623,73 +797,114 @@ class GestionUsuarios extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | ACCIONES INDIVIDUALES
+    | Acciones individuales
     |--------------------------------------------------------------------------
     */
     public function desactivarUsuario(string $codUsu): void
     {
         if (! Schema::hasColumn('users', 'est_usu')) {
+            $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;
         }
 
         if (Auth::user()?->cod_usu === $codUsu) {
             $this->dispatch('no-puedes-desactivarte');
-
+            $this->dispatch('error-general', mensaje: 'No puedes desactivar tu propia cuenta.');
             return;
         }
 
-        $usuario = User::where('cod_usu', $codUsu)->first();
+        DB::transaction(function () use ($codUsu) {
+            $usuario = User::with(['persona', 'roles'])
+                ->where('cod_usu', $codUsu)
+                ->first();
 
-        if (! $usuario) {
-            return;
-        }
+            if (! $usuario) {
+                $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+                return;
+            }
 
-        if ($usuario->est_usu === 'INACTIVO') {
-            return;
-        }
+            if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
+                $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra inactivo.');
+                return;
+            }
 
-        $usuario->update([
-            'est_usu' => 'INACTIVO',
-        ]);
+            $valoresAnteriores = $this->resumenUsuario($usuario);
 
-        $this->registrarBitacora(
-            'DESACTIVAR_USUARIO',
-            'users',
-            'Usuario desactivado: ' . $usuario->cod_usu
-        );
+            $usuario->update([
+                'est_usu' => 'INACTIVO',
+            ]);
 
-        $this->dispatch('usuario-desactivado');
+            $usuarioActualizado = $usuario->fresh(['persona', 'roles']);
+
+            $this->registrarBitacora(
+                accion: 'DESACTIVAR_USUARIO',
+                tabla: 'users',
+                registro: $usuarioActualizado->cod_usu,
+                nombreRegistro: $this->nombreVisibleUsuario($usuarioActualizado),
+                descripcion: 'Se desactivó una cuenta de usuario. No se realizó eliminación física.',
+                nivel: 'WARNING',
+                resultado: 'EXITOSO',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: $this->resumenUsuario($usuarioActualizado)
+            );
+
+            $this->dispatch('usuario-desactivado');
+            $this->dispatch('success-general', mensaje: 'Usuario desactivado correctamente.');
+        });
     }
 
     public function reactivarUsuario(string $codUsu): void
     {
         if (! Schema::hasColumn('users', 'est_usu')) {
+            $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;
         }
 
-        $usuario = User::where('cod_usu', $codUsu)->first();
+        DB::transaction(function () use ($codUsu) {
+            $usuario = User::with(['persona', 'roles'])
+                ->where('cod_usu', $codUsu)
+                ->first();
 
-        if (! $usuario) {
-            return;
-        }
+            if (! $usuario) {
+                $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+                return;
+            }
 
-        if ($usuario->est_usu === 'ACTIVO') {
-            return;
-        }
+            if (($usuario->est_usu ?? 'ACTIVO') === 'ACTIVO') {
+                $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra activo.');
+                return;
+            }
 
-        $usuario->update([
-            'est_usu' => 'ACTIVO',
-        ]);
+            $valoresAnteriores = $this->resumenUsuario($usuario);
 
-        $this->registrarBitacora(
-            'REACTIVAR_USUARIO',
-            'users',
-            'Usuario reactivado: ' . $usuario->cod_usu
-        );
+            $usuario->update([
+                'est_usu' => 'ACTIVO',
+            ]);
 
-        $this->dispatch('usuario-reactivado');
+            $usuarioActualizado = $usuario->fresh(['persona', 'roles']);
+
+            $this->registrarBitacora(
+                accion: 'REACTIVAR_USUARIO',
+                tabla: 'users',
+                registro: $usuarioActualizado->cod_usu,
+                nombreRegistro: $this->nombreVisibleUsuario($usuarioActualizado),
+                descripcion: 'Se reactivó una cuenta de usuario en el sistema.',
+                nivel: 'SUCCESS',
+                resultado: 'EXITOSO',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: $this->resumenUsuario($usuarioActualizado)
+            );
+
+            $this->dispatch('usuario-reactivado');
+            $this->dispatch('success-general', mensaje: 'Usuario reactivado correctamente.');
+        });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Sincronización de perfiles
+    |--------------------------------------------------------------------------
+    */
     public function getHayUsuariosParaSincronizarProperty(): bool
     {
         $usuarios = User::with('roles')->get();
@@ -752,30 +967,64 @@ class GestionUsuarios extends Component
         DB::beginTransaction();
 
         try {
-            $usuarios = User::with('roles')->get();
+            $usuarios = User::with(['persona', 'roles'])->get();
             $sincronizados = 0;
+            $detalle = [];
 
             foreach ($usuarios as $usuario) {
                 if ($this->usuarioTienePerfilFaltante($usuario)) {
                     $this->sincronizarPerfilUsuario($usuario);
                     $sincronizados++;
+
+                    $detalle[] = [
+                        'cod_usu' => $usuario->cod_usu,
+                        'email' => $usuario->email,
+                        'rol' => $usuario->roles->first()?->name,
+                    ];
                 }
             }
 
             $this->registrarBitacora(
-                'SINCRONIZAR_DATOS_USUARIOS',
-                'users',
-                'Registros sincronizados: ' . $sincronizados
+                accion: $sincronizados > 0
+                    ? 'SINCRONIZAR_PERFILES_USUARIO'
+                    : 'REVISAR_SINCRONIZACION_USUARIOS',
+                tabla: 'users',
+                registro: 'SINCRONIZACION',
+                nombreRegistro: $sincronizados > 0
+                    ? 'Sincronización de perfiles completada'
+                    : 'Sincronización revisada sin cambios',
+                descripcion: $sincronizados > 0
+                    ? 'Se sincronizaron ' . $sincronizados . ' perfiles institucionales pendientes. El sistema actualizó la relación entre usuarios, personas y roles académicos.'
+                    : 'Se ejecutó la revisión de sincronización de usuarios. No se encontraron perfiles institucionales pendientes de actualización.',
+                nivel: $sincronizados > 0 ? 'SUCCESS' : 'INFO',
+                resultado: 'EXITOSO',
+                valoresNuevos: [
+                    'total_sincronizados' => $sincronizados,
+                    'detalle' => $detalle,
+                ]
             );
 
             DB::commit();
 
             $this->dispatch('usuarios-sincronizados', cantidad: $sincronizados);
+            $this->dispatch('success-general', mensaje: 'Sincronización completada. Registros sincronizados: ' . $sincronizados);
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
 
+            $this->registrarBitacora(
+                accion: 'ERROR_SINCRONIZAR_DATOS_USUARIOS',
+                tabla: 'users',
+                registro: 'SINCRONIZACION',
+                nombreRegistro: 'Sincronización de perfiles de usuario',
+                descripcion: 'Ocurrió un error durante la sincronización de perfiles asociados a usuarios.',
+                nivel: 'ERROR',
+                resultado: 'FALLIDO',
+                error: $e->getMessage()
+            );
+
             $this->dispatch('error-sincronizacion');
+            $this->dispatch('error-general', mensaje: 'No se pudieron sincronizar los datos. Revisa la consola o el log del sistema.');
         }
     }
 
@@ -852,21 +1101,117 @@ class GestionUsuarios extends Component
         };
     }
 
-    private function registrarBitacora(string $accion, string $tabla, ?string $registro = null): void
-    {
-        Bitacora::create([
-            'acc_bit' => $accion,
-            'tab_bit' => $tabla,
-            'reg_bit' => $registro,
-            'cod_usu' => Auth::user()?->cod_usu,
-            'fec_bit' => now(),
-            'est_bit' => 'ACTIVO',
-        ]);
+    /*
+    |--------------------------------------------------------------------------
+    | Bitácora
+    |--------------------------------------------------------------------------
+    */
+    private function registrarBitacora(
+        string $accion,
+        string $tabla,
+        ?string $registro = null,
+        ?string $modulo = 'Gestión de Usuarios',
+        ?string $nombreRegistro = null,
+        ?string $descripcion = null,
+        string $nivel = 'INFO',
+        string $resultado = 'EXITOSO',
+        ?array $valoresAnteriores = null,
+        ?array $valoresNuevos = null,
+        ?string $error = null
+    ): void {
+        BitacoraService::registrar(
+            accion: $accion,
+            tabla: $tabla,
+            registro: $registro,
+            modulo: $modulo,
+            nombreRegistro: $nombreRegistro,
+            descripcion: $descripcion,
+            nivel: $nivel,
+            resultado: $resultado,
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $valoresNuevos,
+            error: $error
+        );
     }
 
     /*
     |--------------------------------------------------------------------------
-    | RENDER
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+    private function limpiarCorreo(?string $valor): ?string
+    {
+        $valor = trim(mb_strtolower((string) $valor));
+
+        return $valor === '' ? null : $valor;
+    }
+
+    private function nombreVisibleUsuario(?User $usuario): string
+    {
+        if (! $usuario) {
+            return 'Usuario no identificado';
+        }
+
+        $persona = $usuario->persona;
+
+        if ($persona) {
+            $nombre = trim(collect([
+                $persona->nom_per,
+                $persona->ape_pat_per,
+                $persona->ape_mat_per,
+            ])->filter()->implode(' '));
+
+            if ($nombre !== '') {
+                return $nombre . ' · ' . $usuario->email;
+            }
+        }
+
+        return $usuario->email ?? $usuario->cod_usu ?? 'Usuario no identificado';
+    }
+
+    private function resumenUsuario(User $usuario): array
+    {
+        return [
+            'cod_usu' => $usuario->cod_usu,
+            'cod_per' => $usuario->cod_per,
+            'email' => $usuario->email,
+            'rol' => $usuario->roles->first()?->name,
+            'est_usu' => $usuario->est_usu ?? null,
+        ];
+    }
+
+    public function puedeGuardarUsuario(): bool
+    {
+        return filled($this->form['cod_per'] ?? null)
+            && filled($this->form['email'] ?? null)
+            && filled($this->form['password'] ?? null)
+            && filled($this->form['password_confirmation'] ?? null)
+            && filled($this->form['role'] ?? null)
+            && $this->form['password'] === $this->form['password_confirmation']
+            && mb_strlen((string) $this->form['password']) >= 8;
+    }
+
+    public function puedeActualizarUsuario(): bool
+    {
+        $password = (string) ($this->formEditar['password'] ?? '');
+        $passwordConfirmation = (string) ($this->formEditar['password_confirmation'] ?? '');
+
+        $passwordValida = $password === ''
+            || (
+                $password === $passwordConfirmation
+                && mb_strlen($password) >= 8
+            );
+
+        return filled($this->formEditar['cod_usu'] ?? null)
+            && filled($this->formEditar['email'] ?? null)
+            && filled($this->formEditar['role'] ?? null)
+            && filled($this->formEditar['est_usu'] ?? null)
+            && $passwordValida;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render
     |--------------------------------------------------------------------------
     */
     public function render()
@@ -878,6 +1223,8 @@ class GestionUsuarios extends Component
             'rolesDisponibles' => $this->rolesDisponibles,
             'personasDisponibles' => $this->personasDisponibles,
             'totalUsuarios' => $this->totalUsuarios,
+            'totalActivos' => $this->totalActivos,
+            'totalInactivos' => $this->totalInactivos,
             'totalEstudiantes' => $this->totalEstudiantes,
             'totalDocentes' => $this->totalDocentes,
             'totalAdministrativos' => $this->totalAdministrativos,

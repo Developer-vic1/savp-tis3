@@ -3,7 +3,6 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Asignatura;
-use App\Models\Bitacora;
 use App\Models\Curso;
 use App\Models\Docente;
 use App\Models\EspecialidadTecnica;
@@ -12,7 +11,7 @@ use App\Models\Paralelo;
 use App\Models\PlanAsignatura;
 use App\Models\PlanEspecialidad;
 use App\Models\Turno;
-use Illuminate\Support\Facades\Auth;
+use App\Services\BitacoraService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -22,9 +21,11 @@ class PersonalInstitucional extends Component
 {
     use WithPagination;
 
+    protected $paginationTheme = 'tailwind';
+
     /*
     |--------------------------------------------------------------------------
-    | FILTROS PRINCIPALES
+    | Filtros principales
     |--------------------------------------------------------------------------
     */
     public string $search = '';
@@ -35,7 +36,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | CONTROL DE MODALES
+    | Control de modales
     |--------------------------------------------------------------------------
     */
     public bool $modalVer = false;
@@ -46,13 +47,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | REGLAS INSTITUCIONALES
-    |--------------------------------------------------------------------------
-    | maxHorasDocente:
-    | Límite total combinado entre materias de la mañana y especialidades de la tarde.
-    |
-    | maxModificaciones:
-    | Control de modificaciones permitidas para datos sensibles del docente.
+    | Reglas institucionales
     |--------------------------------------------------------------------------
     */
     public int $maxHorasDocente = 24;
@@ -60,7 +55,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | TURNOS Y GESTIÓN AUTOMÁTICOS
+    | Turnos y gestión automáticos
     |--------------------------------------------------------------------------
     | Materia curricular   => turno mañana
     | Especialidad técnica => turno tarde
@@ -76,11 +71,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | FORMULARIO DE ASIGNACIÓN
-    |--------------------------------------------------------------------------
-    | tipo_carga:
-    | - MATERIA: usa plan_asignatura
-    | - ESPECIALIDAD: usa plan_especialidad
+    | Formulario de asignación
     |--------------------------------------------------------------------------
     */
     public array $formAsignacion = [
@@ -98,10 +89,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | FORMULARIO DE EDICIÓN
-    |--------------------------------------------------------------------------
-    | esp_doc representa el perfil profesional del docente.
-    | No representa necesariamente una especialidad técnica asignada.
+    | Formulario de edición
     |--------------------------------------------------------------------------
     */
     public array $formEditar = [
@@ -112,7 +100,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | CICLO DE VIDA
+    | Ciclo de vida
     |--------------------------------------------------------------------------
     */
     public function mount(): void
@@ -122,7 +110,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | VALIDACIONES
+    | Validaciones
     |--------------------------------------------------------------------------
     */
     protected function rules(): array
@@ -139,13 +127,13 @@ class PersonalInstitucional extends Component
             ],
 
             'formAsignacion.cod_asi' => [
-                Rule::requiredIf(fn () => $this->formAsignacion['tipo_carga'] === 'MATERIA'),
+                Rule::requiredIf(fn() => $this->formAsignacion['tipo_carga'] === 'MATERIA'),
                 'nullable',
                 'exists:asignatura,cod_asi',
             ],
 
             'formAsignacion.cod_esp' => [
-                Rule::requiredIf(fn () => $this->formAsignacion['tipo_carga'] === 'ESPECIALIDAD'),
+                Rule::requiredIf(fn() => $this->formAsignacion['tipo_carga'] === 'ESPECIALIDAD'),
                 'nullable',
                 'exists:especialidad_tecnica,cod_esp',
             ],
@@ -226,7 +214,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | REACTIVIDAD DE FILTROS
+    | Reactividad de filtros
     |--------------------------------------------------------------------------
     */
     public function updatingSearch(): void
@@ -268,14 +256,13 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | CONFIGURACIÓN AUTOMÁTICA: TURNO Y GESTIÓN
+    | Configuración automática: turno y gestión
     |--------------------------------------------------------------------------
     */
     private function cargarConfiguracionAcademicaAutomatica(): void
     {
         $turnoManana = $this->obtenerTurnoPorNombre(['mañana', 'manana']);
         $turnoTarde = $this->obtenerTurnoPorNombre(['tarde']);
-
         $gestionActual = $this->obtenerGestionAcademicaPorDefecto();
 
         $this->codTurnoManana = $turnoManana?->cod_tur;
@@ -284,6 +271,7 @@ class PersonalInstitucional extends Component
 
         $this->nombreTurnoManana = $turnoManana?->nom_tur ?? 'Mañana no configurada';
         $this->nombreTurnoTarde = $turnoTarde?->nom_tur ?? 'Tarde no configurada';
+
         $this->nombreGestionActual = $gestionActual?->ani_gea
             ? 'Gestión ' . $gestionActual->ani_gea
             : 'Gestión activa no definida';
@@ -304,16 +292,6 @@ class PersonalInstitucional extends Component
 
     private function obtenerGestionAcademicaPorDefecto(): ?GestionAcademica
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Regla institucional
-        |--------------------------------------------------------------------------
-        | Normalmente se usa la gestión activa.
-        | Para planificación futura, desde octubre/noviembre se podría habilitar
-        | selección de la siguiente gestión en la vista, pero por ahora el sistema
-        | asigna automáticamente la gestión activa para evitar errores humanos.
-        |--------------------------------------------------------------------------
-        */
         return GestionAcademica::query()
             ->where('est_gea', 'ACTIVO')
             ->orderByDesc('ani_gea')
@@ -342,14 +320,6 @@ class PersonalInstitucional extends Component
             $tipoCarga = 'MATERIA';
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Limpiar selección opuesta
-        |--------------------------------------------------------------------------
-        | Si se elige materia, se limpia cod_esp.
-        | Si se elige especialidad, se limpia cod_asi.
-        |--------------------------------------------------------------------------
-        */
         if ($tipoCarga === 'MATERIA') {
             $this->formAsignacion['cod_esp'] = '';
         }
@@ -364,7 +334,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | UTILIDADES DE MODALES
+    | Utilidades de modales
     |--------------------------------------------------------------------------
     */
     private function cerrarTodosLosModales(): void
@@ -372,6 +342,31 @@ class PersonalInstitucional extends Component
         $this->modalVer = false;
         $this->modalAsignar = false;
         $this->modalEditar = false;
+    }
+
+    private function resetFormAsignacion(): void
+    {
+        $this->formAsignacion = [
+            'tipo_carga' => 'MATERIA',
+            'cod_doc' => '',
+            'cod_asi' => '',
+            'cod_esp' => '',
+            'cod_cur' => '',
+            'cod_par' => '',
+            'cod_tur' => '',
+            'cod_gea' => '',
+            'hor_car' => '',
+            'est_car' => 'ACTIVO',
+        ];
+    }
+
+    private function resetFormEditar(): void
+    {
+        $this->formEditar = [
+            'cod_doc' => '',
+            'esp_doc' => '',
+            'est_doc' => 'ACTIVO',
+        ];
     }
 
     private function cargarDocenteDetalle(string $codDoc): Docente
@@ -395,7 +390,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL VER
+    | Modal ver
     |--------------------------------------------------------------------------
     */
     public function abrirModalVer(string $codDoc): void
@@ -416,7 +411,7 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL ASIGNAR CARGA
+    | Modal asignar carga
     |--------------------------------------------------------------------------
     */
     public function abrirModalAsignar(string $codDoc): void
@@ -440,18 +435,9 @@ class PersonalInstitucional extends Component
             return;
         }
 
-        $this->formAsignacion = [
-            'tipo_carga' => 'MATERIA',
-            'cod_doc' => $docente->cod_doc,
-            'cod_asi' => '',
-            'cod_esp' => '',
-            'cod_cur' => '',
-            'cod_par' => '',
-            'cod_tur' => '',
-            'cod_gea' => '',
-            'hor_car' => '',
-            'est_car' => 'ACTIVO',
-        ];
+        $this->resetFormAsignacion();
+
+        $this->formAsignacion['cod_doc'] = $docente->cod_doc;
 
         $this->prepararTurnoYGestionSegunTipoCarga('MATERIA');
 
@@ -481,6 +467,7 @@ class PersonalInstitucional extends Component
     {
         $this->modalAsignar = false;
         $this->docenteDetalle = null;
+        $this->resetFormAsignacion();
         $this->resetValidation();
     }
 
@@ -491,7 +478,9 @@ class PersonalInstitucional extends Component
         $tipoCarga = $this->formAsignacion['tipo_carga'];
 
         DB::transaction(function () use ($tipoCarga) {
-            $docente = Docente::lockForUpdate()->findOrFail($this->formAsignacion['cod_doc']);
+            $docente = Docente::with('personalInstitucional.persona')
+                ->lockForUpdate()
+                ->findOrFail($this->formAsignacion['cod_doc']);
 
             if ($docente->est_doc !== 'ACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El docente está inactivo. No se puede registrar la carga académica.');
@@ -518,12 +507,12 @@ class PersonalInstitucional extends Component
             }
 
             if ($tipoCarga === 'MATERIA') {
-                $this->guardarAsignacionMateria();
+                $this->guardarAsignacionMateria($docente);
                 return;
             }
 
             if ($tipoCarga === 'ESPECIALIDAD') {
-                $this->guardarAsignacionEspecialidad();
+                $this->guardarAsignacionEspecialidad($docente);
                 return;
             }
 
@@ -531,7 +520,7 @@ class PersonalInstitucional extends Component
         });
     }
 
-    private function guardarAsignacionMateria(): void
+    private function guardarAsignacionMateria(Docente $docente): void
     {
         $existe = PlanAsignatura::where('cod_doc', $this->formAsignacion['cod_doc'])
             ->where('cod_asi', $this->formAsignacion['cod_asi'])
@@ -543,6 +532,7 @@ class PersonalInstitucional extends Component
 
         if ($existe) {
             $this->addError('formAsignacion.cod_asi', 'Esta materia ya fue asignada al docente en el mismo curso, paralelo, turno y gestión.');
+            $this->dispatch('error-general', mensaje: 'La materia seleccionada ya fue asignada a este docente en el mismo curso, paralelo, turno y gestión.');
             return;
         }
 
@@ -557,14 +547,36 @@ class PersonalInstitucional extends Component
             'est_pas' => $this->formAsignacion['est_car'],
         ]);
 
-        $this->registrarBitacora('ASIGNAR_MATERIA_MANANA', 'plan_asignatura', $plan->cod_pas);
+        $plan->load(['asignatura', 'curso', 'paralelo', 'turno', 'gestionAcademica']);
+
+        $this->registrarBitacora(
+            accion: 'ASIGNAR_MATERIA_MANANA',
+            tabla: 'plan_asignatura',
+            registro: $plan->cod_pas,
+            nombreRegistro: $this->nombreDocente($docente),
+            descripcion: 'Se asignó una materia curricular al docente en el turno de la mañana.',
+            nivel: 'SUCCESS',
+            resultado: 'EXITOSO',
+            valoresNuevos: [
+                'docente' => $docente->cod_doc,
+                'nombre_docente' => $this->nombreDocente($docente),
+                'materia' => $plan->asignatura->nom_asi ?? $plan->cod_asi,
+                'curso' => $plan->curso->nom_cur ?? $plan->cod_cur,
+                'paralelo' => $plan->paralelo->nom_par ?? $plan->cod_par,
+                'turno' => $plan->turno->nom_tur ?? $plan->cod_tur,
+                'gestion' => $plan->gestionAcademica->ani_gea ?? $plan->cod_gea,
+                'horas' => $plan->hor_pas,
+                'estado' => $plan->est_pas,
+            ]
+        );
 
         $this->cerrarModalAsignar();
 
         $this->dispatch('asignacion-creada');
+        $this->dispatch('success-general', mensaje: 'Materia asignada correctamente al docente.');
     }
 
-    private function guardarAsignacionEspecialidad(): void
+    private function guardarAsignacionEspecialidad(Docente $docente): void
     {
         $existe = PlanEspecialidad::where('cod_doc', $this->formAsignacion['cod_doc'])
             ->where('cod_esp', $this->formAsignacion['cod_esp'])
@@ -576,6 +588,7 @@ class PersonalInstitucional extends Component
 
         if ($existe) {
             $this->addError('formAsignacion.cod_esp', 'Esta especialidad ya fue asignada al docente en el mismo curso, paralelo, turno y gestión.');
+            $this->dispatch('error-general', mensaje: 'La especialidad seleccionada ya fue asignada a este docente en el mismo curso, paralelo, turno y gestión.');
             return;
         }
 
@@ -590,16 +603,38 @@ class PersonalInstitucional extends Component
             'est_pes' => $this->formAsignacion['est_car'],
         ]);
 
-        $this->registrarBitacora('ASIGNAR_ESPECIALIDAD_TARDE', 'plan_especialidad', $plan->cod_pes);
+        $plan->load(['especialidad', 'curso', 'paralelo', 'turno', 'gestionAcademica']);
+
+        $this->registrarBitacora(
+            accion: 'ASIGNAR_ESPECIALIDAD_TARDE',
+            tabla: 'plan_especialidad',
+            registro: $plan->cod_pes,
+            nombreRegistro: $this->nombreDocente($docente),
+            descripcion: 'Se asignó una especialidad técnica al docente en el turno de la tarde.',
+            nivel: 'SUCCESS',
+            resultado: 'EXITOSO',
+            valoresNuevos: [
+                'docente' => $docente->cod_doc,
+                'nombre_docente' => $this->nombreDocente($docente),
+                'especialidad' => $plan->especialidad->nom_esp ?? $plan->cod_esp,
+                'curso' => $plan->curso->nom_cur ?? $plan->cod_cur,
+                'paralelo' => $plan->paralelo->nom_par ?? $plan->cod_par,
+                'turno' => $plan->turno->nom_tur ?? $plan->cod_tur,
+                'gestion' => $plan->gestionAcademica->ani_gea ?? $plan->cod_gea,
+                'horas' => $plan->hor_pes,
+                'estado' => $plan->est_pes,
+            ]
+        );
 
         $this->cerrarModalAsignar();
 
         $this->dispatch('asignacion-creada');
+        $this->dispatch('success-general', mensaje: 'Especialidad técnica asignada correctamente al docente.');
     }
 
     /*
     |--------------------------------------------------------------------------
-    | MODAL EDITAR DOCENTE
+    | Modal editar docente
     |--------------------------------------------------------------------------
     */
     public function abrirModalEditar(string $codDoc): void
@@ -629,6 +664,7 @@ class PersonalInstitucional extends Component
     {
         $this->modalEditar = false;
         $this->docenteDetalle = null;
+        $this->resetFormEditar();
         $this->resetValidation();
     }
 
@@ -652,7 +688,7 @@ class PersonalInstitucional extends Component
         ]);
 
         DB::transaction(function () {
-            $docente = Docente::with('personalInstitucional')
+            $docente = Docente::with('personalInstitucional.persona')
                 ->lockForUpdate()
                 ->findOrFail($this->formEditar['cod_doc']);
 
@@ -661,8 +697,16 @@ class PersonalInstitucional extends Component
                 return;
             }
 
+            $valoresAnteriores = [
+                'cod_doc' => $docente->cod_doc,
+                'esp_doc' => $docente->esp_doc,
+                'est_doc' => $docente->est_doc,
+                'num_mod_doc' => $docente->num_mod_doc,
+                'est_pin' => $docente->personalInstitucional?->est_pin,
+            ];
+
             $docente->update([
-                'esp_doc' => $this->formEditar['esp_doc'],
+                'esp_doc' => trim($this->formEditar['esp_doc']),
                 'est_doc' => $this->formEditar['est_doc'],
                 'num_mod_doc' => ((int) $docente->num_mod_doc) + 1,
             ]);
@@ -673,17 +717,36 @@ class PersonalInstitucional extends Component
                 ]);
             }
 
-            $this->registrarBitacora('EDITAR_DOCENTE', 'docente', $docente->cod_doc);
+            $docenteActualizado = $docente->fresh(['personalInstitucional.persona']);
+
+            $this->registrarBitacora(
+                accion: 'EDITAR_DOCENTE',
+                tabla: 'docente',
+                registro: $docenteActualizado->cod_doc,
+                nombreRegistro: $this->nombreDocente($docenteActualizado),
+                descripcion: 'Se actualizó la información profesional o estado del docente.',
+                nivel: 'WARNING',
+                resultado: 'EXITOSO',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: [
+                    'cod_doc' => $docenteActualizado->cod_doc,
+                    'esp_doc' => $docenteActualizado->esp_doc,
+                    'est_doc' => $docenteActualizado->est_doc,
+                    'num_mod_doc' => $docenteActualizado->num_mod_doc,
+                    'est_pin' => $docenteActualizado->personalInstitucional?->est_pin,
+                ]
+            );
 
             $this->cerrarModalEditar();
 
             $this->dispatch('docente-actualizado');
+            $this->dispatch('success-general', mensaje: 'Docente actualizado correctamente.');
         });
     }
 
     /*
     |--------------------------------------------------------------------------
-    | CAMBIAR ESTADO DOCENTE
+    | Cambiar estado docente
     |--------------------------------------------------------------------------
     */
     public function cambiarEstado(string $codDoc, string $estado): void
@@ -694,7 +757,7 @@ class PersonalInstitucional extends Component
         }
 
         DB::transaction(function () use ($codDoc, $estado) {
-            $docente = Docente::with('personalInstitucional')
+            $docente = Docente::with('personalInstitucional.persona')
                 ->lockForUpdate()
                 ->findOrFail($codDoc);
 
@@ -702,6 +765,18 @@ class PersonalInstitucional extends Component
                 $this->dispatch('error-general', mensaje: 'No se puede cambiar el estado porque el docente alcanzó el límite de modificaciones.');
                 return;
             }
+
+            if ($docente->est_doc === $estado) {
+                $this->dispatch('error-general', mensaje: 'El docente ya tiene el estado seleccionado.');
+                return;
+            }
+
+            $valoresAnteriores = [
+                'cod_doc' => $docente->cod_doc,
+                'est_doc' => $docente->est_doc,
+                'num_mod_doc' => $docente->num_mod_doc,
+                'est_pin' => $docente->personalInstitucional?->est_pin,
+            ];
 
             $docente->update([
                 'est_doc' => $estado,
@@ -714,19 +789,41 @@ class PersonalInstitucional extends Component
                 ]);
             }
 
+            $docenteActualizado = $docente->fresh(['personalInstitucional.persona']);
+
             $this->registrarBitacora(
-                $estado === 'ACTIVO' ? 'REACTIVAR_DOCENTE' : 'DESACTIVAR_DOCENTE',
-                'docente',
-                $docente->cod_doc
+                accion: $estado === 'ACTIVO' ? 'REACTIVAR_DOCENTE' : 'DESACTIVAR_DOCENTE',
+                tabla: 'docente',
+                registro: $docenteActualizado->cod_doc,
+                nombreRegistro: $this->nombreDocente($docenteActualizado),
+                descripcion: $estado === 'ACTIVO'
+                    ? 'Se reactivó el registro institucional del docente.'
+                    : 'Se desactivó el registro institucional del docente. No se realizó eliminación física.',
+                nivel: $estado === 'ACTIVO' ? 'SUCCESS' : 'WARNING',
+                resultado: 'EXITOSO',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: [
+                    'cod_doc' => $docenteActualizado->cod_doc,
+                    'est_doc' => $docenteActualizado->est_doc,
+                    'num_mod_doc' => $docenteActualizado->num_mod_doc,
+                    'est_pin' => $docenteActualizado->personalInstitucional?->est_pin,
+                ]
             );
 
             $this->dispatch($estado === 'ACTIVO' ? 'docente-reactivado' : 'docente-desactivado');
+
+            $this->dispatch(
+                'success-general',
+                mensaje: $estado === 'ACTIVO'
+                    ? 'Docente reactivado correctamente.'
+                    : 'Docente desactivado correctamente.'
+            );
         });
     }
 
     /*
     |--------------------------------------------------------------------------
-    | CÁLCULO DE CARGA ACADÉMICA
+    | Cálculo de carga académica
     |--------------------------------------------------------------------------
     */
     public function nivelCarga(int $horas): string
@@ -787,14 +884,14 @@ class PersonalInstitucional extends Component
         return $horasMaterias
             ->concat($horasEspecialidades)
             ->groupBy('cod_doc')
-            ->map(fn ($items) => (int) $items->sum('total_horas'))
-            ->filter(fn ($total) => $total >= $min && $total <= $max)
+            ->map(fn($items) => (int) $items->sum('total_horas'))
+            ->filter(fn($total) => $total >= $min && $total <= $max)
             ->keys()
             ->values()
             ->toArray();
     }
 
-    private function docentesSinCargaActiva(): array
+    private function docentesConCargaActiva(): array
     {
         $conMateria = PlanAsignatura::where('est_pas', 'ACTIVO')
             ->pluck('cod_doc')
@@ -810,7 +907,7 @@ class PersonalInstitucional extends Component
     private function aplicarFiltroCarga($query)
     {
         return match ($this->carga) {
-            'SIN_ASIGNACION' => $query->whereNotIn('cod_doc', $this->docentesSinCargaActiva()),
+            'SIN_ASIGNACION' => $query->whereNotIn('cod_doc', $this->docentesConCargaActiva()),
             'NORMAL' => $query->whereIn('cod_doc', $this->docentesPorRangoHoras(1, 10)),
             'MEDIA' => $query->whereIn('cod_doc', $this->docentesPorRangoHoras(11, 18)),
             'CRITICA' => $query->whereIn('cod_doc', $this->docentesPorRangoHoras(19, 999)),
@@ -840,24 +937,90 @@ class PersonalInstitucional extends Component
 
     /*
     |--------------------------------------------------------------------------
-    | BITÁCORA MANUAL
+    | Bitácora
     |--------------------------------------------------------------------------
     */
-    private function registrarBitacora(string $accion, string $tabla, string $registro): void
-    {
-        Bitacora::create([
-            'acc_bit' => $accion,
-            'tab_bit' => $tabla,
-            'reg_bit' => $registro,
-            'cod_usu' => Auth::id(),
-            'fec_bit' => now(),
-            'est_bit' => 'ACTIVO',
-        ]);
+    private function registrarBitacora(
+        string $accion,
+        string $tabla,
+        ?string $registro = null,
+        ?string $modulo = 'Gestión de Personal Institucional',
+        ?string $nombreRegistro = null,
+        ?string $descripcion = null,
+        string $nivel = 'INFO',
+        string $resultado = 'EXITOSO',
+        ?array $valoresAnteriores = null,
+        ?array $valoresNuevos = null,
+        ?string $error = null
+    ): void {
+        BitacoraService::registrar(
+            accion: $accion,
+            tabla: $tabla,
+            registro: $registro,
+            modulo: $modulo,
+            nombreRegistro: $nombreRegistro,
+            descripcion: $descripcion,
+            nivel: $nivel,
+            resultado: $resultado,
+            valoresAnteriores: $valoresAnteriores,
+            valoresNuevos: $valoresNuevos,
+            error: $error
+        );
     }
 
     /*
     |--------------------------------------------------------------------------
-    | RENDER
+    | Helpers
+    |--------------------------------------------------------------------------
+    */
+    public function puedeGuardarAsignacion(): bool
+    {
+        return filled($this->formAsignacion['tipo_carga'] ?? null)
+            && filled($this->formAsignacion['cod_doc'] ?? null)
+            && filled($this->formAsignacion['cod_cur'] ?? null)
+            && filled($this->formAsignacion['cod_par'] ?? null)
+            && filled($this->formAsignacion['cod_tur'] ?? null)
+            && filled($this->formAsignacion['cod_gea'] ?? null)
+            && filled($this->formAsignacion['hor_car'] ?? null)
+            && filled($this->formAsignacion['est_car'] ?? null)
+            && (
+                ($this->formAsignacion['tipo_carga'] === 'MATERIA' && filled($this->formAsignacion['cod_asi'] ?? null))
+                || ($this->formAsignacion['tipo_carga'] === 'ESPECIALIDAD' && filled($this->formAsignacion['cod_esp'] ?? null))
+            );
+    }
+
+    public function puedeActualizarDocente(): bool
+    {
+        return filled($this->formEditar['cod_doc'] ?? null)
+            && filled($this->formEditar['esp_doc'] ?? null)
+            && mb_strlen((string) $this->formEditar['esp_doc']) >= 3
+            && filled($this->formEditar['est_doc'] ?? null);
+    }
+
+    private function nombreDocente(?Docente $docente): string
+    {
+        if (! $docente) {
+            return 'Docente no identificado';
+        }
+
+        $persona = $docente->personalInstitucional?->persona;
+
+        if (! $persona) {
+            return $docente->cod_doc;
+        }
+
+        $nombre = trim(collect([
+            $persona->nom_per,
+            $persona->ape_pat_per,
+            $persona->ape_mat_per,
+        ])->filter()->implode(' '));
+
+        return $nombre !== '' ? $nombre : $docente->cod_doc;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Render
     |--------------------------------------------------------------------------
     */
     public function render()
@@ -897,63 +1060,53 @@ class PersonalInstitucional extends Component
                 },
             ], 'hor_pes')
             ->when($this->search !== '', function ($query) {
-                $query->where(function ($q) {
-                    $q->where('esp_doc', 'ILIKE', "%{$this->search}%")
-                        ->orWhereHas('personalInstitucional.persona', function ($sub) {
-                            $sub->where('nom_per', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('ape_pat_per', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('ape_mat_per', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('ci_per', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('ema_per', 'ILIKE', "%{$this->search}%");
+                $search = trim($this->search);
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('esp_doc', 'ILIKE', "%{$search}%")
+                        ->orWhereHas('personalInstitucional.persona', function ($sub) use ($search) {
+                            $sub->where('nom_per', 'ILIKE', "%{$search}%")
+                                ->orWhere('ape_pat_per', 'ILIKE', "%{$search}%")
+                                ->orWhere('ape_mat_per', 'ILIKE', "%{$search}%")
+                                ->orWhere('ci_per', 'ILIKE', "%{$search}%")
+                                ->orWhere('ema_per', 'ILIKE', "%{$search}%");
                         })
-                        ->orWhereHas('planAsignaturas.asignatura', function ($sub) {
-                            $sub->where('nom_asi', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('sig_asi', 'ILIKE', "%{$this->search}%");
+                        ->orWhereHas('planAsignaturas.asignatura', function ($sub) use ($search) {
+                            $sub->where('nom_asi', 'ILIKE', "%{$search}%")
+                                ->orWhere('sig_asi', 'ILIKE', "%{$search}%");
                         })
-                        ->orWhereHas('planEspecialidades.especialidad', function ($sub) {
-                            $sub->where('nom_esp', 'ILIKE', "%{$this->search}%")
-                                ->orWhere('des_esp', 'ILIKE', "%{$this->search}%");
+                        ->orWhereHas('planEspecialidades.especialidad', function ($sub) use ($search) {
+                            $sub->where('nom_esp', 'ILIKE', "%{$search}%")
+                                ->orWhere('des_esp', 'ILIKE', "%{$search}%");
                         });
                 });
             })
-            ->when($this->estado !== '', fn ($query) => $query->where('est_doc', $this->estado))
-            ->when($this->carga !== '', fn ($query) => $this->aplicarFiltroCarga($query))
-            ->when($this->tipoCargaFiltro !== '', fn ($query) => $this->aplicarFiltroTipoCarga($query))
+            ->when($this->estado !== '', fn($query) => $query->where('est_doc', $this->estado))
+            ->when($this->carga !== '', fn($query) => $this->aplicarFiltroCarga($query))
+            ->when($this->tipoCargaFiltro !== '', fn($query) => $this->aplicarFiltroTipoCarga($query))
             ->orderByDesc('cod_doc')
             ->paginate($this->perPage);
 
         /*
         |--------------------------------------------------------------------------
-        | TOTALES GENERALES
+        | Totales generales
         |--------------------------------------------------------------------------
         */
         $totalDocentes = Docente::count();
-
         $docentesActivos = Docente::where('est_doc', 'ACTIVO')->count();
-
         $docentesInactivos = Docente::where('est_doc', 'INACTIVO')->count();
 
         $totalMateriasAsignadas = PlanAsignatura::where('est_pas', 'ACTIVO')->count();
-
         $totalEspecialidadesAsignadas = PlanEspecialidad::where('est_pes', 'ACTIVO')->count();
-
         $totalAsignaciones = $totalMateriasAsignadas + $totalEspecialidadesAsignadas;
 
         $totalHorasMaterias = (int) PlanAsignatura::where('est_pas', 'ACTIVO')->sum('hor_pas');
-
         $totalHorasEspecialidades = (int) PlanEspecialidad::where('est_pes', 'ACTIVO')->sum('hor_pes');
-
         $totalHoras = $totalHorasMaterias + $totalHorasEspecialidades;
 
-        $docentesSinAsignacion = Docente::whereNotIn('cod_doc', $this->docentesSinCargaActiva())->count();
-
+        $docentesSinAsignacion = Docente::whereNotIn('cod_doc', $this->docentesConCargaActiva())->count();
         $docentesSobrecargados = count($this->docentesPorRangoHoras(19, 999));
 
-        /*
-        |--------------------------------------------------------------------------
-        | CATÁLOGOS PARA LA VISTA
-        |--------------------------------------------------------------------------
-        */
         return view('livewire.admin.personal-institucional', [
             'docentes' => $docentes,
 
