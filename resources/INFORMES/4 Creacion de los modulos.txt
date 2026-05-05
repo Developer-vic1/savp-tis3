@@ -1,0 +1,1163 @@
+DIARIO DEL DESARROLLADOR: PROYECTO SAVP: TIS-3 
+
+Fecha de registro: 02 de mayo de 2026 05:33
+Ubicación: La Paz, Bolivia – UNIFRANZ
+Sistema: SAVP: TIS-3
+Stack trabajado: Laravel + Sail + PostgreSQL + Livewire + Jetstream + Spatie + Tailwind CSS
+Etapa: Construcción avanzada de módulos administrativos, académicos y de trazabilidad institucional.
+
+1. Inicio de esta etapa: enfoque en módulos reales del sistema
+------------------------------------------------------------
+En esta fase del desarrollo ya no trabajamos solamente sobre la base de datos o sobre estructuras aisladas. Empezamos a convertir el modelo relacional del sistema en módulos funcionales reales, pensados para que una institución educativa pueda utilizarlos de forma ordenada, visual e intuitiva.
+
+El objetivo principal fue dejar de pensar en simples CRUD y comenzar a construir pantallas con lógica institucional, académica y administrativa.
+
+Durante esta etapa trabajamos principalmente en:
+
+Gestión de Estudiantes
+Bitácora Institucional
+Perfil de usuario y modo oscuro
+Fotografía de perfil
+Gestión Académica
+Validaciones Livewire
+Rutas y permisos
+Cierre institucional de gestión
+Corrección de seeders
+Preparación para Git
+
+------------------------------------------------------------
+2. Módulo de Gestión de Estudiantes
+------------------------------------------------------------
+
+2.1. Diseño conceptual del módulo
+------------------------------------------------------------
+Primero analizamos qué debía representar realmente una pantalla de Gestión de Estudiantes dentro de una Unidad Educativa Técnico Humanístico.
+
+Se definió que este módulo no debía verse como una tabla simple, sino como un espacio donde distintos roles pudieran interpretar la información del estudiante:
+
+Docente:
+- Identificar rápidamente al estudiante.
+- Ver curso, paralelo, especialidad, estado e inscripción.
+- Acceder al historial académico.
+
+Director:
+- Ver población estudiantil.
+- Controlar matrícula, inscripción y estado institucional.
+- Revisar alertas y datos por especialidad.
+
+Autoridad educativa:
+- Ver trazabilidad.
+- Revisar estados académicos y administrativos.
+- Confirmar que no exista eliminación física de información sensible.
+
+Con esto se definió que la interfaz debía tener un enfoque más serio, académico e institucional.
+
+------------------------------------------------------------
+2.2. Prompt visual para diseñar la interfaz
+------------------------------------------------------------
+
+Creamos un prompt completo para generar una imagen/mockup de la pantalla Gestión de Estudiantes.
+
+El prompt incluía:
+
+Sidebar institucional
+Header con breadcrumb
+Cards resumen
+Filtros inteligentes
+Tabla principal
+Vista por carpetas
+Vistas por cursos
+Vistas por especialidad
+Modal de detalle
+Modal de registro
+Modal de inscripción
+Historial del estudiante
+Badges de estado
+Iconos SVG tipo Heroicons
+Compatibilidad con modo claro y oscuro
+
+También se definió una estética inspirada en:
+
+Filament Admin
+Linear
+Notion
+Stripe
+SaaS educativo-administrativo
+
+La idea central fue que el módulo se vea como una herramienta administrativa educativa real, no como una simple tabla de registros.
+
+2.3. Creación del componente Livewire de estudiantes
+------------------------------------------------------------
+Trabajamos sobre estos archivos:
+
+CLASS: app/Livewire/Admin/GestionEstudiantes.php
+VIEW:  resources/views/livewire/admin/gestion-estudiantes.blade.php
+
+Se empezó a construir el componente con una lógica más completa, incluyendo:
+
+Búsqueda
+Filtros
+Vista general
+Vista por cursos
+Vista por especialidades
+Vista tipo carpetas
+Validaciones
+SweetAlert
+Modal de registro
+Modal de detalle
+Control de inscripción
+Estado del estudiante
+Estados visuales
+
+También se reforzó una regla importante:
+
+No mostrar códigos internos al usuario final.
+
+Por eso, campos como cod_est, cod_per, cod_esp debían mantenerse ocultos en la interfaz y mostrarse solo información humana, como nombres, RUDE, curso, paralelo, especialidad y estado.
+
+------------------------------------------------------------
+2.4. Rutas y permisos de Gestión de Estudiantes
+------------------------------------------------------------
+Se creó y revisó el controlador:
+
+App\Http\Controllers\Admin\GestionEstudiantesController
+
+Con el método:
+
+public function index(): View
+{
+    return view('admin.gestion-estudiantes');
+}
+
+También se integró la ruta dentro del grupo administrativo:
+
+Route::get('/gestion-estudiantes', [GestionEstudiantesController::class, 'index'])
+    ->name('gestion-estudiantes')
+    ->middleware('can:Gestion_Estudiantes');
+
+Luego surgió un problema de autorización:
+
+403
+This action is unauthorized.
+
+Se revisó que el problema estaba relacionado con la diferencia entre el permiso usado en la vista y el permiso usado en la ruta.
+
+Se identificó que había inconsistencias como:
+
+@can('Estudiantes')
+
+frente a:
+
+middleware('can:Gestion_Estudiantes')
+
+La conclusión fue clara:
+
+El nombre del permiso debe ser exactamente igual en:
+- Seeder de permisos
+- Middleware de ruta
+- Directiva @can del menú
+
+------------------------------------------------------------
+2.5. Sidebar con iconos SVG
+------------------------------------------------------------
+
+También corregimos el menú lateral para que el enlace de estudiantes no usara href="#", sino una ruta real.
+
+Se recomendó usar:
+
+href="{{ route('admin.gestion-estudiantes') }}"
+
+o el nombre correcto según cómo estuviera registrada la ruta.
+
+Además se mantuvo la regla visual del proyecto:
+
+No usar emojis.
+Usar iconos SVG estilo Heroicons.
+
+------------------------------------------------------------
+2.6. Corrección conceptual de curso y paralelo
+------------------------------------------------------------
+
+Después analizamos un problema importante del modelo académico:
+
+El usuario indicó que no podía relacionar directamente curso y paralelo de manera simple, porque esa organización ya estaba relacionada con:
+
+plan_asignatura
+plan_especialidad
+gestión académica
+
+Se entendió que, si curso y paralelo se modelaban mal, podían aparecer duplicaciones como:
+
+6 veces A
+6 veces B
+
+Por eso se aclaró que:
+
+Curso y paralelo deben funcionar como catálogos base.
+La combinación curso + paralelo + turno + gestión debe manejarse desde planes o inscripción.
+
+Esto ayudó a evitar redundancia y problemas de normalización.
+
+------------------------------------------------------------
+2.7. Corrección del seeder de paralelo
+------------------------------------------------------------    
+
+Se revisó el ParaleloSeeder.
+
+El problema era que estaba generando paralelos por cada curso:
+
+foreach ($cursos as $codCur) {
+    foreach ($paralelos as $paralelo) {
+        ...
+    }
+}
+
+Pero la tabla paralelo no tenía cod_cur, por lo tanto estaba creando muchos registros repetidos:
+
+A, B, C, D
+A, B, C, D
+A, B, C, D
+...
+
+La conclusión fue:
+
+La tabla paralelo debe tener solo los paralelos base:
+A
+B
+C
+D
+
+No debe duplicarse por curso.
+
+------------------------------------------------------------
+3. Módulo de Bitácora Institucional
+------------------------------------------------------------
+
+3.1. Análisis conceptual de la bitácora
+------------------------------------------------------------
+
+Luego pasamos al módulo Bitácora Institucional.
+
+Primero analizamos qué debía representar este campo desde una mirada educativa, administrativa y de auditoría.
+
+Se concluyó que la bitácora debía servir para:
+
+Registrar acciones del sistema.
+Identificar quién hizo qué.
+Saber sobre qué módulo ocurrió la acción.
+Ver qué registro fue afectado.
+Consultar fecha y hora.
+Distinguir acciones exitosas, fallidas, críticas o de seguridad.
+Permitir trazabilidad institucional.
+
+La bitácora no debía ser una tabla seca, ni mostrar frases como:
+
+Actividad registrada
+Victor realizó una acción sobre usuario
+
+Sino frases humanas como:
+
+Sincronización de perfiles completada.
+Víctor Asturizaga sincronizó los perfiles institucionales del sistema.
+Se revisó la relación entre usuarios, personas y roles académicos.
+
+------------------------------------------------------------
+3.2. Revisión de la tabla bitácora
+------------------------------------------------------------    
+El usuario mostró la migración inicial:
+
+Schema::create('bitacora', function (Blueprint $table) {
+    $table->string('cod_bit', 20)->primary();
+    $table->string('acc_bit', 150);
+    $table->string('tab_bit', 100);
+    $table->string('reg_bit', 50)->nullable();
+    $table->string('cod_usu', 20)->nullable();
+    $table->timestamp('fec_bit')->useCurrent();
+    $table->string('est_bit', 20)->default('ACTIVO');
+});
+
+Se analizó si era suficiente.
+
+La conclusión fue:
+
+No era suficiente para una bitácora institucional seria.
+
+Se recomendó mejorarla con campos como:
+
+rol_bit
+mod_bit
+nom_reg_bit
+des_bit
+niv_bit
+res_bit
+ip_bit
+age_bit
+rut_bit
+met_bit
+val_ant_bit
+val_nue_bit
+err_bit
+
+También se debatió si est_bit era necesario.
+
+El usuario planteó que no tenía sentido desactivar una bitácora, porque la bitácora debe ser inalterable.
+
+La conclusión fue:
+
+La bitácora no debería eliminarse ni desactivarse.
+Debe ser solo lectura.
+Debe conservar trazabilidad.
+3.3. Servicio BitacoraService
+
+Se creó el servicio:
+
+app/Services/BitacoraService.php
+
+Pero ocurrió un error:
+
+Could not open input file: app/Services/BitacoraService.php
+
+Después se revisó la estructura y se detectó el problema:
+
+BitacoraService,php
+
+El archivo tenía una coma en lugar de punto:
+
+BitacoraService,php
+
+Se corrigió con:
+
+mv app/Services/BitacoraService,php app/Services/BitacoraService.php
+
+Luego se verificó:
+
+sail php -l app/Services/BitacoraService.php
+
+Resultado:
+
+No syntax errors detected
+
+Este fue un error pequeño, pero importante para entender que Linux distingue exactamente los nombres de archivo.
+
+------------------------------------------------------------
+3.4. Humanización de eventos
+------------------------------------------------------------    
+
+Trabajamos el problema de que la bitácora se veía seca.
+
+El ejemplo era:
+
+Actividad registrada
+
+hace 1 minuto
+Victor Asturizaga realizó una acción sobre usuario (SINCRONIZACION)
+
+Se decidió que la bitácora debía interpretar la acción, no solo mostrar el código técnico.
+
+Creamos la idea de métodos como:
+
+tituloEvento()
+descripcionEvento()
+nombreUsuario()
+formatearAccion()
+badgeNivel()
+badgeResultado()
+badgeModulo()
+
+Esto permite transformar:
+
+SINCRONIZAR_PERFILES_USUARIO
+
+en:
+
+Sincronización de perfiles completada
+
+y una descripción más humana:
+
+Se sincronizaron perfiles institucionales pendientes. El sistema actualizó la relación entre usuarios, personas y roles académicos.
+3.5. Prompt visual de Bitácora Institucional
+
+También generamos un prompt completo para visualizar la pantalla Bitácora Institucional.
+
+La pantalla debía incluir:
+
+Sidebar
+Header
+Encabezado informativo
+Cards resumen
+Gráficos estadísticos
+Selector de vistas
+Filtros avanzados
+Tabla principal
+Vista por módulos
+Vista por usuarios
+Vista por acciones
+Vista de seguridad
+Timeline
+Drawer derecho de detalle
+
+Se especificaron gráficos como:
+
+Eventos por módulo
+Distribución por nivel
+Actividad reciente
+Usuarios con más actividad
+
+También se definieron vistas:
+
+Tabla general
+Por módulos
+Por usuarios
+Por acciones
+Seguridad
+Timeline
+
+Y se reforzó que la bitácora debía ser:
+
+Solo lectura
+Sin editar
+Sin eliminar
+Sin vaciar historial
+3.6. Componente y vista de Bitácora
+
+Luego creamos el componente:
+
+CLASS: app/Livewire/Admin/Bitacora.php
+VIEW:  resources/views/livewire/admin/bitacora.blade.php
+
+El componente se orientó a:
+
+Filtrar eventos
+Buscar por acción, módulo, usuario, registro o descripción
+Agrupar por módulos
+Agrupar por usuarios
+Agrupar por acciones
+Mostrar eventos sensibles
+Mostrar timeline
+Abrir drawer de detalle
+Interpretar acciones
+Mostrar cambios anteriores y nuevos
+
+Después se revisó visualmente y se detectó que se veía muy seco.
+
+Se hicieron ajustes para mejorar:
+
+Humanización de títulos
+Eliminación de códigos innecesarios
+Mejor jerarquía visual
+Mejor presentación académica
+Más interpretación institucional
+Drawer derecho más claro
+Badges de estado
+Colores por nivel
+
+------------------------------------------------------------
+4. Ajustes en perfil de usuario y modo oscuro
+------------------------------------------------------------
+
+Después trabajamos con las vistas de perfil y autenticación.
+
+Se revisaron varios componentes de Jetstream, entre ellos:
+
+delete-user-form
+update-password-form
+two-factor-authentication-form
+logout-other-browser-sessions-form
+profile-information-form
+confirm-password
+
+El objetivo fue adaptar esas pantallas al estilo visual del sistema:
+
+Modo claro
+Modo oscuro
+Bordes redondeados
+Colores institucionales
+Mejor legibilidad
+Botones coherentes
+Mensajes en español
+Diseño más moderno
+
+También se trabajó el problema de que algunas vistas seguían usando estilos por defecto como:
+
+text-gray-600
+bg-white
+
+y no respetaban completamente las variables visuales del sistema.
+
+------------------------------------------------------------
+4.1. Foto de perfil
+------------------------------------------------------------
+
+El usuario preguntó dónde se manejaba la foto de perfil.
+
+Se explicó que en Jetstream normalmente intervienen:
+
+config/jetstream.php
+App\Models\User
+resources/views/profile/update-profile-information-form.blade.php
+Laravel\Jetstream\HasProfilePhoto
+
+Se revisó que solo aparecía la información básica del perfil, pero no la opción de subir nueva foto.
+
+Entonces se trabajó una versión completa para permitir:
+
+Ver si existe foto actual
+Subir nueva foto de perfil
+Previsualizar imagen
+Eliminar foto
+Mantener estilo oscuro/claro
+Validar campos
+Mejorar diseño visual
+
+La idea fue que el perfil no se vea como una pantalla genérica de Jetstream, sino como parte del sistema SAVP.
+
+------------------------------------------------------------
+5. Módulo de Gestión Académica
+
+------------------------------------------------------------
+
+5.1. Análisis conceptual inicial
+
+------------------------------------------------------------
+
+Luego empezamos un nuevo módulo: Gestión Académica.
+
+El usuario planteó una idea clara:
+
+Este campo debería encerrarse por años.
+Debe funcionar como historial exportable de gestión.
+Debe contener periodos, registros del año, estructura académica y cierre.
+Debe permitir crear una nueva gestión para el siguiente ciclo.
+
+Se analizó desde una visión de:
+
+Director
+Administrador
+Docente académico
+Autoridad educativa
+Ministerio de Educación
+
+La conclusión fue que Gestión Académica no debía ser un CRUD simple, sino el:
+
+Centro anual de planificación, seguimiento, historial y cierre institucional.
+
+------------------------------------------------------------
+
+5.2. Qué debe contener Gestión Académica
+
+
+Se definió que la gestión académica debe organizar:
+
+Año académico
+Fecha de inicio
+Fecha de finalización
+Estado
+Inscripciones
+Cursos
+Paralelos
+Turnos
+Especialidades técnicas
+Planes de asignatura
+Planes de especialidad
+Periodos de evaluación
+Historial
+Reportes
+Cierre institucional
+
+También se propusieron estados como:
+
+PLANIFICADA
+ACTIVA
+CERRADA
+ARCHIVADA
+
+Pero luego, al ver tu migración real, se ajustaron a tus estados reales:
+
+ACTIVO
+PLANIFICADO
+CERRADO
+ARCHIVADO
+INACTIVO
+
+------------------------------------------------------------
+5.3. Prompt visual para Gestión Académica
+
+------------------------------------------------------------
+
+Creamos un prompt grande para generar una imagen/mockup de esta pantalla.
+
+La interfaz debía tener:
+
+Sidebar
+Header
+Gestión activa destacada
+Cards resumen
+Historial por años tipo carpetas
+Selector de vistas
+Panel de periodos
+Panel de estructura académica anual
+Panel de control de cierre
+Actividad reciente
+Drawer derecho de detalle
+Modal de nueva gestión
+
+Se insistió en que no debía parecer CRUD, sino un módulo premium, institucional y educativo.
+
+------------------------------------------------------------
+
+5.4. Primer componente de Gestión Académica
+
+------------------------------------------------------------
+
+Se trabajó sobre:
+
+CLASS: app/Livewire/Admin/GestionAcademica.php
+VIEW:  resources/views/livewire/admin/gestion-academica.blade.php
+
+Inicialmente se creó un componente flexible, intentando detectar columnas dinámicamente.
+
+Pero el usuario observó algo muy importante:
+
+No quiero que me dé valores falsos.
+Si no tiene ningún registro, colócalo como tal.
+
+Entonces corregimos el componente para eliminar valores inventados como:
+
+Gestión 2026 falsa
+420 estudiantes
+28 docentes
+3 periodos simulados
+actividad reciente falsa
+
+La regla quedó clara:
+
+El sistema solo debe mostrar datos reales.
+Si no hay datos, debe decir “Sin registro”, “0” o “No existen registros”.
+
+------------------------------------------------------------
+
+5.5. Migraciones reales de Gestión Académica
+
+------------------------------------------------------------
+
+Luego el usuario mostró las migraciones reales.
+
+La tabla gestion_academica tiene:
+
+cod_gea
+ani_gea
+fii_gea
+ffi_gea
+est_gea
+created_at
+updated_at
+
+La tabla periodo_evaluacion tiene:
+
+cod_pev
+nom_pev
+ord_pev
+est_pev
+created_at
+updated_at
+
+La tabla inscripcion_estudiante tiene:
+
+cod_ins
+cod_est
+cod_cur
+cod_par
+cod_tur
+cod_gea
+fei_ins
+est_ins
+created_at
+updated_at
+
+Esto permitió corregir completamente el componente, porque antes buscaba columnas como:
+
+cod_ges
+anio
+fecha_inicio
+fecha_fin
+estado
+
+Pero la base real usa:
+
+cod_gea
+ani_gea
+fii_gea
+ffi_gea
+est_gea
+
+------------------------------------------------------------
+
+5.6. Corrección importante sobre periodo_evaluacion
+
+------------------------------------------------------------
+
+Se detectó que periodo_evaluacion no tiene cod_gea.
+
+Por lo tanto:
+
+Los periodos no pertenecen a una gestión específica.
+Son un catálogo general.
+No deben bloquear el cierre de una gestión específica.
+
+Esta fue una decisión importante, porque antes se pensaba validar periodos para cerrar gestión, pero eso habría sido incorrecto con la estructura actual.
+
+------------------------------------------------------------
+
+5.7. Otras migraciones revisadas
+
+------------------------------------------------------------
+
+Para completar el contexto, el usuario envió migraciones de:
+
+curso
+turno
+especialidad_tecnica
+plan_asignatura
+estudiante
+docente
+personal_institucional
+plan_especialidad
+
+Se confirmó que:
+
+plan_asignatura tiene cod_gea
+plan_especialidad tiene cod_gea
+inscripcion_estudiante tiene cod_gea
+
+Por eso, la lógica correcta de cierre de gestión debe revisar:
+
+inscripcion_estudiante.cod_gea
+plan_asignatura.cod_gea
+plan_especialidad.cod_gea
+
+No debe revisar periodo_evaluacion como si fuera específico de una gestión.
+
+------------------------------------------------------------
+
+5.8. Lógica correcta de cierre académico
+
+------------------------------------------------------------
+
+Se definió que para cerrar una gestión:
+
+La gestión debe estar:
+
+ACTIVO
+
+Y no debe tener:
+
+Inscripciones pendientes
+Planes de asignatura incompletos
+Planes de especialidad incompletos
+
+Se consideró incompleto un plan de asignatura cuando:
+
+est_pas != ACTIVO
+hor_pas IS NULL
+hor_pas <= 0
+
+Se consideró incompleto un plan de especialidad cuando:
+
+est_pes != ACTIVO
+hor_pes <= 0
+
+Luego se implementó el cierre real:
+
+'est_gea' => 'CERRADO'
+
+Esto reemplazó la lógica anterior que solo mostraba un mensaje informativo.
+
+------------------------------------------------------------
+
+5.9. Corrección del error del seeder eliminado
+
+------------------------------------------------------------
+
+El usuario ejecutó:
+
+sail artisan migrate:fresh --seed
+
+Las migraciones corrieron correctamente, pero falló el seeder:
+
+include(.../GestionAcademicaSeeder.php): Failed to open stream: No such file or directory
+
+La causa fue que el archivo GestionAcademicaSeeder.php había sido eliminado, pero todavía estaba llamado desde:
+
+database/seeders/DatabaseSeeder.php
+
+La solución fue eliminar la línea:
+
+GestionAcademicaSeeder::class,
+
+del DatabaseSeeder.php.
+
+Se reforzó la decisión:
+
+Gestión Académica debe crearse desde el sistema, no desde seeder.
+
+Porque si se crea desde seeder puede generar:
+
+Años duplicados
+Gestión activa falsa
+Estados iniciales incorrectos
+Confusión en producción
+
+------------------------------------------------------------
+
+5.10. Componente final de Gestión Académica
+
+------------------------------------------------------------
+
+Finalmente se creó desde cero el componente:
+
+app/Livewire/Admin/GestionAcademica.php
+
+Usando solo campos reales.
+
+Funciones principales implementadas:
+
+Crear gestión académica
+Validar año
+Validar fechas
+Validar estado
+Evitar años duplicados
+Evitar más de una gestión ACTIVO
+Activar gestión planificada
+Preparar cierre
+Confirmar cierre
+Contar inscripciones por gestión
+Contar planes de asignatura por gestión
+Contar planes de especialidad por gestión
+Contar pendientes reales
+Mostrar actividad desde bitácora
+Registrar bitácora de forma segura
+Generar código GEA_0001
+Generar código PEV_0001
+Generar código BIT_0001 si corresponde
+
+También se agregó seguridad para no romper si alguna tabla no existe:
+
+Schema::hasTable()
+Schema::hasColumn()
+
+Esto permite que el componente sea más resistente durante desarrollo.
+
+------------------------------------------------------------
+
+5.11. Vista final de Gestión Académica
+
+------------------------------------------------------------
+
+Se trabajó la vista:
+
+resources/views/livewire/admin/gestion-academica.blade.php
+
+El usuario pidió que:
+
+No use transparencia en modals.
+No muestre nombres técnicos de columnas.
+No muestre códigos al usuario final.
+No invente información.
+Sea lo mejor posible.
+Sea adaptable al contexto educativo.
+
+Se corrigió un error importante:
+
+Undefined variable $gestion
+
+La causa fue que se usó $gestion fuera de un @foreach, cuando correspondía usar:
+
+$gestionActiva
+
+Se reconstruyó la vista completa para usar correctamente:
+
+$gestionActiva       → tarjeta principal
+$gestion             → historial dentro del foreach
+$gestionSeleccionada → drawer de detalle
+
+------------------------------------------------------------
+
+5.12. Eliminación de lenguaje técnico en la interfaz
+
+------------------------------------------------------------
+
+El usuario observó que no quería ver textos como:
+
+La tabla actual almacena cod_gea, ani_gea, fii_gea, ffi_gea y est_gea.
+
+Se corrigió porque ese texto era técnico y no debía aparecer al usuario final.
+
+Se reemplazó por lenguaje institucional:
+
+Registra el ciclo académico anual, definiendo sus fechas oficiales y el estado inicial para organizar inscripciones, planificación académica y cierre institucional.
+
+También se eliminaron o reemplazaron textos como:
+
+Código: GEA_0001
+
+por:
+
+Ciclo 2026
+Historial académico anual
+
+------------------------------------------------------------
+
+5.13. Modals sin transparencia
+
+------------------------------------------------------------
+
+El usuario pidió explícitamente:
+
+No uses lo transparente en los modals, no deja ver bien.
+
+Se modificaron los modals y drawer para usar fondos sólidos:
+
+bg-slate-950
+bg-white
+dark:bg-slate-950
+
+En lugar de fondos como:
+
+bg-slate-950/80
+backdrop-blur
+bg-white/10
+
+Esto mejoró la legibilidad y evitó que el contenido de fondo interfiera con los formularios.
+
+------------------------------------------------------------
+
+6. Registro en bitácora desde Gestión Académica
+
+------------------------------------------------------------
+
+Dentro del componente de Gestión Académica se agregó una función segura para registrar eventos en bitácora:
+
+registrarBitacoraSeguro()
+
+Esta función verifica si la tabla y columnas existen antes de insertar.
+
+Registra eventos como:
+
+CREAR_GESTION_ACADEMICA
+ACTIVAR_GESTION_ACADEMICA
+CERRAR_GESTION_ACADEMICA
+
+Esto conecta Gestión Académica con Bitácora Institucional y permite trazabilidad.
+
++------------------------------------------------------------
+
+7. Comandos ejecutados y revisiones técnicas
+
++------------------------------------------------------------
+
+Durante esta etapa se usaron comandos como:
+
+sail php -l app/Livewire/Admin/GestionAcademica.php
+sail php -l app/Livewire/Admin/Bitacora.php
+sail php -l app/Services/BitacoraService.php
+sail artisan optimize:clear
+sail artisan migrate:fresh --seed
+git status
+
+También se revisaron errores de:
+
+Seeder inexistente
+Variables Blade indefinidas
+Permisos 403
+Archivos mal nombrados
+Columnas no coincidentes
+Estados distintos entre vista y base de datos
+Datos falsos en interfaz
+
+------------------------------------------------------------
+
+8. Preparación para Git
+
+------------------------------------------------------------
+
+Al final se decidió subir el avance a Git creando una rama específica.
+
+Se recomendó:
+
+git checkout -b feature/gestion-academica-bitacora
+
+Luego:
+
+sail artisan optimize:clear
+sail php -l app/Livewire/Admin/GestionAcademica.php
+sail php -l app/Livewire/Admin/Bitacora.php
+sail php -l app/Services/BitacoraService.php
+git add .
+git commit -m "feat: implementar gestion academica y bitacora institucional"
+git push -u origin feature/gestion-academica-bitacora
+
+La intención fue dejar separado este avance en una rama clara, porque se trabajaron módulos importantes y sensibles.
+
+------------------------------------------------------------
+
+9. Decisiones importantes tomadas en esta etapa
+
+------------------------------------------------------------
+
+Decisión 1: No mostrar datos falsos
+
+------------------------------------------------------------
+
+Se estableció que:
+
+Si no existe un dato, el sistema debe mostrar 0, Sin registro o No existen registros.
+
+No se deben usar datos ficticios como:
+
+420 estudiantes
+28 docentes
+Gestión 2026 inventada
+
+Esto hace que el sistema sea más confiable.
+
+------------------------------------------------------------
+
+Decisión 2: No mostrar códigos internos al usuario final
+
+------------------------------------------------------------
+
+Se decidió que campos como:
+
+cod_gea
+cod_est
+cod_per
+cod_bit
+cod_pas
+cod_pes
+
+no deben mostrarse en la interfaz principal.
+
+El usuario final debe ver:
+
+Ciclo 2026
+Gestión Académica 2026
+Historial académico anual
+Inscripciones
+Planes de asignatura
+Planes de especialidad
+
+------------------------------------------------------------
+
+Decisión 3: La bitácora debe ser interpretada
+
+------------------------------------------------------------
+
+La bitácora no debe mostrar solo acciones técnicas.
+
+Debe transformar:
+
+CREAR_GESTION_ACADEMICA
+
+en:
+
+Se registró una nueva gestión académica.
+
+------------------------------------------------------------
+
+Decisión 4: Periodo de evaluación es catálogo general
+
+------------------------------------------------------------
+
+Como periodo_evaluacion no tiene cod_gea, no se debe tratar como dependiente de gestión.
+
+Por ahora:
+
+periodo_evaluacion = catálogo institucional general
+
+------------------------------------------------------------
+
+Decisión 5: Gestión Académica se crea desde el sistema
+
+------------------------------------------------------------
+
+Se eliminó el seeder de gestión académica.
+
+La razón:
+
+Evitar gestiones falsas.
+Evitar años duplicados.
+Evitar estado ACTIVO insertado sin control.
+Forzar creación mediante validaciones Livewire.
+
+------------------------------------------------------------
+
+Decisión 6: Cierre académico responsable
+
+------------------------------------------------------------
+
+Una gestión no se cierra directamente.
+
+Primero se revisa:
+
+Inscripciones pendientes
+Planes de asignatura incompletos
+Planes de especialidad incompletos
+
+Solo si todo está en 0, se permite cerrar.
+
+
+
+-------------------------------10. Estado actual alcanzado----------------------------------
+
+Al terminar esta etapa, el proyecto tiene avances importantes:
+
+Gestión de Estudiantes diseñada conceptualmente.
+Componente de estudiantes trabajado.
+Rutas y permisos revisados.
+Seeder de paralelo corregido conceptualmente.
+Bitácora Institucional analizada y potenciada.
+BitacoraService creado y corregido.
+Vista de bitácora diseñada como módulo de auditoría.
+Perfil y autenticación mejorados visualmente.
+Foto de perfil revisada.
+Gestión Académica diseñada desde cero.
+Componente de Gestión Académica alineado a migraciones reales.
+Vista de Gestión Académica mejorada.
+Cierre académico implementado.
+Seeder de gestión académica eliminado correctamente.
+Preparación para subir a Git.
+
+
+-------------------------------11. Reflexión del desarrollador----------------------------------
+
+Esta etapa fue una de las más importantes del proyecto SAVP: TIS-3, porque se pasó de tener una base de datos estructurada a comenzar a construir módulos administrativos reales.
+
+El aprendizaje principal fue entender que un sistema educativo no puede reducirse a CRUDs simples. Cada módulo debe representar una responsabilidad institucional.
+
+La Gestión de Estudiantes no es solo registrar estudiantes; es controlar matrícula, inscripción, estado académico y trayectoria.
+
+La Bitácora no es solo guardar logs; es garantizar trazabilidad, seguridad y responsabilidad institucional.
+
+La Gestión Académica no es solo guardar un año; es controlar todo un ciclo educativo, sus inscripciones, planes, estructura, cierre e historial.
+
+También se aprendió algo muy importante: no se deben inventar datos para que una interfaz se vea bonita. Un sistema serio debe mostrar la verdad de su base de datos, aunque al principio esté vacía. Si no hay registros, debe decirlo. Si no hay actividad, debe mostrarlo. Si no existe una relación, no se debe fingir que existe.
+
+Este avance demuestra que el sistema está creciendo con criterio. Ya no se trata solo de programar pantallas, sino de construir una herramienta que pueda ser defendida académicamente, entendida por docentes, usada por administrativos y revisada por una autoridad educativa.
+
+Mi versión personal
+
+Hoy avanzamos bastante en el proyecto SAVP: TIS-3. No solo hicimos código, sino que entendimos mejor cómo debe funcionar un sistema educativo real.
+
+Aprendí que cada módulo tiene que tener sentido dentro de la institución. No es suficiente crear una tabla y mostrarla en pantalla. Hay que pensar quién la usará, qué necesita ver, qué errores se deben evitar y cómo se va a mantener la trazabilidad.
+
+También aprendí que no debo mostrar datos falsos solo para que la interfaz se vea llena. Si el sistema no tiene información, debe decirlo claramente. Eso hace que el sistema sea más serio y más confiable.
+
+En Gestión Académica entendí que un año escolar no es solo un número. Es un ciclo completo donde se organizan inscripciones, cursos, paralelos, planes, especialidades y cierre institucional. También entendí que cerrar una gestión no debe ser algo simple, porque representa cerrar un periodo importante de la institución.
+
+En Bitácora aprendí que registrar acciones no sirve si nadie las entiende. Por eso es importante humanizar los eventos y mostrar lo que pasó de forma clara.
+
+Siento que este proyecto cada vez se vuelve más grande, pero también más real. Al inicio parecía que solo estaba haciendo pantallas, pero ahora veo que estoy construyendo una estructura que puede ayudar a organizar mejor una institución educativa.
+
+Todavía falta mucho, pero esta etapa me demuestra que el sistema ya tiene una base fuerte. Cada error corregido, cada migración ajustada y cada vista mejorada me ayuda a entender mejor cómo se construye software de verdad.
+
+Hoy no solo avancé en código. Avancé como desarrollador.

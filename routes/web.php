@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\GestionPersonalInstitucional;
 use App\Http\Controllers\Admin\GestionUsuarioController;
 use App\Http\Controllers\Admin\BitacoraController;
 use App\Http\Controllers\Admin\GestionAcademicaController;
+use App\Http\Controllers\Admin\GestionCursosController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -67,4 +68,8 @@ Route::middleware([
     Route::get('/gestion-academica', [GestionAcademicaController::class, 'index'])
         ->name('gestion-academica')
         ->middleware('can:Gestion_Academica');
+
+    Route::get('/gestion-cursos', [GestionCursosController::class, 'index'])
+        ->name('gestion-cursos')
+        ->middleware('can:Cursos');
 });

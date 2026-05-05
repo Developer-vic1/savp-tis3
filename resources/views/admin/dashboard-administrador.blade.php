@@ -18,7 +18,16 @@
                     </div>
 
                     <h2 class="ui-title mt-3 text-3xl font-black tracking-tight">
-                        Buen día, {{ $nombreCompleto ?: 'Administrador' }}
+                        @php
+                            $horaActual = date('H');
+                            $saludo = 'Buen día';
+                            if ($horaActual >= 12 && $horaActual < 18) {
+                                $saludo = 'Buena tarde';
+                            } elseif ($horaActual >= 18) {
+                                $saludo = 'Buenas noches';
+                            }
+                        @endphp
+                        {{ $saludo }}, {{ $nombreCompleto ?: 'Administrador' }}
                     </h2>
 
                     <p class="ui-muted mt-3 max-w-2xl text-sm leading-6">

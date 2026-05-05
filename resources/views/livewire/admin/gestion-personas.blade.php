@@ -574,10 +574,12 @@
     {{-- MODAL CREAR PERSONA --}}
     @if ($modalCrear)
         <div wire:key="modal-crear-persona" class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-6">
+
             <div class="ui-modal-backdrop" wire:click="cerrarModalCrear"></div>
 
-            <div x-data="{ valido: false }" x-init="$nextTick(() => valido = validarPersonaForm($root))"
-                @input="valido = validarPersonaForm($root)" @change="valido = validarPersonaForm($root)"
+            <div x-data="{ validacion: { valido: false, errores: {}, lista: [] } }"
+                x-init="$nextTick(() => validacion = estadoValidacionPersona($root))"
+                @input="validacion = estadoValidacionPersona($root)" @change="validacion = estadoValidacionPersona($root)"
                 class="ui-modal w-full max-w-4xl">
 
                 <div class="bg-gradient-to-r from-emerald-600 to-sky-600 px-6 py-5 text-white">
@@ -586,9 +588,11 @@
                             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
                                 Nuevo registro
                             </p>
+
                             <h3 class="mt-2 text-2xl font-black">
                                 Registrar persona
                             </h3>
+
                             <p class="mt-2 text-sm text-white/90">
                                 Registra los datos personales antes de crear una cuenta de usuario.
                             </p>
@@ -605,7 +609,22 @@
                 </div>
 
                 <div class="max-h-[72vh] overflow-y-auto px-6 py-6 ui-scrollbar">
+
+                    <div x-show="!validacion.valido" x-cloak class="mb-5 rounded-2xl border px-4 py-3"
+                        style="background: var(--ui-danger-soft); border-color: var(--ui-danger-border); color: var(--ui-danger);">
+                        <p class="text-sm font-black">
+                            Revisa los datos antes de guardar
+                        </p>
+
+                        <ul class="mt-2 list-disc space-y-1 pl-5 text-xs font-semibold leading-5">
+                            <template x-for="error in validacion.lista" :key="error">
+                                <li x-text="error"></li>
+                            </template>
+                        </ul>
+                    </div>
+
                     <div class="grid gap-5 md:grid-cols-2">
+
                         <div class="md:col-span-2">
                             <label class="ui-label">
                                 Foto de la persona
@@ -614,8 +633,10 @@
                             <div class="ui-card-soft flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
                                 <div class="h-24 w-24 overflow-hidden rounded-3xl ring-1"
                                     style="background: var(--ui-surface); --tw-ring-color: var(--ui-border);">
+
                                     @if ($foto)
-                                        <img src="{{ $foto->temporaryUrl() }}" class="h-full w-full object-cover">
+                                        <img src="{{ $foto->temporaryUrl() }}" class="h-full w-full object-cover"
+                                            alt="Vista previa de la foto">
                                     @else
                                         <div class="flex h-full w-full items-center justify-center text-2xl font-black"
                                             style="background: linear-gradient(135deg, var(--ui-primary-soft), var(--ui-info-soft)); color: var(--ui-text-soft);">
@@ -639,45 +660,99 @@
                         </div>
 
                         <div>
-                            <label class="ui-label">Nombre</label>
-                            <input type="text" wire:model="form.nom_per" data-field="nombre"
-                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input">
+                            <label class="ui-label">
+                                Nombre <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" wire:model="form.nom_per" data-field="nombre" maxlength="100"
+                                autocomplete="off" @input="$event.target.value = limpiarSoloLetras($event.target.value)"
+                                class="ui-input" placeholder="Ej. Víctor">
+
+                            <p x-show="validacion.errores.nombre" x-cloak x-text="validacion.errores.nombre"
+                                class="ui-error"></p>
+
                             @error('form.nom_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Apellido paterno</label>
-                            <input type="text" wire:model="form.ape_pat_per" data-field="apellido"
-                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input">
+                            <label class="ui-label">
+                                Apellido paterno <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" wire:model="form.ape_pat_per" data-field="apellido" maxlength="100"
+                                autocomplete="off" @input="$event.target.value = limpiarSoloLetras($event.target.value)"
+                                class="ui-input" placeholder="Ej. Asturizaga">
+
+                            <p x-show="validacion.errores.apellido" x-cloak x-text="validacion.errores.apellido"
+                                class="ui-error"></p>
+
                             @error('form.ape_pat_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Apellido materno</label>
-                            <input type="text" wire:model="form.ape_mat_per"
-                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input">
-                        </div>
+                            <label class="ui-label">
+                                Apellido materno
+                            </label>
 
-                        <div>
-                            <label class="ui-label">CI</label>
-                            <input type="text" wire:model="form.ci_per" data-field="ci" maxlength="12"
-                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input">
-                            @error('form.ci_per')
+                            <input type="text" wire:model="form.ape_mat_per" maxlength="100" autocomplete="off"
+                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input"
+                                placeholder="Ej. Plata">
+
+                            @error('form.ape_mat_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Complemento</label>
-                            <input type="text" wire:model="form.com_per" maxlength="4" class="ui-input">
+                            <label class="ui-label">
+                                CI <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" wire:model="form.ci_per" data-field="ci" maxlength="12" autocomplete="off"
+                                inputmode="numeric" @input="$event.target.value = limpiarSoloNumeros($event.target.value)"
+                                class="ui-input" placeholder="Ej. 12345678">
+
+                            <p x-show="validacion.errores.ci" x-cloak x-text="validacion.errores.ci" class="ui-error"></p>
+
+                            @error('form.ci_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Debe contener entre 5 y 12 números.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="ui-label">Expedido</label>
+                            <label class="ui-label">
+                                Complemento
+                            </label>
+
+                            <input type="text" wire:model="form.com_per" data-field="complemento" maxlength="4"
+                                autocomplete="off" @input="$event.target.value = limpiarComplementoCi($event.target.value)"
+                                class="ui-input" placeholder="Opcional. Ej. 1A">
+
+                            <p x-show="validacion.errores.complemento" x-cloak x-text="validacion.errores.complemento"
+                                class="ui-error"></p>
+
+                            @error('form.com_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Campo opcional. Solo se llena si el CI tiene complemento.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="ui-label">
+                                Expedido <span class="text-red-500">*</span>
+                            </label>
+
                             <select wire:model="form.exp_per" data-field="expedido" class="ui-select">
                                 <option value="">Seleccionar</option>
                                 <option value="LP">LP</option>
@@ -690,75 +765,142 @@
                                 <option value="BN">BN</option>
                                 <option value="PD">PD</option>
                             </select>
+
+                            <p x-show="validacion.errores.expedido" x-cloak x-text="validacion.errores.expedido"
+                                class="ui-error"></p>
+
                             @error('form.exp_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Fecha de nacimiento</label>
+                            <label class="ui-label">
+                                Fecha de nacimiento <span class="text-red-500">*</span>
+                            </label>
+
                             <input type="date" wire:model="form.fec_nac_per" data-field="fecha" min="1900-01-01"
                                 max="{{ now()->subYears(8)->format('Y-m-d') }}" class="ui-input">
+
+                            <p x-show="validacion.errores.fecha" x-cloak x-text="validacion.errores.fecha" class="ui-error">
+                            </p>
+
                             @error('form.fec_nac_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
+
+                            <p class="ui-help">
+                                La persona debe tener al menos 8 años.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="ui-label">Género</label>
+                            <label class="ui-label">
+                                Género <span class="text-red-500">*</span>
+                            </label>
+
                             <select wire:model="form.gen_per" data-field="genero" class="ui-select">
                                 <option value="">Seleccionar</option>
                                 <option value="M">Masculino</option>
                                 <option value="F">Femenino</option>
                             </select>
+
+                            <p x-show="validacion.errores.genero" x-cloak x-text="validacion.errores.genero"
+                                class="ui-error"></p>
+
                             @error('form.gen_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Teléfono</label>
+                            <label class="ui-label">
+                                Teléfono
+                            </label>
+
                             <input type="text" wire:model="form.tel_per" data-field="telefono" maxlength="8"
-                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input">
+                                autocomplete="off" inputmode="numeric"
+                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input"
+                                placeholder="Ej. 70123456">
+
+                            <p x-show="validacion.errores.telefono" x-cloak x-text="validacion.errores.telefono"
+                                class="ui-error"></p>
+
+                            @error('form.tel_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Opcional. Si se llena, debe tener 7 u 8 números.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="ui-label">Correo</label>
-                            <input type="email" wire:model="form.ema_per" data-field="email" placeholder="persona@gmail.com"
-                                class="ui-input">
+                            <label class="ui-label">
+                                Correo
+                            </label>
+
+                            <input type="email" wire:model="form.ema_per" data-field="email" maxlength="150"
+                                autocomplete="off" @input="$event.target.value = limpiarCorreo($event.target.value)"
+                                class="ui-input" placeholder="persona@gmail.com">
+
+                            <p x-show="validacion.errores.email" x-cloak x-text="validacion.errores.email" class="ui-error">
+                            </p>
+
                             @error('form.ema_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Opcional. Se aceptan Gmail, Hotmail, Outlook o Yahoo.
+                            </p>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="ui-label">
+                                Dirección
+                            </label>
+
+                            <input type="text" wire:model="form.dir_per" maxlength="255" autocomplete="off" class="ui-input"
+                                placeholder="Ej. Zona Villa Victoria, calle...">
+
+                            @error('form.dir_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="ui-label">Dirección</label>
-                            <input type="text" wire:model="form.dir_per" class="ui-input">
-                        </div>
+                            <label class="ui-label">
+                                Estado
+                            </label>
 
-                        <div class="md:col-span-2">
-                            <label class="ui-label">Estado</label>
                             <select wire:model="form.est_per" class="ui-select">
                                 <option value="1">Activo</option>
                                 <option value="0">Inactivo</option>
                             </select>
+
+                            @error('form.est_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="ui-card-soft md:col-span-2 p-4">
                             <p class="text-sm font-semibold" style="color: var(--ui-text-soft);">
                                 Validación del registro
                             </p>
+
                             <p class="mt-1 text-xs leading-5" style="color: var(--ui-muted);">
-                                El botón de guardado se habilita cuando nombre, apellido paterno, CI, expedido, fecha de
-                                nacimiento y género son válidos.
+                                El sistema bloquea el guardado si el CI, teléfono o correo no cumplen el formato.
+                                El complemento es opcional.
                             </p>
                         </div>
                     </div>
                 </div>
 
                 <div class="ui-modal-footer flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <p x-show="!valido" x-cloak class="text-sm font-medium sm:mr-auto" style="color: var(--ui-danger);">
-                        Completa correctamente los campos obligatorios para guardar.
+                    <p x-show="!validacion.valido" x-cloak class="text-sm font-medium sm:mr-auto"
+                        style="color: var(--ui-danger);">
+                        Corrige los campos marcados antes de guardar.
                     </p>
 
                     <button type="button" wire:click="cerrarModalCrear" class="ui-btn-secondary">
@@ -766,11 +908,18 @@
                     </button>
 
                     <button type="button" wire:click="guardarPersona" wire:loading.attr="disabled"
-                        wire:target="guardarPersona" :disabled="!valido" :class="valido
-                                ? 'ui-btn-primary'
-                                : 'ui-btn cursor-not-allowed bg-slate-300 text-slate-500 shadow-none'"
+                        wire:target="guardarPersona" :disabled="!validacion.valido" :class="validacion.valido
+                                    ? 'ui-btn-primary'
+                                    : 'ui-btn cursor-not-allowed bg-slate-300 text-slate-500 shadow-none'"
                         class="rounded-2xl px-5 py-3 text-sm font-semibold transition">
-                        Guardar persona
+
+                        <span wire:loading.remove wire:target="guardarPersona">
+                            Guardar persona
+                        </span>
+
+                        <span wire:loading wire:target="guardarPersona">
+                            Guardando...
+                        </span>
                     </button>
                 </div>
             </div>
@@ -941,13 +1090,16 @@
         </div>
     @endif
 
+
     {{-- MODAL EDITAR PERSONA --}}
     @if ($modalEditar)
         <div wire:key="modal-editar-persona" class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-6">
+
             <div class="ui-modal-backdrop" wire:click="cerrarModalEditar"></div>
 
-            <div x-data="{ valido: false }" x-init="$nextTick(() => valido = validarPersonaForm($root))"
-                @input="valido = validarPersonaForm($root)" @change="valido = validarPersonaForm($root)"
+            <div x-data="{ validacion: { valido: false, errores: {}, lista: [] } }"
+                x-init="$nextTick(() => validacion = estadoValidacionPersona($root))"
+                @input="validacion = estadoValidacionPersona($root)" @change="validacion = estadoValidacionPersona($root)"
                 class="ui-modal w-full max-w-4xl">
 
                 <div class="bg-gradient-to-r from-emerald-600 to-sky-600 px-6 py-5 text-white">
@@ -956,9 +1108,11 @@
                             <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/80">
                                 Edición de registro
                             </p>
+
                             <h3 class="mt-2 text-2xl font-black">
                                 Editar persona
                             </h3>
+
                             <p class="mt-2 text-sm text-white/90">
                                 Actualiza los datos personales sin modificar los códigos internos.
                             </p>
@@ -975,13 +1129,28 @@
                 </div>
 
                 <div class="max-h-[72vh] overflow-y-auto px-6 py-6 ui-scrollbar">
+
                     @error('editar_general')
                         <div class="ui-alert-danger mb-5">
                             {{ $message }}
                         </div>
                     @enderror
 
+                    <div x-show="!validacion.valido" x-cloak class="mb-5 rounded-2xl border px-4 py-3"
+                        style="background: var(--ui-danger-soft); border-color: var(--ui-danger-border); color: var(--ui-danger);">
+                        <p class="text-sm font-black">
+                            Revisa los datos antes de actualizar
+                        </p>
+
+                        <ul class="mt-2 list-disc space-y-1 pl-5 text-xs font-semibold leading-5">
+                            <template x-for="error in validacion.lista" :key="error">
+                                <li x-text="error"></li>
+                            </template>
+                        </ul>
+                    </div>
+
                     <div class="grid gap-5 md:grid-cols-2">
+
                         <div class="md:col-span-2">
                             <label class="ui-label">
                                 Foto de la persona
@@ -990,11 +1159,13 @@
                             <div class="ui-card-soft flex flex-col gap-4 p-4 sm:flex-row sm:items-center">
                                 <div class="h-24 w-24 overflow-hidden rounded-3xl ring-1"
                                     style="background: var(--ui-surface); --tw-ring-color: var(--ui-border);">
+
                                     @if ($fotoEditar)
-                                        <img src="{{ $fotoEditar->temporaryUrl() }}" class="h-full w-full object-cover">
+                                        <img src="{{ $fotoEditar->temporaryUrl() }}" class="h-full w-full object-cover"
+                                            alt="Nueva foto de la persona">
                                     @elseif (!empty($formEditar['fot_per']))
                                         <img src="{{ asset('storage/' . $formEditar['fot_per']) }}"
-                                            class="h-full w-full object-cover">
+                                            class="h-full w-full object-cover" alt="Foto actual de la persona">
                                     @else
                                         <div class="flex h-full w-full items-center justify-center text-2xl font-black"
                                             style="background: linear-gradient(135deg, var(--ui-primary-soft), var(--ui-info-soft)); color: var(--ui-text-soft);">
@@ -1026,46 +1197,100 @@
                         </div>
 
                         <div>
-                            <label class="ui-label">Nombre</label>
-                            <input type="text" wire:model="formEditar.nom_per" data-field="nombre"
-                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input">
+                            <label class="ui-label">
+                                Nombre <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" wire:model="formEditar.nom_per" data-field="nombre" maxlength="100"
+                                autocomplete="off" @input="$event.target.value = limpiarSoloLetras($event.target.value)"
+                                class="ui-input" placeholder="Ej. Víctor">
+
+                            <p x-show="validacion.errores.nombre" x-cloak x-text="validacion.errores.nombre"
+                                class="ui-error"></p>
+
                             @error('formEditar.nom_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Apellido paterno</label>
-                            <input type="text" wire:model="formEditar.ape_pat_per" data-field="apellido"
-                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input">
+                            <label class="ui-label">
+                                Apellido paterno <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" wire:model="formEditar.ape_pat_per" data-field="apellido" maxlength="100"
+                                autocomplete="off" @input="$event.target.value = limpiarSoloLetras($event.target.value)"
+                                class="ui-input" placeholder="Ej. Asturizaga">
+
+                            <p x-show="validacion.errores.apellido" x-cloak x-text="validacion.errores.apellido"
+                                class="ui-error"></p>
+
                             @error('formEditar.ape_pat_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Apellido materno</label>
-                            <input type="text" wire:model="formEditar.ape_mat_per"
-                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input">
-                        </div>
+                            <label class="ui-label">
+                                Apellido materno
+                            </label>
 
-                        <div>
-                            <label class="ui-label">CI</label>
-                            <input type="text" wire:model="formEditar.ci_per" data-field="ci" maxlength="12"
-                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input">
-                            @error('formEditar.ci_per')
+                            <input type="text" wire:model="formEditar.ape_mat_per" maxlength="100" autocomplete="off"
+                                @input="$event.target.value = limpiarSoloLetras($event.target.value)" class="ui-input"
+                                placeholder="Ej. Plata">
+
+                            @error('formEditar.ape_mat_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Complemento</label>
-                            <input type="text" wire:model="formEditar.com_per" data-field="complemento" maxlength="4"
-                                @input="$event.target.value = limpiarComplementoCi($event.target.value)" class="ui-input">
+                            <label class="ui-label">
+                                CI <span class="text-red-500">*</span>
+                            </label>
+
+                            <input type="text" wire:model="formEditar.ci_per" data-field="ci" maxlength="12"
+                                autocomplete="off" inputmode="numeric"
+                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input"
+                                placeholder="Ej. 12345678">
+
+                            <p x-show="validacion.errores.ci" x-cloak x-text="validacion.errores.ci" class="ui-error"></p>
+
+                            @error('formEditar.ci_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Debe contener entre 5 y 12 números.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="ui-label">Expedido</label>
+                            <label class="ui-label">
+                                Complemento
+                            </label>
+
+                            <input type="text" wire:model="formEditar.com_per" data-field="complemento" maxlength="4"
+                                autocomplete="off" @input="$event.target.value = limpiarComplementoCi($event.target.value)"
+                                class="ui-input" placeholder="Opcional. Ej. 1A">
+
+                            <p x-show="validacion.errores.complemento" x-cloak x-text="validacion.errores.complemento"
+                                class="ui-error"></p>
+
+                            @error('formEditar.com_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Campo opcional. Solo se llena si el CI tiene complemento.
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="ui-label">
+                                Expedido <span class="text-red-500">*</span>
+                            </label>
+
                             <select wire:model="formEditar.exp_per" data-field="expedido" class="ui-select">
                                 <option value="">Seleccionar</option>
                                 <option value="LP">LP</option>
@@ -1078,58 +1303,120 @@
                                 <option value="BN">BN</option>
                                 <option value="PD">PD</option>
                             </select>
+
+                            <p x-show="validacion.errores.expedido" x-cloak x-text="validacion.errores.expedido"
+                                class="ui-error"></p>
+
                             @error('formEditar.exp_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Fecha de nacimiento</label>
+                            <label class="ui-label">
+                                Fecha de nacimiento <span class="text-red-500">*</span>
+                            </label>
+
                             <input type="date" wire:model="formEditar.fec_nac_per" data-field="fecha" min="1900-01-01"
-                                max="{{ now()->subYears(10)->format('Y-m-d') }}" class="ui-input">
+                                max="{{ now()->subYears(8)->format('Y-m-d') }}" class="ui-input">
+
+                            <p x-show="validacion.errores.fecha" x-cloak x-text="validacion.errores.fecha" class="ui-error">
+                            </p>
+
                             @error('formEditar.fec_nac_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
+
+                            <p class="ui-help">
+                                La persona debe tener al menos 8 años.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="ui-label">Género</label>
+                            <label class="ui-label">
+                                Género <span class="text-red-500">*</span>
+                            </label>
+
                             <select wire:model="formEditar.gen_per" data-field="genero" class="ui-select">
                                 <option value="">Seleccionar</option>
                                 <option value="M">Masculino</option>
                                 <option value="F">Femenino</option>
                             </select>
+
+                            <p x-show="validacion.errores.genero" x-cloak x-text="validacion.errores.genero"
+                                class="ui-error"></p>
+
                             @error('formEditar.gen_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label class="ui-label">Teléfono</label>
+                            <label class="ui-label">
+                                Teléfono
+                            </label>
+
                             <input type="text" wire:model="formEditar.tel_per" data-field="telefono" maxlength="8"
-                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input">
+                                autocomplete="off" inputmode="numeric"
+                                @input="$event.target.value = limpiarSoloNumeros($event.target.value)" class="ui-input"
+                                placeholder="Ej. 70123456">
+
+                            <p x-show="validacion.errores.telefono" x-cloak x-text="validacion.errores.telefono"
+                                class="ui-error"></p>
+
+                            @error('formEditar.tel_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Opcional. Si se llena, debe tener 7 u 8 números.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="ui-label">Correo</label>
-                            <input type="email" wire:model="formEditar.ema_per" data-field="email"
-                                placeholder="persona@gmail.com" class="ui-input">
+                            <label class="ui-label">
+                                Correo
+                            </label>
+
+                            <input type="email" wire:model="formEditar.ema_per" data-field="email" maxlength="150"
+                                autocomplete="off" @input="$event.target.value = limpiarCorreo($event.target.value)"
+                                class="ui-input" placeholder="persona@gmail.com">
+
+                            <p x-show="validacion.errores.email" x-cloak x-text="validacion.errores.email" class="ui-error">
+                            </p>
+
                             @error('formEditar.ema_per')
+                                <p class="ui-error">{{ $message }}</p>
+                            @enderror
+
+                            <p class="ui-help">
+                                Opcional. Se aceptan Gmail, Hotmail, Outlook o Yahoo.
+                            </p>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="ui-label">
+                                Dirección
+                            </label>
+
+                            <input type="text" wire:model="formEditar.dir_per" maxlength="255" autocomplete="off"
+                                class="ui-input" placeholder="Ej. Zona Villa Victoria, calle...">
+
+                            @error('formEditar.dir_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div class="md:col-span-2">
-                            <label class="ui-label">Dirección</label>
-                            <input type="text" wire:model="formEditar.dir_per" class="ui-input">
-                        </div>
+                            <label class="ui-label">
+                                Estado
+                            </label>
 
-                        <div class="md:col-span-2">
-                            <label class="ui-label">Estado</label>
                             <select wire:model="formEditar.est_per" class="ui-select">
                                 <option value="1">Activo</option>
                                 <option value="0">Inactivo</option>
                             </select>
+
                             @error('formEditar.est_per')
                                 <p class="ui-error">{{ $message }}</p>
                             @enderror
@@ -1139,16 +1426,19 @@
                             <p class="text-sm font-semibold" style="color: var(--ui-text-soft);">
                                 Validación del registro
                             </p>
+
                             <p class="mt-1 text-xs leading-5" style="color: var(--ui-muted);">
-                                El botón de guardado se habilita cuando los campos obligatorios cumplen el formato definido.
+                                El sistema bloquea la actualización si el CI, teléfono o correo no cumplen el formato.
+                                El complemento es opcional.
                             </p>
                         </div>
                     </div>
                 </div>
 
                 <div class="ui-modal-footer flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <p x-show="!valido" x-cloak class="text-sm font-medium sm:mr-auto" style="color: var(--ui-danger);">
-                        Completa correctamente los campos obligatorios para guardar.
+                    <p x-show="!validacion.valido" x-cloak class="text-sm font-medium sm:mr-auto"
+                        style="color: var(--ui-danger);">
+                        Corrige los campos marcados antes de guardar.
                     </p>
 
                     <button type="button" wire:click="cerrarModalEditar" class="ui-btn-secondary">
@@ -1156,11 +1446,18 @@
                     </button>
 
                     <button type="button" wire:click="actualizarPersona" wire:loading.attr="disabled"
-                        wire:target="actualizarPersona" :disabled="!valido" :class="valido
+                        wire:target="actualizarPersona" :disabled="!validacion.valido" :class="validacion.valido
                                 ? 'ui-btn-primary'
                                 : 'ui-btn cursor-not-allowed bg-slate-300 text-slate-500 shadow-none'"
                         class="rounded-2xl px-5 py-3 text-sm font-semibold transition">
-                        Guardar cambios
+
+                        <span wire:loading.remove wire:target="actualizarPersona">
+                            Guardar cambios
+                        </span>
+
+                        <span wire:loading wire:target="actualizarPersona">
+                            Guardando...
+                        </span>
                     </button>
                 </div>
             </div>
@@ -1169,57 +1466,222 @@
 
     @push('scripts')
         <script>
+            /*
+            |--------------------------------------------------------------------------
+            | Limpieza de campos
+            |--------------------------------------------------------------------------
+            */
             function limpiarSoloLetras(valor) {
-                return valor.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]/g, '');
+                return String(valor ?? '').replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]/g, '').replace(/\s{2,}/g, ' ');
             }
 
             function limpiarSoloNumeros(valor) {
-                return valor.replace(/[^0-9]/g, '');
+                return String(valor ?? '').replace(/[^0-9]/g, '');
             }
 
             function limpiarComplementoCi(valor) {
-                return valor.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+                return String(valor ?? '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
             }
 
+            function limpiarCorreo(valor) {
+                return String(valor ?? '').trim().toLowerCase();
+            }
+
+            function obtenerValor(root, field) {
+                return root.querySelector(`[data-field="${field}"]`)?.value?.trim() ?? '';
+            }
+
+            function marcarCampo(root, field, tieneError) {
+                const campo = root.querySelector(`[data-field="${field}"]`);
+
+                if (!campo) return;
+
+                campo.classList.toggle('ring-2', tieneError);
+                campo.classList.toggle('ring-red-400', tieneError);
+                campo.classList.toggle('border-red-400', tieneError);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Validación principal con mensajes
+            |--------------------------------------------------------------------------
+            | Retorna:
+            | {
+            |   valido: true/false,
+            |   errores: { campo: 'mensaje' },
+            |   lista: ['mensaje 1', 'mensaje 2']
+            | }
+            |--------------------------------------------------------------------------
+            */
             function validarPersonaForm(root) {
-                const nombre = root.querySelector('[data-field="nombre"]')?.value.trim() ?? '';
-                const apellido = root.querySelector('[data-field="apellido"]')?.value.trim() ?? '';
-                const ci = root.querySelector('[data-field="ci"]')?.value.trim() ?? '';
-                const fecha = root.querySelector('[data-field="fecha"]')?.value ?? '';
-                const expedido = root.querySelector('[data-field="expedido"]')?.value ?? '';
-                const genero = root.querySelector('[data-field="genero"]')?.value ?? '';
-                const telefono = root.querySelector('[data-field="telefono"]')?.value.trim() ?? '';
-                const email = root.querySelector('[data-field="email"]')?.value.trim() ?? '';
+                const errores = {};
 
-                const nombreValido = nombre.length >= 2;
-                const apellidoValido = apellido.length >= 2;
-                const ciValido = /^[0-9]{5,12}$/.test(ci);
-                const expedidoValido = expedido !== '';
-                const generoValido = genero !== '';
-                const telefonoValido = telefono === '' || /^[0-9]{7,8}$/.test(telefono);
-                const emailValido = email === '' || /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/.test(email);
+                const nombre = obtenerValor(root, 'nombre');
+                const apellido = obtenerValor(root, 'apellido');
+                const ci = obtenerValor(root, 'ci');
+                const complemento = obtenerValor(root, 'complemento');
+                const fecha = obtenerValor(root, 'fecha');
+                const expedido = obtenerValor(root, 'expedido');
+                const genero = obtenerValor(root, 'genero');
+                const telefono = obtenerValor(root, 'telefono');
+                const email = limpiarCorreo(obtenerValor(root, 'email'));
 
-                let fechaValida = false;
+                /*
+                |--------------------------------------------------------------------------
+                | Nombre
+                |--------------------------------------------------------------------------
+                */
+                if (nombre.length === 0) {
+                    errores.nombre = 'El nombre es obligatorio.';
+                } else if (nombre.length < 2) {
+                    errores.nombre = 'El nombre debe tener al menos 2 letras.';
+                } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/.test(nombre)) {
+                    errores.nombre = 'El nombre solo debe contener letras.';
+                }
 
-                if (fecha) {
+                /*
+                |--------------------------------------------------------------------------
+                | Apellido paterno
+                |--------------------------------------------------------------------------
+                */
+                if (apellido.length === 0) {
+                    errores.apellido = 'El apellido paterno es obligatorio.';
+                } else if (apellido.length < 2) {
+                    errores.apellido = 'El apellido paterno debe tener al menos 2 letras.';
+                } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/.test(apellido)) {
+                    errores.apellido = 'El apellido paterno solo debe contener letras.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | CI
+                |--------------------------------------------------------------------------
+                | Ajusté a 5-12 porque en el modal indicas 5 a 12 números.
+                |--------------------------------------------------------------------------
+                */
+                if (ci.length === 0) {
+                    errores.ci = 'El CI es obligatorio.';
+                } else if (!/^[0-9]+$/.test(ci)) {
+                    errores.ci = 'El CI solo debe contener números.';
+                } else if (!/^[0-9]{5,12}$/.test(ci)) {
+                    errores.ci = 'El CI debe tener entre 5 y 12 números.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Complemento
+                |--------------------------------------------------------------------------
+                | Opcional. Solo se valida si el usuario escribe algo.
+                |--------------------------------------------------------------------------
+                */
+                if (complemento !== '' && !/^[A-Z0-9]{1,4}$/.test(complemento)) {
+                    errores.complemento = 'El complemento es opcional, pero si lo llenas debe tener máximo 4 letras o números.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Expedido
+                |--------------------------------------------------------------------------
+                */
+                if (expedido === '') {
+                    errores.expedido = 'Debes seleccionar el lugar de expedición.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Fecha de nacimiento
+                |--------------------------------------------------------------------------
+                */
+                if (fecha === '') {
+                    errores.fecha = 'La fecha de nacimiento es obligatoria.';
+                } else {
                     const nacimiento = new Date(fecha + 'T00:00:00');
                     const minima = new Date('1900-01-01T00:00:00');
                     const maxima = new Date();
                     maxima.setFullYear(maxima.getFullYear() - 8);
 
-                    fechaValida = nacimiento >= minima && nacimiento <= maxima;
+                    if (Number.isNaN(nacimiento.getTime())) {
+                        errores.fecha = 'La fecha de nacimiento no es válida.';
+                    } else if (nacimiento < minima) {
+                        errores.fecha = 'La fecha de nacimiento no puede ser anterior a 1900.';
+                    } else if (nacimiento > maxima) {
+                        errores.fecha = 'La persona debe tener al menos 8 años.';
+                    }
                 }
 
-                return nombreValido &&
-                    apellidoValido &&
-                    ciValido &&
-                    expedidoValido &&
-                    generoValido &&
-                    fechaValida &&
-                    telefonoValido &&
-                    emailValido;
+                /*
+                |--------------------------------------------------------------------------
+                | Género
+                |--------------------------------------------------------------------------
+                */
+                if (genero === '') {
+                    errores.genero = 'Debes seleccionar el género.';
+                } else if (!['M', 'F'].includes(genero)) {
+                    errores.genero = 'El género seleccionado no es válido.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Teléfono
+                |--------------------------------------------------------------------------
+                | Opcional, pero si se llena bloquea el guardado si no tiene 7 u 8 números.
+                |--------------------------------------------------------------------------
+                */
+                if (telefono !== '' && !/^[0-9]{7,8}$/.test(telefono)) {
+                    errores.telefono = 'El teléfono es opcional, pero si lo llenas debe tener 7 u 8 números.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Correo
+                |--------------------------------------------------------------------------
+                | Opcional, pero si se llena bloquea el guardado si no cumple formato.
+                |--------------------------------------------------------------------------
+                */
+                if (email !== '' && !/^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com)$/.test(email)) {
+                    errores.email = 'El correo es opcional, pero si lo llenas debe ser Gmail, Hotmail, Outlook o Yahoo.';
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | Marcado visual de campos
+                |--------------------------------------------------------------------------
+                */
+                [
+                    'nombre',
+                    'apellido',
+                    'ci',
+                    'complemento',
+                    'expedido',
+                    'fecha',
+                    'genero',
+                    'telefono',
+                    'email',
+                ].forEach((field) => {
+                    marcarCampo(root, field, Boolean(errores[field]));
+                });
+
+                return {
+                    valido: Object.keys(errores).length === 0,
+                    errores,
+                    lista: Object.values(errores),
+                };
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | Estado inicial reutilizable para Alpine
+            |--------------------------------------------------------------------------
+            */
+            function estadoValidacionPersona(root) {
+                return validarPersonaForm(root);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Gráficos de personas
+            |--------------------------------------------------------------------------
+            */
             document.addEventListener('livewire:navigated', iniciarGraficosPersonas);
             document.addEventListener('DOMContentLoaded', iniciarGraficosPersonas);
             window.addEventListener('theme-changed', iniciarGraficosPersonas);
