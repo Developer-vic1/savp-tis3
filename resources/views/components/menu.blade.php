@@ -161,8 +161,6 @@
                             </a>
                     @endcan
 
-
-
                     @can('Personal_Institucional')
                             <a href="{{ route('admin.personal-institucional') }}"
                                 class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition" style="{{ request()->routeIs('admin.personal-institucional')
@@ -283,7 +281,7 @@
                     @endcan
 
                     @can('Paralelos')
-                        <a href="#"
+                        <a href="{{ route('admin.gestion-paralelos') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
                             style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
                             onmouseout="this.style.color='var(--ui-muted)'">

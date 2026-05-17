@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BitacoraController;
 use App\Http\Controllers\Admin\GestionAcademicaController;
 use App\Http\Controllers\Admin\GestionCursosController;
 use App\Http\Controllers\Admin\GestionAsignaturaController;
+use App\Http\Controllers\Admin\GestionParaleloController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -77,4 +78,8 @@ Route::middleware([
     Route::get('/gestion-asignaturas', [GestionAsignaturaController::class, 'index'])
         ->name('gestion-asignaturas')
         ->middleware('can:Asignaturas');
+
+    Route::get('/gestion-paralelos', [GestionParaleloController::class, 'index'])
+        ->name('gestion-paralelos')
+        ->middleware('can:Paralelos');
 });
