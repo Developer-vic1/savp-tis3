@@ -13,20 +13,28 @@ class Persona extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'cod_per',
-        'nom_per',
-        'ape_pat_per',
-        'ape_mat_per',
-        'ci_per',
-        'com_per',
-        'exp_per',
-        'fec_nac_per',
-        'gen_per',
-        'tel_per',
-        'ema_per',
-        'dir_per',
-        'fot_per',
-        'est_per',
+        'cod_per',      // Código Persona
+        'nom_per',      // Nombre Persona
+        'ape_pat_per',  // Apellido Paterno Persona
+        'ape_mat_per',  // Apellido Materno Persona
+        'ci_per',       // Carnet de Identidad Persona
+        'com_per',      // Complemento del Carnet de Identidad Persona
+        'exp_per',      // Expedición del Carnet de Identidad Persona
+        'fec_nac_per',  // Fecha de Nacimiento Persona
+        'gen_per',      // Genero Persona
+        'tel_per',      // Teléfono Persona
+        'ema_per',      // Email Persona
+        'dir_per',      // Dirección Persona
+        'zona_per',     // Zona Persona
+        'ave_per',      // Avenida Persona
+        'cal_per',      // Calle Persona
+        'num_per',      // Número Persona
+        'ref_per',      // Referencia Persona
+        'ciu_per',      // Ciudad Persona
+        'mun_per',      // Municipio Persona
+        'dep_per',      // Departamento Persona
+        'fot_per',      // Foto Persona
+        'est_per',      // Estado Persona
     ];
 
     protected static function booted(): void
