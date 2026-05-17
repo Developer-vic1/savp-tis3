@@ -125,6 +125,24 @@
                     x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-1"
                     class="mt-2 space-y-1 pl-3">
 
+                    @can('Registro_Personas')
+                            <a href="{{ route('admin.gestion-personas') }}"
+                                class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition" style="{{ request()->routeIs('admin.gestion-personas')
+                        ? 'background: var(--ui-primary-soft); color: var(--ui-primary);'
+                        : 'color: var(--ui-muted);' }}"
+                                onmouseover="this.style.background='var(--ui-primary-soft)'; this.style.color='var(--ui-primary)'"
+                                onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-personas') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-personas') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
+
+                                {{-- Registro de personas / expediente --}}
+                                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15A1.5 1.5 0 0 0 21 18V6a1.5 1.5 0 0 0-1.5-1.5h-15A1.5 1.5 0 0 0 3 6v12a1.5 1.5 0 0 0 1.5 1.5Zm6-10.125a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0ZM12 17.25c-.9-1.285-2.395-2.25-4.125-2.25S4.65 15.965 3.75 17.25" />
+                                </svg>
+
+                                <span x-show="sidebarOpen" x-cloak>Registro de personas</span>
+                            </a>
+                    @endcan
+
                     @can('Gestion_Usuarios')
                             <a href="{{ route('admin.gestion-usuarios') }}"
                                 class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition" style="{{ request()->routeIs('admin.gestion-usuarios')
@@ -143,23 +161,7 @@
                             </a>
                     @endcan
 
-                    @can('Registro_Personas')
-                            <a href="{{ route('admin.gestion-personas') }}"
-                                class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition" style="{{ request()->routeIs('admin.gestion-personas')
-                        ? 'background: var(--ui-primary-soft); color: var(--ui-primary);'
-                        : 'color: var(--ui-muted);' }}"
-                                onmouseover="this.style.background='var(--ui-primary-soft)'; this.style.color='var(--ui-primary)'"
-                                onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-personas') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-personas') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
-                                {{-- Registro de personas / expediente --}}
-                                <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                        d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15A1.5 1.5 0 0 0 21 18V6a1.5 1.5 0 0 0-1.5-1.5h-15A1.5 1.5 0 0 0 3 6v12a1.5 1.5 0 0 0 1.5 1.5Zm6-10.125a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0ZM12 17.25c-.9-1.285-2.395-2.25-4.125-2.25S4.65 15.965 3.75 17.25" />
-                                </svg>
-
-                                <span x-show="sidebarOpen" x-cloak>Registro de personas</span>
-                            </a>
-                    @endcan
 
                     @can('Personal_Institucional')
                             <a href="{{ route('admin.personal-institucional') }}"
