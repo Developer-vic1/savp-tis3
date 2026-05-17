@@ -22,5 +22,5 @@ class AppServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom([
             database_path('migrations/aula_virtual'),
         ]);
-}
+    }
 }
