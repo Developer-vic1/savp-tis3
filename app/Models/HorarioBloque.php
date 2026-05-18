@@ -14,6 +14,7 @@ class HorarioBloque extends Model
 
     protected $fillable = [
         'cod_hbl',
+        'cod_pho',
         'cod_tur',
         'num_hbl',
         'hor_ini_hbl',
