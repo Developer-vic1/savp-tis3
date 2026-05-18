@@ -293,7 +293,7 @@ class PersonalInstitucional extends Component
     private function obtenerGestionAcademicaPorDefecto(): ?GestionAcademica
     {
         return GestionAcademica::query()
-            ->where('est_gea', 'ACTIVO')
+            ->where('est_gea', 'ACTIVA')
             ->orderByDesc('ani_gea')
             ->first();
     }
