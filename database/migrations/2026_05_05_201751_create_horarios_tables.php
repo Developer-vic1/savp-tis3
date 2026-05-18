@@ -117,6 +117,7 @@ return new class extends Migration
         */
         Schema::create('horario_bloque', function (Blueprint $table) {
             $table->string('cod_hbl', 20)->primary();
+            $table->string('cod_pho', 20)->nullable()->after('cod_tur');
 
             $table->string('cod_tur', 20);
             $table->unsignedTinyInteger('num_hbl');
@@ -144,6 +145,17 @@ return new class extends Migration
             $table->index('cod_tur');
             $table->index('num_hbl');
             $table->index('est_hbl');
+            $table->index('cod_pho', 'horario_bloque_cod_pho_index');
+
+            $table->unique(
+                ['cod_pho', 'num_hbl'],
+                'horario_bloque_plantilla_numero_unique'
+            );
+
+            $table->unique(
+                ['cod_pho', 'hor_ini_hbl', 'hor_fin_hbl'],
+                'horario_bloque_plantilla_rango_unique'
+            );
         });
 
         /*
@@ -160,6 +172,15 @@ return new class extends Migration
                     ->cascadeOnUpdate();
             }
         });
+        Schema::table('horario_bloque', function (Blueprint $table) {
+            $table->foreign('cod_pho', 'horario_bloque_cod_pho_foreign')
+                ->references('cod_pho')
+                ->on('plantilla_horaria')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+        });
+
+
 
         /*
         |--------------------------------------------------------------------------
