@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\GestionAcademicaController;
 use App\Http\Controllers\Admin\GestionCursosController;
 use App\Http\Controllers\Admin\GestionAsignaturaController;
 use App\Http\Controllers\Admin\GestionParaleloController;
+use App\Http\Controllers\Admin\GestionTurnoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -82,4 +83,8 @@ Route::middleware([
     Route::get('/gestion-paralelos', [GestionParaleloController::class, 'index'])
         ->name('gestion-paralelos')
         ->middleware('can:Paralelos');
+
+    Route::get('/gestion-turnos', [GestionTurnoController::class, 'index'])
+        ->name('gestion-turnos')
+        ->middleware('can:Turnos');
 });
