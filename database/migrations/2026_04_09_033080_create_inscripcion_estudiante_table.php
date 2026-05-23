@@ -40,9 +40,29 @@ return new class extends Migration
 
             $table->date('fei_ins'); // Fecha inscripción
 
+            $table->string('tip_ins', 30)->default('REGULAR'); // Tipo de inscripción: NUEVO, REGULAR, TRASLADO, etc.
+            $table->string('con_ins', 30)->default('NORMAL'); // Condición de inscripción: NORMAL, OBSERVADA, CONDICIONAL, etc.
+
+            $table->text('obs_ins')->nullable(); // Observación general de la inscripción
+            $table->text('mot_obs_ins')->nullable(); // Motivo de observación o condición especial
+            $table->string('pro_ins', 180)->nullable(); // Procedencia del estudiante en caso de traslado
+
+            $table->boolean('doc_com_ins')->default(false); // Documentos completos
+            $table->boolean('sob_aut_ins')->default(false); // Sobrecupo autorizado
+
+            $table->string('registrado_por', 20)->nullable(); // Usuario que registra la inscripción
+
+            $table->timestamp('fec_con_ins')->nullable(); // Fecha de confirmación
+            $table->string('confirmado_por', 20)->nullable(); // Usuario que confirma
+
+            $table->timestamp('fec_anu_ins')->nullable(); // Fecha de anulación
+            $table->string('anulado_por', 20)->nullable(); // Usuario que anula
+            $table->text('mot_anu_ins')->nullable(); // Motivo de anulación
+
             $table->string('est_ins', 20)->default('ACTIVO'); // Estado inscripción
 
             $table->timestamps(); // Fecha de creación y actualización
+            $table->unique(['cod_est', 'cod_gea'], 'uq_inscripcion_estudiante_por_gestion');
         });
     }
 

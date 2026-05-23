@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\GestionCursosController;
 use App\Http\Controllers\Admin\GestionAsignaturaController;
 use App\Http\Controllers\Admin\GestionParaleloController;
 use App\Http\Controllers\Admin\GestionTurnoController;
+use App\Http\Controllers\Admin\GestionInscripcionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -87,4 +88,8 @@ Route::middleware([
     Route::get('/gestion-turnos', [GestionTurnoController::class, 'index'])
         ->name('gestion-turnos')
         ->middleware('can:Turnos');
+
+    Route::get('/gestion-inscripciones', [GestionInscripcionController::class, 'index'])
+        ->name('gestion-inscripciones')
+        ->middleware('can:Inscripciones');
 });

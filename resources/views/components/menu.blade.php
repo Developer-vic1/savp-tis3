@@ -446,7 +446,7 @@
                     @endcan
 
                     @can('Inscripciones')
-                        <a href="#"
+                        <a href="{{ route('admin.gestion-inscripciones') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
                             style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
                             onmouseout="this.style.color='var(--ui-muted)'">

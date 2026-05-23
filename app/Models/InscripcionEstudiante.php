@@ -19,7 +19,20 @@ class InscripcionEstudiante extends Model
         'cod_tur', // Código turno
         'cod_gea', // Código gestión académica
         'fei_ins', // Fecha inscripción
-        'est_ins', // Estado inscripción
+        'tip_ins', // Tipo de inscripción
+        'con_ins', // Condición de inscripción
+        'obs_ins', // Observación
+        'mot_obs_ins', // Motivo de observación
+        'pro_ins',
+        'doc_com_ins',
+        'sob_aut_ins',
+        'registrado_por',
+        'fec_con_ins',
+        'confirmado_por',
+        'fec_anu_ins',
+        'anulado_por',
+        'mot_anu_ins',
+        'est_ins',
     ];
 
     protected static function booted(): void
@@ -40,6 +53,14 @@ class InscripcionEstudiante extends Model
             }
         });
     }
+
+    protected $casts = [
+        'fei_ins' => 'date',
+        'doc_com_ins' => 'boolean',
+        'sob_aut_ins' => 'boolean',
+        'fec_con_ins' => 'datetime',
+        'fec_anu_ins' => 'datetime',
+    ];
 
     // 🔗 Relaciones
 
@@ -66,5 +87,10 @@ class InscripcionEstudiante extends Model
     public function gestionAcademica()
     {
         return $this->belongsTo(GestionAcademica::class, 'cod_gea', 'cod_gea');
+    }
+
+    public function documentos()
+    {
+        return $this->hasMany(DocumentoInscripcionEstudiante::class, 'cod_ins', 'cod_ins');
     }
 }
