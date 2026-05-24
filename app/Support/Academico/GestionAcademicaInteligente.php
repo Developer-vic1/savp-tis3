@@ -346,6 +346,12 @@ class GestionAcademicaInteligente
             }
         }
 
+        // Verificar respaldo antes de cierre definitivo
+        if (! $this->tieneRespaldoValidado($codGea)) {
+            $bloqueos[] = 'No existe un respaldo académico validado para esta gestión.';
+            $sugerencias[] = 'Genera y valida un respaldo académico de cierre antes de cerrar definitivamente la gestión.';
+        }
+
         if (! empty($bloqueos)) {
             $sugerencias[] = 'Corrige los procesos pendientes antes de cerrar la gestión como expediente histórico.';
         }
@@ -364,6 +370,7 @@ class GestionAcademicaInteligente
             sugerencias: $sugerencias,
             resumen: array_merge($resumen, [
                 'pendientes_cierre' => $pendientes,
+                'respaldos' => $this->resumirRespaldos($codGea),
             ])
         );
     }
@@ -494,6 +501,160 @@ class GestionAcademicaInteligente
                 'total_registros_exportables' => $totalRegistros,
             ])
         );
+    }
+
+    // ============================================================
+    // RESPALDOS ACADÉMICOS
+    // ============================================================
+
+    public function analizarGeneracionRespaldo(string $codGea): array
+    {
+        $gestion = $this->obtenerGestion($codGea);
+
+        if (! $gestion) {
+            return $this->resultadoBloqueado(
+                'La gestión académica seleccionada no existe.',
+                ['No se encontró el registro en gestion_academica.']
+            );
+        }
+
+        $estado = self::normalizarEstado($gestion->est_gea ?? '');
+
+        $bloqueos = [];
+        $advertencias = [];
+        $sugerencias = [];
+
+        if ($estado === self::ESTADO_ANULADA) {
+            $bloqueos[] = 'No se puede generar un respaldo para una gestión anulada.';
+        }
+
+        $resumen = $this->resumenGestion($codGea);
+
+        $totalRegistros = (
+            ($resumen['inscripciones'] ?? 0) +
+            ($resumen['planes_asignatura'] ?? 0) +
+            ($resumen['planes_especialidad'] ?? 0) +
+            ($resumen['horarios'] ?? 0) +
+            ($resumen['calificaciones'] ?? 0)
+        );
+
+        if ($totalRegistros === 0) {
+            $advertencias[] = 'La gestión no tiene registros académicos asociados. El respaldo será preliminar.';
+        }
+
+        if ($estado === self::ESTADO_ACTIVA) {
+            $advertencias[] = 'La gestión está activa. El respaldo generado será de tipo PRELIMINAR.';
+            $sugerencias[] = 'Para un respaldo de cierre, pasa la gestión a EN_CIERRE primero.';
+        }
+
+        if ($this->existeRespaldoCierrePendiente($codGea)) {
+            $advertencias[] = 'Ya existe un respaldo de cierre generado pero no validado para esta gestión.';
+            $sugerencias[] = 'Valida o archiva el respaldo existente antes de generar uno nuevo.';
+        }
+
+        $tipoSugerido = in_array($estado, [self::ESTADO_EN_CIERRE, self::ESTADO_CERRADA], true)
+            ? 'CIERRE'
+            : 'PRELIMINAR';
+
+        return $this->resultado(
+            puedeContinuar: empty($bloqueos),
+            estadoInteligente: empty($bloqueos)
+                ? ($totalRegistros > 0 ? 'PUEDE_GENERAR' : 'VACIO')
+                : 'BLOQUEADO',
+            nivelRiesgo: $this->nivelRiesgo($bloqueos, $advertencias),
+            mensaje: empty($bloqueos)
+                ? 'Se puede generar un respaldo académico para esta gestión.'
+                : 'No se puede generar un respaldo académico.',
+            bloqueos: $bloqueos,
+            advertencias: $advertencias,
+            sugerencias: $sugerencias,
+            resumen: array_merge($resumen, [
+                'tipo_respaldo_sugerido' => $tipoSugerido,
+                'total_registros' => $totalRegistros,
+                'respaldos_existentes' => $this->resumirRespaldos($codGea),
+            ])
+        );
+    }
+
+    public function resumirRespaldos(string $codGea): array
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            return [
+                'total' => 0,
+                'generados' => 0,
+                'validados' => 0,
+                'observados' => 0,
+                'archivados' => 0,
+                'anulados' => 0,
+                'tiene_cierre_validado' => false,
+                'ultimo_respaldo' => null,
+            ];
+        }
+
+        $respaldos = DB::table('respaldo_gestion_academica')
+            ->where('cod_gea', $codGea)
+            ->get();
+
+        $ultimo = $respaldos->sortByDesc('fec_rga')->first();
+
+        return [
+            'total' => $respaldos->count(),
+            'generados' => $respaldos->where('est_rga', 'GENERADO')->count(),
+            'validados' => $respaldos->where('est_rga', 'VALIDADO')->count(),
+            'observados' => $respaldos->where('est_rga', 'OBSERVADO')->count(),
+            'archivados' => $respaldos->where('est_rga', 'ARCHIVADO')->count(),
+            'anulados' => $respaldos->where('est_rga', 'ANULADO')->count(),
+            'tiene_cierre_validado' => $respaldos
+                ->where('tip_rga', 'CIERRE')
+                ->whereIn('est_rga', ['VALIDADO', 'ARCHIVADO'])
+                ->isNotEmpty(),
+            'ultimo_respaldo' => $ultimo ? [
+                'codigo' => $ultimo->cod_rga,
+                'tipo' => $ultimo->tip_rga,
+                'formato' => $ultimo->for_rga,
+                'estado' => $ultimo->est_rga,
+                'fecha' => $ultimo->fec_rga,
+                'observacion' => $ultimo->obs_rga,
+            ] : null,
+        ];
+    }
+
+    public function tieneRespaldoValidado(string $codGea): bool
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            return false;
+        }
+
+        return DB::table('respaldo_gestion_academica')
+            ->where('cod_gea', $codGea)
+            ->whereIn('est_rga', ['VALIDADO', 'ARCHIVADO'])
+            ->exists();
+    }
+
+    public function existeRespaldoCierreDuplicado(string $codGea): bool
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            return false;
+        }
+
+        return DB::table('respaldo_gestion_academica')
+            ->where('cod_gea', $codGea)
+            ->where('tip_rga', 'CIERRE')
+            ->whereIn('est_rga', ['VALIDADO', 'ARCHIVADO'])
+            ->exists();
+    }
+
+    private function existeRespaldoCierrePendiente(string $codGea): bool
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            return false;
+        }
+
+        return DB::table('respaldo_gestion_academica')
+            ->where('cod_gea', $codGea)
+            ->where('tip_rga', 'CIERRE')
+            ->where('est_rga', 'GENERADO')
+            ->exists();
     }
 
     // ============================================================

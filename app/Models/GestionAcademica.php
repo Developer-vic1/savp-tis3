@@ -49,4 +49,14 @@ class GestionAcademica extends Model
     {
         return $this->hasMany(PlanAsignatura::class, 'cod_gea', 'cod_gea');
     }
+
+    public function respaldos()
+    {
+        return $this->hasMany(RespaldoGestionAcademica::class, 'cod_gea', 'cod_gea');
+    }
+
+    public function horarios()
+    {
+        return $this->hasMany(Horario::class, 'cod_gea', 'cod_gea');
+    }
 }

@@ -1127,6 +1127,154 @@
                         </button>
                     @endforeach
                 </div>
+
+                {{-- RESPALDOS ACADÉMICOS --}}
+                <div class="mt-8 border-t-2 border-slate-100 pt-6 dark:border-slate-800">
+                    <div class="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div>
+                            <p class="text-sm font-black uppercase tracking-[0.18em] text-violet-700 dark:text-violet-300">
+                                Respaldos académicos
+                            </p>
+
+                            <h3 class="mt-2 text-xl font-black text-slate-950 dark:text-white">
+                                Registro de respaldos institucionales
+                            </h3>
+
+                            <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                                Genera, valida y archiva respaldos académicos. Un respaldo validado es requisito para el cierre definitivo.
+                            </p>
+                        </div>
+
+                        @if ($gestionActiva)
+                            <button type="button"
+                                wire:click="generarRespaldo('{{ $gestionActiva['id'] }}')"
+                                wire:loading.attr="disabled"
+                                class="inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-500/20 transition hover:-translate-y-0.5 hover:shadow-xl">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.5v15m7.5-7.5h-15" />
+                                </svg>
+                                <span wire:loading.remove wire:target="generarRespaldo">Generar respaldo</span>
+                                <span wire:loading wire:target="generarRespaldo">Generando...</span>
+                            </button>
+                        @endif
+                    </div>
+
+                    @if (count($this->respaldosGestion) > 0)
+                        <div class="overflow-hidden rounded-[1.5rem] border-2 border-slate-200 shadow-sm dark:border-slate-800">
+                            <table class="min-w-full border-separate border-spacing-0">
+                                <thead>
+                                    <tr class="bg-slate-50 dark:bg-slate-900/80">
+                                        <th class="border-b-2 border-slate-200 px-4 py-3 text-left text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                                            Tipo
+                                        </th>
+                                        <th class="border-b-2 border-slate-200 px-4 py-3 text-left text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                                            Formato
+                                        </th>
+                                        <th class="border-b-2 border-slate-200 px-4 py-3 text-left text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                                            Estado
+                                        </th>
+                                        <th class="border-b-2 border-slate-200 px-4 py-3 text-left text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                                            Fecha
+                                        </th>
+                                        <th class="border-b-2 border-slate-200 px-4 py-3 text-right text-xs font-black uppercase tracking-[0.14em] text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                                            Acciones
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($this->respaldosGestion as $respaldo)
+                                        <tr class="transition hover:bg-slate-50 dark:hover:bg-slate-900/50">
+                                            <td class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                                                <span class="rounded-full border-2 px-3 py-1 text-xs font-black
+                                                    {{ $respaldo['tipo'] === 'CIERRE'
+                                                        ? 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-950 dark:text-amber-300'
+                                                        : 'border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-500/30 dark:bg-violet-950 dark:text-violet-300' }}">
+                                                    {{ $respaldo['tipo_label'] }}
+                                                </span>
+                                            </td>
+
+                                            <td class="border-b border-slate-100 px-4 py-3 text-sm font-bold text-slate-800 dark:border-slate-800 dark:text-slate-200">
+                                                {{ $respaldo['formato'] }}
+                                            </td>
+
+                                            <td class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                                                @php
+                                                    $badgeClass = match ($respaldo['estado']) {
+                                                        'GENERADO' => 'border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-500/30 dark:bg-sky-950 dark:text-sky-300',
+                                                        'VALIDADO' => 'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-950 dark:text-emerald-300',
+                                                        'OBSERVADO' => 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-950 dark:text-amber-300',
+                                                        'ARCHIVADO' => 'border-violet-200 bg-violet-50 text-violet-800 dark:border-violet-500/30 dark:bg-violet-950 dark:text-violet-300',
+                                                        'ANULADO' => 'border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-500/30 dark:bg-rose-950 dark:text-rose-300',
+                                                        default => 'border-slate-200 bg-slate-50 text-slate-800 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300',
+                                                    };
+                                                @endphp
+
+                                                <span class="rounded-full border-2 px-3 py-1 text-xs font-black {{ $badgeClass }}">
+                                                    {{ $respaldo['estado_label'] }}
+                                                </span>
+                                            </td>
+
+                                            <td class="border-b border-slate-100 px-4 py-3 text-sm font-bold text-slate-600 dark:border-slate-800 dark:text-slate-300">
+                                                {{ $respaldo['fecha'] }}
+                                            </td>
+
+                                            <td class="border-b border-slate-100 px-4 py-3 dark:border-slate-800">
+                                                <div class="flex justify-end gap-2">
+                                                    @if ($respaldo['estado'] === 'GENERADO')
+                                                        <button type="button"
+                                                            wire:click="validarRespaldo('{{ $respaldo['id'] }}')"
+                                                            wire:loading.attr="disabled"
+                                                            class="rounded-xl border-2 border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-800 transition hover:-translate-y-0.5 hover:shadow-md dark:border-emerald-500/30 dark:bg-emerald-950 dark:text-emerald-300">
+                                                            Validar
+                                                        </button>
+
+                                                        <button type="button"
+                                                            wire:click="observarRespaldo('{{ $respaldo['id'] }}')"
+                                                            wire:loading.attr="disabled"
+                                                            class="rounded-xl border-2 border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-black text-amber-800 transition hover:-translate-y-0.5 hover:shadow-md dark:border-amber-500/30 dark:bg-amber-950 dark:text-amber-300">
+                                                            Observar
+                                                        </button>
+                                                    @endif
+
+                                                    @if (in_array($respaldo['estado'], ['GENERADO', 'VALIDADO']))
+                                                        <button type="button"
+                                                            wire:click="archivarRespaldo('{{ $respaldo['id'] }}')"
+                                                            wire:loading.attr="disabled"
+                                                            class="rounded-xl border-2 border-violet-200 bg-violet-50 px-3 py-1.5 text-xs font-black text-violet-800 transition hover:-translate-y-0.5 hover:shadow-md dark:border-violet-500/30 dark:bg-violet-950 dark:text-violet-300">
+                                                            Archivar
+                                                        </button>
+                                                    @endif
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-8 text-center dark:border-slate-700 dark:bg-slate-900">
+                            <svg class="mx-auto h-12 w-12 text-slate-400 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                            </svg>
+
+                            <p class="mt-4 text-sm font-black text-slate-950 dark:text-white">
+                                No existen respaldos académicos
+                            </p>
+
+                            <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                                Genera un respaldo académico para documentar el estado de la gestión vigente.
+                            </p>
+
+                            @if ($gestionActiva)
+                                <button type="button"
+                                    wire:click="generarRespaldo('{{ $gestionActiva['id'] }}')"
+                                    class="mt-5 rounded-2xl bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-violet-500/20 transition hover:-translate-y-0.5 hover:shadow-xl">
+                                    Generar primer respaldo
+                                </button>
+                            @endif
+                        </div>
+                    @endif
+                </div>
             </section>
         @endif
 
@@ -1142,8 +1290,56 @@
                     </h2>
 
                     <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                        El cierre definitivo se bloquea si existen procesos académicos pendientes o inconsistencias críticas.
+                        El cierre definitivo se bloquea si existen procesos académicos pendientes, inconsistencias críticas o si no existe un respaldo académico validado.
                     </p>
+                </div>
+
+                {{-- ESTADO DEL RESPALDO PARA CIERRE --}}
+                @php
+                    $resumenRespaldos = $gestionActiva
+                        ? app(\App\Support\Academico\GestionAcademicaInteligente::class)->resumirRespaldos($gestionActiva['id'])
+                        : ['total' => 0, 'validados' => 0, 'tiene_cierre_validado' => false];
+                    $tieneRespaldoValidado = ($resumenRespaldos['validados'] ?? 0) > 0 || ($resumenRespaldos['tiene_cierre_validado'] ?? false);
+                @endphp
+
+                <div class="mb-5 rounded-2xl border-2 p-4 shadow-sm {{ $tieneRespaldoValidado
+                    ? 'border-emerald-200 bg-emerald-50 dark:border-emerald-500/30 dark:bg-emerald-950'
+                    : 'border-rose-200 bg-rose-50 dark:border-rose-500/30 dark:bg-rose-950' }}">
+                    <div class="flex items-center gap-3">
+                        @if ($tieneRespaldoValidado)
+                            <svg class="h-6 w-6 text-emerald-700 dark:text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+
+                            <div>
+                                <p class="text-sm font-black text-emerald-800 dark:text-emerald-200">
+                                    Respaldo académico validado
+                                </p>
+                                <p class="mt-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                                    {{ $resumenRespaldos['validados'] ?? 0 }} respaldo(s) validado(s) · {{ $resumenRespaldos['total'] ?? 0 }} total(es)
+                                </p>
+                            </div>
+                        @else
+                            <svg class="h-6 w-6 text-rose-700 dark:text-rose-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                            </svg>
+
+                            <div>
+                                <p class="text-sm font-black text-rose-800 dark:text-rose-200">
+                                    Sin respaldo académico validado
+                                </p>
+                                <p class="mt-1 text-xs font-semibold text-rose-700 dark:text-rose-300">
+                                    El cierre definitivo requiere un respaldo validado. Ve a Respaldos para generarlo.
+                                </p>
+                            </div>
+
+                            <button type="button"
+                                wire:click="cambiarVista('reportes')"
+                                class="ml-auto rounded-xl border-2 border-rose-200 bg-white px-3 py-1.5 text-xs font-black text-rose-800 transition hover:-translate-y-0.5 hover:shadow-md dark:border-rose-500/30 dark:bg-rose-950 dark:text-rose-300">
+                                Ir a Respaldos
+                            </button>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="grid gap-3 md:grid-cols-2">
@@ -1168,9 +1364,9 @@
                     </button>
 
                     <button type="button"
-                        wire:click="exportarGestion('{{ $gestionActiva['id'] ?? '' }}')"
-                        class="rounded-2xl border-2 border-teal-200 bg-teal-50 px-5 py-3 text-sm font-black text-teal-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-teal-100 hover:shadow-md dark:border-teal-500/30 dark:bg-teal-950 dark:text-teal-300">
-                        Preparar respaldo
+                        wire:click="generarRespaldo('{{ $gestionActiva['id'] ?? '' }}')"
+                        class="rounded-2xl border-2 border-violet-200 bg-violet-50 px-5 py-3 text-sm font-black text-violet-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-violet-100 hover:shadow-md dark:border-violet-500/30 dark:bg-violet-950 dark:text-violet-300">
+                        Generar respaldo
                     </button>
                 </div>
             </section>

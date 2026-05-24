@@ -146,6 +146,7 @@ class GestionAcademica extends Component
             'estructura',
             'inscripciones',
             'reportes',
+            'respaldos',
             'cierre',
         ];
 
@@ -619,6 +620,228 @@ class GestionAcademica extends Component
     }
 
     // ============================================================
+    // RESPALDOS ACADÉMICOS
+    // ============================================================
+
+    public function generarRespaldo(?string $id = null): void
+    {
+        $codGea = $id ?: ($this->selectedGestionId ?: ($this->gestionActiva['id'] ?? null));
+
+        if (! $codGea) {
+            $this->alerta('warning', 'Sin gestión', 'No se seleccionó una gestión académica para generar respaldo.');
+            return;
+        }
+
+        $analisis = $this->soporte()->analizarGeneracionRespaldo($codGea);
+
+        if (! ($analisis['puede_continuar'] ?? false)) {
+            $this->alerta('warning', 'Respaldo bloqueado', $analisis['mensaje'] ?? 'No se puede generar el respaldo.');
+            return;
+        }
+
+        $gestion = DB::table('gestion_academica')->where('cod_gea', $codGea)->first();
+
+        if (! $gestion) {
+            $this->alerta('warning', 'Gestión no encontrada', 'No se encontró la gestión académica.');
+            return;
+        }
+
+        $tipoRespaldo = $analisis['resumen']['tipo_respaldo_sugerido'] ?? 'PRELIMINAR';
+
+        DB::beginTransaction();
+
+        try {
+            $codRga = $this->generarCodigoRespaldo();
+
+            DB::table('respaldo_gestion_academica')->insert([
+                'cod_rga' => $codRga,
+                'cod_gea' => $codGea,
+                'tip_rga' => $tipoRespaldo,
+                'for_rga' => 'JSON',
+                'fec_rga' => now(),
+                'est_rga' => 'GENERADO',
+                'obs_rga' => 'Respaldo académico generado automáticamente por el sistema SAVP-TIS3.',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $this->registrarBitacoraSeguro(
+                accion: 'GENERAR_RESPALDO_ACADEMICO',
+                tabla: 'respaldo_gestion_academica',
+                registro: $codRga,
+                nombreVisible: 'Respaldo ' . strtolower($tipoRespaldo) . ' - Gestión ' . $gestion->ani_gea,
+                descripcion: 'Se generó un respaldo académico de ' . strtolower($tipoRespaldo) . ' para la gestión ' . $gestion->ani_gea . ' antes del cierre institucional.',
+                nivel: 'SUCCESS'
+            );
+
+            DB::commit();
+
+            $this->alerta('success', 'Respaldo generado', 'Se generó el respaldo académico de ' . strtolower($tipoRespaldo) . ' para la gestión ' . $gestion->ani_gea . '.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->alerta('error', 'Error al generar respaldo', 'Ocurrió un error al generar el respaldo académico.');
+        }
+    }
+
+    public function validarRespaldo(string $codRga): void
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla de respaldos.');
+            return;
+        }
+
+        $respaldo = DB::table('respaldo_gestion_academica')->where('cod_rga', $codRga)->first();
+
+        if (! $respaldo) {
+            $this->alerta('warning', 'Respaldo no encontrado', 'El respaldo seleccionado no existe.');
+            return;
+        }
+
+        if ($respaldo->est_rga !== 'GENERADO') {
+            $this->alerta('warning', 'Estado incorrecto', 'Solo se pueden validar respaldos en estado GENERADO.');
+            return;
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $valoresAnteriores = ['est_rga' => $respaldo->est_rga];
+
+            DB::table('respaldo_gestion_academica')
+                ->where('cod_rga', $codRga)
+                ->update([
+                    'est_rga' => 'VALIDADO',
+                    'updated_at' => now(),
+                ]);
+
+            $gestion = DB::table('gestion_academica')->where('cod_gea', $respaldo->cod_gea)->first();
+
+            $this->registrarBitacoraSeguro(
+                accion: 'VALIDAR_RESPALDO_ACADEMICO',
+                tabla: 'respaldo_gestion_academica',
+                registro: $codRga,
+                nombreVisible: 'Respaldo ' . strtolower($respaldo->tip_rga) . ' - Gestión ' . ($gestion->ani_gea ?? ''),
+                descripcion: 'Se validó el respaldo académico ' . strtolower($respaldo->tip_rga) . ' de la gestión ' . ($gestion->ani_gea ?? '') . '. El respaldo queda habilitado para permitir el cierre definitivo.',
+                nivel: 'SUCCESS',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: ['est_rga' => 'VALIDADO']
+            );
+
+            DB::commit();
+
+            $this->alerta('success', 'Respaldo validado', 'El respaldo académico fue validado correctamente.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->alerta('error', 'Error al validar', 'Ocurrió un error al validar el respaldo.');
+        }
+    }
+
+    public function archivarRespaldo(string $codRga): void
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla de respaldos.');
+            return;
+        }
+
+        $respaldo = DB::table('respaldo_gestion_academica')->where('cod_rga', $codRga)->first();
+
+        if (! $respaldo) {
+            $this->alerta('warning', 'Respaldo no encontrado', 'El respaldo seleccionado no existe.');
+            return;
+        }
+
+        if (! in_array($respaldo->est_rga, ['GENERADO', 'VALIDADO'], true)) {
+            $this->alerta('warning', 'Estado incorrecto', 'Solo se pueden archivar respaldos en estado GENERADO o VALIDADO.');
+            return;
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $valoresAnteriores = ['est_rga' => $respaldo->est_rga];
+
+            DB::table('respaldo_gestion_academica')
+                ->where('cod_rga', $codRga)
+                ->update([
+                    'est_rga' => 'ARCHIVADO',
+                    'updated_at' => now(),
+                ]);
+
+            $gestion = DB::table('gestion_academica')->where('cod_gea', $respaldo->cod_gea)->first();
+
+            $this->registrarBitacoraSeguro(
+                accion: 'ARCHIVAR_RESPALDO_ACADEMICO',
+                tabla: 'respaldo_gestion_academica',
+                registro: $codRga,
+                nombreVisible: 'Respaldo ' . strtolower($respaldo->tip_rga) . ' - Gestión ' . ($gestion->ani_gea ?? ''),
+                descripcion: 'Se archivó el respaldo académico ' . strtolower($respaldo->tip_rga) . ' de la gestión ' . ($gestion->ani_gea ?? '') . ' como expediente histórico institucional.',
+                nivel: 'INFO',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: ['est_rga' => 'ARCHIVADO']
+            );
+
+            DB::commit();
+
+            $this->alerta('success', 'Respaldo archivado', 'El respaldo académico fue archivado correctamente.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->alerta('error', 'Error al archivar', 'Ocurrió un error al archivar el respaldo.');
+        }
+    }
+
+    public function observarRespaldo(string $codRga, string $observacion = ''): void
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            return;
+        }
+
+        $respaldo = DB::table('respaldo_gestion_academica')->where('cod_rga', $codRga)->first();
+
+        if (! $respaldo || $respaldo->est_rga === 'ANULADO') {
+            $this->alerta('warning', 'Acción no permitida', 'No se puede observar este respaldo.');
+            return;
+        }
+
+        DB::beginTransaction();
+
+        try {
+            $valoresAnteriores = ['est_rga' => $respaldo->est_rga, 'obs_rga' => $respaldo->obs_rga];
+
+            DB::table('respaldo_gestion_academica')
+                ->where('cod_rga', $codRga)
+                ->update([
+                    'est_rga' => 'OBSERVADO',
+                    'obs_rga' => $observacion ?: 'Observado por administración académica.',
+                    'updated_at' => now(),
+                ]);
+
+            $gestion = DB::table('gestion_academica')->where('cod_gea', $respaldo->cod_gea)->first();
+
+            $this->registrarBitacoraSeguro(
+                accion: 'OBSERVAR_RESPALDO_ACADEMICO',
+                tabla: 'respaldo_gestion_academica',
+                registro: $codRga,
+                nombreVisible: 'Respaldo ' . strtolower($respaldo->tip_rga) . ' - Gestión ' . ($gestion->ani_gea ?? ''),
+                descripcion: 'Se marcó como observado el respaldo académico de la gestión ' . ($gestion->ani_gea ?? '') . '. Motivo: ' . ($observacion ?: 'Sin observación detallada.'),
+                nivel: 'WARNING',
+                valoresAnteriores: $valoresAnteriores,
+                valoresNuevos: ['est_rga' => 'OBSERVADO', 'obs_rga' => $observacion]
+            );
+
+            DB::commit();
+
+            $this->alerta('info', 'Respaldo observado', 'El respaldo fue marcado como observado.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->alerta('error', 'Error', 'Ocurrió un error al observar el respaldo.');
+        }
+    }
+
+    // ============================================================
     // PROPIEDADES COMPUTADAS
     // ============================================================
 
@@ -863,6 +1086,48 @@ class GestionAcademica extends Component
                     'titulo' => $titulo,
                     'valor' => $valor,
                     'color' => $valor > 0 ? 'amber' : 'emerald',
+                ];
+            })
+            ->values()
+            ->all();
+    }
+
+    public function getRespaldosGestionProperty(): array
+    {
+        $gestion = $this->gestionSeleccionada ?? $this->gestionActiva;
+
+        if (! $gestion || ! Schema::hasTable('respaldo_gestion_academica')) {
+            return [];
+        }
+
+        return DB::table('respaldo_gestion_academica')
+            ->where('cod_gea', $gestion['id'])
+            ->orderByDesc('fec_rga')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'id' => $row->cod_rga,
+                    'tipo' => $row->tip_rga,
+                    'tipo_label' => match ($row->tip_rga) {
+                        'PRELIMINAR' => 'Preliminar',
+                        'CIERRE' => 'Cierre',
+                        'AUDITORIA' => 'Auditoría',
+                        'RECUPERACION' => 'Recuperación',
+                        default => $row->tip_rga,
+                    },
+                    'formato' => $row->for_rga,
+                    'estado' => $row->est_rga,
+                    'estado_label' => match ($row->est_rga) {
+                        'GENERADO' => 'Generado',
+                        'VALIDADO' => 'Validado',
+                        'OBSERVADO' => 'Observado',
+                        'ARCHIVADO' => 'Archivado',
+                        'ANULADO' => 'Anulado',
+                        default => $row->est_rga,
+                    },
+                    'fecha' => $row->fec_rga ? Carbon::parse($row->fec_rga)->format('d/m/Y H:i') : 'Sin fecha',
+                    'observacion' => $row->obs_rga,
+                    'tamanio' => $row->tam_rga ?? null,
                 ];
             })
             ->values()
@@ -1292,6 +1557,10 @@ class GestionAcademica extends Component
             'ACTUALIZAR_GESTION_ACADEMICA' => 'Se actualizó la información de una gestión académica.',
             'CREAR_PERIODO' => 'Se configuró un periodo académico.',
             'INSCRIBIR_ESTUDIANTE' => 'Se registró una inscripción académica.',
+            'GENERAR_RESPALDO_ACADEMICO' => 'Se generó un respaldo académico institucional.',
+            'VALIDAR_RESPALDO_ACADEMICO' => 'Se validó un respaldo académico para cierre.',
+            'ARCHIVAR_RESPALDO_ACADEMICO' => 'Se archivó un respaldo académico como expediente histórico.',
+            'OBSERVAR_RESPALDO_ACADEMICO' => 'Se marcó un respaldo académico como observado.',
             'SIN_ACCION' => 'Sin acción registrada.',
             default => ucfirst(mb_strtolower(str_replace('_', ' ', $accion))),
         };
@@ -1347,13 +1616,19 @@ class GestionAcademica extends Component
         string $accion,
         string $tabla,
         string $registro,
-        string $descripcion
+        string $descripcion,
+        string $nombreVisible = '',
+        string $nivel = 'SUCCESS',
+        ?array $valoresAnteriores = null,
+        ?array $valoresNuevos = null
     ): void {
         if (! Schema::hasTable('bitacora')) {
             return;
         }
 
         $columnas = Schema::getColumnListing('bitacora');
+        $request = request();
+        $usuario = Auth::user();
         $payload = [];
 
         if (in_array('cod_bit', $columnas, true)) {
@@ -1373,15 +1648,15 @@ class GestionAcademica extends Component
         }
 
         if (in_array('cod_usu', $columnas, true)) {
-            $payload['cod_usu'] = Auth::id();
+            $payload['cod_usu'] = $usuario?->cod_usu ?? Auth::id();
+        }
+
+        if (in_array('rol_bit', $columnas, true)) {
+            $payload['rol_bit'] = $usuario?->getRoleNames()?->first() ?? 'Sin rol';
         }
 
         if (in_array('fec_bit', $columnas, true)) {
             $payload['fec_bit'] = now();
-        }
-
-        if (in_array('est_bit', $columnas, true)) {
-            $payload['est_bit'] = 'ACTIVO';
         }
 
         if (in_array('mod_bit', $columnas, true)) {
@@ -1389,7 +1664,7 @@ class GestionAcademica extends Component
         }
 
         if (in_array('nom_reg_bit', $columnas, true)) {
-            $payload['nom_reg_bit'] = $registro;
+            $payload['nom_reg_bit'] = $nombreVisible ?: $registro;
         }
 
         if (in_array('des_bit', $columnas, true)) {
@@ -1397,24 +1672,62 @@ class GestionAcademica extends Component
         }
 
         if (in_array('niv_bit', $columnas, true)) {
-            $payload['niv_bit'] = 'SUCCESS';
+            $payload['niv_bit'] = $nivel;
         }
 
         if (in_array('res_bit', $columnas, true)) {
             $payload['res_bit'] = 'EXITOSO';
         }
 
-        if (in_array('created_at', $columnas, true)) {
-            $payload['created_at'] = now();
+        // Datos de auditoría técnica
+        if (in_array('ip_bit', $columnas, true)) {
+            $payload['ip_bit'] = $request?->ip() ?? '127.0.0.1';
         }
 
-        if (in_array('updated_at', $columnas, true)) {
-            $payload['updated_at'] = now();
+        if (in_array('age_bit', $columnas, true)) {
+            $payload['age_bit'] = $request?->userAgent() ?? 'SAVP-TIS3';
+        }
+
+        if (in_array('rut_bit', $columnas, true)) {
+            $payload['rut_bit'] = $request?->path() ?? 'livewire';
+        }
+
+        if (in_array('met_bit', $columnas, true)) {
+            $payload['met_bit'] = $request?->method() ?? 'POST';
+        }
+
+        // Valores antes y después
+        if (in_array('val_ant_bit', $columnas, true) && $valoresAnteriores !== null) {
+            $payload['val_ant_bit'] = json_encode($valoresAnteriores, JSON_UNESCAPED_UNICODE);
+        }
+
+        if (in_array('val_nue_bit', $columnas, true) && $valoresNuevos !== null) {
+            $payload['val_nue_bit'] = json_encode($valoresNuevos, JSON_UNESCAPED_UNICODE);
         }
 
         if (! empty($payload)) {
             DB::table('bitacora')->insert($payload);
         }
+    }
+
+    private function generarCodigoRespaldo(): string
+    {
+        if (! Schema::hasTable('respaldo_gestion_academica')) {
+            return 'RGA_0001';
+        }
+
+        $ultimo = DB::table('respaldo_gestion_academica')
+            ->where('cod_rga', 'like', 'RGA_%')
+            ->orderByDesc('cod_rga')
+            ->value('cod_rga');
+
+        $numero = 1;
+
+        if ($ultimo && preg_match('/RGA_(\d+)/', $ultimo, $matches)) {
+            $numero = ((int) $matches[1]) + 1;
+        }
+
+        return 'RGA_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
     }
 
     private function alerta(string $icon, string $title, string $text): void
