@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 use Throwable;
 
 class GestionInscripciones extends Component
 {
     use WithPagination;
+    use WithFileUploads;
 
     protected string $paginationTheme = 'tailwind';
 
@@ -55,12 +57,28 @@ class GestionInscripciones extends Component
     public array $documentos = [];
     public array $previsualizacionChecklist = [];
 
+    // Sugerencias aplicadas (UX): ocultan botones contextuales al aplicarse.
+    public bool $cursoSugeridoAplicado = false;
+    public bool $turnoSugeridoAplicado = false;
+    public bool $tipoSugeridoAplicado = false;
+
+    // Paso 3: carga PDF por documento (Livewire no maneja bien archivos dentro del array $documentos).
+    public array $archivosDocumentos = [];
+
+    // Paso 3: sugerencia compacta de documentos faltantes para el tipo actual.
+    public bool $sugerenciaDocumentalVisible = false;
+    public array $documentosFaltantesSugeridos = [];
+
     public bool $modalInscripcion = false;
     public bool $modalDetalle = false;
     public bool $modalDocumentos = false;
     public bool $modalAnular = false;
     public bool $modalRetirar = false;
     public bool $modalChecklist = false;
+
+    // Modal de acciones agrupadas por fila.
+    public bool $modalAcciones = false;
+    public ?array $accionesInscripcion = null;
 
     public ?array $detalleInscripcion = null;
     public array $documentosModal = [];
@@ -72,14 +90,16 @@ class GestionInscripciones extends Component
     public bool $permitirSobrecupo = false;
     public bool $turnoMananaAplicado = false;
     public bool $mostrarPanelEspecialidad = false;
+    public bool $condicionesAceptadas = false;
+
+    // BTH: ocultar botón "Dejar pendiente" tras aplicarlo.
+    public bool $especialidadPendienteAplicada = false;
 
     public array $pasosWizard = [
-        1 => 'Identificación',
-        2 => 'Tipo',
-        3 => 'Asignación',
-        4 => 'Documentos',
-        5 => 'Revisión',
-        6 => 'Confirmación',
+        1 => 'Estudiante',
+        2 => 'Asignación académica',
+        3 => 'Documentos',
+        4 => 'Revisión y confirmación',
     ];
 
     public array $formInscripcion = [
@@ -95,6 +115,8 @@ class GestionInscripciones extends Component
         'obs_ins' => '',
         'mot_obs_ins' => '',
         'pro_ins' => '',
+        // Auxiliar UI: tipo de procedencia (no se guarda como columna si no existe).
+        'tip_pro_ins' => 'SIN_REGISTRO',
         'doc_com_ins' => false,
         'sob_aut_ins' => false,
 
@@ -221,6 +243,14 @@ class GestionInscripciones extends Component
     public function updatedFormInscripcionCodCur(): void
     {
         $this->actualizarEstadoEspecialidad();
+
+        // Si el usuario cambia manualmente, resetea bandera si deja de coincidir con la sugerencia.
+        $codSugerido = $this->cursoSugerido['cod_cur']
+            ?? ($this->analisis['curso_sugerido_disponible']['cod_cur'] ?? null);
+        if ($codSugerido && ($this->formInscripcion['cod_cur'] ?? null) !== $codSugerido) {
+            $this->cursoSugeridoAplicado = false;
+        }
+
         $this->recalcularTodo();
     }
 
@@ -234,6 +264,10 @@ class GestionInscripciones extends Component
         $turnoManana = $this->catalogos['turno_manana'] ?? null;
         $this->turnoMananaAplicado = $turnoManana && ($this->formInscripcion['cod_tur'] ?? null) === ($turnoManana['cod_tur'] ?? null);
 
+        if ($turnoManana && ($this->formInscripcion['cod_tur'] ?? null) !== ($turnoManana['cod_tur'] ?? null)) {
+            $this->turnoSugeridoAplicado = false;
+        }
+
         $this->recalcularTodo();
     }
 
@@ -245,8 +279,21 @@ class GestionInscripciones extends Component
     public function updatedFormInscripcionTipIns(): void
     {
         $this->formInscripcion['tip_ins'] = $this->normalizarMayuscula($this->formInscripcion['tip_ins'] ?? 'REGULAR');
+        // Mantiene previsualización para lógica interna, pero la UI del paso 3 usa una sugerencia compacta.
         $this->previsualizarChecklist();
         $this->recalcularTodo();
+
+        if ($this->pasoInscripcion === 3) {
+            $this->asegurarListaDocumental();
+        } else {
+            $this->evaluarSugerenciaDocumental();
+        }
+
+        if (! empty($this->situacionEstudiante['tipo_sugerido'])
+            && ($this->formInscripcion['tip_ins'] ?? null) !== ($this->situacionEstudiante['tipo_sugerido'] ?? null)
+        ) {
+            $this->tipoSugeridoAplicado = false;
+        }
     }
 
     public function updatedFormInscripcionConIns(): void
@@ -270,6 +317,14 @@ class GestionInscripciones extends Component
     public function updatedFormInscripcionCodEspTec(): void
     {
         $this->actualizarEstadoEspecialidad();
+
+        if (! empty($this->formInscripcion['cod_esp_tec'])) {
+            $this->formInscripcion['est_esp_tec_ins'] = 'ASIGNADA';
+            $this->especialidadPendienteAplicada = false;
+        } else if ($this->mostrarPanelEspecialidad) {
+            $this->formInscripcion['est_esp_tec_ins'] = 'PENDIENTE';
+        }
+
         $this->recalcularTodo();
     }
 
@@ -287,7 +342,108 @@ class GestionInscripciones extends Component
 
     public function updatedDocumentos(): void
     {
+        // Normaliza combinaciones incoherentes (archivo vs estado) en edición directa.
+        foreach (array_keys($this->documentos) as $i) {
+            $this->normalizarDocumento($i);
+        }
         $this->recalcularTodo();
+    }
+
+    public function updatedArchivosDocumentos($archivo, $key): void
+    {
+        $indice = (int) $key;
+
+        if (! isset($this->documentos[$indice])) {
+            return;
+        }
+
+        $this->validate([
+            "archivosDocumentos.{$indice}" => ['nullable', 'file', 'mimes:pdf', 'max:5120'],
+        ]);
+
+        if (! $archivo) {
+            return;
+        }
+
+        // Subir PDF y actualizar metadata.
+        $codEst = $this->formInscripcion['cod_est'] ?? 'SIN_EST';
+        $path = $archivo->store("inscripciones/{$codEst}", 'public');
+
+        $this->documentos[$indice]['rut_die'] = $path;
+        $this->documentos[$indice]['for_die'] = 'PDF';
+        $this->documentos[$indice]['tam_die'] = method_exists($archivo, 'getSize') ? $archivo->getSize() : null;
+        $this->documentos[$indice]['has_die'] = method_exists($archivo, 'hashName') ? $archivo->hashName() : null;
+
+        // Regla: subir PDF implica minimo PRESENTADO.
+        $this->documentos[$indice]['est_die'] = 'PRESENTADO';
+        $this->documentos[$indice]['fec_pre_die'] = $this->documentos[$indice]['fec_pre_die'] ?? now()->toDateString();
+        $this->documentos[$indice]['fec_lim_die'] = null;
+
+        $this->normalizarDocumento($indice);
+        $this->recalcularTodo();
+    }
+
+    private function normalizarDocumento(int $indice): void
+    {
+        if (! isset($this->documentos[$indice])) {
+            return;
+        }
+
+        $estado = $this->normalizarMayuscula($this->documentos[$indice]['est_die'] ?? 'PENDIENTE');
+        if (($this->documentos[$indice]['est_die'] ?? null) !== $estado) {
+            $this->documentos[$indice]['est_die'] = $estado;
+        }
+
+        $tieneArchivo = ! empty($this->documentos[$indice]['rut_die'])
+            || ! empty($this->documentos[$indice]['for_die'])
+            || ! empty($this->documentos[$indice]['tam_die'])
+            || ! empty($this->documentos[$indice]['has_die']);
+
+        // Si hay archivo, no puede quedar PENDIENTE.
+        if ($estado === 'PENDIENTE' && $tieneArchivo) {
+            $estado = 'PRESENTADO';
+            $this->documentos[$indice]['est_die'] = $estado;
+        }
+
+        if ($estado === 'PENDIENTE') {
+            $tieneMetadata = ! empty($this->documentos[$indice]['rut_die'])
+                || ! empty($this->documentos[$indice]['for_die'])
+                || ! empty($this->documentos[$indice]['tam_die'])
+                || ! empty($this->documentos[$indice]['has_die'])
+                || ! empty($this->documentos[$indice]['fec_pre_die']);
+
+            if ($tieneMetadata) {
+                $this->documentos[$indice]['rut_die'] = null;
+                $this->documentos[$indice]['for_die'] = null;
+                $this->documentos[$indice]['tam_die'] = null;
+                $this->documentos[$indice]['has_die'] = null;
+                $this->documentos[$indice]['fec_pre_die'] = null;
+            }
+        }
+
+        if ($estado === 'NO_APLICA') {
+            $tieneCampos = ! empty($this->documentos[$indice]['rut_die'])
+                || ! empty($this->documentos[$indice]['for_die'])
+                || ! empty($this->documentos[$indice]['tam_die'])
+                || ! empty($this->documentos[$indice]['has_die'])
+                || ! empty($this->documentos[$indice]['fec_pre_die'])
+                || ! empty($this->documentos[$indice]['fec_lim_die'])
+                || ! empty($this->documentos[$indice]['obs_die']);
+
+            if ($tieneCampos) {
+                $this->documentos[$indice]['rut_die'] = null;
+                $this->documentos[$indice]['for_die'] = null;
+                $this->documentos[$indice]['tam_die'] = null;
+                $this->documentos[$indice]['has_die'] = null;
+                $this->documentos[$indice]['fec_pre_die'] = null;
+                $this->documentos[$indice]['fec_lim_die'] = null;
+                $this->documentos[$indice]['obs_die'] = null;
+            }
+        }
+
+        if (in_array($estado, ['PRESENTADO', 'VALIDADO'], true) && empty($this->documentos[$indice]['fec_pre_die'])) {
+            $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
+        }
     }
 
     /* -------------------------------------------------------------------------
@@ -296,7 +452,10 @@ class GestionInscripciones extends Component
 
     public function abrirModalInscripcion(): void
     {
+        $this->cerrarTodosLosModales();
         $this->resetValidation();
+
+        $this->cerrarTodosLosModales();
         $this->resetearProceso();
         $this->modalInscripcion = true;
         $this->subvistaProceso = 'asistente';
@@ -306,6 +465,42 @@ class GestionInscripciones extends Component
     {
         $this->modalInscripcion = false;
         $this->resetValidation();
+
+        // Limpia archivos temporales para evitar rehidratar uploads al reabrir.
+        $this->archivosDocumentos = [];
+    }
+
+    public function cerrarTodosLosModales(): void
+    {
+        $this->modalInscripcion = false;
+        $this->modalDetalle = false;
+        $this->modalDocumentos = false;
+        $this->modalAnular = false;
+        $this->modalRetirar = false;
+        $this->modalChecklist = false;
+        $this->modalAcciones = false;
+        $this->accionesInscripcion = null;
+    }
+
+    public function abrirModalAcciones(string $codIns): void
+    {
+        $detalle = $this->soporte()->obtenerInscripcion($codIns);
+        if (! $detalle) {
+            $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+            return;
+        }
+
+        $this->cerrarTodosLosModales();
+        $this->codInscripcionAccion = $codIns;
+        $this->accionesInscripcion = $detalle;
+        $this->modalAcciones = true;
+    }
+
+    public function cerrarModalAcciones(): void
+    {
+        $this->modalAcciones = false;
+        $this->accionesInscripcion = null;
+        $this->codInscripcionAccion = null;
     }
 
     public function resetearProceso(): void
@@ -318,6 +513,11 @@ class GestionInscripciones extends Component
         $this->permitirSobrecupo = false;
         $this->turnoMananaAplicado = false;
         $this->mostrarPanelEspecialidad = false;
+        $this->condicionesAceptadas = false;
+        $this->especialidadPendienteAplicada = false;
+
+        $this->modalAcciones = false;
+        $this->accionesInscripcion = null;
 
         $this->busquedaEstudiante = '';
         $this->resultadosEstudiantes = [];
@@ -327,6 +527,7 @@ class GestionInscripciones extends Component
         $this->cursoSugerido = [];
         $this->documentos = [];
         $this->previsualizacionChecklist = [];
+        $this->archivosDocumentos = [];
 
         $this->prepararFormularioInicial();
         $this->aplicarTurnoMananaPorDefecto();
@@ -340,6 +541,10 @@ class GestionInscripciones extends Component
         $this->historialEstudiante = [];
         $this->situacionEstudiante = [];
         $this->cursoSugerido = [];
+        $this->cursoSugeridoAplicado = false;
+        $this->turnoSugeridoAplicado = false;
+        $this->tipoSugeridoAplicado = false;
+        $this->especialidadPendienteAplicada = false;
         $this->formInscripcion['cod_est'] = '';
 
         $this->recalcularTodo();
@@ -394,6 +599,7 @@ class GestionInscripciones extends Component
 
         if (! empty($this->situacionEstudiante['tipo_sugerido'])) {
             $this->formInscripcion['tip_ins'] = $this->situacionEstudiante['tipo_sugerido'];
+            $this->tipoSugeridoAplicado = true;
         }
 
         $this->aplicarTurnoMananaPorDefecto();
@@ -420,6 +626,8 @@ class GestionInscripciones extends Component
         }
 
         $this->formInscripcion['tip_ins'] = $tipo;
+        $this->tipoSugeridoAplicado = ! empty($this->situacionEstudiante['tipo_sugerido'])
+            && $tipo === ($this->situacionEstudiante['tipo_sugerido'] ?? null);
         $this->previsualizarChecklist();
         $this->recalcularTodo();
     }
@@ -451,6 +659,7 @@ class GestionInscripciones extends Component
 
         $this->formInscripcion['cod_tur'] = $turnoManana['cod_tur'];
         $this->turnoMananaAplicado = true;
+        $this->turnoSugeridoAplicado = true;
 
         $this->recalcularTodo();
         $this->notificar('success', 'Turno Mañana aplicado como jornada principal.');
@@ -470,6 +679,7 @@ class GestionInscripciones extends Component
         }
 
         $this->formInscripcion['cod_cur'] = $codCurso;
+        $this->cursoSugeridoAplicado = true;
 
         $this->actualizarEstadoEspecialidad();
         $this->recalcularTodo();
@@ -485,6 +695,7 @@ class GestionInscripciones extends Component
     public function ignorarCursoSugerido(): void
     {
         $this->cursoSugerido = [];
+        $this->cursoSugeridoAplicado = false;
         $this->notificar('info', 'La sugerencia fue omitida. Puedes seleccionar el curso manualmente.');
     }
 
@@ -516,9 +727,10 @@ class GestionInscripciones extends Component
 
         $this->formInscripcion['cod_esp_tec'] = '';
         $this->formInscripcion['est_esp_tec_ins'] = 'PENDIENTE';
+        $this->especialidadPendienteAplicada = true;
 
         $this->recalcularTodo();
-        $this->notificar('info', 'La especialidad técnica quedó pendiente. Podrá completarse posteriormente.');
+        $this->notificar('info', 'La especialidad técnica quedó pendiente de elección.');
     }
 
     public function aplicarEstadoSugerido(): void
@@ -555,19 +767,20 @@ class GestionInscripciones extends Component
 
     public function irAPaso(int $paso): void
     {
-        if ($paso < 1 || $paso > 6) {
+        if ($paso < 1 || $paso > 4) {
             return;
         }
 
-        if ($paso > $this->pasoInscripcion) {
-            for ($actual = $this->pasoInscripcion; $actual < $paso; $actual++) {
-                if (! $this->validarPaso($actual)) {
-                    return;
-                }
-            }
+        if ($paso > 1 && ! $this->estudianteSeleccionado) {
+            $this->notificar('warning', 'Seleccione un estudiante antes de continuar.');
+            return;
         }
 
         $this->pasoInscripcion = $paso;
+        if ($paso === 3) {
+            $this->asegurarListaDocumental();
+        }
+        $this->recalcularTodo();
     }
 
     public function siguientePaso(): void
@@ -576,8 +789,12 @@ class GestionInscripciones extends Component
             return;
         }
 
-        if ($this->pasoInscripcion < 6) {
+        if ($this->pasoInscripcion < 4) {
             $this->pasoInscripcion++;
+            if ($this->pasoInscripcion === 3) {
+                $this->asegurarListaDocumental();
+            }
+            $this->recalcularTodo();
         }
     }
 
@@ -585,11 +802,93 @@ class GestionInscripciones extends Component
     {
         if ($this->pasoInscripcion > 1) {
             $this->pasoInscripcion--;
+            $this->evaluarSugerenciaDocumental();
+            $this->recalcularTodo();
         }
+    }
+
+    public function asegurarListaDocumental(): void
+    {
+        // Al entrar al paso 3, si no hay documentos, genera automáticamente la lista requerida.
+        if (empty($this->documentos)) {
+            $this->generarDocumentosRequeridos();
+            $this->ocultarSugerenciaDocumental();
+            return;
+        }
+
+        $this->evaluarSugerenciaDocumental();
+    }
+
+    public function generarDocumentosRequeridos(): void
+    {
+        $this->documentos = $this->soporte()->documentosBase($this->formInscripcion['tip_ins'] ?? 'REGULAR');
+
+        $this->registrarBitacora('GENERAR_LISTA_DOCUMENTAL', 'documento_inscripcion_estudiante', $this->codInscripcionEditando ?: 'SIN_REGISTRO', [
+            'estudiante' => $this->estudianteSeleccionado['nombre_completo'] ?? null,
+            'tipo' => $this->formInscripcion['tip_ins'] ?? null,
+        ]);
+
+        $this->recalcularTodo();
+        $this->notificar('success', 'Se generó automáticamente la lista documental requerida.');
+    }
+
+    private function evaluarSugerenciaDocumental(): void
+    {
+        $preview = $this->soporte()->previsualizarChecklistPorTipo($this->formInscripcion['tip_ins'] ?? 'REGULAR', $this->documentos);
+        $faltantes = $preview['faltantes'] ?? [];
+
+        if (count($faltantes) > 0) {
+            $this->documentosFaltantesSugeridos = $faltantes;
+            $this->sugerenciaDocumentalVisible = true;
+            return;
+        }
+
+        $this->ocultarSugerenciaDocumental();
+    }
+
+    public function mostrarSugerenciaDocumental(): void
+    {
+        $this->evaluarSugerenciaDocumental();
+    }
+
+    public function ocultarSugerenciaDocumental(): void
+    {
+        $this->sugerenciaDocumentalVisible = false;
+        $this->documentosFaltantesSugeridos = [];
+    }
+
+    public function documentoPendiente(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'PENDIENTE');
+    }
+
+    public function documentoPresentado(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'PRESENTADO');
+    }
+
+    public function documentoObservado(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'OBSERVADO');
+    }
+
+    public function documentoValidado(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'VALIDADO');
+    }
+
+    public function documentoNoAplica(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'NO_APLICA');
     }
 
     private function validarPaso(int $paso): bool
     {
+        if ($paso === 1 && ! $this->estudianteSeleccionado) {
+            $this->notificar('warning', 'Seleccione un estudiante antes de continuar.');
+            return false;
+        }
+
         $this->actualizarEstadoEspecialidad();
         $this->recalcularTodo();
 
@@ -608,11 +907,17 @@ class GestionInscripciones extends Component
         }
 
         if ($paso === 2) {
-            $this->validarTipoBasico();
+            $this->validarAsignacionBasica();
         }
 
         if ($paso === 3) {
-            $this->validarAsignacionBasica();
+            // Paso 3: reglas mínimas para confirmar consistencia documental.
+            $doc = $this->analisis['documentos'] ?? [];
+            if (! empty($doc['bloqueos'] ?? [])) {
+                $this->mostrarValidaciones = true;
+                $this->notificar('warning', 'Existen bloqueos documentales que deben corregirse.');
+                return false;
+            }
         }
 
         return true;
@@ -637,6 +942,7 @@ class GestionInscripciones extends Component
             return;
         }
 
+        $this->cerrarTodosLosModales();
         $this->modalChecklist = true;
     }
 
@@ -657,6 +963,7 @@ class GestionInscripciones extends Component
         ]);
 
         $this->modalChecklist = false;
+        $this->ocultarSugerenciaDocumental();
         $this->recalcularTodo();
         $this->notificar('success', 'Se agregaron documentos recomendados sin borrar lo registrado.');
     }
@@ -670,6 +977,7 @@ class GestionInscripciones extends Component
         ]);
 
         $this->modalChecklist = false;
+        $this->ocultarSugerenciaDocumental();
         $this->recalcularTodo();
         $this->notificar('success', 'Checklist documental generado correctamente.');
     }
@@ -677,11 +985,17 @@ class GestionInscripciones extends Component
     public function agregarDocumentoManual(): void
     {
         $this->documentos[] = [
+            'cod_die' => null,
             'nom_die' => 'Documento adicional',
             'tip_die' => 'GENERAL',
             'est_die' => 'PENDIENTE',
             'obs_die' => null,
             'fec_pre_die' => null,
+            'fec_lim_die' => null,
+            'rut_die' => null,
+            'for_die' => null,
+            'tam_die' => null,
+            'has_die' => null,
             'obligatorio' => false,
         ];
 
@@ -717,6 +1031,39 @@ class GestionInscripciones extends Component
             $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
         }
 
+        if ($estado === 'PENDIENTE') {
+            // Regla: PENDIENTE no debe tener archivo.
+            $this->documentos[$indice]['rut_die'] = null;
+            $this->documentos[$indice]['for_die'] = null;
+            $this->documentos[$indice]['tam_die'] = null;
+            $this->documentos[$indice]['has_die'] = null;
+            $this->documentos[$indice]['fec_pre_die'] = null;
+        }
+
+        if ($estado === 'OBSERVADO') {
+            // OBSERVADO exige motivo en UI; mantenemos los campos para que se complete.
+            if (empty($this->documentos[$indice]['fec_lim_die'])) {
+                $this->documentos[$indice]['fec_lim_die'] = null;
+            }
+        }
+
+        if ($estado === 'VALIDADO') {
+            // VALIDADO exige archivo (validación/bloqueo se aplica en el análisis documental).
+            if (empty($this->documentos[$indice]['fec_pre_die'])) {
+                $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
+            }
+        }
+
+        if ($estado === 'NO_APLICA') {
+            $this->documentos[$indice]['rut_die'] = null;
+            $this->documentos[$indice]['for_die'] = null;
+            $this->documentos[$indice]['tam_die'] = null;
+            $this->documentos[$indice]['has_die'] = null;
+            $this->documentos[$indice]['fec_pre_die'] = null;
+            $this->documentos[$indice]['fec_lim_die'] = null;
+            $this->documentos[$indice]['obs_die'] = null;
+        }
+
         $this->recalcularTodo();
     }
 
@@ -731,11 +1078,19 @@ class GestionInscripciones extends Component
 
     public function confirmarInscripcion(): void
     {
+        if (! $this->condicionesAceptadas) {
+            $this->notificar('warning', 'Debe aceptar los términos y condiciones de inscripción para confirmar.');
+            return;
+        }
         $this->guardarInscripcion();
     }
 
     public function confirmarEImprimir(): void
     {
+        if (! $this->condicionesAceptadas) {
+            $this->notificar('warning', 'Debe aceptar los términos y condiciones de inscripción para confirmar.');
+            return;
+        }
         $this->guardarInscripcion(imprimir: true);
     }
 
@@ -750,27 +1105,35 @@ class GestionInscripciones extends Component
         $this->recalcularTodo(modoLive: false);
 
         if (! ($this->analisis['puede_continuar'] ?? false) && ! $forzarPendiente) {
-            $this->pasoInscripcion = 5;
+            $this->pasoInscripcion = 4;
             $this->notificar('warning', 'La inscripción tiene bloqueos. Corrige los datos antes de confirmar.');
             return;
         }
 
-        $datos = $this->soporte()->normalizarDatosInscripcion($this->formInscripcion, $this->analisis);
+        $formParaGuardar = $this->formInscripcion;
+        $formParaGuardar['pro_ins'] = $this->procedenciaParaGuardar(
+            $formParaGuardar['tip_pro_ins'] ?? null,
+            $formParaGuardar['pro_ins'] ?? null
+        );
+        unset($formParaGuardar['tip_pro_ins']);
+
+        $datos = $this->soporte()->normalizarDatosInscripcion($formParaGuardar, $this->analisis);
 
         if ($forzarPendiente) {
             $datos['est_ins'] = 'PENDIENTE';
             $datos['con_ins'] = $datos['con_ins'] === 'NORMAL' ? 'OBSERVADA' : $datos['con_ins'];
         }
 
+        // Columnas confirmadas en BD (fec_con_ins SÍ existe; confirmado_por NO existe).
         if (! $forzarPendiente && ($datos['est_ins'] ?? null) === 'INSCRITO') {
-            if (Schema::hasColumn('inscripcion_estudiante', 'fec_con_ins')) {
-                $datos['fec_con_ins'] = now();
-            }
-
-            if (Schema::hasColumn('inscripcion_estudiante', 'confirmado_por')) {
-                $datos['confirmado_por'] = auth()->user()->cod_usu ?? auth()->id();
-            }
+            $datos['fec_con_ins'] = now();
         }
+
+        // Capa de seguridad definitiva: solo guardar campos del $fillable del modelo.
+        // Esto garantiza que ninguna columna fantasma llegue al INSERT, independientemente
+        // del comportamiento del Schema::hasColumn con el driver de PgSQL en Livewire.
+        $fillablePermitidos = (new \App\Models\InscripcionEstudiante())->getFillable();
+        $datos = array_intersect_key($datos, array_flip($fillablePermitidos));
 
         try {
             DB::transaction(function () use ($datos, $forzarPendiente) {
@@ -824,8 +1187,30 @@ class GestionInscripciones extends Component
             $this->cerrarModalInscripcion();
         } catch (Throwable $e) {
             report($e);
+            logger()->error('Error al guardar inscripción', [
+                'mensaje' => $e->getMessage(),
+                'archivo' => $e->getFile(),
+                'linea' => $e->getLine(),
+            ]);
             $this->notificar('error', 'No se pudo guardar la inscripción. Revisa los datos e intenta nuevamente.');
         }
+    }
+
+    private function procedenciaParaGuardar(?string $tipo, ?string $detalle): ?string
+    {
+        $tipo = $this->normalizarMayuscula($tipo ?? '');
+        $detalle = trim((string) ($detalle ?? ''));
+
+        if ($tipo === '' || $tipo === 'SIN_REGISTRO') {
+            return $detalle !== '' ? $detalle : null;
+        }
+
+        // Persistimos en pro_ins una representación legible sin requerir nueva columna.
+        if ($detalle !== '' && in_array($tipo, ['OTRA_UNIDAD', 'TRASLADO_DEPARTAMENTAL', 'TRASLADO_INTERDEPARTAMENTAL', 'EXTERIOR', 'OTRO'], true)) {
+            return $tipo . ' - ' . $detalle;
+        }
+
+        return $tipo;
     }
 
     /* -------------------------------------------------------------------------
@@ -864,7 +1249,8 @@ class GestionInscripciones extends Component
         $this->modoFormulario = 'editar';
         $this->codInscripcionEditando = $codIns;
         $this->modalInscripcion = true;
-        $this->pasoInscripcion = 3;
+        $this->pasoInscripcion = 2;
+        $this->condicionesAceptadas = false;
 
         $this->formInscripcion = [
             'cod_est' => $registro->cod_est ?? '',
@@ -911,6 +1297,7 @@ class GestionInscripciones extends Component
             return;
         }
 
+        $this->cerrarTodosLosModales();
         $this->modalDetalle = true;
     }
 
@@ -928,6 +1315,7 @@ class GestionInscripciones extends Component
     {
         $this->codInscripcionAccion = $codIns;
         $this->documentosModal = $this->obtenerDocumentosDeInscripcion($codIns);
+        $this->cerrarTodosLosModales();
         $this->modalDocumentos = true;
     }
 
@@ -964,11 +1352,17 @@ class GestionInscripciones extends Component
     public function agregarDocumentoEnModal(): void
     {
         $this->documentosModal[] = [
+            'cod_die' => null,
             'nom_die' => 'Documento adicional',
             'tip_die' => 'GENERAL',
             'est_die' => 'PENDIENTE',
             'obs_die' => null,
             'fec_pre_die' => null,
+            'fec_lim_die' => null,
+            'rut_die' => null,
+            'for_die' => null,
+            'tam_die' => null,
+            'has_die' => null,
             'obligatorio' => false,
         ];
     }
@@ -992,17 +1386,47 @@ class GestionInscripciones extends Component
 
         try {
             DB::transaction(function () {
-                DB::table('documento_inscripcion_estudiante')
+                $existentes = DB::table('documento_inscripcion_estudiante')
                     ->where('cod_ins', $this->codInscripcionAccion)
-                    ->delete();
+                    ->get()
+                    ->keyBy('cod_die');
 
-                foreach ($this->soporte()->normalizarDocumentosParaGuardar($this->documentosModal) as $documento) {
-                    DocumentoInscripcionEstudiante::create(array_merge($documento, [
-                        'cod_ins' => $this->codInscripcionAccion,
-                    ]));
+                $procesados = [];
+
+                $normalizados = $this->soporte()->normalizarDocumentosParaGuardar($this->documentosModal);
+
+                foreach ($normalizados as $documento) {
+                    $codDie = $documento['cod_die'] ?? null;
+
+                    if ($codDie && $existentes->has($codDie)) {
+                        DB::table('documento_inscripcion_estudiante')
+                            ->where('cod_die', $codDie)
+                            ->update(array_merge(
+                                collect($documento)->except(['cod_die', 'cod_ins'])->all(),
+                                ['updated_at' => now()]
+                            ));
+                        $procesados[] = $codDie;
+                        continue;
+                    }
+
+                    DocumentoInscripcionEstudiante::create(array_merge(
+                        collect($documento)->except(['cod_die'])->all(),
+                        ['cod_ins' => $this->codInscripcionAccion]
+                    ));
                 }
 
-                $revision = $this->soporte()->analizarDocumentos($this->documentosModal);
+                // Anular los omitidos (no eliminar físicamente).
+                $noProcesados = $existentes->keys()->diff($procesados);
+                foreach ($noProcesados as $codDie) {
+                    DB::table('documento_inscripcion_estudiante')
+                        ->where('cod_die', $codDie)
+                        ->update([
+                            'est_die' => 'ANULADO',
+                            'updated_at' => now(),
+                        ]);
+                }
+
+                $revision = $this->soporte()->analizarDocumentos($normalizados);
 
                 DB::table('inscripcion_estudiante')
                     ->where('cod_ins', $this->codInscripcionAccion)
@@ -1034,6 +1458,7 @@ class GestionInscripciones extends Component
 
     public function confirmarAnular(string $codIns): void
     {
+        $this->cerrarTodosLosModales();
         $this->codInscripcionAccion = $codIns;
         $this->motivoAccion = '';
 
@@ -1093,6 +1518,7 @@ class GestionInscripciones extends Component
 
     public function confirmarRetiro(string $codIns): void
     {
+        $this->cerrarTodosLosModales();
         $this->codInscripcionAccion = $codIns;
         $this->motivoAccion = '';
         $this->fechaRetiro = now()->toDateString();
@@ -1211,6 +1637,9 @@ class GestionInscripciones extends Component
 
     public function recalcularTodo(bool $modoLive = true): void
     {
+        // Mantener coherencia documental antes de solicitar análisis inteligente.
+        $this->documentos = $this->normalizarCoherenciaDocumental($this->documentos);
+
         $this->analisis = $this->soporte()->analizarInscripcion(
             form: $this->formInscripcion,
             documentos: $this->documentos,
@@ -1256,6 +1685,48 @@ class GestionInscripciones extends Component
                 $this->formInscripcion['est_esp_tec_ins'] = $this->analisis['especialidad_tecnica']['estado_sugerido'];
             }
         }
+    }
+
+    private function normalizarCoherenciaDocumental(array $documentos): array
+    {
+        return collect($documentos)
+            ->map(function (array $doc) {
+                $estado = $this->normalizarMayuscula($doc['est_die'] ?? 'PENDIENTE');
+
+                $tieneArchivo = ! empty($doc['rut_die']) || ! empty($doc['for_die']) || ! empty($doc['tam_die']) || ! empty($doc['has_die']);
+
+                if ($estado === 'PENDIENTE') {
+                    // PENDIENTE no admite archivo.
+                    $doc['rut_die'] = null;
+                    $doc['for_die'] = null;
+                    $doc['tam_die'] = null;
+                    $doc['has_die'] = null;
+                    $doc['fec_pre_die'] = null;
+                }
+
+                if ($estado === 'NO_APLICA') {
+                    $doc['rut_die'] = null;
+                    $doc['for_die'] = null;
+                    $doc['tam_die'] = null;
+                    $doc['has_die'] = null;
+                    $doc['fec_pre_die'] = null;
+                    $doc['fec_lim_die'] = null;
+                }
+
+                if ($tieneArchivo && $estado === 'PENDIENTE') {
+                    // Si llega por datos previos incoherentes, auto-corrige a PRESENTADO.
+                    $doc['est_die'] = 'PRESENTADO';
+                    $doc['fec_pre_die'] = $doc['fec_pre_die'] ?: now()->toDateString();
+                }
+
+                if (($doc['est_die'] ?? '') === 'PRESENTADO' && empty($doc['fec_pre_die'])) {
+                    $doc['fec_pre_die'] = now()->toDateString();
+                }
+
+                return $doc;
+            })
+            ->values()
+            ->all();
     }
 
     /* -------------------------------------------------------------------------
@@ -1590,9 +2061,15 @@ class GestionInscripciones extends Component
                 'nom_die' => $documento->nom_die ?? 'Documento',
                 'tip_die' => $documento->tip_die ?? 'GENERAL',
                 'est_die' => $documento->est_die ?? 'PENDIENTE',
+                'obl_die' => (bool) ($documento->obl_die ?? false),
+                'fec_lim_die' => $documento->fec_lim_die ?? null,
                 'obs_die' => $documento->obs_die ?? null,
                 'fec_pre_die' => $documento->fec_pre_die ?? null,
-                'obligatorio' => false,
+                'rut_die' => $documento->rut_die ?? null,
+                'for_die' => $documento->for_die ?? null,
+                'tam_die' => $documento->tam_die ?? null,
+                'has_die' => $documento->has_die ?? null,
+                'obligatorio' => (bool) ($documento->obl_die ?? false),
             ])
             ->values()
             ->all();
@@ -1604,14 +2081,45 @@ class GestionInscripciones extends Component
             return;
         }
 
-        DB::table('documento_inscripcion_estudiante')
+        $existentes = DB::table('documento_inscripcion_estudiante')
             ->where('cod_ins', $codIns)
-            ->delete();
+            ->get()
+            ->keyBy('cod_die');
+
+        $procesados = [];
 
         foreach ($this->soporte()->normalizarDocumentosParaGuardar($this->documentos) as $documento) {
-            DocumentoInscripcionEstudiante::create(array_merge($documento, [
-                'cod_ins' => $codIns,
-            ]));
+            $codDie = $documento['cod_die'] ?? null;
+
+            if ($codDie && $existentes->has($codDie)) {
+                DB::table('documento_inscripcion_estudiante')
+                    ->where('cod_die', $codDie)
+                    ->update(array_merge(
+                        collect($documento)
+                            ->except(['cod_die', 'cod_ins'])
+                            ->all(),
+                        ['updated_at' => now()]
+                    ));
+
+                $procesados[] = $codDie;
+                continue;
+            }
+
+            DocumentoInscripcionEstudiante::create(array_merge(
+                collect($documento)->except(['cod_die'])->all(),
+                ['cod_ins' => $codIns]
+            ));
+        }
+
+        // No eliminamos documentos omitidos: los anulamos para conservar historial.
+        $noProcesados = $existentes->keys()->diff($procesados);
+        foreach ($noProcesados as $codDie) {
+            DB::table('documento_inscripcion_estudiante')
+                ->where('cod_die', $codDie)
+                ->update([
+                    'est_die' => 'ANULADO',
+                    'updated_at' => now(),
+                ]);
         }
     }
 
@@ -1678,7 +2186,26 @@ class GestionInscripciones extends Component
             'formInscripcion.cod_tur' => ['required', 'string', 'max:20'],
             'formInscripcion.fei_ins' => ['required', 'date'],
             'formInscripcion.tip_ins' => ['required', 'string', 'max:30'],
+            'formInscripcion.tip_pro_ins' => ['nullable', 'string', 'max:40'],
+            'formInscripcion.pro_ins' => ['nullable', 'string', 'max:180'],
         ]);
+
+        // Regla: traslado requiere procedencia distinta a SIN_REGISTRO.
+        if (($this->formInscripcion['tip_ins'] ?? null) === 'TRASLADO') {
+            $tipo = $this->normalizarMayuscula($this->formInscripcion['tip_pro_ins'] ?? 'SIN_REGISTRO');
+            if ($tipo === 'SIN_REGISTRO' || $tipo === '') {
+                throw ValidationException::withMessages([
+                    'formInscripcion.tip_pro_ins' => 'Seleccione procedencia para inscripción por traslado.',
+                ]);
+            }
+
+            $requiereDetalle = in_array($tipo, ['OTRA_UNIDAD', 'TRASLADO_DEPARTAMENTAL', 'TRASLADO_INTERDEPARTAMENTAL', 'EXTERIOR', 'OTRO'], true);
+            if ($requiereDetalle && empty(trim((string) ($this->formInscripcion['pro_ins'] ?? '')))) {
+                throw ValidationException::withMessages([
+                    'formInscripcion.pro_ins' => 'Registre la unidad educativa de procedencia.',
+                ]);
+            }
+        }
     }
 
     /* -------------------------------------------------------------------------
@@ -1729,31 +2256,103 @@ class GestionInscripciones extends Component
 
     private function registrarBitacora(string $accion, string $tabla, string $registro, array $datos = []): void
     {
+        $descripcion = $this->soporte()->descripcionBitacora($accion, $datos);
+        $this->registrarBitacoraSeguro($accion, $tabla, $registro, $descripcion);
+    }
+
+    private function registrarBitacoraSeguro(
+        string $accion,
+        string $tabla,
+        string $registro,
+        string $descripcion,
+        string $nombreVisible = '',
+        string $nivel = 'SUCCESS'
+    ): void {
+        try {
+            if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
+                activity()
+                    ->performedOn(Schema::hasTable($tabla) ? DB::table($tabla)->where('cod_' . substr($tabla, 0, 3), $registro)->first() : null)
+                    ->causedBy(auth()->user())
+                    ->withProperties([
+                        'modulo' => 'Gestión de Inscripciones',
+                        'tabla' => $tabla,
+                        'registro' => $registro,
+                        'descripcion' => $descripcion,
+                    ])
+                    ->log($accion . ' - ' . $descripcion);
+            }
+        } catch (Throwable) {
+            //
+        }
+
         if (! Schema::hasTable('bitacora')) {
             return;
         }
 
         try {
-            $ultimo = DB::table('bitacora')
-                ->where('cod_bit', 'like', 'BIT_%')
-                ->orderByDesc('cod_bit')
-                ->value('cod_bit');
+            $columnas = Schema::getColumnListing('bitacora');
+            $request = request();
+            $usuario = auth()->user();
+            $payload = [];
 
-            $numero = $ultimo
-                ? ((int) str_replace('BIT_', '', $ultimo)) + 1
-                : 1;
+            if (in_array('cod_bit', $columnas, true)) {
+                $ultimo = DB::table('bitacora')
+                    ->where('cod_bit', 'like', 'BIT_%')
+                    ->orderByDesc('cod_bit')
+                    ->value('cod_bit');
 
-            $descripcion = $this->soporte()->descripcionBitacora($accion, $datos);
+                $numero = $ultimo
+                    ? ((int) str_replace('BIT_', '', $ultimo)) + 1
+                    : 1;
+                $payload['cod_bit'] = 'BIT_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+            }
+            if (in_array('acc_bit', $columnas, true)) {
+                $payload['acc_bit'] = mb_substr($descripcion, 0, 500);
+            }
+            if (in_array('tab_bit', $columnas, true)) {
+                $payload['tab_bit'] = $tabla;
+            }
+            if (in_array('reg_bit', $columnas, true)) {
+                $payload['reg_bit'] = $registro;
+            }
+            if (in_array('cod_usu', $columnas, true)) {
+                $payload['cod_usu'] = $usuario?->cod_usu ?? auth()->id();
+            }
+            if (in_array('rol_bit', $columnas, true)) {
+                $payload['rol_bit'] = $usuario?->getRoleNames()?->first() ?? 'Sin rol';
+            }
+            if (in_array('fec_bit', $columnas, true)) {
+                $payload['fec_bit'] = now();
+            }
+            if (in_array('mod_bit', $columnas, true)) {
+                $payload['mod_bit'] = 'Gestión de Inscripciones';
+            }
+            if (in_array('nom_reg_bit', $columnas, true)) {
+                $payload['nom_reg_bit'] = $nombreVisible ?: $registro;
+            }
+            if (in_array('des_bit', $columnas, true)) {
+                $payload['des_bit'] = $descripcion;
+            }
+            if (in_array('niv_bit', $columnas, true)) {
+                $payload['niv_bit'] = $nivel;
+            }
+            if (in_array('res_bit', $columnas, true)) {
+                $payload['res_bit'] = 'EXITOSO';
+            }
+            if (in_array('ip_bit', $columnas, true)) {
+                $payload['ip_bit'] = $request?->ip() ?? '127.0.0.1';
+            }
+            if (in_array('age_bit', $columnas, true)) {
+                $payload['age_bit'] = $request?->userAgent() ?? 'SAVP-TIS3';
+            }
+            if (in_array('rut_bit', $columnas, true)) {
+                $payload['rut_bit'] = $request?->path() ?? 'livewire';
+            }
+            if (in_array('met_bit', $columnas, true)) {
+                $payload['met_bit'] = $request?->method() ?? 'POST';
+            }
 
-            DB::table('bitacora')->insert([
-                'cod_bit' => 'BIT_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT),
-                'acc_bit' => mb_substr($descripcion, 0, 500),
-                'tab_bit' => $tabla,
-                'reg_bit' => $registro,
-                'cod_usu' => auth()->user()->cod_usu ?? auth()->id(),
-                'fec_bit' => now(),
-                'est_bit' => 'ACTIVO',
-            ]);
+            DB::table('bitacora')->insert($payload);
         } catch (Throwable $e) {
             report($e);
         }

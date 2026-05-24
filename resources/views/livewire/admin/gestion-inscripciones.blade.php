@@ -1048,12 +1048,13 @@
             {{ $inscripciones->links() }}
         </div>
     </section>
+
     {{-- =========================================================
         7. MODAL PRINCIPAL: INSCRIPCIÓN
     ========================================================== --}}
     @if ($modalInscripcion)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop"></div>
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarModalInscripcion"></div>
 
             <div class="ui-modal savp-modal-shell my-6 flex max-h-[92vh] w-full max-w-7xl flex-col overflow-hidden">
                 <div class="ui-modal-header sticky top-0 z-10 flex items-start justify-between gap-4">
@@ -1099,7 +1100,7 @@
                 </div>
 
                 <div class="flex-1 overflow-y-auto p-5">
-                    <div class="grid gap-6 xl:grid-cols-[1fr_380px]">
+                    <div class="grid gap-6">
                         <section class="space-y-5">
                             {{-- PASO 1: IDENTIFICACIÓN DEL ESTUDIANTE --}}
                             @if ($pasoInscripcion === 1)
@@ -1119,8 +1120,7 @@
                                                 </h4>
 
                                                 <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Busca al estudiante por RUDE, CI, nombre, apellido o teléfono. Al seleccionarlo,
-                                                    el sistema revisará su historial, edad, estado actual y posible duplicidad en la gestión activa.
+                                                    Busque al estudiante por RUDE, CI o nombre para comenzar el proceso de inscripción.
                                                 </p>
                                             </div>
 
@@ -1271,7 +1271,7 @@
                                                 <div class="ui-card-soft p-4">
                                                     <p class="ui-muted text-xs">Edad</p>
                                                     <p class="ui-title mt-1 font-black">
-                                                        {{ $estudianteSeleccionado['edad'] ? $estudianteSeleccionado['edad'].' años' : 'Sin fecha de nacimiento' }}
+                                                        {{ ($estudianteSeleccionado['edad'] ?? null) ? ($estudianteSeleccionado['edad'].' años') : 'Sin fecha de nacimiento' }}
                                                     </p>
                                                 </div>
 
@@ -1543,7 +1543,7 @@
                                                     <div class="ui-card-soft p-4">
                                                         <p class="ui-muted text-xs">Edad registrada</p>
                                                         <p class="ui-title mt-1 font-black">
-                                                            {{ $estudianteSeleccionado['edad'] ? $estudianteSeleccionado['edad'].' años' : 'Sin edad' }}
+                                                            {{ ($estudianteSeleccionado['edad'] ?? null) ? ($estudianteSeleccionado['edad'].' años') : 'Sin edad' }}
                                                         </p>
                                                     </div>
 
@@ -1588,481 +1588,15 @@
                                 </div>
                             @endif
 
-                            {{-- PASO 2: TIPO DE INSCRIPCIÓN --}}
+                            {{-- PASO 2: ASIGNACIÓN ACADÉMICA --}}
                             @if ($pasoInscripcion === 2)
-                                <div class="space-y-5">
-                                    {{-- CABECERA --}}
-                                    <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                                            <div>
-                                                <div class="flex flex-wrap items-center gap-2">
-                                                    <span class="ui-badge-success">Paso 2</span>
-                                                    <span class="ui-badge-muted">Clasificación</span>
-                                                    <span class="ui-badge-warning">Tipo de inscripción</span>
-
-                                                    @if (! empty($situacionEstudiante['tipo_sugerido']))
-                                                        <span class="ui-badge-success">
-                                                            Sugerido: {{ $situacionEstudiante['tipo_sugerido'] }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-
-                                                <h4 class="ui-title mt-3 text-2xl font-black">
-                                                    Definir tipo de inscripción
-                                                </h4>
-
-                                                <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Clasifica el ingreso del estudiante según su historial académico, situación institucional,
-                                                    procedencia y condiciones especiales. Esta selección ajustará la revisión y la checklist documental.
-                                                </p>
-                                            </div>
-
-                                            <div class="ui-card-soft min-w-[280px] p-4">
-                                                <p class="ui-muted text-xs">Estudiante seleccionado</p>
-                                                <p class="ui-title mt-1 font-black">
-                                                    {{ $estudianteSeleccionado['nombre_completo'] ?? 'Sin estudiante seleccionado' }}
-                                                </p>
-
-                                                <div class="mt-3 flex flex-wrap gap-2">
-                                                    @if (! empty($situacionEstudiante['situacion']))
-                                                        <span class="{{ ($situacionEstudiante['situacion'] ?? '') === 'YA_INSCRITO' ? 'ui-badge-danger' : 'ui-badge-muted' }}">
-                                                            {{ str_replace('_', ' ', $situacionEstudiante['situacion']) }}
-                                                        </span>
-                                                    @endif
-
-                                                    <span class="{{ $this->badgeEstado($formInscripcion['est_ins'] ?? 'PENDIENTE') }}">
-                                                        {{ $formInscripcion['est_ins'] ?? 'PENDIENTE' }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                    {{-- SITUACIÓN DEL ESTUDIANTE --}}
-                                    <section class="grid gap-5 xl:grid-cols-[1fr_380px]">
-                                        <article class="ui-panel savp-type-context">
-                                            <div class="flex gap-4">
-                                                <span class="savp-avatar-md ui-badge-success">
-                                                    {!! $icon('shield', 'h-6 w-6') !!}
-                                                </span>
-
-                                                <div>
-                                                    <p class="ui-kicker">Revisión por historial</p>
-                                                    <h5 class="ui-title mt-1 text-xl font-black">
-                                                        {{ str_replace('_', ' ', $situacionEstudiante['situacion'] ?? 'SIN CLASIFICAR') }}
-                                                    </h5>
-
-                                                    <p class="ui-muted mt-2 text-sm leading-6">
-                                                        {{ $situacionEstudiante['mensaje'] ?? 'Selecciona un estudiante para analizar su historial y sugerir el tipo de inscripción.' }}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-5 grid gap-4 md:grid-cols-3">
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Tipo actual</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $formInscripcion['tip_ins'] ?? 'REGULAR' }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Tipo sugerido</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $situacionEstudiante['tipo_sugerido'] ?? ($analisis['tipo_sugerido']['tipo'] ?? 'REGULAR') }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Historial</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ count($historialEstudiante) }} registro(s)
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            @if (($situacionEstudiante['situacion'] ?? '') === 'YA_INSCRITO')
-                                                <div class="ui-alert-danger mt-5">
-                                                    El estudiante ya tiene una inscripción activa en la gestión seleccionada. Revisa el registro existente antes de continuar.
-                                                </div>
-                                            @elseif (($situacionEstudiante['situacion'] ?? '') === 'SIN_HISTORIAL')
-                                                <div class="ui-alert-info mt-5">
-                                                    No se encontró historial institucional previo. Se recomienda clasificar como nuevo estudiante.
-                                                </div>
-                                            @elseif (($situacionEstudiante['situacion'] ?? '') === 'RETORNO')
-                                                <div class="ui-alert-warning mt-5">
-                                                    El estudiante presenta retiro anterior. Se recomienda reinscripción con observación institucional.
-                                                </div>
-                                            @else
-                                                <div class="ui-alert-success mt-5">
-                                                    La situación del estudiante puede clasificarse y continuar con la asignación académica.
-                                                </div>
-                                            @endif
-                                        </article>
-
-                                        {{-- PANEL DE AYUDA --}}
-                                        <aside class="ui-panel">
-                                            <p class="ui-kicker">Criterio de clasificación</p>
-                                            <h5 class="ui-title mt-1 text-xl font-black">
-                                                ¿Qué afecta esta elección?
-                                            </h5>
-
-                                            <div class="mt-5 space-y-3">
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-title text-sm font-black">Checklist documental</p>
-                                                    <p class="ui-muted mt-1 text-xs leading-5">
-                                                        Traslado, extranjero y casos especiales pueden requerir documentos adicionales.
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-title text-sm font-black">Estado sugerido</p>
-                                                    <p class="ui-muted mt-1 text-xs leading-5">
-                                                        Casos excepcionales pueden guardarse como provisional u observado.
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-title text-sm font-black">Seguimiento institucional</p>
-                                                    <p class="ui-muted mt-1 text-xs leading-5">
-                                                        Vulnerabilidad, traslado o reinscripción deben conservar observación clara.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </aside>
-                                    </section>
-
-                                    {{-- TARJETAS DE TIPO --}}
-                                    <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                                            <div>
-                                                <p class="ui-kicker">Tipos disponibles</p>
-                                                <h5 class="ui-title mt-1 text-xl font-black">
-                                                    Selecciona la clasificación correspondiente
-                                                </h5>
-                                                <p class="ui-muted mt-1 text-sm">
-                                                    Elige el tipo más adecuado. El sistema no borra datos ni cambia documentos de forma agresiva.
-                                                </p>
-                                            </div>
-
-                                            @if (! empty($situacionEstudiante['tipo_sugerido']))
-                                                <button
-                                                    type="button"
-                                                    wire:click="seleccionarTipoRapido('{{ $situacionEstudiante['tipo_sugerido'] }}')"
-                                                    class="ui-btn-primary"
-                                                >
-                                                    Aplicar sugerido
-                                                </button>
-                                            @endif
-                                        </div>
-
-                                        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                                            @foreach ([
-                                                'REGULAR' => [
-                                                    'titulo' => 'Regular',
-                                                    'descripcion' => 'Continuidad académica del estudiante dentro de la institución.',
-                                                    'badge' => 'Continuidad',
-                                                    'alerta' => 'Ideal para estudiantes con historial institucional previo.',
-                                                    'icono' => 'check',
-                                                ],
-                                                'NUEVO' => [
-                                                    'titulo' => 'Nuevo',
-                                                    'descripcion' => 'Primer registro de inscripción del estudiante en la unidad educativa.',
-                                                    'badge' => 'Primer ingreso',
-                                                    'alerta' => 'Requiere mayor control documental inicial.',
-                                                    'icono' => 'user',
-                                                ],
-                                                'TRASLADO' => [
-                                                    'titulo' => 'Traslado',
-                                                    'descripcion' => 'Estudiante proveniente de otra unidad educativa.',
-                                                    'badge' => 'Procedencia',
-                                                    'alerta' => 'Se recomienda registrar unidad educativa de procedencia.',
-                                                    'icono' => 'refresh',
-                                                ],
-                                                'REINSCRIPCION' => [
-                                                    'titulo' => 'Reinscripción',
-                                                    'descripcion' => 'Retorno después de retiro, interrupción o inscripción anterior no activa.',
-                                                    'badge' => 'Retorno',
-                                                    'alerta' => 'Debe revisarse el historial institucional previo.',
-                                                    'icono' => 'calendar',
-                                                ],
-                                                'REPITENTE' => [
-                                                    'titulo' => 'Repitente',
-                                                    'descripcion' => 'Estudiante que cursará nuevamente el nivel académico.',
-                                                    'badge' => 'Seguimiento',
-                                                    'alerta' => 'Puede requerir observación académica.',
-                                                    'icono' => 'book',
-                                                ],
-                                                'EXCEPCIONAL' => [
-                                                    'titulo' => 'Excepcional',
-                                                    'descripcion' => 'Caso especial que requiere respaldo administrativo.',
-                                                    'badge' => 'Especial',
-                                                    'alerta' => 'Debe registrarse justificación institucional.',
-                                                    'icono' => 'warning',
-                                                ],
-                                                'VULNERABILIDAD' => [
-                                                    'titulo' => 'Vulnerabilidad',
-                                                    'descripcion' => 'Caso que requiere seguimiento prioritario y cuidado institucional.',
-                                                    'badge' => 'Prioritario',
-                                                    'alerta' => 'No debe bloquearse el acceso, pero sí conservar seguimiento.',
-                                                    'icono' => 'shield',
-                                                ],
-                                                'EXTRANJERO' => [
-                                                    'titulo' => 'Extranjero',
-                                                    'descripcion' => 'Estudiante con documentación o procedencia internacional.',
-                                                    'badge' => 'Documental',
-                                                    'alerta' => 'Requiere revisión específica de identidad y respaldo.',
-                                                    'icono' => 'file',
-                                                ],
-                                            ] as $tipo => $info)
-                                                @php
-                                                    $activo = ($formInscripcion['tip_ins'] ?? '') === $tipo;
-                                                    $sugerido = ($situacionEstudiante['tipo_sugerido'] ?? null) === $tipo
-                                                        || ($analisis['tipo_sugerido']['tipo'] ?? null) === $tipo;
-                                                @endphp
-
-                                                <button
-                                                    type="button"
-                                                    wire:click="seleccionarTipoRapido('{{ $tipo }}')"
-                                                    class="savp-type-card ui-card-soft p-4 text-left {{ $activo ? 'savp-type-active' : '' }}"
-                                                >
-                                                    <div class="flex items-start justify-between gap-3">
-                                                        <span class="{{ $activo ? 'ui-badge-success' : 'ui-badge-muted' }} p-2">
-                                                            {!! $icon($info['icono'], 'h-5 w-5') !!}
-                                                        </span>
-
-                                                        <div class="flex flex-col items-end gap-2">
-                                                            @if ($sugerido)
-                                                                <span class="ui-badge-success">Sugerido</span>
-                                                            @endif
-
-                                                            <span class="{{ $activo ? 'ui-badge-success' : 'ui-badge-muted' }}">
-                                                                {{ $info['badge'] }}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    <h6 class="ui-title mt-4 text-base font-black">
-                                                        {{ $info['titulo'] }}
-                                                    </h6>
-
-                                                    <p class="ui-muted mt-2 text-xs leading-5">
-                                                        {{ $info['descripcion'] }}
-                                                    </p>
-
-                                                    <div class="mt-4 rounded-2xl border px-3 py-2 text-xs" style="border-color: var(--ui-border); background: var(--ui-surface-muted); color: var(--ui-muted);">
-                                                        {{ $info['alerta'] }}
-                                                    </div>
-                                                </button>
-                                            @endforeach
-                                        </div>
-                                    </section>
-
-                                    {{-- CAMPOS COMPLEMENTARIOS SEGÚN TIPO --}}
-                                    <section class="grid gap-5 xl:grid-cols-[1fr_390px]">
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Datos complementarios</p>
-                                            <h5 class="ui-title mt-1 text-xl font-black">
-                                                Información para respaldo institucional
-                                            </h5>
-
-                                            <p class="ui-muted mt-1 text-sm">
-                                                Algunos tipos requieren procedencia, motivo u observación para que el registro sea claro.
-                                            </p>
-
-                                            <div class="mt-5 grid gap-4 md:grid-cols-2">
-                                                <div>
-                                                    <label class="ui-label">
-                                                        Procedencia
-                                                        @if (($formInscripcion['tip_ins'] ?? '') === 'TRASLADO')
-                                                            <span class="ui-badge-warning ml-2">Recomendado</span>
-                                                        @endif
-                                                    </label>
-
-                                                    <input
-                                                        type="text"
-                                                        wire:model.live.debounce.800ms="formInscripcion.pro_ins"
-                                                        class="ui-input"
-                                                        placeholder="Unidad educativa de procedencia, si aplica"
-                                                    >
-
-                                                    @error('formInscripcion.pro_ins')
-                                                        <p class="ui-error">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-
-                                                <div>
-                                                    <label class="ui-label">Condición inicial</label>
-                                                    <select wire:model.live="formInscripcion.con_ins" class="ui-select">
-                                                        @foreach ($catalogos['condiciones_inscripcion'] ?? [] as $condicion)
-                                                            <option value="{{ $condicion }}">
-                                                                {{ ucfirst(strtolower($condicion)) }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-
-                                                    @error('formInscripcion.con_ins')
-                                                        <p class="ui-error">{{ $message }}</p>
-                                                    @enderror
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-5">
-                                                <label class="ui-label">
-                                                    Observación institucional
-                                                    @if (in_array(($formInscripcion['tip_ins'] ?? ''), ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO', 'REINSCRIPCION', 'REPITENTE'], true))
-                                                        <span class="ui-badge-warning ml-2">Importante</span>
-                                                    @endif
-                                                </label>
-
-                                                <textarea
-                                                    wire:model.live.debounce.900ms="formInscripcion.obs_ins"
-                                                    rows="4"
-                                                    class="ui-textarea"
-                                                    placeholder="Ejemplo: inscripción por traslado con documentación pendiente de regularización."
-                                                ></textarea>
-
-                                                @error('formInscripcion.obs_ins')
-                                                    <p class="ui-error">{{ $message }}</p>
-                                                @enderror
-                                            </div>
-                                        </article>
-
-                                        {{-- IMPACTO DOCUMENTAL --}}
-                                        <aside class="ui-panel">
-                                            <div class="flex items-start justify-between gap-4">
-                                                <div>
-                                                    <p class="ui-kicker">Vista previa documental</p>
-                                                    <h5 class="ui-title mt-1 text-xl font-black">
-                                                        Checklist sugerida
-                                                    </h5>
-                                                </div>
-
-                                                <button type="button" wire:click="previsualizarChecklist" class="ui-btn-secondary px-3 py-2 text-xs">
-                                                    Actualizar
-                                                </button>
-                                            </div>
-
-                                            <div class="mt-5">
-                                                @if (! empty($previsualizacionChecklist))
-                                                    <div class="grid grid-cols-3 gap-3">
-                                                        <div class="ui-card-soft p-3">
-                                                            <p class="ui-muted text-xs">Recomendados</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ count($previsualizacionChecklist['recomendados'] ?? []) }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div class="ui-card-soft p-3">
-                                                            <p class="ui-muted text-xs">Actuales</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ count($previsualizacionChecklist['actuales'] ?? []) }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div class="ui-card-soft p-3">
-                                                            <p class="ui-muted text-xs">Faltantes</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ count($previsualizacionChecklist['faltantes'] ?? []) }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="ui-alert-info mt-4">
-                                                        {{ $previsualizacionChecklist['mensaje'] ?? 'Checklist evaluada correctamente.' }}
-                                                    </div>
-
-                                                    <div class="mt-4 space-y-2">
-                                                        @forelse (array_slice($previsualizacionChecklist['recomendados'] ?? [], 0, 5) as $doc)
-                                                            <div class="savp-type-doc-row">
-                                                                <div>
-                                                                    <p class="ui-title text-sm font-black">
-                                                                        {{ $doc['nom_die'] ?? 'Documento' }}
-                                                                    </p>
-                                                                    <p class="ui-muted text-xs">
-                                                                        {{ $doc['tip_die'] ?? 'GENERAL' }}
-                                                                    </p>
-                                                                </div>
-
-                                                                <span class="{{ $this->badgeDocumento($doc['est_die'] ?? 'PENDIENTE') }}">
-                                                                    {{ ucfirst(strtolower($doc['est_die'] ?? 'Pendiente')) }}
-                                                                </span>
-                                                            </div>
-                                                        @empty
-                                                            <div class="ui-alert-info">
-                                                                Presiona actualizar para ver documentos sugeridos.
-                                                            </div>
-                                                        @endforelse
-                                                    </div>
-                                                @else
-                                                    <div class="ui-alert-info">
-                                                        Genera una vista previa para ver qué documentos serán sugeridos en el siguiente paso.
-                                                    </div>
-
-                                                    <button type="button" wire:click="previsualizarChecklist" class="ui-btn-primary mt-4 w-full justify-center">
-                                                        Generar vista previa
-                                                    </button>
-                                                @endif
-                                            </div>
-                                        </aside>
-                                    </section>
-
-                                    {{-- ALERTAS SEGÚN TIPO --}}
-                                    <section class="grid gap-5 xl:grid-cols-3">
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Bloqueos</p>
-
-                                            <div class="mt-4 space-y-2">
-                                                @forelse ($analisis['bloqueos'] ?? [] as $mensaje)
-                                                    <div class="ui-alert-danger">{{ $mensaje }}</div>
-                                                @empty
-                                                    <div class="ui-alert-success">
-                                                        No existen bloqueos críticos para clasificar el tipo de inscripción.
-                                                    </div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Observaciones</p>
-
-                                            <div class="mt-4 space-y-2">
-                                                @forelse ($analisis['advertencias'] ?? [] as $mensaje)
-                                                    <div class="ui-alert-warning">{{ $mensaje }}</div>
-                                                @empty
-                                                    <div class="ui-alert-success">
-                                                        No existen observaciones importantes en esta etapa.
-                                                    </div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Sugerencias</p>
-
-                                            <div class="mt-4 space-y-2">
-                                                @forelse ($analisis['sugerencias'] ?? [] as $mensaje)
-                                                    <div class="ui-alert-info">{{ $mensaje }}</div>
-                                                @empty
-                                                    <div class="ui-alert-info">
-                                                        Selecciona el tipo para obtener recomendaciones específicas.
-                                                    </div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-                                    </section>
-                                </div>
-                            @endif
-
-                            {{-- PASO 3: ASIGNACIÓN ACADÉMICA --}}
-                            @if ($pasoInscripcion === 3)
                                 <div class="space-y-5">
                                     {{-- CABECERA DEL PASO --}}
                                     <section class="ui-panel">
                                         <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                             <div>
                                                 <div class="flex flex-wrap items-center gap-2">
-                                                    <span class="ui-badge-success">Paso 3</span>
+                                                    <span class="ui-badge-success">Paso 2</span>
                                                     <span class="ui-badge-muted">Asignación académica</span>
                                                     <span class="ui-badge-warning">Cupo y turno</span>
 
@@ -2078,8 +1612,7 @@
                                                 </h4>
 
                                                 <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Esta sección define oficialmente dónde estudiará el estudiante durante la gestión seleccionada.
-                                                    Por regla institucional, la inscripción se registra inicialmente en turno Mañana.
+                                                    Defina la gestión, curso, paralelo y turno correspondientes para la inscripción.
                                                 </p>
                                             </div>
 
@@ -2102,71 +1635,9 @@
                                         </div>
                                     </section>
 
-                                    {{-- PANEL SUPERIOR: SUGERENCIA Y TURNO --}}
-                                    <section class="grid gap-5 xl:grid-cols-[1fr_360px]">
-                                        {{-- CURSO SUGERIDO --}}
-                                        <article class="ui-panel">
-                                            <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                                                <div class="flex gap-4">
-                                                    <span class="savp-avatar-md ui-badge-success">
-                                                        {!! $icon('book', 'h-6 w-6') !!}
-                                                    </span>
-
-                                                    <div>
-                                                        <p class="ui-kicker">Curso sugerido por edad</p>
-                                                        <h5 class="ui-title mt-1 text-xl font-black">
-                                                            {{ $cursoSugerido['nombre'] ?? ($analisis['curso_sugerido_disponible']['nombre'] ?? 'Sin sugerencia disponible') }}
-                                                        </h5>
-
-                                                        <p class="ui-muted mt-2 text-sm leading-6">
-                                                            {{ $analisis['curso_edad']['mensaje'] ?? 'Selecciona un estudiante con fecha de nacimiento registrada para obtener sugerencia referencial.' }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div class="flex flex-wrap gap-2 xl:justify-end">
-                                                    @if (! empty($cursoSugerido['cod_cur']) || ! empty($analisis['curso_sugerido_disponible']['cod_cur']))
-                                                        <button type="button" wire:click="aplicarCursoSugerido" class="ui-btn-primary">
-                                                            Aplicar sugerencia
-                                                        </button>
-
-                                                        <button type="button" wire:click="ignorarCursoSugerido" class="ui-btn-secondary">
-                                                            Omitir
-                                                        </button>
-                                                    @else
-                                                        <button type="button" class="ui-btn-secondary" disabled>
-                                                            Sin sugerencia
-                                                        </button>
-                                                    @endif
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-5 grid gap-4 md:grid-cols-3">
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Edad registrada</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $estudianteSeleccionado['edad'] ? $estudianteSeleccionado['edad'].' años' : 'Sin edad' }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Comparación</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $analisis['curso_edad']['estado'] ?? 'SIN_DATOS' }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Tipo sugerido</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $situacionEstudiante['tipo_sugerido'] ?? ($formInscripcion['tip_ins'] ?? 'REGULAR') }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </article>
-
-                                        {{-- TURNO MAÑANA --}}
-                                        <aside class="ui-panel">
+                                    {{-- PANEL SUPERIOR: TURNO PRINCIPAL (compacto) --}}
+                                    <section class="grid gap-5 xl:grid-cols-1">
+                                        <section class="ui-panel">
                                             <div class="flex items-start gap-3">
                                                 <span class="{{ $turnoMananaAplicado ? 'ui-badge-success' : 'ui-badge-warning' }} p-2">
                                                     {!! $icon('clock', 'h-5 w-5') !!}
@@ -2196,10 +1667,12 @@
                                                     </p>
                                                 </div>
 
-                                                <button type="button" wire:click="forzarTurnoManana" class="ui-btn-primary w-full justify-center">
-                                                    {!! $icon('clock', 'h-4 w-4') !!}
-                                                    Aplicar Turno Mañana
-                                                </button>
+                                                @if (! $turnoMananaAplicado)
+                                                    <button type="button" wire:click="forzarTurnoManana" class="ui-btn-primary w-full justify-center">
+                                                        {!! $icon('clock', 'h-4 w-4') !!}
+                                                        Aplicar Turno Mañana
+                                                    </button>
+                                                @endif
                                             </div>
 
                                             @if (! $turnoMananaAplicado)
@@ -2211,7 +1684,7 @@
                                                     El estudiante será inscrito en el turno principal de la institución.
                                                 </div>
                                             @endif
-                                        </aside>
+                                        </section>
                                     </section>
 
                                     {{-- FORMULARIO DE ASIGNACIÓN --}}
@@ -2276,6 +1749,26 @@
                                                 @error('formInscripcion.tip_ins')
                                                     <p class="ui-error">{{ $message }}</p>
                                                 @enderror
+                                                @if (! empty($situacionEstudiante['tipo_sugerido']) && ($formInscripcion['tip_ins'] ?? '') !== $situacionEstudiante['tipo_sugerido'])
+                                                    <div class="mt-2">
+                                                        <button type="button" wire:click="seleccionarTipoRapido('{{ $situacionEstudiante['tipo_sugerido'] }}')" class="ui-btn-secondary px-3 py-2 text-xs">
+                                                            Aplicar sugerencia: {{ $situacionEstudiante['tipo_sugerido'] }}
+                                                        </button>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            {{-- CONDICIÓN --}}
+                                            <div>
+                                                <label class="ui-label">Condición</label>
+                                                <select wire:model.live="formInscripcion.con_ins" class="ui-select">
+                                                    @foreach ($catalogos['condiciones_inscripcion'] ?? [] as $condicion)
+                                                        <option value="{{ $condicion }}">{{ ucfirst(strtolower($condicion)) }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('formInscripcion.con_ins')
+                                                    <p class="ui-error">{{ $message }}</p>
+                                                @enderror
                                             </div>
 
                                             {{-- CURSO --}}
@@ -2295,6 +1788,23 @@
                                                 @error('formInscripcion.cod_cur')
                                                     <p class="ui-error">{{ $message }}</p>
                                                 @enderror
+                                                @php
+                                                    $codCursoSugerido = $cursoSugerido['cod_cur'] ?? ($analisis['curso_sugerido_disponible']['cod_cur'] ?? null);
+                                                    $nombreCursoSugerido = $cursoSugerido['nombre'] ?? ($analisis['curso_sugerido_disponible']['nombre'] ?? null);
+                                                @endphp
+
+                                                @if (! empty($codCursoSugerido) && ($formInscripcion['cod_cur'] ?? '') !== $codCursoSugerido && ! ($cursoSugeridoAplicado ?? false))
+                                                    <div class="mt-2 flex items-center justify-between gap-3 ui-card-soft p-3">
+                                                        <p class="ui-muted text-xs">
+                                                            Curso sugerido: <span class="ui-title font-black">{{ $nombreCursoSugerido }}</span>
+                                                        </p>
+                                                        <button type="button" wire:click="aplicarCursoSugerido" class="ui-btn-secondary px-3 py-2 text-xs">
+                                                            Aplicar
+                                                        </button>
+                                                    </div>
+                                                @elseif (($cursoSugeridoAplicado ?? false) && ! empty($codCursoSugerido) && ($formInscripcion['cod_cur'] ?? '') === $codCursoSugerido)
+                                                    <p class="ui-muted mt-2 text-xs">Curso sugerido aplicado.</p>
+                                                @endif
                                             </div>
 
                                             {{-- PARALELO --}}
@@ -2330,22 +1840,53 @@
                                                 @error('formInscripcion.cod_tur')
                                                     <p class="ui-error">{{ $message }}</p>
                                                 @enderror
+                                                @if (! empty($turnoManana['cod_tur']) && ($formInscripcion['cod_tur'] ?? '') !== $turnoManana['cod_tur'] && ! ($turnoSugeridoAplicado ?? false))
+                                                    <div class="mt-2 flex items-center justify-between gap-3 ui-card-soft p-3">
+                                                        <p class="ui-muted text-xs">
+                                                            Turno sugerido: <span class="ui-title font-black">{{ $turnoManana['nombre'] ?? 'Mañana' }}</span>
+                                                        </p>
+                                                        <button type="button" wire:click="forzarTurnoManana" class="ui-btn-secondary px-3 py-2 text-xs">
+                                                            Aplicar
+                                                        </button>
+                                                    </div>
+                                                @elseif (($turnoSugeridoAplicado ?? false) && ($formInscripcion['cod_tur'] ?? '') === ($turnoManana['cod_tur'] ?? ''))
+                                                    <p class="ui-muted mt-2 text-xs">Turno sugerido aplicado.</p>
+                                                @endif
                                             </div>
                                         </div>
 
-                                        {{-- PROCEDENCIA --}}
+                                        {{-- PROCEDENCIA (controlada) --}}
                                         <div class="mt-5 grid gap-4 xl:grid-cols-[1fr_260px]">
                                             <div>
                                                 <label class="ui-label">Procedencia</label>
-                                                <input
-                                                    type="text"
-                                                    wire:model.live.debounce.800ms="formInscripcion.pro_ins"
-                                                    class="ui-input"
-                                                    placeholder="Unidad educativa de procedencia, si aplica"
-                                                >
-                                                @error('formInscripcion.pro_ins')
+                                                <select wire:model.live="formInscripcion.tip_pro_ins" class="ui-select">
+                                                    @foreach ($catalogos['tipos_procedencia'] ?? [] as $tipo)
+                                                        <option value="{{ $tipo }}">{{ str_replace('_', ' ', $tipo) }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('formInscripcion.tip_pro_ins')
                                                     <p class="ui-error">{{ $message }}</p>
                                                 @enderror
+
+                                                @php
+                                                    $tipPro = $formInscripcion['tip_pro_ins'] ?? 'SIN_REGISTRO';
+                                                    $requiereDetalle = in_array($tipPro, ['OTRA_UNIDAD', 'TRASLADO_DEPARTAMENTAL', 'TRASLADO_INTERDEPARTAMENTAL', 'EXTERIOR', 'OTRO'], true);
+                                                @endphp
+
+                                                @if ($requiereDetalle)
+                                                    <div class="mt-2">
+                                                        <label class="ui-label text-xs">Unidad educativa de procedencia</label>
+                                                        <input
+                                                            type="text"
+                                                            wire:model.live.debounce.800ms="formInscripcion.pro_ins"
+                                                            class="ui-input mt-1"
+                                                            placeholder="Nombre de la unidad educativa"
+                                                        >
+                                                        @error('formInscripcion.pro_ins')
+                                                            <p class="ui-error">{{ $message }}</p>
+                                                        @enderror
+                                                    </div>
+                                                @endif
                                             </div>
 
                                             <div class="ui-card-soft flex items-center justify-between gap-3 p-4">
@@ -2364,7 +1905,7 @@
                                     </section>
 
                                     {{-- PANEL DE CUPO EN TIEMPO REAL --}}
-                                    <section class="grid gap-5 xl:grid-cols-[1fr_420px]">
+                                    <section class="grid gap-5">
                                         <article class="ui-panel">
                                             <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                                 <div>
@@ -2432,49 +1973,6 @@
                                                 @endif
                                             </div>
                                         </article>
-
-                                        {{-- REVISIÓN COMPACTA --}}
-                                        <aside class="ui-panel">
-                                            <div class="flex items-start justify-between gap-4">
-                                                <div>
-                                                    <p class="ui-kicker">Revisión rápida</p>
-                                                    <h5 class="ui-title mt-1 text-xl font-black">
-                                                        {{ $analisis['mensaje'] ?? 'Completa los datos' }}
-                                                    </h5>
-                                                </div>
-
-                                                <span class="{{ $this->badgeRevision($estadoRevision) }}">
-                                                    {{ $estadoRevision }}
-                                                </span>
-                                            </div>
-
-                                            <div class="mt-5 space-y-3">
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Estado sugerido</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $analisis['estado_sugerido'] ?? 'PENDIENTE' }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Condición sugerida</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $analisis['condicion_sugerida'] ?? 'NORMAL' }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Especialidad técnica</p>
-                                                    <p class="ui-title mt-1 font-black">
-                                                        {{ $especialidadRevision['estado_sugerido'] ?? ($formInscripcion['est_esp_tec_ins'] ?? 'NO_APLICA') }}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <button type="button" wire:click="aplicarEstadoSugerido" class="ui-btn-secondary mt-5 w-full justify-center">
-                                                Aplicar estado sugerido
-                                            </button>
-                                        </aside>
                                     </section>
 
                                     {{-- ESPECIALIDAD TÉCNICA BTH --}}
@@ -2506,10 +2004,18 @@
                                                     </div>
                                                 </div>
 
-                                                <button type="button" wire:click="dejarEspecialidadPendiente" class="ui-btn-secondary">
-                                                    Dejar pendiente
-                                                </button>
+                                                @if (($formInscripcion['est_esp_tec_ins'] ?? '') !== 'PENDIENTE' && ! ($especialidadPendienteAplicada ?? false))
+                                                    <button type="button" wire:click="dejarEspecialidadPendiente" class="ui-btn-secondary">
+                                                        Dejar pendiente
+                                                    </button>
+                                                @endif
                                             </div>
+
+                                            @if (($formInscripcion['est_esp_tec_ins'] ?? '') === 'PENDIENTE')
+                                                <div class="ui-alert-warning mt-5">
+                                                    Especialidad pendiente de elección. Podrá completarse posteriormente.
+                                                </div>
+                                            @endif
 
                                             <div class="mt-6 grid gap-4 md:grid-cols-2">
                                                 <div>
@@ -2613,34 +2119,32 @@
                                 </div>
                             @endif
 
-                            {{-- PASO 4: CONTROL DOCUMENTAL --}}
-                            @if ($pasoInscripcion === 4)
+                            {{-- PASO 3: DOCUMENTOS --}}
+                            @if ($pasoInscripcion === 3)
                                 <div class="space-y-5">
                                     {{-- CABECERA DEL PASO --}}
                                     <section class="ui-panel">
                                         <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                             <div>
                                                 <div class="flex flex-wrap items-center gap-2">
-                                                    <span class="ui-badge-success">Paso 4</span>
-                                                    <span class="ui-badge-muted">Documentos</span>
-                                                    <span class="ui-badge-warning">Checklist institucional</span>
+                                                    <span class="ui-badge-success">Paso 3</span>
+                                                    <span class="ui-badge-muted">Documentos requeridos</span>
 
                                                     @if (($panelDoc['pendientes'] ?? 0) > 0 || ($panelDoc['observados'] ?? 0) > 0)
                                                         <span class="ui-badge-warning">Con pendientes</span>
                                                     @elseif (($panelDoc['total'] ?? 0) > 0)
                                                         <span class="ui-badge-success">Sin pendientes críticos</span>
                                                     @else
-                                                        <span class="ui-badge-muted">Sin checklist</span>
+                                                        <span class="ui-badge-muted">Sin lista documental</span>
                                                     @endif
                                                 </div>
 
                                                 <h4 class="ui-title mt-3 text-2xl font-black">
-                                                    Control documental de inscripción
+                                                    Lista documental de inscripción
                                                 </h4>
 
                                                 <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Registra los documentos presentados, pendientes, observados o no aplicables. El sistema puede
-                                                    sugerir una checklist base según el tipo de inscripción sin borrar información ya registrada.
+                                                    Registre el estado de la documentación requerida para la inscripción.
                                                 </p>
                                             </div>
 
@@ -2651,287 +2155,51 @@
                                                 </p>
 
                                                 <p class="ui-muted mt-2 text-xs">
-                                                    La checklist sugerida se adapta al tipo seleccionado.
+                                                    La lista documental requerida se adapta al tipo seleccionado.
                                                 </p>
                                             </div>
                                         </div>
                                     </section>
 
-                                    {{-- PANEL DE PRELLENADO / VISTA PREVIA --}}
-                                    <section class="grid gap-5 xl:grid-cols-[1fr_380px]">
-                                        <article class="ui-panel savp-prefill-panel">
-                                            <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                                                <div class="flex gap-4">
-                                                    <span class="savp-avatar-md ui-badge-success">
-                                                        {!! $icon('file', 'h-6 w-6') !!}
-                                                    </span>
-
-                                                    <div>
-                                                        <p class="ui-kicker">Prellenado sugerido</p>
-                                                        <h5 class="ui-title mt-1 text-xl font-black">
-                                                            Checklist base recomendada
-                                                        </h5>
-
-                                                        <p class="ui-muted mt-2 text-sm leading-6">
-                                                            Puedes generar documentos iniciales según el tipo de inscripción actual.
-                                                            Si ya existen documentos registrados, se recomienda agregar solo los faltantes.
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <div class="flex flex-wrap gap-2 xl:justify-end">
-                                                    <button type="button" wire:click="previsualizarChecklist" class="ui-btn-secondary">
-                                                        Vista previa
-                                                    </button>
-
-                                                    <button type="button" wire:click="solicitarChecklistBase" class="ui-btn-primary">
-                                                        Generar checklist
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            {{-- VISTA PREVIA --}}
-                                            <div class="mt-5">
-                                                @if (! empty($previsualizacionChecklist))
-                                                    <div class="grid gap-4 md:grid-cols-3">
-                                                        <div class="ui-card-soft p-4">
-                                                            <p class="ui-muted text-xs">Acción recomendada</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ str_replace('_', ' ', $previsualizacionChecklist['accion_recomendada'] ?? 'GENERAR') }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div class="ui-card-soft p-4">
-                                                            <p class="ui-muted text-xs">Documentos actuales</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ count($previsualizacionChecklist['actuales'] ?? []) }}
-                                                            </p>
-                                                        </div>
-
-                                                        <div class="ui-card-soft p-4">
-                                                            <p class="ui-muted text-xs">Faltantes sugeridos</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ count($previsualizacionChecklist['faltantes'] ?? []) }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="ui-alert-info mt-4">
-                                                        {{ $previsualizacionChecklist['mensaje'] ?? 'Vista previa generada correctamente.' }}
-                                                    </div>
-
-                                                    <div class="mt-5 grid gap-4 lg:grid-cols-2">
-                                                        {{-- RECOMENDADOS --}}
-                                                        <div class="ui-card-soft p-4">
-                                                            <div class="flex items-center justify-between gap-3">
-                                                                <div>
-                                                                    <p class="ui-kicker">Recomendados</p>
-                                                                    <h6 class="ui-title mt-1 font-black">
-                                                                        Checklist sugerida
-                                                                    </h6>
-                                                                </div>
-
-                                                                <span class="ui-badge-muted">
-                                                                    {{ count($previsualizacionChecklist['recomendados'] ?? []) }}
-                                                                </span>
-                                                            </div>
-
-                                                            <div class="mt-4 space-y-2">
-                                                                @forelse (($previsualizacionChecklist['recomendados'] ?? []) as $doc)
-                                                                    <div class="savp-doc-preview-row">
-                                                                        <div>
-                                                                            <p class="ui-title text-sm font-black">
-                                                                                {{ $doc['nom_die'] ?? 'Documento' }}
-                                                                            </p>
-                                                                            <p class="ui-muted text-xs">
-                                                                                {{ $doc['tip_die'] ?? 'GENERAL' }}
-                                                                            </p>
-                                                                        </div>
-
-                                                                        <span class="{{ $this->badgeDocumento($doc['est_die'] ?? 'PENDIENTE') }}">
-                                                                            {{ ucfirst(strtolower($doc['est_die'] ?? 'Pendiente')) }}
-                                                                        </span>
-                                                                    </div>
-                                                                @empty
-                                                                    <div class="ui-alert-info">
-                                                                        No hay documentos recomendados para mostrar.
-                                                                    </div>
-                                                                @endforelse
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- FALTANTES --}}
-                                                        <div class="ui-card-soft p-4">
-                                                            <div class="flex items-center justify-between gap-3">
-                                                                <div>
-                                                                    <p class="ui-kicker">Faltantes</p>
-                                                                    <h6 class="ui-title mt-1 font-black">
-                                                                        Sugerencias por agregar
-                                                                    </h6>
-                                                                </div>
-
-                                                                <span class="{{ count($previsualizacionChecklist['faltantes'] ?? []) > 0 ? 'ui-badge-warning' : 'ui-badge-success' }}">
-                                                                    {{ count($previsualizacionChecklist['faltantes'] ?? []) }}
-                                                                </span>
-                                                            </div>
-
-                                                            <div class="mt-4 space-y-2">
-                                                                @forelse (($previsualizacionChecklist['faltantes'] ?? []) as $doc)
-                                                                    <div class="savp-doc-preview-row">
-                                                                        <div>
-                                                                            <p class="ui-title text-sm font-black">
-                                                                                {{ $doc['nom_die'] ?? 'Documento' }}
-                                                                            </p>
-                                                                            <p class="ui-muted text-xs">
-                                                                                {{ $doc['tip_die'] ?? 'GENERAL' }}
-                                                                            </p>
-                                                                        </div>
-
-                                                                        <span class="ui-badge-warning">
-                                                                            Faltante
-                                                                        </span>
-                                                                    </div>
-                                                                @empty
-                                                                    <div class="ui-alert-success">
-                                                                        No se detectaron documentos faltantes respecto a la checklist sugerida.
-                                                                    </div>
-                                                                @endforelse
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                @else
-                                                    <div class="ui-card-soft p-6">
-                                                        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                                                            <div class="flex gap-4">
-                                                                <span class="savp-avatar-md ui-badge-muted">
-                                                                    {!! $icon('file', 'h-6 w-6') !!}
-                                                                </span>
-
-                                                                <div>
-                                                                    <h6 class="ui-title font-black">
-                                                                        Vista previa aún no generada
-                                                                    </h6>
-
-                                                                    <p class="ui-muted mt-2 text-sm leading-6">
-                                                                        Presiona “Vista previa” para revisar qué documentos se sugieren antes de aplicarlos.
-                                                                        Esto evita reemplazar información por error.
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-
-                                                            <button type="button" wire:click="previsualizarChecklist" class="ui-btn-primary">
-                                                                Generar vista previa
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </article>
-
-                                        {{-- RESUMEN DOCUMENTAL --}}
-                                        <aside class="ui-panel">
-                                            <div class="flex items-start justify-between gap-4">
+                                    @if ($sugerenciaDocumentalVisible)
+                                        <section class="ui-panel">
+                                            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                                 <div>
-                                                    <p class="ui-kicker">Resumen documental</p>
-                                                    <h5 class="ui-title mt-1 text-xl font-black">
-                                                        {{ count($documentos) }} documento(s)
-                                                    </h5>
+                                                    <p class="ui-kicker">Sugerencia</p>
+                                                    <h5 class="ui-title mt-1 text-xl font-black">Documentos faltantes para este tipo</h5>
+                                                    <p class="ui-muted mt-1 text-sm">
+                                                        Se detectaron {{ count($documentosFaltantesSugeridos) }} documento(s) faltante(s) según el tipo de inscripción actual.
+                                                    </p>
                                                 </div>
-
-                                                @if (($panelDoc['completos'] ?? false))
-                                                    <span class="ui-badge-success">Completo</span>
-                                                @elseif (count($documentos) === 0)
-                                                    <span class="ui-badge-muted">Sin checklist</span>
-                                                @else
-                                                    <span class="ui-badge-warning">Revisar</span>
-                                                @endif
+                                                <button type="button" wire:click="aplicarChecklistAgregarFaltantes" class="ui-btn-secondary">
+                                                    Agregar faltantes
+                                                </button>
                                             </div>
+                                        </section>
+                                    @endif
 
-                                            <div class="mt-5 grid grid-cols-2 gap-3">
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Presentados</p>
-                                                    <p class="ui-title mt-1 text-2xl font-black">
-                                                        {{ $panelDoc['presentados'] ?? 0 }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Pendientes</p>
-                                                    <p class="ui-title mt-1 text-2xl font-black">
-                                                        {{ $panelDoc['pendientes'] ?? 0 }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">Observados</p>
-                                                    <p class="ui-title mt-1 text-2xl font-black">
-                                                        {{ $panelDoc['observados'] ?? 0 }}
-                                                    </p>
-                                                </div>
-
-                                                <div class="ui-card-soft p-4">
-                                                    <p class="ui-muted text-xs">No aplica</p>
-                                                    <p class="ui-title mt-1 text-2xl font-black">
-                                                        {{ $panelDoc['no_aplica'] ?? 0 }}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div class="mt-5">
-                                                @if (($panelDoc['pendientes'] ?? 0) > 0 || ($panelDoc['observados'] ?? 0) > 0)
-                                                    <div class="ui-alert-warning">
-                                                        Existen documentos pendientes u observados. La inscripción puede continuar con seguimiento.
-                                                    </div>
-                                                @elseif (count($documentos) > 0)
-                                                    <div class="ui-alert-success">
-                                                        No se detectan pendientes documentales críticos.
-                                                    </div>
-                                                @else
-                                                    <div class="ui-alert-info">
-                                                        Aún no se generó checklist documental.
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </aside>
-                                    </section>
-
-                                    {{-- BARRA DE ACCIONES DOCUMENTALES --}}
                                     <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                                        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                                             <div>
-                                                <p class="ui-kicker">Acciones documentales</p>
-                                                <h5 class="ui-title mt-1 text-xl font-black">
-                                                    Gestionar checklist
-                                                </h5>
-                                                <p class="ui-muted mt-1 text-sm">
-                                                    Puedes agregar documentos manuales o generar la checklist recomendada sin perder información.
-                                                </p>
+                                                <p class="ui-kicker">Acciones</p>
+                                                <h5 class="ui-title mt-1 text-xl font-black">Documentos requeridos</h5>
+                                                <p class="ui-muted mt-1 text-sm">Agrega documentos adicionales solo si corresponde.</p>
                                             </div>
 
                                             <div class="flex flex-wrap gap-2">
-                                                <button type="button" wire:click="solicitarChecklistBase" class="ui-btn-primary">
-                                                    {!! $icon('file', 'h-4 w-4') !!}
-                                                    Checklist base
-                                                </button>
-
-                                                <button type="button" wire:click="aplicarChecklistAgregarFaltantes" class="ui-btn-secondary">
-                                                    {!! $icon('plus', 'h-4 w-4') !!}
-                                                    Agregar faltantes
-                                                </button>
-
                                                 <button type="button" wire:click="agregarDocumentoManual" class="ui-btn-secondary">
                                                     {!! $icon('plus', 'h-4 w-4') !!}
-                                                    Documento manual
+                                                    Agregar documento
                                                 </button>
                                             </div>
                                         </div>
                                     </section>
 
-                                    {{-- LISTADO EDITABLE DE DOCUMENTOS --}}
+                                    {{-- LISTA DOCUMENTAL ACTUAL --}}
                                     <section class="ui-panel">
                                         <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
                                             <div>
-                                                <p class="ui-kicker">Checklist actual</p>
+                                                <p class="ui-kicker">Lista documental</p>
                                                 <h5 class="ui-title mt-1 text-xl font-black">
                                                     Documentos de la inscripción
                                                 </h5>
@@ -2949,7 +2217,7 @@
                                                 @endphp
 
                                                 <article class="ui-card-soft savp-doc-card p-4">
-                                                    <div class="grid gap-4 xl:grid-cols-[1.15fr_170px_1fr_auto] xl:items-start">
+                                                    <div class="grid gap-4 xl:grid-cols-[1.15fr_170px_1fr_240px_auto] xl:items-start">
                                                         {{-- NOMBRE --}}
                                                         <div>
                                                             <label class="ui-label">Documento</label>
@@ -2959,6 +2227,29 @@
                                                                 class="ui-input"
                                                                 placeholder="Nombre del documento"
                                                             >
+
+                                                            <div class="mt-3">
+                                                                <label class="ui-label">Tipo documental</label>
+                                                                <select wire:model.live="documentos.{{ $index }}.tip_die" class="ui-select">
+                                                                    @php
+                                                                        $labelsTipoDoc = [
+                                                                            'RUDE' => 'Formulario RUDE',
+                                                                            'IDENTIDAD' => 'Identidad (estudiante/tutor)',
+                                                                            'VACUNAS' => 'Salud / vacunas',
+                                                                            'ACADEMICO' => 'Académico',
+                                                                            'TRASLADO' => 'Traslado',
+                                                                            'EXTERIOR' => 'Extranjero',
+                                                                            'VULNERABILIDAD' => 'Caso vulnerable',
+                                                                            'ESPECIALIDAD' => 'Especialidad técnica BTH',
+                                                                            'AUTORIZACION' => 'Autorización',
+                                                                            'GENERAL' => 'General',
+                                                                        ];
+                                                                    @endphp
+                                                                    @foreach (($catalogos['tipos_documento_inscripcion'] ?? []) as $tipo)
+                                                                        <option value="{{ $tipo }}">{{ $labelsTipoDoc[$tipo] ?? str_replace('_', ' ', $tipo) }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
 
                                                             <div class="mt-2 flex flex-wrap gap-2">
                                                                 <span class="{{ $this->badgeDocumento($estadoDoc) }}">
@@ -2973,7 +2264,7 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- ESTADO --}}
+                                                        {{-- ESTADO Y ACCIONES CONTEXTUALES --}}
                                                         <div>
                                                             <label class="ui-label">Estado</label>
                                                             <select wire:model.live="documentos.{{ $index }}.est_die" class="ui-select">
@@ -2982,55 +2273,108 @@
                                                                 @endforeach
                                                             </select>
 
-                                                            <div class="mt-2 grid grid-cols-2 gap-2">
-                                                                <button
-                                                                    type="button"
-                                                                    wire:click="marcarDocumento({{ $index }}, 'PRESENTADO')"
-                                                                    class="savp-doc-action {{ $estadoDoc === 'PRESENTADO' ? 'savp-doc-action-active' : '' }}"
-                                                                >
-                                                                    Presentado
-                                                                </button>
-
-                                                                <button
-                                                                    type="button"
-                                                                    wire:click="marcarDocumento({{ $index }}, 'PENDIENTE')"
-                                                                    class="savp-doc-action {{ $estadoDoc === 'PENDIENTE' ? 'savp-doc-action-active' : '' }}"
-                                                                >
-                                                                    Pendiente
-                                                                </button>
-
-                                                                <button
-                                                                    type="button"
-                                                                    wire:click="marcarDocumento({{ $index }}, 'OBSERVADO')"
-                                                                    class="savp-doc-action {{ $estadoDoc === 'OBSERVADO' ? 'savp-doc-action-active' : '' }}"
-                                                                >
-                                                                    Observado
-                                                                </button>
-
-                                                                <button
-                                                                    type="button"
-                                                                    wire:click="marcarDocumento({{ $index }}, 'NO_APLICA')"
-                                                                    class="savp-doc-action {{ $estadoDoc === 'NO_APLICA' ? 'savp-doc-action-active' : '' }}"
-                                                                >
-                                                                    No aplica
-                                                                </button>
+                                                            <div class="mt-2 flex flex-wrap gap-2">
+                                                                @if ($estadoDoc === 'PENDIENTE')
+                                                                    <button type="button" wire:click="documentoPresentado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Marcar como presentado</button>
+                                                                    <button type="button" wire:click="documentoNoAplica({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">No aplica</button>
+                                                                @elseif ($estadoDoc === 'PRESENTADO')
+                                                                    <button type="button" wire:click="documentoValidado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Validar</button>
+                                                                    <button type="button" wire:click="documentoObservado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Observar</button>
+                                                                @elseif ($estadoDoc === 'OBSERVADO')
+                                                                    <button type="button" wire:click="documentoPresentado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Marcar corregido</button>
+                                                                @elseif ($estadoDoc === 'NO_APLICA')
+                                                                    <button type="button" wire:click="documentoPendiente({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Requerir documento</button>
+                                                                @endif
                                                             </div>
                                                         </div>
 
                                                         {{-- OBSERVACIÓN --}}
                                                         <div>
-                                                            <label class="ui-label">Observación</label>
+                                                            <label class="ui-label">
+                                                                Observación
+                                                                @if (($estadoDoc ?? '') === 'OBSERVADO')
+                                                                    <span class="ui-badge-danger ml-2">Obligatoria</span>
+                                                                @endif
+                                                            </label>
                                                             <textarea
                                                                 wire:model.live.debounce.800ms="documentos.{{ $index }}.obs_die"
                                                                 rows="3"
                                                                 class="ui-textarea"
                                                                 placeholder="Observación documental"
                                                             ></textarea>
+                                                            <p class="ui-help">
+                                                                @if (($estadoDoc ?? '') === 'PENDIENTE')
+                                                                    PENDIENTE: requiere fecha límite si es obligatorio. No admite archivo.
+                                                                @elseif (($estadoDoc ?? '') === 'PRESENTADO')
+                                                                    PRESENTADO: registra fecha de presentación y permite pasar a validación.
+                                                                @elseif (($estadoDoc ?? '') === 'VALIDADO')
+                                                                    VALIDADO: requiere archivo.
+                                                                @elseif (($estadoDoc ?? '') === 'NO_APLICA')
+                                                                    NO APLICA: no requiere archivo ni fechas.
+                                                                @else
+                                                                    OBSERVADO: requiere motivo y fecha límite de corrección.
+                                                                @endif
+                                                            </p>
+                                                        </div>
 
-                                                            @if (($estadoDoc ?? '') === 'PRESENTADO')
-                                                                <p class="ui-muted mt-2 text-xs">
-                                                                    Fecha: {{ $documento['fec_pre_die'] ?? now()->toDateString() }}
+                                                        {{-- ARCHIVO Y FECHAS --}}
+                                                        <div>
+                                                            <label class="ui-label">Archivo y fechas</label>
+
+                                                            @php
+                                                                $tieneArchivo = ! empty($documento['rut_die']) || ! empty($documento['has_die']);
+                                                            @endphp
+
+                                                            @if (($estadoDoc ?? '') === 'PENDIENTE')
+                                                                <input type="date" wire:model.live="documentos.{{ $index }}.fec_lim_die" class="ui-input" @if(($documento['obligatorio'] ?? false)) required @endif>
+                                                                <p class="ui-muted text-xs mt-2">
+                                                                    @if (($documento['obligatorio'] ?? false))
+                                                                        Obligatorio: fecha límite requerida.
+                                                                    @else
+                                                                        Fecha límite opcional.
+                                                                    @endif
                                                                 </p>
+
+                                                                <div class="mt-3 ui-card-soft p-3 opacity-60">
+                                                                    <p class="ui-muted text-xs font-bold">Archivo deshabilitado</p>
+                                                                    <p class="ui-muted text-xs mt-1">Un documento pendiente no debe tener archivo cargado.</p>
+                                                                </div>
+                                                            @elseif (in_array(($estadoDoc ?? ''), ['PRESENTADO', 'VALIDADO', 'OBSERVADO'], true))
+                                                                <input type="date" wire:model.live="documentos.{{ $index }}.fec_pre_die" class="ui-input" title="Fecha de presentación">
+
+                                                                <div class="mt-3">
+                                                                    <label class="ui-label text-xs">Archivo PDF</label>
+                                                                    <input
+                                                                        type="file"
+                                                                        wire:model="archivosDocumentos.{{ $index }}"
+                                                                        accept="application/pdf,.pdf"
+                                                                        class="ui-input mt-1"
+                                                                    >
+                                                                    @error("archivosDocumentos.$index")
+                                                                        <p class="ui-error">{{ $message }}</p>
+                                                                    @enderror
+                                                                </div>
+
+                                                                @if (($estadoDoc ?? '') === 'OBSERVADO')
+                                                                    <div class="mt-3">
+                                                                        <label class="ui-label text-xs">Fecha límite (corrección)</label>
+                                                                        <input type="date" wire:model.live="documentos.{{ $index }}.fec_lim_die" class="ui-input mt-1" required>
+                                                                    </div>
+                                                                @endif
+
+                                                                <div class="mt-3 ui-card-soft p-3">
+                                                                    <div class="flex items-center justify-between gap-2">
+                                                                        <p class="ui-muted text-xs font-bold">Archivo</p>
+                                                                        <span class="{{ $tieneArchivo ? 'ui-badge-success' : 'ui-badge-warning' }}">
+                                                                            {{ $tieneArchivo ? 'Registrado' : 'Sin archivo' }}
+                                                                        </span>
+                                                                    </div>
+                                                                    <p class="ui-muted text-xs mt-1">
+                                                                        {{ $tieneArchivo ? 'Existe metadata de archivo registrada.' : 'Carga de archivo pendiente de conexión backend.' }}
+                                                                    </p>
+                                                                </div>
+                                                            @else
+                                                                <input type="text" disabled class="ui-input opacity-60" value="No aplica">
                                                             @endif
                                                         </div>
 
@@ -3053,484 +2397,28 @@
                                                         {!! $icon('file', 'h-8 w-8') !!}
                                                     </div>
 
-                                                    <h5 class="ui-title mt-4 font-black">
-                                                        No existe checklist documental
-                                                    </h5>
-
-                                                    <p class="ui-muted mt-2 text-sm">
-                                                        Genera una checklist base o agrega documentos manualmente para controlar la inscripción.
-                                                    </p>
+                                                    <h5 class="ui-title mt-4 font-black">No se generó la lista documental</h5>
+                                                    <p class="ui-muted mt-2 text-sm">Agrega un documento adicional o vuelve al paso anterior para revisar el tipo de inscripción.</p>
 
                                                     <div class="mt-5 flex flex-wrap justify-center gap-2">
-                                                        <button type="button" wire:click="solicitarChecklistBase" class="ui-btn-primary">
-                                                            Generar checklist
-                                                        </button>
-
-                                                        <button type="button" wire:click="agregarDocumentoManual" class="ui-btn-secondary">
-                                                            Agregar manual
-                                                        </button>
+                                                        <button type="button" wire:click="agregarDocumentoManual" class="ui-btn-secondary">Agregar documento</button>
                                                     </div>
                                                 </div>
                                             @endforelse
                                         </div>
                                     </section>
-
-                                    {{-- RECOMENDACIONES DOCUMENTALES --}}
-                                    <section class="grid gap-5 xl:grid-cols-3">
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Bloqueos</p>
-                                            <div class="mt-4 space-y-2">
-                                                @forelse (($analisis['bloqueos'] ?? []) as $mensaje)
-                                                    <div class="ui-alert-danger">{{ $mensaje }}</div>
-                                                @empty
-                                                    <div class="ui-alert-success">No existen bloqueos documentales críticos.</div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Observaciones</p>
-                                            <div class="mt-4 space-y-2">
-                                                @forelse (($analisis['documentos']['advertencias'] ?? []) as $mensaje)
-                                                    <div class="ui-alert-warning">{{ $mensaje }}</div>
-                                                @empty
-                                                    <div class="ui-alert-success">No existen observaciones documentales pendientes.</div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-
-                                        <article class="ui-panel">
-                                            <p class="ui-kicker">Sugerencias</p>
-                                            <div class="mt-4 space-y-2">
-                                                @forelse (($analisis['documentos']['sugerencias'] ?? []) as $mensaje)
-                                                    <div class="ui-alert-info">{{ $mensaje }}</div>
-                                                @empty
-                                                    <div class="ui-alert-info">Genera una checklist para obtener recomendaciones documentales.</div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-                                    </section>
                                 </div>
                             @endif
 
-                            {{-- PASO 5: REVISIÓN INSTITUCIONAL --}}
-                            @if ($pasoInscripcion === 5)
-                                <div class="space-y-5">
-                                    {{-- CABECERA --}}
-                                    <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                                            <div>
-                                                <div class="flex flex-wrap items-center gap-2">
-                                                    <span class="ui-badge-success">Paso 5</span>
-                                                    <span class="ui-badge-muted">Revisión institucional</span>
-
-                                                    <span class="{{ $this->badgeRevision($estadoRevision) }}">
-                                                        {{ $estadoRevision }}
-                                                    </span>
-
-                                                    <span class="{{ $this->badgeEstado($analisis['estado_sugerido'] ?? 'PENDIENTE') }}">
-                                                        {{ $analisis['estado_sugerido'] ?? 'PENDIENTE' }}
-                                                    </span>
-                                                </div>
-
-                                                <h4 class="ui-title mt-3 text-2xl font-black">
-                                                    Revisión antes de confirmar
-                                                </h4>
-
-                                                <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Verifica la asignación académica, cupo, documentación, turno y especialidad técnica antes de guardar.
-                                                    Si existen observaciones, la inscripción puede continuar con seguimiento institucional.
-                                                </p>
-                                            </div>
-
-                                            <div class="ui-card-soft min-w-[270px] p-4">
-                                                <p class="ui-muted text-xs">Resultado actual</p>
-                                                <p class="ui-title mt-1 text-lg font-black">
-                                                    {{ $analisis['mensaje'] ?? 'Completa los datos para revisar' }}
-                                                </p>
-
-                                                <div class="mt-3 flex flex-wrap gap-2">
-                                                    <span class="{{ $this->badgeRevision($estadoRevision) }}">
-                                                        Riesgo: {{ $analisis['nivel_riesgo'] ?? 'SIN_RIESGO' }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                    {{-- RESUMEN EJECUTIVO --}}
-                                    <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-                                        <article class="ui-card-soft p-5">
-                                            <p class="ui-muted text-xs">Estado sugerido</p>
-                                            <p class="ui-title mt-2 text-xl font-black">
-                                                {{ $analisis['estado_sugerido'] ?? 'PENDIENTE' }}
-                                            </p>
-                                            <p class="ui-muted mt-2 text-xs">Resultado recomendado para guardar.</p>
-                                        </article>
-
-                                        <article class="ui-card-soft p-5">
-                                            <p class="ui-muted text-xs">Condición</p>
-                                            <p class="ui-title mt-2 text-xl font-black">
-                                                {{ $analisis['condicion_sugerida'] ?? 'NORMAL' }}
-                                            </p>
-                                            <p class="ui-muted mt-2 text-xs">Clasificación administrativa.</p>
-                                        </article>
-
-                                        <article class="ui-card-soft p-5">
-                                            <p class="ui-muted text-xs">Cupo</p>
-                                            <p class="ui-title mt-2 text-xl font-black">
-                                                {{ $cupo['disponibles'] ?? 0 }} disponibles
-                                            </p>
-                                            <p class="ui-muted mt-2 text-xs">
-                                                {{ $cupo['inscritos'] ?? 0 }}/{{ $cupo['capacidad'] ?? 35 }} ocupados.
-                                            </p>
-                                        </article>
-
-                                        <article class="ui-card-soft p-5">
-                                            <p class="ui-muted text-xs">Documentos</p>
-                                            <p class="ui-title mt-2 text-xl font-black">
-                                                {{ $analisis['documentos']['pendientes'] ?? 0 }} pendientes
-                                            </p>
-                                            <p class="ui-muted mt-2 text-xs">
-                                                {{ $analisis['documentos']['observados'] ?? 0 }} observados.
-                                            </p>
-                                        </article>
-
-                                        <article class="ui-card-soft p-5">
-                                            <p class="ui-muted text-xs">Especialidad BTH</p>
-                                            <p class="ui-title mt-2 text-xl font-black">
-                                                {{ $especialidadRevision['estado_sugerido'] ?? ($formInscripcion['est_esp_tec_ins'] ?? 'NO_APLICA') }}
-                                            </p>
-                                            <p class="ui-muted mt-2 text-xs">Opcional desde 4to.</p>
-                                        </article>
-                                    </section>
-
-                                    {{-- VISTA PREVIA DE ASIGNACIÓN --}}
-                                    <section class="grid gap-5 xl:grid-cols-[1fr_410px]">
-                                        <article class="ui-panel savp-review-main">
-                                            <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                                                <div>
-                                                    <p class="ui-kicker">Vista previa de inscripción</p>
-                                                    <h5 class="ui-title mt-1 text-xl font-black">
-                                                        Designación académica final
-                                                    </h5>
-
-                                                    <p class="ui-muted mt-1 text-sm">
-                                                        Esta es la información que quedará registrada para la gestión seleccionada.
-                                                    </p>
-                                                </div>
-
-                                                <button type="button" wire:click="aplicarEstadoSugerido" class="ui-btn-secondary">
-                                                    Aplicar estado sugerido
-                                                </button>
-                                            </div>
-
-                                            <div class="mt-6 grid gap-4 md:grid-cols-2">
-                                                <div class="savp-preview-block">
-                                                    <div class="flex items-start gap-3">
-                                                        <span class="ui-badge-success p-2">
-                                                            {!! $icon('user', 'h-4 w-4') !!}
-                                                        </span>
-
-                                                        <div>
-                                                            <p class="ui-muted text-xs">Estudiante</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ $estudianteSeleccionado['nombre_completo'] ?? 'Sin estudiante seleccionado' }}
-                                                            </p>
-                                                            <p class="ui-muted mt-1 text-xs">
-                                                                CI: {{ $estudianteSeleccionado['ci_completo'] ?? 'Sin CI' }}
-                                                                · RUDE: {{ $estudianteSeleccionado['rud'] ?? 'Sin RUDE' }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="savp-preview-block">
-                                                    <div class="flex items-start gap-3">
-                                                        <span class="ui-badge-muted p-2">
-                                                            {!! $icon('calendar', 'h-4 w-4') !!}
-                                                        </span>
-
-                                                        <div>
-                                                            <p class="ui-muted text-xs">Gestión y fecha</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ $gestionTrabajo['anio'] ?? 'Sin gestión' }}
-                                                            </p>
-                                                            <p class="ui-muted mt-1 text-xs">
-                                                                Fecha: {{ $formInscripcion['fei_ins'] ?? now()->toDateString() }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="savp-preview-block">
-                                                    <div class="flex items-start gap-3">
-                                                        <span class="ui-badge-success p-2">
-                                                            {!! $icon('book', 'h-4 w-4') !!}
-                                                        </span>
-
-                                                        <div>
-                                                            <p class="ui-muted text-xs">Curso y paralelo</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ collect($catalogos['cursos'] ?? [])->firstWhere('cod_cur', $formInscripcion['cod_cur'] ?? '')['nombre'] ?? 'Curso no seleccionado' }}
-                                                                ·
-                                                                {{ collect($catalogos['paralelos'] ?? [])->firstWhere('cod_par', $formInscripcion['cod_par'] ?? '')['nombre'] ?? 'Paralelo no seleccionado' }}
-                                                            </p>
-                                                            <p class="ui-muted mt-1 text-xs">
-                                                                Comparación edad/curso: {{ $analisis['curso_edad']['estado'] ?? 'SIN_DATOS' }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="savp-preview-block">
-                                                    <div class="flex items-start gap-3">
-                                                        <span class="{{ $turnoMananaAplicado ? 'ui-badge-success' : 'ui-badge-warning' }} p-2">
-                                                            {!! $icon('clock', 'h-4 w-4') !!}
-                                                        </span>
-
-                                                        <div>
-                                                            <p class="ui-muted text-xs">Turno</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ collect($catalogos['turnos'] ?? [])->firstWhere('cod_tur', $formInscripcion['cod_tur'] ?? '')['nombre'] ?? 'Turno no seleccionado' }}
-                                                            </p>
-                                                            <p class="ui-muted mt-1 text-xs">
-                                                                {{ $turnoMananaAplicado ? 'Cumple la regla de turno Mañana.' : 'No coincide con turno Mañana; quedará observado.' }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="savp-preview-block">
-                                                    <div class="flex items-start gap-3">
-                                                        <span class="{{ $this->badgeEspecialidad($formInscripcion['est_esp_tec_ins'] ?? 'NO_APLICA') }} p-2">
-                                                            {!! $icon('star', 'h-4 w-4') !!}
-                                                        </span>
-
-                                                        <div>
-                                                            <p class="ui-muted text-xs">Especialidad técnica</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                @php
-                                                                    $espSeleccionada = collect($catalogos['especialidades_tecnicas'] ?? [])->firstWhere('cod_esp_tec', $formInscripcion['cod_esp_tec'] ?? '');
-                                                                @endphp
-
-                                                                {{ $espSeleccionada['nombre'] ?? ($formInscripcion['est_esp_tec_ins'] ?? 'NO_APLICA') }}
-                                                            </p>
-                                                            <p class="ui-muted mt-1 text-xs">
-                                                                {{ $especialidadRevision['mensaje'] ?? 'Especialidad evaluada según el curso seleccionado.' }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="savp-preview-block">
-                                                    <div class="flex items-start gap-3">
-                                                        <span class="{{ $this->badgeEstado($analisis['estado_sugerido'] ?? 'PENDIENTE') }} p-2">
-                                                            {!! $icon('shield', 'h-4 w-4') !!}
-                                                        </span>
-
-                                                        <div>
-                                                            <p class="ui-muted text-xs">Estado final sugerido</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ $analisis['estado_sugerido'] ?? 'PENDIENTE' }}
-                                                            </p>
-                                                            <p class="ui-muted mt-1 text-xs">
-                                                                Condición: {{ $analisis['condicion_sugerida'] ?? 'NORMAL' }}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </article>
-
-                                        {{-- PANEL DE CUPOS Y DOCUMENTOS --}}
-                                        <aside class="space-y-5">
-                                            <article class="ui-panel">
-                                                <div class="flex items-start justify-between gap-4">
-                                                    <div>
-                                                        <p class="ui-kicker">Cupo</p>
-                                                        <h5 class="ui-title mt-1 text-xl font-black">
-                                                            {{ $cupo['estado'] ?? 'DISPONIBLE' }}
-                                                        </h5>
-                                                    </div>
-
-                                                    <span class="{{ $this->badgeCupo($cupo['estado'] ?? 'DISPONIBLE') }}">
-                                                        {{ $cupo['porcentaje'] ?? 0 }}%
-                                                    </span>
-                                                </div>
-
-                                                <div class="mt-4 grid grid-cols-3 gap-3">
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">Capacidad</p>
-                                                        <p class="ui-title font-black">{{ $cupo['capacidad'] ?? 35 }}</p>
-                                                    </div>
-
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">Inscritos</p>
-                                                        <p class="ui-title font-black">{{ $cupo['inscritos'] ?? 0 }}</p>
-                                                    </div>
-
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">Libre</p>
-                                                        <p class="ui-title font-black">{{ $cupo['disponibles'] ?? 0 }}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div class="mt-4 h-3 overflow-hidden rounded-full" style="background: var(--ui-surface-muted);">
-                                                    <div class="savp-progress h-full rounded-full" style="width: {{ min(100, max(0, $cupo['porcentaje'] ?? 0)) }}%;"></div>
-                                                </div>
-                                            </article>
-
-                                            <article class="ui-panel">
-                                                <p class="ui-kicker">Documentación</p>
-                                                <h5 class="ui-title mt-1 text-xl font-black">
-                                                    {{ count($documentos) }} documento(s)
-                                                </h5>
-
-                                                <div class="mt-4 grid grid-cols-2 gap-3">
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">Presentados</p>
-                                                        <p class="ui-title font-black">{{ $analisis['documentos']['presentados'] ?? 0 }}</p>
-                                                    </div>
-
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">Pendientes</p>
-                                                        <p class="ui-title font-black">{{ $analisis['documentos']['pendientes'] ?? 0 }}</p>
-                                                    </div>
-
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">Observados</p>
-                                                        <p class="ui-title font-black">{{ $analisis['documentos']['observados'] ?? 0 }}</p>
-                                                    </div>
-
-                                                    <div class="ui-card-soft p-3">
-                                                        <p class="ui-muted text-xs">No aplica</p>
-                                                        <p class="ui-title font-black">{{ $analisis['documentos']['no_aplica'] ?? 0 }}</p>
-                                                    </div>
-                                                </div>
-                                            </article>
-                                        </aside>
-                                    </section>
-
-                                    {{-- BLOQUEOS / OBSERVACIONES / SUGERENCIAS --}}
-                                    <section class="grid gap-5 xl:grid-cols-3">
-                                        <article class="ui-panel">
-                                            <div class="flex items-center justify-between gap-3">
-                                                <div>
-                                                    <p class="ui-kicker">Bloqueos</p>
-                                                    <h5 class="ui-title mt-1 font-black">
-                                                        {{ count($analisis['bloqueos'] ?? []) }} detectado(s)
-                                                    </h5>
-                                                </div>
-
-                                                <span class="{{ count($analisis['bloqueos'] ?? []) > 0 ? 'ui-badge-danger' : 'ui-badge-success' }}">
-                                                    {{ count($analisis['bloqueos'] ?? []) > 0 ? 'Corregir' : 'Correcto' }}
-                                                </span>
-                                            </div>
-
-                                            <div class="mt-4 space-y-2">
-                                                @forelse ($analisis['bloqueos'] ?? [] as $mensaje)
-                                                    <div class="ui-alert-danger">
-                                                        {{ $mensaje }}
-                                                    </div>
-                                                @empty
-                                                    <div class="ui-alert-success">
-                                                        No existen bloqueos críticos para continuar.
-                                                    </div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-
-                                        <article class="ui-panel">
-                                            <div class="flex items-center justify-between gap-3">
-                                                <div>
-                                                    <p class="ui-kicker">Observaciones</p>
-                                                    <h5 class="ui-title mt-1 font-black">
-                                                        {{ count($analisis['advertencias'] ?? []) }} registrada(s)
-                                                    </h5>
-                                                </div>
-
-                                                <span class="{{ count($analisis['advertencias'] ?? []) > 0 ? 'ui-badge-warning' : 'ui-badge-success' }}">
-                                                    {{ count($analisis['advertencias'] ?? []) > 0 ? 'Seguimiento' : 'Sin observaciones' }}
-                                                </span>
-                                            </div>
-
-                                            <div class="mt-4 space-y-2">
-                                                @forelse ($analisis['advertencias'] ?? [] as $mensaje)
-                                                    <div class="ui-alert-warning">
-                                                        {{ $mensaje }}
-                                                    </div>
-                                                @empty
-                                                    <div class="ui-alert-success">
-                                                        No existen observaciones pendientes.
-                                                    </div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-
-                                        <article class="ui-panel">
-                                            <div class="flex items-center justify-between gap-3">
-                                                <div>
-                                                    <p class="ui-kicker">Sugerencias</p>
-                                                    <h5 class="ui-title mt-1 font-black">
-                                                        {{ count($analisis['sugerencias'] ?? []) }} recomendación(es)
-                                                    </h5>
-                                                </div>
-
-                                                <span class="ui-badge-muted">Apoyo</span>
-                                            </div>
-
-                                            <div class="mt-4 space-y-2">
-                                                @forelse ($analisis['sugerencias'] ?? [] as $mensaje)
-                                                    <div class="ui-alert-info">
-                                                        {{ $mensaje }}
-                                                    </div>
-                                                @empty
-                                                    <div class="ui-alert-info">
-                                                        Completa el formulario para obtener recomendaciones.
-                                                    </div>
-                                                @endforelse
-                                            </div>
-                                        </article>
-                                    </section>
-
-                                    {{-- OBSERVACIÓN FINAL ANTES DE CONFIRMAR --}}
-                                    <section class="ui-panel">
-                                        <p class="ui-kicker">Respaldo final</p>
-                                        <h5 class="ui-title mt-1 text-xl font-black">
-                                            Observación o justificación institucional
-                                        </h5>
-
-                                        <p class="ui-muted mt-1 text-sm">
-                                            Si existen observaciones, sobrecupo, traslado, especialidad pendiente o documentación incompleta,
-                                            registra una nota breve para que la bitácora y el historial sean comprensibles.
-                                        </p>
-
-                                        <div class="mt-5">
-                                            <textarea
-                                                wire:model.live.debounce.900ms="formInscripcion.mot_obs_ins"
-                                                rows="4"
-                                                class="ui-textarea"
-                                                placeholder="Ejemplo: inscripción observada por documentos pendientes y especialidad técnica aún no definida."
-                                            ></textarea>
-
-                                            @error('formInscripcion.mot_obs_ins')
-                                                <p class="ui-error">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-                                    </section>
-                                </div>
-                            @endif
-
-                            {{-- PASO 6: CONFIRMACIÓN FINAL --}}
-                            @if ($pasoInscripcion === 6)
+                            {{-- PASO 4: REVISIÓN Y CONFIRMACIÓN --}}
+                            @if ($pasoInscripcion === 4)
                                 <div class="space-y-5">
                                     {{-- CABECERA --}}
                                     <section class="ui-panel savp-confirm-panel">
                                         <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                             <div>
                                                 <div class="flex flex-wrap items-center gap-2">
-                                                    <span class="ui-badge-success">Paso 6</span>
+                                                    <span class="ui-badge-success">Paso 4</span>
                                                     <span class="ui-badge-muted">Confirmación final</span>
 
                                                     <span class="{{ $puedeConfirmar ? 'ui-badge-success' : 'ui-badge-danger' }}">
@@ -3543,8 +2431,7 @@
                                                 </h4>
 
                                                 <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Revisa el resumen final. Al guardar, se registrará la inscripción, sus documentos,
-                                                    estado, condición, especialidad técnica si corresponde y trazabilidad institucional.
+                                                    Verifique el resumen de los datos que se registrarán para la inscripción del estudiante.
                                                 </p>
                                             </div>
 
@@ -3591,7 +2478,7 @@
                                                             <p class="ui-muted mt-1 text-xs">
                                                                 CI: {{ $estudianteSeleccionado['ci_completo'] ?? 'Sin CI' }}
                                                                 · RUDE: {{ $estudianteSeleccionado['rud'] ?? 'Sin RUDE' }}
-                                                                · Edad: {{ $estudianteSeleccionado['edad'] ? $estudianteSeleccionado['edad'].' años' : 'Sin edad' }}
+                                                                · Edad: {{ ($estudianteSeleccionado['edad'] ?? null) ? ($estudianteSeleccionado['edad'].' años') : 'Sin edad' }}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -3698,9 +2585,7 @@
                                                     <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                                                         <div>
                                                             <p class="ui-muted text-xs">Documentación</p>
-                                                            <p class="ui-title mt-1 font-black">
-                                                                {{ count($documentos) }} documento(s) en checklist
-                                                            </p>
+                                                            <p class="ui-title mt-1 font-black">{{ count($documentos) }} documento(s) en lista documental</p>
 
                                                             <p class="ui-muted mt-1 text-xs">
                                                                 {{ $analisis['documentos']['presentados'] ?? 0 }} presentados ·
@@ -3714,7 +2599,7 @@
                                                         @elseif (count($documentos) > 0)
                                                             <span class="ui-badge-success">Documentación completa</span>
                                                         @else
-                                                            <span class="ui-badge-muted">Sin checklist</span>
+                                                            <span class="ui-badge-muted">Sin lista documental</span>
                                                         @endif
                                                     </div>
                                                 </div>
@@ -3758,30 +2643,25 @@
                                             </article>
 
                                             <article class="ui-panel">
-                                                <p class="ui-kicker">Acciones disponibles</p>
+                                                <p class="ui-kicker">Aceptación</p>
 
-                                                <div class="mt-4 space-y-3">
-                                                    <button type="button" wire:click="guardarPendiente" class="ui-btn-secondary w-full justify-center">
-                                                        Guardar pendiente
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        wire:click="confirmarInscripcion"
-                                                        @disabled(! $puedeConfirmar)
-                                                        class="{{ $puedeConfirmar ? 'ui-btn-primary' : 'ui-btn-secondary' }} w-full justify-center"
+                                                <!-- Checkbox de Aceptación de Condiciones -->
+                                                <div class="mt-4 mb-4 flex items-start gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="condicionesAceptadas"
+                                                        wire:model.live="condicionesAceptadas"
+                                                        class="ui-checkbox mt-1"
                                                     >
-                                                        {{ $estadoConfirmacion }}
-                                                    </button>
+                                                    <label for="condicionesAceptadas" class="text-xs text-gray-600 dark:text-gray-400 cursor-pointer select-none leading-5">
+                                                        Acepto los términos y condiciones de inscripción del estudiante de acuerdo a las normas vigentes de la institución.
+                                                    </label>
+                                                </div>
 
-                                                    <button
-                                                        type="button"
-                                                        wire:click="confirmarEImprimir"
-                                                        @disabled(! $puedeConfirmar)
-                                                        class="{{ $puedeConfirmar ? 'ui-btn-primary' : 'ui-btn-secondary' }} w-full justify-center"
-                                                    >
-                                                        Confirmar e imprimir constancia
-                                                    </button>
+                                                <div class="mt-4">
+                                                    <div class="ui-alert-warning">
+                                                        Las acciones finales se encuentran en el pie del formulario.
+                                                    </div>
                                                 </div>
 
                                                 @if (! $puedeConfirmar)
@@ -3829,45 +2709,6 @@
                                 </div>
                             @endif
                         </section>
-
-                        {{-- RESUMEN LATERAL --}}
-                        <aside class="space-y-4">
-                            <div class="ui-panel">
-                                <p class="ui-kicker">Resumen</p>
-                                <h4 class="ui-title mt-1 font-black">
-                                    {{ $estudianteSeleccionado['nombre_completo'] ?? 'Sin estudiante seleccionado' }}
-                                </h4>
-
-                                <div class="mt-4 space-y-3">
-                                    <div class="ui-card-soft p-3">
-                                        <p class="ui-muted text-xs">Turno</p>
-                                        <p class="ui-title font-black">
-                                            {{ $turnoMananaAplicado ? 'Mañana aplicado' : 'Revisar turno' }}
-                                        </p>
-                                    </div>
-
-                                    <div class="ui-card-soft p-3">
-                                        <p class="ui-muted text-xs">Cupo</p>
-                                        <p class="ui-title font-black">{{ $cupo['inscritos'] ?? 0 }}/{{ $cupo['capacidad'] ?? 35 }}</p>
-                                    </div>
-
-                                    <div class="ui-card-soft p-3">
-                                        <p class="ui-muted text-xs">Documentos pendientes</p>
-                                        <p class="ui-title font-black">{{ $analisis['documentos']['pendientes'] ?? 0 }}</p>
-                                    </div>
-
-                                    <div class="ui-card-soft p-3">
-                                        <p class="ui-muted text-xs">Especialidad</p>
-                                        <p class="ui-title font-black">{{ $formInscripcion['est_esp_tec_ins'] ?? 'NO_APLICA' }}</p>
-                                    </div>
-
-                                    <div class="ui-card-soft p-3">
-                                        <p class="ui-muted text-xs">Confirmación</p>
-                                        <p class="ui-title font-black">{{ $estadoConfirmacion }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </aside>
                     </div>
                 </div>
 
@@ -3888,7 +2729,7 @@
                             </button>
                         @endif
 
-                        @if ($pasoInscripcion < 6)
+                        @if ($pasoInscripcion < 4)
                             <button type="button" wire:click="siguientePaso" class="ui-btn-primary">
                                 Siguiente
                                 {!! $icon('arrow-right', 'h-4 w-4') !!}
@@ -3901,8 +2742,8 @@
                             <button
                                 type="button"
                                 wire:click="confirmarInscripcion"
-                                @disabled(! $puedeConfirmar)
-                                class="{{ $puedeConfirmar ? 'ui-btn-primary' : 'ui-btn-secondary' }}"
+                                @disabled(! $puedeConfirmar || ! $condicionesAceptadas)
+                                class="{{ ($puedeConfirmar && $condicionesAceptadas) ? 'ui-btn-primary' : 'ui-btn-secondary' }}"
                             >
                                 {{ $estadoConfirmacion }}
                             </button>
@@ -3910,8 +2751,8 @@
                             <button
                                 type="button"
                                 wire:click="confirmarEImprimir"
-                                @disabled(! $puedeConfirmar)
-                                class="{{ $puedeConfirmar ? 'ui-btn-primary' : 'ui-btn-secondary' }}"
+                                @disabled(! $puedeConfirmar || ! $condicionesAceptadas)
+                                class="{{ ($puedeConfirmar && $condicionesAceptadas) ? 'ui-btn-primary' : 'ui-btn-secondary' }}"
                             >
                                 Confirmar e imprimir
                             </button>
@@ -3925,11 +2766,11 @@
     {{-- MODALES SECUNDARIOS --}}
     @if ($modalChecklist)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop"></div>
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarChecklist"></div>
             <div class="ui-modal savp-modal-shell w-full max-w-3xl overflow-hidden">
                 <div class="ui-modal-header flex items-start justify-between gap-4">
                     <div>
-                        <p class="ui-kicker">Checklist documental</p>
+                        <p class="ui-kicker">Lista documental</p>
                         <h3 class="ui-title text-xl font-black">Actualizar documentos sin borrar información</h3>
                         <p class="ui-muted mt-1 text-sm">Puedes agregar recomendados sin reemplazar lo avanzado.</p>
                     </div>
@@ -3945,7 +2786,7 @@
 
                     <button type="button" wire:click="aplicarChecklistReemplazar" class="ui-card-soft savp-student-card p-5 text-left">
                         <span class="ui-badge-warning p-3">{!! $icon('warning', 'h-5 w-5') !!}</span>
-                        <h4 class="ui-title mt-4 font-black">Reemplazar checklist</h4>
+                        <h4 class="ui-title mt-4 font-black">Reemplazar lista</h4>
                         <p class="ui-muted mt-2 text-sm">Usa la lista recomendada desde cero. Requiere cuidado administrativo.</p>
                     </button>
                 </div>
@@ -3959,7 +2800,7 @@
 
     @if ($modalDetalle)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop"></div>
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarDetalle"></div>
             <div class="ui-modal savp-modal-shell w-full max-w-5xl overflow-hidden">
                 <div class="ui-modal-header flex items-start justify-between gap-4">
                     <div>
@@ -4020,9 +2861,68 @@
         </div>
     @endif
 
+    @if ($modalAcciones && $accionesInscripcion)
+        <div class="savp-modal-wrap">
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarModalAcciones"></div>
+            <div class="ui-modal savp-modal-shell w-full max-w-3xl overflow-hidden">
+                <div class="ui-modal-header flex items-start justify-between gap-4">
+                    <div>
+                        <p class="ui-kicker">Acciones</p>
+                        <h3 class="ui-title text-xl font-black">{{ $accionesInscripcion['estudiante'] ?? 'Inscripción' }}</h3>
+                        <p class="ui-muted mt-1 text-sm">Acciones secundarias agrupadas para evitar saturación visual.</p>
+                    </div>
+                    <button type="button" wire:click="cerrarModalAcciones" class="ui-icon-btn">{!! $icon('x') !!}</button>
+                </div>
+
+                <div class="p-5 grid gap-3 sm:grid-cols-2">
+                    <button type="button" wire:click="abrirDetalle('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-secondary justify-center">
+                        {!! $icon('eye', 'h-4 w-4') !!}
+                        Ver
+                    </button>
+
+                    <button type="button" wire:click="abrirEditar('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-secondary justify-center">
+                        {!! $icon('edit', 'h-4 w-4') !!}
+                        Editar
+                    </button>
+
+                    <button type="button" wire:click="abrirDocumentos('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-secondary justify-center">
+                        {!! $icon('file', 'h-4 w-4') !!}
+                        Documentos
+                    </button>
+
+                    <button type="button" wire:click="generarConstancia('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-primary justify-center">
+                        {!! $icon('download', 'h-4 w-4') !!}
+                        Constancia
+                    </button>
+
+                    @if (in_array(($accionesInscripcion['estado'] ?? ''), ['ANULADO', 'RETIRADO'], true))
+                        <button type="button" wire:click="reactivarInscripcion('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-secondary justify-center">
+                            {!! $icon('refresh', 'h-4 w-4') !!}
+                            Reactivar
+                        </button>
+                    @else
+                        <button type="button" wire:click="confirmarAnular('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-danger justify-center">
+                            {!! $icon('trash', 'h-4 w-4') !!}
+                            Anular
+                        </button>
+
+                        <button type="button" wire:click="confirmarRetiro('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-secondary justify-center">
+                            {!! $icon('x', 'h-4 w-4') !!}
+                            Retirar
+                        </button>
+                    @endif
+                </div>
+
+                <div class="ui-modal-footer flex justify-end">
+                    <button type="button" wire:click="cerrarModalAcciones" class="ui-btn-secondary">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if ($modalDocumentos)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop"></div>
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarDocumentos"></div>
             <div class="ui-modal savp-modal-shell w-full max-w-6xl overflow-hidden">
                 <div class="ui-modal-header flex items-start justify-between gap-4">
                     <div>
@@ -4052,7 +2952,16 @@
 
                                 <input type="text" wire:model.live.debounce.800ms="documentosModal.{{ $index }}.obs_die" class="ui-input" placeholder="Observación">
 
-                                <input type="date" wire:model.live="documentosModal.{{ $index }}.fec_pre_die" class="ui-input">
+                                @php
+                                    $estMod = $documento['est_die'] ?? 'PENDIENTE';
+                                @endphp
+                                @if (in_array($estMod, ['PRESENTADO', 'VALIDADO'], true))
+                                    <input type="date" wire:model.live="documentosModal.{{ $index }}.fec_pre_die" class="ui-input" title="Fecha Presentación">
+                                @elseif (in_array($estMod, ['PENDIENTE', 'OBSERVADO'], true))
+                                    <input type="date" wire:model.live="documentosModal.{{ $index }}.fec_lim_die" class="ui-input" title="Fecha Límite">
+                                @else
+                                    <input type="text" disabled class="ui-input opacity-50" placeholder="N/A" title="No aplica">
+                                @endif
 
                                 <button type="button" wire:click="quitarDocumentoEnModal({{ $index }})" class="ui-icon-btn">
                                     {!! $icon('trash', 'h-4 w-4') !!}
@@ -4074,7 +2983,7 @@
 
     @if ($modalAnular)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop"></div>
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarAnular"></div>
             <div class="ui-modal savp-modal-shell w-full max-w-2xl overflow-hidden">
                 <div class="ui-modal-header flex items-start justify-between gap-4">
                     <div>
@@ -4105,7 +3014,7 @@
 
     @if ($modalRetirar)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop"></div>
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarRetiro"></div>
             <div class="ui-modal savp-modal-shell w-full max-w-2xl overflow-hidden">
                 <div class="ui-modal-header flex items-start justify-between gap-4">
                     <div>
@@ -4245,7 +3154,7 @@
         .savp-modal-wrap {
             position: fixed;
             inset: 0;
-            z-index: 80;
+            z-index: 9999;
             display: flex;
             align-items: flex-start;
             justify-content: center;
@@ -4254,10 +3163,15 @@
         }
 
         .savp-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
             animation: savpBackdrop .24s ease-out both;
         }
 
         .savp-modal-shell {
+            position: relative;
+            z-index: 10000;
             animation: savpModalIn .34s var(--savp-ease) both;
         }
 

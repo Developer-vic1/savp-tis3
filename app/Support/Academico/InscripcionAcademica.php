@@ -53,6 +53,7 @@ class InscripcionAcademica
         'PENDIENTE',
         'OBSERVADO',
         'NO_APLICA',
+        'VALIDADO',
     ];
 
     public const ESTADOS_ESPECIALIDAD = [
@@ -60,6 +61,29 @@ class InscripcionAcademica
         'PENDIENTE',
         'ASIGNADA',
         'OBSERVADA',
+    ];
+
+    public const TIPOS_PROCEDENCIA = [
+        'MISMA_UNIDAD',
+        'OTRA_UNIDAD',
+        'TRASLADO_DEPARTAMENTAL',
+        'TRASLADO_INTERDEPARTAMENTAL',
+        'EXTERIOR',
+        'SIN_REGISTRO',
+        'OTRO',
+    ];
+
+    public const TIPOS_DOCUMENTO_INSCRIPCION = [
+        'RUDE',
+        'IDENTIDAD',
+        'VACUNAS',
+        'ACADEMICO',
+        'TRASLADO',
+        'EXTERIOR',
+        'VULNERABILIDAD',
+        'ESPECIALIDAD',
+        'AUTORIZACION',
+        'GENERAL',
     ];
 
     public const CURSOS_EDAD_REFERENCIAL = [
@@ -159,6 +183,8 @@ class InscripcionAcademica
             'estados_inscripcion' => self::ESTADOS_INSCRIPCION,
             'estados_documento' => self::ESTADOS_DOCUMENTO,
             'estados_especialidad' => self::ESTADOS_ESPECIALIDAD,
+            'tipos_procedencia' => self::TIPOS_PROCEDENCIA,
+            'tipos_documento_inscripcion' => self::TIPOS_DOCUMENTO_INSCRIPCION,
             'cursos_edad_referencial' => self::CURSOS_EDAD_REFERENCIAL,
         ];
     }
@@ -960,6 +986,10 @@ class InscripcionAcademica
 
         $revisionDocumentos = $this->analizarDocumentos($documentos, $tipo);
 
+        foreach (($revisionDocumentos['bloqueos'] ?? []) as $mensaje) {
+            $bloqueos[] = $mensaje;
+        }
+
         foreach ($revisionDocumentos['advertencias'] as $mensaje) {
             $advertencias[] = $mensaje;
         }
@@ -969,7 +999,7 @@ class InscripcionAcademica
         }
 
         if (empty($documentos) && ! $modoLive) {
-            $advertencias[] = 'No se cargó una checklist documental. Se recomienda generar documentos iniciales.';
+            $advertencias[] = 'No se cargó una lista documental. Se recomienda generar documentos iniciales.';
         }
 
         $estadoSugerido = $this->sugerirEstadoFinal(
@@ -1085,48 +1115,40 @@ class InscripcionAcademica
         $pasos = [];
 
         $pasos[1] = [
-            'nombre' => 'Identificación',
+            'nombre' => 'Estudiante',
             'estado' => $estudiante ? 'COMPLETO' : 'PENDIENTE',
             'mensaje' => $estudiante ? 'Estudiante seleccionado correctamente.' : 'Selecciona un estudiante para iniciar.',
         ];
 
-        $tipoValido = in_array($this->normalizarMayuscula($form['tip_ins'] ?? ''), self::TIPOS_INSCRIPCION, true);
-
-        $pasos[2] = [
-            'nombre' => 'Tipo',
-            'estado' => $tipoValido ? 'COMPLETO' : 'PENDIENTE',
-            'mensaje' => $tipoValido ? 'Tipo de inscripción definido.' : 'Selecciona el tipo de inscripción.',
-        ];
-
         $asignacionCompleta = ! empty($form['cod_gea']) && ! empty($form['cod_cur']) && ! empty($form['cod_par']) && ! empty($form['cod_tur']) && ! empty($form['fei_ins']);
 
-        $pasos[3] = [
-            'nombre' => 'Asignación',
+        $pasos[2] = [
+            'nombre' => 'Asignación académica',
             'estado' => $asignacionCompleta ? (($analisis['combinacion_academica']['estado'] ?? 'VALIDO') === 'BLOQUEADO' ? 'BLOQUEADO' : 'COMPLETO') : 'PENDIENTE',
             'mensaje' => $asignacionCompleta ? 'Asignación académica registrada.' : 'Completa gestión, curso, paralelo, turno y fecha.',
         ];
 
         $docAnalisis = $this->analizarDocumentos($documentos, $form['tip_ins'] ?? 'REGULAR');
 
-        $pasos[4] = [
+        $docEstado = empty($documentos)
+            ? 'PENDIENTE'
+            : (! empty($docAnalisis['bloqueos']) ? 'BLOQUEADO' : (($docAnalisis['pendientes'] > 0 || $docAnalisis['observados'] > 0) ? 'OBSERVADO' : 'COMPLETO'));
+
+        $pasos[3] = [
             'nombre' => 'Documentos',
-            'estado' => empty($documentos) ? 'PENDIENTE' : (($docAnalisis['pendientes'] > 0 || $docAnalisis['observados'] > 0) ? 'OBSERVADO' : 'COMPLETO'),
+            'estado' => $docEstado,
             'mensaje' => empty($documentos)
-                ? 'Genera o registra la checklist documental.'
-                : (($docAnalisis['pendientes'] > 0 || $docAnalisis['observados'] > 0)
-                    ? 'Existen documentos pendientes u observados.'
-                    : 'Documentación sin pendientes críticos.'),
+                ? 'Genera o registra la lista documental.'
+                : (! empty($docAnalisis['bloqueos'])
+                    ? 'Existen incoherencias documentales que deben corregirse.'
+                    : (($docAnalisis['pendientes'] > 0 || $docAnalisis['observados'] > 0)
+                        ? 'Existen documentos pendientes u observados.'
+                        : 'Documentación sin pendientes críticos.')),
         ];
 
-        $pasos[5] = [
-            'nombre' => 'Revisión',
-            'estado' => $analisis['estado'] ?? 'PENDIENTE',
-            'mensaje' => $analisis['mensaje'] ?? 'Completa la información para revisar.',
-        ];
-
-        $pasos[6] = [
-            'nombre' => 'Confirmación',
-            'estado' => ($analisis['puede_continuar'] ?? false) ? 'COMPLETO' : 'BLOQUEADO',
+        $pasos[4] = [
+            'nombre' => 'Revisión y confirmación',
+            'estado' => ($analisis['puede_continuar'] ?? false) ? 'COMPLETO' : ($analisis['estado'] ?? 'PENDIENTE'),
             'mensaje' => ($analisis['puede_continuar'] ?? false)
                 ? 'La inscripción puede guardarse según el estado sugerido.'
                 : 'Corrige los bloqueos antes de confirmar.',
@@ -1144,46 +1166,36 @@ class InscripcionAcademica
             ];
         }
 
-        if ($paso === 2 && ! in_array($this->normalizarMayuscula($form['tip_ins'] ?? ''), self::TIPOS_INSCRIPCION, true)) {
-            return [
-                'puede' => false,
-                'mensaje' => 'Selecciona un tipo de inscripción válido.',
-            ];
-        }
-
-        if ($paso === 3) {
-            $faltan = [];
-
-            foreach (
-                [
-                    'cod_gea' => 'gestión',
-                    'cod_cur' => 'curso',
-                    'cod_par' => 'paralelo',
-                    'cod_tur' => 'turno',
-                    'fei_ins' => 'fecha de inscripción',
-                ] as $campo => $label
-            ) {
-                if (empty($form[$campo])) {
-                    $faltan[] = $label;
-                }
+        if ($paso === 2) {
+            if (empty($form['cod_gea'])) {
+                return ['puede' => false, 'mensaje' => 'Seleccione gestión académica de inscripción.'];
             }
 
-            if (! empty($faltan)) {
-                return [
-                    'puede' => false,
-                    'mensaje' => 'Completa: ' . implode(', ', $faltan) . '.',
-                ];
+            if (empty($form['fei_ins'])) {
+                return ['puede' => false, 'mensaje' => 'Seleccione fecha de inscripción.'];
+            }
+
+            if (empty($form['cod_cur'])) {
+                return ['puede' => false, 'mensaje' => 'Seleccione curso de inscripción.'];
+            }
+
+            if (empty($form['cod_par'])) {
+                return ['puede' => false, 'mensaje' => 'Seleccione paralelo de inscripción.'];
+            }
+
+            if (empty($form['cod_tur'])) {
+                return ['puede' => false, 'mensaje' => 'Seleccione turno de inscripción.'];
             }
         }
 
-        if ($paso === 4 && empty($documentos)) {
+        if ($paso === 3 && empty($documentos)) {
             return [
                 'puede' => true,
-                'mensaje' => 'Puedes continuar, pero se recomienda generar la checklist documental.',
+                'mensaje' => 'Puedes continuar, pero se recomienda generar la lista documental.',
             ];
         }
 
-        if ($paso === 5 && ! ($analisis['puede_continuar'] ?? false)) {
+        if ($paso === 4 && ! ($analisis['puede_continuar'] ?? false)) {
             return [
                 'puede' => false,
                 'mensaje' => 'Existen bloqueos en la revisión. Corrige antes de confirmar.',
@@ -1204,8 +1216,19 @@ class InscripcionAcademica
     {
         $tipoInscripcion = $this->normalizarMayuscula($tipoInscripcion);
 
+        $base = [
+            'cod_die' => null,
+            'fec_lim_die' => null,
+            'fec_pre_die' => null,
+            'rut_die' => null,
+            'for_die' => null,
+            'tam_die' => null,
+            'has_die' => null,
+        ];
+
         $documentos = [
             [
+                ...$base,
                 'nom_die' => 'Formulario RUDE',
                 'tip_die' => 'RUDE',
                 'est_die' => 'PENDIENTE',
@@ -1213,6 +1236,7 @@ class InscripcionAcademica
                 'obligatorio' => true,
             ],
             [
+                ...$base,
                 'nom_die' => 'Certificado de nacimiento',
                 'tip_die' => 'IDENTIDAD',
                 'est_die' => in_array($tipoInscripcion, ['NUEVO', 'EXTRANJERO'], true) ? 'PENDIENTE' : 'NO_APLICA',
@@ -1220,6 +1244,7 @@ class InscripcionAcademica
                 'obligatorio' => in_array($tipoInscripcion, ['NUEVO', 'EXTRANJERO'], true),
             ],
             [
+                ...$base,
                 'nom_die' => 'Cédula de identidad del estudiante',
                 'tip_die' => 'IDENTIDAD',
                 'est_die' => 'PENDIENTE',
@@ -1227,13 +1252,15 @@ class InscripcionAcademica
                 'obligatorio' => true,
             ],
             [
+                ...$base,
                 'nom_die' => 'Cédula de identidad del padre, madre o tutor',
-                'tip_die' => 'TUTOR',
+                'tip_die' => 'IDENTIDAD',
                 'est_die' => 'PENDIENTE',
                 'obs_die' => null,
                 'obligatorio' => true,
             ],
             [
+                ...$base,
                 'nom_die' => 'Libreta o boletín anterior',
                 'tip_die' => 'ACADEMICO',
                 'est_die' => in_array($tipoInscripcion, ['REGULAR', 'REINSCRIPCION'], true) ? 'NO_APLICA' : 'PENDIENTE',
@@ -1241,8 +1268,9 @@ class InscripcionAcademica
                 'obligatorio' => ! in_array($tipoInscripcion, ['REGULAR', 'REINSCRIPCION'], true),
             ],
             [
+                ...$base,
                 'nom_die' => 'Carnet de vacunas',
-                'tip_die' => 'SALUD',
+                'tip_die' => 'VACUNAS',
                 'est_die' => 'PENDIENTE',
                 'obs_die' => 'Puede regularizarse durante la gestión con seguimiento institucional.',
                 'obligatorio' => false,
@@ -1251,6 +1279,7 @@ class InscripcionAcademica
 
         if ($tipoInscripcion === 'TRASLADO') {
             $documentos[] = [
+                ...$base,
                 'nom_die' => 'Documento o respaldo de traslado',
                 'tip_die' => 'TRASLADO',
                 'est_die' => 'PENDIENTE',
@@ -1261,8 +1290,9 @@ class InscripcionAcademica
 
         if (in_array($tipoInscripcion, ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO'], true)) {
             $documentos[] = [
+                ...$base,
                 'nom_die' => 'Declaración jurada o respaldo institucional',
-                'tip_die' => 'EXCEPCIONAL',
+                'tip_die' => 'VULNERABILIDAD',
                 'est_die' => 'PENDIENTE',
                 'obs_die' => 'Permite registrar seguimiento sin bloquear abruptamente el acceso educativo.',
                 'obligatorio' => false,
@@ -1279,15 +1309,64 @@ class InscripcionAcademica
         $presentados = 0;
         $noAplica = 0;
         $obligatoriosPendientes = 0;
+        $bloqueos = [];
         $advertencias = [];
         $sugerencias = [];
 
         foreach ($documentos as $documento) {
             $estado = $this->normalizarMayuscula($documento['est_die'] ?? 'PENDIENTE');
-            $obligatorio = (bool) ($documento['obligatorio'] ?? false);
+            $obligatorio = (bool) ($documento['obl_die'] ?? $documento['obligatorio'] ?? false);
+
+            $tieneArchivo = ! $this->estaVacio($documento['rut_die'] ?? null)
+                || ! $this->estaVacio($documento['for_die'] ?? null)
+                || ! $this->estaVacio($documento['tam_die'] ?? null)
+                || ! $this->estaVacio($documento['has_die'] ?? null);
+
+            $esPdf = $this->normalizarMayuscula($documento['for_die'] ?? '') === 'PDF';
+
+            // Reglas coherencia estado/archivo
+            if ($estado === 'PENDIENTE' && $tieneArchivo) {
+                $advertencias[] = 'El documento tiene archivo cargado, por lo que se recomienda marcarlo como PRESENTADO u OBSERVADO.';
+            }
+
+            if ($estado === 'NO_APLICA' && $tieneArchivo) {
+                $advertencias[] = 'El documento está marcado como NO APLICA pero tiene archivo cargado. Revisa si corresponde.';
+            }
+
+            if (in_array($estado, ['PRESENTADO', 'VALIDADO', 'OBSERVADO'], true) && $tieneArchivo && ! $esPdf) {
+                if ($estado === 'VALIDADO') {
+                    $bloqueos[] = 'No se puede validar un documento si el archivo no es PDF.';
+                } else {
+                    $advertencias[] = 'El archivo registrado no es PDF. Para esta fase solo se aceptan PDFs.';
+                }
+            }
+
+            if ($estado === 'OBSERVADO' && $this->estaVacio($documento['obs_die'] ?? null)) {
+                $bloqueos[] = 'OBSERVADO requiere observación obligatoria.';
+            }
+
+            if ($estado === 'OBSERVADO' && $this->estaVacio($documento['fec_lim_die'] ?? null)) {
+                if ($obligatorio) {
+                    $bloqueos[] = 'Documento obligatorio OBSERVADO requiere fecha límite.';
+                } else {
+                    $advertencias[] = 'OBSERVADO sin fecha límite. Se recomienda registrar fecha de corrección.';
+                }
+            }
+
+            if ($estado === 'VALIDADO' && ! $tieneArchivo) {
+                $bloqueos[] = 'No se puede validar un documento sin archivo PDF.';
+            }
+
+            if ($estado === 'PRESENTADO' && ! $tieneArchivo) {
+                $advertencias[] = 'PRESENTADO sin archivo PDF. Se recomienda adjuntar respaldo.';
+            }
+
+            if ($estado === 'PENDIENTE' && $obligatorio && $this->estaVacio($documento['fec_lim_die'] ?? null)) {
+                $bloqueos[] = 'Documento obligatorio PENDIENTE requiere fecha límite.';
+            }
 
             match ($estado) {
-                'PRESENTADO' => $presentados++,
+                'PRESENTADO', 'VALIDADO' => $presentados++,
                 'OBSERVADO' => $observados++,
                 'NO_APLICA' => $noAplica++,
                 default => $pendientes++,
@@ -1315,7 +1394,7 @@ class InscripcionAcademica
         }
 
         if (empty($documentos)) {
-            $sugerencias[] = 'Genera la checklist documental inicial para controlar la inscripción.';
+            $sugerencias[] = 'Genera la lista documental inicial para controlar la inscripción.';
         }
 
         return [
@@ -1326,6 +1405,7 @@ class InscripcionAcademica
             'no_aplica' => $noAplica,
             'obligatorios_pendientes' => $obligatoriosPendientes,
             'completos' => $pendientes === 0 && $observados === 0 && count($documentos) > 0,
+            'bloqueos' => array_values(array_unique($bloqueos)),
             'advertencias' => $advertencias,
             'sugerencias' => $sugerencias,
         ];
@@ -1343,7 +1423,7 @@ class InscripcionAcademica
             'requiere_confirmacion' => $this->requiereConfirmacionRegenerarDocumentos($documentosActuales),
             'accion_recomendada' => empty($documentosActuales) ? 'GENERAR' : 'AGREGAR_FALTANTES',
             'mensaje' => empty($documentosActuales)
-                ? 'No existe checklist actual. Puedes generar la recomendada.'
+                ? 'No existe lista documental actual. Puedes generar la recomendada.'
                 : 'Ya existen documentos configurados. Se recomienda agregar faltantes sin borrar lo registrado.',
         ];
     }
@@ -1383,15 +1463,53 @@ class InscripcionAcademica
                     $estado = 'PENDIENTE';
                 }
 
+                $tieneArchivo = ! $this->estaVacio($documento['rut_die'] ?? null)
+                    || ! $this->estaVacio($documento['for_die'] ?? null)
+                    || ! $this->estaVacio($documento['tam_die'] ?? null)
+                    || ! $this->estaVacio($documento['has_die'] ?? null);
+
+                // Regla: PENDIENTE no admite archivo.
+                if ($estado === 'PENDIENTE') {
+                    $documento['rut_die'] = null;
+                    $documento['for_die'] = null;
+                    $documento['tam_die'] = null;
+                    $documento['has_die'] = null;
+                    $documento['fec_pre_die'] = null;
+                }
+
+                // Si hay archivo, no puede quedar como PENDIENTE.
+                if ($tieneArchivo && $estado === 'PENDIENTE') {
+                    $estado = 'PRESENTADO';
+                }
+
+                if ($estado === 'NO_APLICA') {
+                    $documento['rut_die'] = null;
+                    $documento['for_die'] = null;
+                    $documento['tam_die'] = null;
+                    $documento['has_die'] = null;
+                    $documento['fec_pre_die'] = null;
+                    $documento['fec_lim_die'] = null;
+                    $documento['obs_die'] = null;
+                }
+
                 return [
+                    'cod_die' => $documento['cod_die'] ?? null,
                     'nom_die' => $this->limpiarTexto($documento['nom_die'] ?? 'Documento') ?: 'Documento',
-                    'tip_die' => $this->normalizarMayuscula($documento['tip_die'] ?? 'GENERAL'),
+                    'tip_die' => ($tipo = $this->normalizarMayuscula($documento['tip_die'] ?? 'GENERAL'))
+                        && in_array($tipo, self::TIPOS_DOCUMENTO_INSCRIPCION, true)
+                            ? $tipo
+                            : 'GENERAL',
                     'est_die' => $estado,
+                    'obl_die' => (bool) ($documento['obl_die'] ?? $documento['obligatorio'] ?? false),
+                    'fec_lim_die' => !empty($documento['fec_lim_die']) ? trim($documento['fec_lim_die']) : null,
                     'obs_die' => $this->limpiarTexto($documento['obs_die'] ?? null),
-                    'fec_pre_die' => $estado === 'PRESENTADO'
+                    'fec_pre_die' => in_array($estado, ['PRESENTADO', 'VALIDADO'], true)
                         ? ($documento['fec_pre_die'] ?? now()->toDateString())
                         : ($documento['fec_pre_die'] ?? null),
-                    'registrado_por' => auth()->user()->cod_usu ?? auth()->id(),
+                    'rut_die' => $this->limpiarTexto($documento['rut_die'] ?? null),
+                    'for_die' => (($for = $this->normalizarMayuscula($documento['for_die'] ?? null)) !== '') ? $for : null,
+                    'tam_die' => isset($documento['tam_die']) ? (int) $documento['tam_die'] : null,
+                    'has_die' => $this->limpiarTexto($documento['has_die'] ?? null),
                 ];
             })
             ->values()
@@ -1428,12 +1546,13 @@ class InscripcionAcademica
             $bloqueos[] = 'El turno seleccionado no existe o no está activo.';
         }
 
-        if ($codGea && $codCur && $codPar && $codTur && Schema::hasTable('horario')) {
+        if ($codGea && $codCur && $codPar && $codTur && Schema::hasTable('horario') && Schema::hasTable('plantilla_horaria')) {
             $existeHorario = DB::table('horario')
-                ->where('cod_gea', $codGea)
-                ->where('cod_cur', $codCur)
-                ->where('cod_par', $codPar)
-                ->where('cod_tur', $codTur)
+                ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
+                ->where('horario.cod_gea', $codGea)
+                ->where('horario.cod_cur', $codCur)
+                ->where('horario.cod_par', $codPar)
+                ->where('plantilla_horaria.cod_tur', $codTur)
                 ->exists();
 
             if (! $existeHorario) {
@@ -1670,6 +1789,17 @@ class InscripcionAcademica
         $turnoManana = $this->turnoManana();
         $especialidad = $this->validarEspecialidadTecnica($form);
 
+        // Columnas confirmadas en la tabla inscripcion_estudiante (verificadas contra el schema real de PgSQL).
+        // NO usar Schema::hasColumn para columnas opcionales: genera falso positivo en el contexto web de Livewire.
+        $columnasConfirmadas = [
+            'cod_ins', 'cod_est', 'cod_gea', 'cod_cur', 'cod_par', 'cod_tur',
+            'fei_ins', 'tip_ins', 'con_ins', 'est_ins', 'pro_ins', 'obs_ins',
+            'mot_obs_ins', 'doc_com_ins', 'sob_aut_ins', 'sie_ins', 'fec_sie_ins',
+            'cod_esp_tec', 'est_esp_tec_ins', 'obs_esp_tec_ins', 'fec_con_ins',
+            'fec_anu_ins', 'mot_anu_ins', 'fec_ret_ins', 'mot_ret_ins',
+            'created_at', 'updated_at',
+        ];
+
         $datos = [
             'cod_est' => $form['cod_est'] ?? null,
             'cod_gea' => $form['cod_gea'] ?? ($gestion['cod_gea'] ?? null),
@@ -1685,28 +1815,20 @@ class InscripcionAcademica
             'pro_ins' => $this->limpiarTexto($form['pro_ins'] ?? null),
             'doc_com_ins' => (bool) ($form['doc_com_ins'] ?? ($analisis['documentos']['completos'] ?? false)),
             'sob_aut_ins' => (bool) ($form['sob_aut_ins'] ?? false),
-            'registrado_por' => auth()->user()->cod_usu ?? auth()->id(),
+            // Especialidad técnica (columnas confirmadas en BD).
+            'cod_esp_tec' => $especialidad['estado_sugerido'] === 'ASIGNADA'
+                ? ($form['cod_esp_tec'] ?? null) ?: null
+                : null,
+            'est_esp_tec_ins' => $especialidad['estado_sugerido'] ?? 'NO_APLICA',
+            'obs_esp_tec_ins' => $this->limpiarTexto($form['obs_esp_tec_ins'] ?? null),
         ];
 
-        if (Schema::hasColumn('inscripcion_estudiante', 'cod_esp_tec')) {
-            $datos['cod_esp_tec'] = $especialidad['estado_sugerido'] === 'ASIGNADA'
-                ? ($form['cod_esp_tec'] ?? null)
-                : null;
-        }
-
-        if (Schema::hasColumn('inscripcion_estudiante', 'est_esp_tec_ins')) {
-            $datos['est_esp_tec_ins'] = $especialidad['estado_sugerido'] ?? 'NO_APLICA';
-        }
-
-        if (Schema::hasColumn('inscripcion_estudiante', 'obs_esp_tec_ins')) {
-            $datos['obs_esp_tec_ins'] = $this->limpiarTexto($form['obs_esp_tec_ins'] ?? null);
-        }
-
-        if (Schema::hasColumn('inscripcion_estudiante', 'fec_asi_esp_tec_ins')) {
-            $datos['fec_asi_esp_tec_ins'] = ($especialidad['estado_sugerido'] ?? null) === 'ASIGNADA'
-                ? now()->toDateString()
-                : null;
-        }
+        // Filtrar solo columnas que existen realmente en la tabla.
+        $datos = array_filter(
+            $datos,
+            fn ($key) => in_array($key, $columnasConfirmadas, true),
+            ARRAY_FILTER_USE_KEY
+        );
 
         return $datos;
     }
@@ -1772,7 +1894,7 @@ class InscripcionAcademica
             'estado' => $analisis['completos'] ? 'VALIDO' : (empty($documentos) ? 'PENDIENTE' : 'OBSERVADO'),
             'descripcion' => $analisis['completos']
                 ? 'La documentación registrada no presenta pendientes críticos.'
-                : 'Existen documentos pendientes, observados o checklist sin generar.',
+                : 'Existen documentos pendientes, observados o lista documental sin generar.',
             'analisis' => $analisis,
         ];
     }
@@ -1881,10 +2003,10 @@ class InscripcionAcademica
             "Se aplicó la sugerencia de curso para {$estudiante}: {$curso}.",
 
             'GENERAR_CHECKLIST_DOCUMENTAL' =>
-            "Se generó la checklist documental para la inscripción de {$estudiante}.",
+            "Se generó la lista documental para la inscripción de {$estudiante}.",
 
             'AGREGAR_DOCUMENTOS_RECOMENDADOS' =>
-            "Se agregaron documentos recomendados a la checklist de {$estudiante} sin borrar los registros existentes.",
+            "Se agregaron documentos recomendados a la lista documental de {$estudiante} sin borrar los registros existentes.",
 
             default =>
             "Se registró una actualización en el módulo de inscripciones para {$estudiante}.",
