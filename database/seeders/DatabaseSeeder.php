@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
             RolSeeder::class,
 
             TurnoSeeder::class,
-            HorarioBloqueSeeder::class,
             CursoSeeder::class,
             ParaleloSeeder::class,
             AsignaturaSeeder::class,

@@ -10,15 +10,23 @@ return new class extends Migration
     /**
      * Módulo de horarios institucionales.
      *
-     * horario:
-     *  Cabecera del horario por gestión, curso, paralelo y turno.
+     * Estructura normalizada:
      *
-     * horario_bloque:
-     *  Bloques horarios por turno. Ej: bloque 1, bloque 2, bloque 3.
+     * turno
+     *  Define la jornada institucional: Mañana, Tarde, Especial.
      *
-     * horario_detalle:
-     *  Celdas reales de la matriz semanal.
-     *  Puede apuntar a plan_asignatura o plan_especialidad.
+     * plantilla_horaria
+     *  Define la variante horaria de un turno: REGULAR, INVIERNO, AJUSTE, EMERGENCIA.
+     *
+     * horario
+     *  Cabecera del horario académico por gestión, curso, paralelo y plantilla horaria.
+     *
+     * horario_bloque
+     *  Define los bloques de tiempo pertenecientes a una plantilla horaria.
+     *
+     * horario_detalle
+     *  Define cada celda real de la matriz semanal:
+     *  horario + bloque + día + plan académico.
      */
     public function up(): void
     {
@@ -26,9 +34,13 @@ return new class extends Migration
         |--------------------------------------------------------------------------
         | TABLA: horario
         |--------------------------------------------------------------------------
-        | Representa el horario de un curso/paralelo/turno en una gestión.
-        | Ejemplo:
-        | Gestión 2026 - 4to de Secundaria - Paralelo A - Turno Tarde
+        | Representa la cabecera de un horario académico.
+        |
+        | Ya no guarda cod_tur directamente porque el turno se obtiene desde:
+        | horario.cod_pho -> plantilla_horaria.cod_tur -> turno.cod_tur
+        |
+        | Tampoco guarda nom_hor porque ese nombre se puede generar desde las
+        | relaciones: gestión + curso + paralelo + plantilla + turno.
         |--------------------------------------------------------------------------
         */
         Schema::create('horario', function (Blueprint $table) {
@@ -37,9 +49,8 @@ return new class extends Migration
             $table->string('cod_gea', 20);
             $table->string('cod_cur', 20);
             $table->string('cod_par', 20);
-            $table->string('cod_tur', 20);
+            $table->string('cod_pho', 20);
 
-            $table->string('nom_hor', 150)->nullable();
             $table->text('obs_hor')->nullable();
 
             $table->string('est_hor', 20)->default('ACTIVO');
@@ -47,22 +58,20 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(
-                ['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'],
-                'horario_gea_cur_par_tur_unique'
+                ['cod_gea', 'cod_cur', 'cod_par', 'cod_pho'],
+                'horario_gea_cur_par_pho_unique'
             );
 
-            $table->index('cod_gea');
-            $table->index('cod_cur');
-            $table->index('cod_par');
-            $table->index('cod_tur');
-            $table->index('est_hor');
+            $table->index('cod_gea', 'horario_cod_gea_index');
+            $table->index('cod_cur', 'horario_cod_cur_index');
+            $table->index('cod_par', 'horario_cod_par_index');
+            $table->index('cod_pho', 'horario_cod_pho_index');
+            $table->index('est_hor', 'horario_est_hor_index');
         });
 
         /*
         |--------------------------------------------------------------------------
         | LLAVES FORÁNEAS: horario
-        |--------------------------------------------------------------------------
-        | Se agregan después para mantener control y evitar problemas de orden.
         |--------------------------------------------------------------------------
         */
         Schema::table('horario', function (Blueprint $table) {
@@ -90,10 +99,10 @@ return new class extends Migration
                     ->cascadeOnUpdate();
             }
 
-            if (Schema::hasTable('turno') && Schema::hasColumn('turno', 'cod_tur')) {
-                $table->foreign('cod_tur', 'horario_cod_tur_foreign')
-                    ->references('cod_tur')
-                    ->on('turno')
+            if (Schema::hasTable('plantilla_horaria') && Schema::hasColumn('plantilla_horaria', 'cod_pho')) {
+                $table->foreign('cod_pho', 'horario_cod_pho_foreign')
+                    ->references('cod_pho')
+                    ->on('plantilla_horaria')
                     ->restrictOnDelete()
                     ->cascadeOnUpdate();
             }
@@ -103,29 +112,25 @@ return new class extends Migration
         |--------------------------------------------------------------------------
         | TABLA: horario_bloque
         |--------------------------------------------------------------------------
-        | Define los periodos disponibles por turno.
+        | Define los bloques de tiempo de una plantilla horaria.
         |
-        | Ejemplo:
-        | Turno mañana:
-        | Bloque 1: 08:00 - 08:40
-        | Bloque 2: 08:40 - 09:20
+        | Ya no guarda cod_tur porque sería redundante:
+        | horario_bloque.cod_pho -> plantilla_horaria.cod_tur
         |
-        | Turno tarde:
-        | Bloque 1: 14:00 - 14:40
-        | Bloque 2: 14:40 - 15:20
+        | Esto mejora 3FN/BCNF y reduce inconsistencias.
         |--------------------------------------------------------------------------
         */
         Schema::create('horario_bloque', function (Blueprint $table) {
             $table->string('cod_hbl', 20)->primary();
-            $table->string('cod_pho', 20)->nullable()->after('cod_tur');
 
-            $table->string('cod_tur', 20);
+            $table->string('cod_pho', 20);
             $table->unsignedTinyInteger('num_hbl');
 
             $table->time('hor_ini_hbl');
             $table->time('hor_fin_hbl');
 
             $table->string('nom_hbl', 80)->nullable();
+            $table->string('tip_hbl', 30)->default('CLASE');
             $table->text('obs_hbl')->nullable();
 
             $table->string('est_hbl', 20)->default('ACTIVO');
@@ -133,29 +138,19 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(
-                ['cod_tur', 'num_hbl'],
-                'horario_bloque_tur_num_unique'
-            );
-
-            $table->unique(
-                ['cod_tur', 'hor_ini_hbl', 'hor_fin_hbl'],
-                'horario_bloque_tur_horas_unique'
-            );
-
-            $table->index('cod_tur');
-            $table->index('num_hbl');
-            $table->index('est_hbl');
-            $table->index('cod_pho', 'horario_bloque_cod_pho_index');
-
-            $table->unique(
                 ['cod_pho', 'num_hbl'],
-                'horario_bloque_plantilla_numero_unique'
+                'horario_bloque_pho_num_unique'
             );
 
             $table->unique(
                 ['cod_pho', 'hor_ini_hbl', 'hor_fin_hbl'],
-                'horario_bloque_plantilla_rango_unique'
+                'horario_bloque_pho_horas_unique'
             );
+
+            $table->index('cod_pho', 'horario_bloque_cod_pho_index');
+            $table->index('num_hbl', 'horario_bloque_num_hbl_index');
+            $table->index('tip_hbl', 'horario_bloque_tip_hbl_index');
+            $table->index('est_hbl', 'horario_bloque_est_hbl_index');
         });
 
         /*
@@ -164,23 +159,14 @@ return new class extends Migration
         |--------------------------------------------------------------------------
         */
         Schema::table('horario_bloque', function (Blueprint $table) {
-            if (Schema::hasTable('turno') && Schema::hasColumn('turno', 'cod_tur')) {
-                $table->foreign('cod_tur', 'horario_bloque_cod_tur_foreign')
-                    ->references('cod_tur')
-                    ->on('turno')
+            if (Schema::hasTable('plantilla_horaria') && Schema::hasColumn('plantilla_horaria', 'cod_pho')) {
+                $table->foreign('cod_pho', 'horario_bloque_cod_pho_foreign')
+                    ->references('cod_pho')
+                    ->on('plantilla_horaria')
                     ->restrictOnDelete()
                     ->cascadeOnUpdate();
             }
         });
-        Schema::table('horario_bloque', function (Blueprint $table) {
-            $table->foreign('cod_pho', 'horario_bloque_cod_pho_foreign')
-                ->references('cod_pho')
-                ->on('plantilla_horaria')
-                ->restrictOnDelete()
-                ->cascadeOnUpdate();
-        });
-
-
 
         /*
         |--------------------------------------------------------------------------
@@ -188,10 +174,8 @@ return new class extends Migration
         |--------------------------------------------------------------------------
         | Representa cada celda de la matriz semanal.
         |
-        | Ejemplo:
-        | LUNES - Bloque 1 - MAT-L.V.
-        | MARTES - Bloque 3 - LCO-M.H.
-        | MIÉRCOLES - Bloque 1 - TTE
+        | No repite gestión, curso, paralelo ni turno, porque esos datos se
+        | obtienen desde horario y plantilla_horaria.
         |
         | cod_pas: referencia a plan_asignatura.
         | cod_pes: referencia a plan_especialidad.
@@ -220,22 +204,17 @@ return new class extends Migration
 
             $table->timestamps();
 
-            /*
-            |--------------------------------------------------------------------------
-            | Evita que un mismo horario tenga dos asignaciones en el mismo día/bloque.
-            |--------------------------------------------------------------------------
-            */
             $table->unique(
                 ['cod_hor', 'cod_hbl', 'dia_hde'],
                 'horario_detalle_hor_bloque_dia_unique'
             );
 
-            $table->index('cod_hor');
-            $table->index('cod_hbl');
-            $table->index('dia_hde');
-            $table->index('cod_pas');
-            $table->index('cod_pes');
-            $table->index('est_hde');
+            $table->index('cod_hor', 'horario_detalle_cod_hor_index');
+            $table->index('cod_hbl', 'horario_detalle_cod_hbl_index');
+            $table->index('dia_hde', 'horario_detalle_dia_hde_index');
+            $table->index('cod_pas', 'horario_detalle_cod_pas_index');
+            $table->index('cod_pes', 'horario_detalle_cod_pes_index');
+            $table->index('est_hde', 'horario_detalle_est_hde_index');
         });
 
         /*
@@ -268,14 +247,6 @@ return new class extends Migration
                     ->cascadeOnUpdate();
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Plan especialidad
-            |--------------------------------------------------------------------------
-            | En el proyecto venimos manejando plan_especialidad. Si tu PK real no es
-            | cod_pes, cambia esta referencia por el nombre real de la columna.
-            |--------------------------------------------------------------------------
-            */
             if (Schema::hasTable('plan_especialidad') && Schema::hasColumn('plan_especialidad', 'cod_pes')) {
                 $table->foreign('cod_pes', 'horario_detalle_cod_pes_foreign')
                     ->references('cod_pes')
@@ -289,13 +260,31 @@ return new class extends Migration
         |--------------------------------------------------------------------------
         | CHECK CONSTRAINTS PARA POSTGRESQL
         |--------------------------------------------------------------------------
-        | Como estás trabajando con PostgreSQL, esto ayuda a proteger la lógica:
-        |
-        | 1. El día solo puede ser uno de los días académicos.
-        | 2. La hora de fin debe ser mayor que la hora de inicio.
-        | 3. En horario_detalle debe existir cod_pas o cod_pes, pero no ambos.
-        |--------------------------------------------------------------------------
         */
+        DB::statement("
+            ALTER TABLE horario
+            ADD CONSTRAINT horario_estado_check
+            CHECK (est_hor IN ('ACTIVO', 'INACTIVO', 'PLANIFICADO', 'ARCHIVADO'))
+        ");
+
+        DB::statement("
+            ALTER TABLE horario_bloque
+            ADD CONSTRAINT horario_bloque_horas_check
+            CHECK (hor_fin_hbl > hor_ini_hbl)
+        ");
+
+        DB::statement("
+            ALTER TABLE horario_bloque
+            ADD CONSTRAINT horario_bloque_tipo_check
+            CHECK (tip_hbl IN ('CLASE', 'RECREO', 'DESCANSO', 'FORMACION', 'SALIDA', 'OTRO'))
+        ");
+
+        DB::statement("
+            ALTER TABLE horario_bloque
+            ADD CONSTRAINT horario_bloque_estado_check
+            CHECK (est_hbl IN ('ACTIVO', 'INACTIVO'))
+        ");
+
         DB::statement("
             ALTER TABLE horario_detalle
             ADD CONSTRAINT horario_detalle_dia_check
@@ -303,9 +292,9 @@ return new class extends Migration
         ");
 
         DB::statement("
-            ALTER TABLE horario_bloque
-            ADD CONSTRAINT horario_bloque_horas_check
-            CHECK (hor_fin_hbl > hor_ini_hbl)
+            ALTER TABLE horario_detalle
+            ADD CONSTRAINT horario_detalle_estado_check
+            CHECK (est_hde IN ('ACTIVO', 'INACTIVO', 'SUSPENDIDO'))
         ");
 
         DB::statement("

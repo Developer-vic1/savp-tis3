@@ -15,22 +15,17 @@ class PlantillaHoraria extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'cod_pho',      // Código único de la plantilla horaria. Ej: PHO_0001.
-
-        'cod_tur',      // Turno al que pertenece la plantilla.
-
-        'nom_pho',      // Nombre visible. Ej: Plantilla Regular - Mañana.
-        'tip_pho',      // Tipo de plantilla: REGULAR, INVIERNO, AJUSTE, EMERGENCIA.
-        'des_pho',      // Descripción institucional o aclaración de uso.
-
-        'fec_ini_pho',  // Fecha de inicio de vigencia si es temporal.
-        'fec_fin_pho',  // Fecha de fin de vigencia si es temporal.
-
-        'dur_blo_pho',  // Duración base sugerida del bloque en minutos.
-        'ord_pho',      // Orden visual dentro del turno.
-
-        'act_pho',      // Indica si la plantilla está aplicada actualmente.
-        'est_pho',      // Estado lógico de la plantilla.
+        'cod_pho',
+        'cod_tur',
+        'nom_pho',
+        'tip_pho',
+        'des_pho',
+        'fec_ini_pho',
+        'fec_fin_pho',
+        'dur_blo_pho',
+        'ord_pho',
+        'act_pho',
+        'est_pho',
     ];
 
     protected $casts = [
@@ -40,6 +35,8 @@ class PlantillaHoraria extends Model
         'ord_pho' => 'integer',
         'act_pho' => 'boolean',
         'est_pho' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     // ============================================================
@@ -78,7 +75,27 @@ class PlantillaHoraria extends Model
     public function bloques(): HasMany
     {
         return $this->hasMany(HorarioBloque::class, 'cod_pho', 'cod_pho')
-            ->orderBy('num_hbl');
+            ->orderBy('num_hbl')
+            ->orderBy('hor_ini_hbl');
+    }
+
+    public function bloquesActivos(): HasMany
+    {
+        return $this->hasMany(HorarioBloque::class, 'cod_pho', 'cod_pho')
+            ->where('est_hbl', 'ACTIVO')
+            ->orderBy('num_hbl')
+            ->orderBy('hor_ini_hbl');
+    }
+
+    public function horarios(): HasMany
+    {
+        return $this->hasMany(Horario::class, 'cod_pho', 'cod_pho');
+    }
+
+    public function horariosActivos(): HasMany
+    {
+        return $this->hasMany(Horario::class, 'cod_pho', 'cod_pho')
+            ->where('est_hor', 'ACTIVO');
     }
 
     // ============================================================
@@ -100,6 +117,11 @@ class PlantillaHoraria extends Model
         return $query->where('act_pho', true);
     }
 
+    public function scopeNoAplicadas($query)
+    {
+        return $query->where('act_pho', false);
+    }
+
     public function scopeRegulares($query)
     {
         return $query->where('tip_pho', 'REGULAR');
@@ -110,9 +132,52 @@ class PlantillaHoraria extends Model
         return $query->where('tip_pho', 'INVIERNO');
     }
 
+    public function scopeAjustes($query)
+    {
+        return $query->where('tip_pho', 'AJUSTE');
+    }
+
+    public function scopeEmergencias($query)
+    {
+        return $query->where('tip_pho', 'EMERGENCIA');
+    }
+
     public function scopeDelTurno($query, string $codTurno)
     {
         return $query->where('cod_tur', $codTurno);
+    }
+
+    // ============================================================
+    // ACCESSORS
+    // ============================================================
+
+    public function getNombreCompletoAttribute(): string
+    {
+        $turno = $this->turno?->nom_tur ?? 'Sin turno';
+
+        return "{$this->nom_pho} - {$turno}";
+    }
+
+    public function getVigenciaAttribute(): string
+    {
+        if (! $this->fec_ini_pho && ! $this->fec_fin_pho) {
+            return 'Base anual / sin rango temporal';
+        }
+
+        $inicio = $this->fec_ini_pho?->format('d/m/Y') ?? 'Sin inicio';
+        $fin = $this->fec_fin_pho?->format('d/m/Y') ?? 'Sin fin';
+
+        return "{$inicio} al {$fin}";
+    }
+
+    public function getEstadoNombreAttribute(): string
+    {
+        return $this->est_pho ? 'Activo' : 'Inactivo';
+    }
+
+    public function getAplicacionNombreAttribute(): string
+    {
+        return $this->act_pho ? 'Aplicada' : 'No aplicada';
     }
 
     // ============================================================
@@ -129,6 +194,16 @@ class PlantillaHoraria extends Model
         return $this->tip_pho === 'INVIERNO';
     }
 
+    public function esAjuste(): bool
+    {
+        return $this->tip_pho === 'AJUSTE';
+    }
+
+    public function esEmergencia(): bool
+    {
+        return $this->tip_pho === 'EMERGENCIA';
+    }
+
     public function estaAplicada(): bool
     {
         return (bool) $this->act_pho;
@@ -142,15 +217,5 @@ class PlantillaHoraria extends Model
     public function tieneVigenciaTemporal(): bool
     {
         return ! is_null($this->fec_ini_pho) || ! is_null($this->fec_fin_pho);
-    }
-
-    public function nombreEstado(): string
-    {
-        return $this->est_pho ? 'Activo' : 'Inactivo';
-    }
-
-    public function nombreAplicacion(): string
-    {
-        return $this->act_pho ? 'Aplicada' : 'No aplicada';
     }
 }
