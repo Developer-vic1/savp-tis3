@@ -71,7 +71,6 @@ class GestionTurnos extends Component
 
     public array $formBloque = [
         'cod_hbl' => null,
-        'cod_tur' => '',
         'cod_pho' => '',
         'num_hbl' => '',
         'hor_ini_hbl' => '',
@@ -637,7 +636,6 @@ class GestionTurnos extends Component
                     DB::table('horario_bloque')
                         ->where('cod_pho', $codPho)
                         ->update($this->filtrarColumnas('horario_bloque', [
-                            'cod_tur' => $datos['cod_tur'],
                             'updated_at' => now(),
                         ]));
 
@@ -744,7 +742,7 @@ class GestionTurnos extends Component
         $sugerencia = $this->soporte->sugerirRangoInvierno();
 
         try {
-            DB::transaction(function () use ($plantilla, $sugerencia) {
+            DB::transaction(function () use ($plantilla, $sugerencia, $codPho) {
                 $nuevoCodPho = $this->generarCodigo('plantilla_horaria', 'cod_pho', 'PHO');
                 $turno = $this->buscarTurno($plantilla['cod_tur']);
 
@@ -775,7 +773,6 @@ class GestionTurnos extends Component
 
                     DB::table('horario_bloque')->insert($this->filtrarColumnas('horario_bloque', [
                         'cod_hbl' => $this->generarCodigo('horario_bloque', 'cod_hbl', 'HBL'),
-                        'cod_tur' => $plantilla['cod_tur'],
                         'cod_pho' => $nuevoCodPho,
                         'num_hbl' => $bloque->num_hbl ?? null,
                         'hor_ini_hbl' => $inicio,
@@ -837,7 +834,6 @@ class GestionTurnos extends Component
 
             if ($plantilla) {
                 $this->formBloque['cod_pho'] = $codPho;
-                $this->formBloque['cod_tur'] = $plantilla['cod_tur'];
                 $this->formBloque['num_hbl'] = $this->siguienteNumeroBloque($codPho);
                 $this->formBloque['nom_hbl'] = $this->nombreSugeridoBloque((int) $this->formBloque['num_hbl']);
                 $this->formBloque['tip_hbl'] = 'CLASE';
@@ -862,7 +858,6 @@ class GestionTurnos extends Component
 
         $this->formBloque = [
             'cod_hbl' => $codHbl,
-            'cod_tur' => $bloque['cod_tur'],
             'cod_pho' => $bloque['cod_pho'],
             'num_hbl' => $bloque['numero'],
             'hor_ini_hbl' => $bloque['hora_inicio'],
@@ -886,12 +881,7 @@ class GestionTurnos extends Component
 
     public function sincronizarTurnoDesdePlantilla(): void
     {
-        $plantilla = $this->buscarPlantilla($this->formBloque['cod_pho'] ?? null);
-
-        if ($plantilla) {
-            $this->formBloque['cod_tur'] = $plantilla['cod_tur'];
-        }
-
+        // El turno ya no se guarda en formBloque; se deriva desde la plantilla en TurnoInteligente
         $this->analizarBloqueTiempoReal();
     }
 
@@ -906,7 +896,7 @@ class GestionTurnos extends Component
 
     public function guardarBloque(): void
     {
-        $this->sincronizarTurnoDesdePlantilla();
+        // El turno se deriva internamente desde la plantilla; no necesita sincronización de formulario
 
         $this->analisisBloque = $this->soporte->analizarBloque(
             $this->formBloque,
@@ -930,7 +920,6 @@ class GestionTurnos extends Component
 
                     DB::table('horario_bloque')->insert($this->filtrarColumnas('horario_bloque', [
                         'cod_hbl' => $codHbl,
-                        'cod_tur' => $datos['cod_tur'],
                         'cod_pho' => $datos['cod_pho'],
                         'num_hbl' => $datos['num_hbl'],
                         'hor_ini_hbl' => $datos['hor_ini_hbl'],
@@ -957,7 +946,6 @@ class GestionTurnos extends Component
                     DB::table('horario_bloque')
                         ->where('cod_hbl', $codHbl)
                         ->update($this->filtrarColumnas('horario_bloque', [
-                            'cod_tur' => $datos['cod_tur'],
                             'cod_pho' => $datos['cod_pho'],
                             'num_hbl' => $datos['num_hbl'],
                             'hor_ini_hbl' => $datos['hor_ini_hbl'],
@@ -1308,18 +1296,21 @@ class GestionTurnos extends Component
             });
         }
 
-        if ($this->usoAcademico !== '') {
+        if ($this->usoAcademico !== '' && $this->tablaExiste('horario') && $this->tablaExiste('plantilla_horaria')) {
+            // horario no tiene cod_tur; se une a través de plantilla_horaria
             if ($this->usoAcademico === 'CON_HORARIO') {
                 $query->whereExists(function (Builder $exists) {
                     $exists->from('horario')
-                        ->whereColumn('horario.cod_tur', 'turno.cod_tur');
+                        ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
+                        ->whereColumn('plantilla_horaria.cod_tur', 'turno.cod_tur');
                 });
             }
 
             if ($this->usoAcademico === 'SIN_HORARIO') {
                 $query->whereNotExists(function (Builder $exists) {
                     $exists->from('horario')
-                        ->whereColumn('horario.cod_tur', 'turno.cod_tur');
+                        ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
+                        ->whereColumn('plantilla_horaria.cod_tur', 'turno.cod_tur');
                 });
             }
         }
@@ -1554,7 +1545,6 @@ class GestionTurnos extends Component
     {
         return [
             'cod_hbl' => $bloque->cod_hbl ?? null,
-            'cod_tur' => $bloque->cod_tur ?? null,
             'cod_pho' => $bloque->cod_pho ?? null,
             'numero' => $bloque->num_hbl ?? null,
             'nombre' => $bloque->nom_hbl ?? 'Bloque',
@@ -1656,14 +1646,17 @@ class GestionTurnos extends Component
 
     private function bloquesPorTurno(string $codTur): Collection
     {
-        if (! $this->tablaExiste('horario_bloque')) {
+        if (! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('plantilla_horaria')) {
             return collect();
         }
 
+        // horario_bloque ya no tiene cod_tur; se obtiene a través de plantilla_horaria
         return DB::table('horario_bloque')
-            ->where('cod_tur', $codTur)
-            ->orderBy('num_hbl')
-            ->orderBy('hor_ini_hbl')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario_bloque.cod_pho')
+            ->where('plantilla_horaria.cod_tur', $codTur)
+            ->select('horario_bloque.*')
+            ->orderBy('horario_bloque.num_hbl')
+            ->orderBy('horario_bloque.hor_ini_hbl')
             ->get()
             ->map(fn($bloque) => $this->mapearBloque($bloque));
     }
@@ -1708,7 +1701,6 @@ class GestionTurnos extends Component
     private function reglasBloque(): array
     {
         return [
-            'formBloque.cod_tur' => ['required', 'string', Rule::exists('turno', 'cod_tur')],
             'formBloque.cod_pho' => ['required', 'string', Rule::exists('plantilla_horaria', 'cod_pho')],
             'formBloque.num_hbl' => ['required', 'integer', 'min:1', 'max:30'],
             'formBloque.hor_ini_hbl' => ['required', 'date_format:H:i'],
@@ -1749,7 +1741,6 @@ class GestionTurnos extends Component
     private function atributosBloque(): array
     {
         return [
-            'formBloque.cod_tur' => 'turno',
             'formBloque.cod_pho' => 'plantilla horaria',
             'formBloque.num_hbl' => 'número de bloque',
             'formBloque.hor_ini_hbl' => 'hora de inicio',
@@ -1774,19 +1765,24 @@ class GestionTurnos extends Component
 
     private function contarBloquesTurno(string $codTur): int
     {
-        return $this->tablaExiste('horario_bloque')
-            ? DB::table('horario_bloque')->where('cod_tur', $codTur)->count()
-            : 0;
+        if (! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('plantilla_horaria')) {
+            return 0;
+        }
+
+        return DB::table('horario_bloque')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario_bloque.cod_pho')
+            ->where('plantilla_horaria.cod_tur', $codTur)
+            ->count();
     }
 
     private function contarBloquesSinPlantillaTurno(string $codTur): int
     {
+        // horario_bloque ya no tiene cod_tur; los huérfanos se detectan globalmente por cod_pho vacío
         if (! $this->tablaExiste('horario_bloque') || ! Schema::hasColumn('horario_bloque', 'cod_pho')) {
             return 0;
         }
 
         return DB::table('horario_bloque')
-            ->where('cod_tur', $codTur)
             ->where(function ($query) {
                 $query->whereNull('cod_pho')
                     ->orWhere('cod_pho', '');
@@ -1803,9 +1799,14 @@ class GestionTurnos extends Component
 
     private function contarHorariosTurno(string $codTur): int
     {
-        return $this->tablaExiste('horario') && Schema::hasColumn('horario', 'cod_tur')
-            ? DB::table('horario')->where('cod_tur', $codTur)->count()
-            : 0;
+        if (! $this->tablaExiste('horario') || ! $this->tablaExiste('plantilla_horaria')) {
+            return 0;
+        }
+
+        return DB::table('horario')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
+            ->where('plantilla_horaria.cod_tur', $codTur)
+            ->count();
     }
 
     private function contarDetallesPlantilla(string $codPho): int
@@ -1874,7 +1875,6 @@ class GestionTurnos extends Component
     {
         $this->formBloque = [
             'cod_hbl' => null,
-            'cod_tur' => '',
             'cod_pho' => '',
             'num_hbl' => '',
             'hor_ini_hbl' => '',

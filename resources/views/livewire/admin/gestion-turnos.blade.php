@@ -1812,27 +1812,23 @@
                             </div>
 
                             <div>
-                                <label class="ui-label">Turno sincronizado</label>
-                                <select
-                                    wire:model.live="formBloque.cod_tur"
-                                    wire:change="analizarBloqueTiempoReal"
-                                    class="ui-select"
-                                    disabled
-                                >
-                                    <option value="">Selecciona primero una plantilla</option>
-                                    @foreach ($turnosCatalogo as $turnoItem)
-                                        <option value="{{ $turnoItem['cod_tur'] }}">
-                                            {{ $turnoItem['nombre'] }} · {{ $turnoItem['rango'] }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                @error('formBloque.cod_tur')
-                                    <p class="ui-error">{{ $message }}</p>
-                                @enderror
-
+                                <label class="ui-label">Turno del bloque</label>
+                                @php
+                                    $plantillaDelBloque = collect($plantillasCatalogo)->firstWhere('cod_pho', $formBloque['cod_pho'] ?? '');
+                                @endphp
+                                <div class="ui-input flex items-center gap-2 opacity-75 cursor-not-allowed select-none" style="min-height:2.5rem;">
+                                    @if ($plantillaDelBloque && ($plantillaDelBloque['turno'] ?? null))
+                                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        <span class="font-medium">{{ $plantillaDelBloque['turno']['nombre'] ?? 'Turno' }}</span>
+                                        <span class="text-xs opacity-60">{{ $plantillaDelBloque['turno']['rango'] ?? '' }}</span>
+                                    @else
+                                        <span class="opacity-50 text-sm">Selecciona primero una plantilla</span>
+                                    @endif
+                                </div>
                                 <p class="ui-help">
-                                    El turno no se elige manualmente para evitar cruces entre plantilla y jornada.
+                                    El turno se deriva automáticamente desde la plantilla. No se elige manualmente.
                                 </p>
                             </div>
                         </div>

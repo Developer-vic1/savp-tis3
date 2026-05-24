@@ -357,8 +357,8 @@ class TurnoInteligente
             return 0;
         }
 
+        // horario_bloque ya no tiene cod_tur; buscamos globalmente bloques sin plantilla
         $query = DB::table('horario_bloque')
-            ->where('cod_tur', $codTur)
             ->where(function ($query) {
                 $query->whereNull('cod_pho')
                     ->orWhere('cod_pho', '');
@@ -707,7 +707,7 @@ class TurnoInteligente
             );
         }
 
-        $codTur = $datos['cod_tur'] ?? null;
+        // El turno se deriva desde la plantilla; horario_bloque ya no tiene cod_tur directo
         $codPho = $datos['cod_pho'] ?? null;
         $numero = $datos['num_hbl'] ?? null;
         $nombre = $datos['nom_hbl'] ?? null;
@@ -715,26 +715,19 @@ class TurnoInteligente
         $horaInicio = $datos['hor_ini_hbl'] ?? null;
         $horaFin = $datos['hor_fin_hbl'] ?? null;
 
-        if (! $this->tieneValor($codTur)) {
-            $bloqueos[] = 'Debes seleccionar el turno del bloque.';
-        } elseif (! $this->obtenerTurno($codTur)) {
-            $bloqueos[] = 'El turno seleccionado no existe.';
-        }
+        $plantilla = null;
+        $codTur = null;
 
-        if (Schema::hasColumn('horario_bloque', 'cod_pho')) {
-            if (! $this->tieneValor($codPho)) {
-                $bloqueos[] = 'Debes seleccionar la plantilla horaria del bloque.';
-                $sugerencias[] = 'Los bloques ya no deben quedar sueltos por turno; deben pertenecer a una plantilla regular o de invierno.';
-            } elseif (! $this->obtenerPlantilla($codPho)) {
-                $bloqueos[] = 'La plantilla horaria seleccionada no existe.';
-            }
-        }
+        if (! $this->tieneValor($codPho)) {
+            $bloqueos[] = 'Debes seleccionar la plantilla horaria del bloque.';
+            $sugerencias[] = 'Los bloques deben pertenecer a una plantilla regular o de invierno.';
+        } elseif (! ($plantilla = $this->obtenerPlantilla($codPho))) {
+            $bloqueos[] = 'La plantilla horaria seleccionada no existe.';
+        } else {
+            $codTur = $plantilla->cod_tur ?? null;
 
-        if ($this->tieneValor($codPho)) {
-            $plantilla = $this->obtenerPlantilla($codPho);
-
-            if ($plantilla && $this->tieneValor($codTur) && $plantilla->cod_tur !== $codTur) {
-                $bloqueos[] = 'El turno del bloque no coincide con el turno de la plantilla seleccionada.';
+            if (! $this->tieneValor($codTur) || ! $this->obtenerTurno($codTur)) {
+                $bloqueos[] = 'La plantilla seleccionada no tiene un turno válido asignado.';
             }
         }
 
@@ -831,7 +824,8 @@ class TurnoInteligente
                 'datos_normalizados_sugeridos' => $this->normalizarDatosBloque($datos, normalizacionFuerte: true),
                 'duracion_minutos' => $duracion,
                 'tiene_uso' => $codHblIgnorado ? $this->bloqueTieneUso($codHblIgnorado) : false,
-                'plantilla' => $this->tieneValor($codPho) ? $this->mapearPlantilla($this->obtenerPlantilla($codPho)) : null,
+                'plantilla' => $plantilla ? $this->mapearPlantilla($plantilla) : null,
+                'turno_derivado' => $codTur ? ($this->obtenerTurno($codTur)->nom_tur ?? null) : null,
             ]
         );
     }
@@ -862,7 +856,6 @@ class TurnoInteligente
         foreach ($bloques as $bloque) {
             $analisis = $this->analizarBloque([
                 'cod_hbl' => $bloque->cod_hbl ?? null,
-                'cod_tur' => $bloque->cod_tur ?? null,
                 'cod_pho' => $bloque->cod_pho ?? null,
                 'num_hbl' => $bloque->num_hbl ?? null,
                 'hor_ini_hbl' => $this->normalizarHora($bloque->hor_ini_hbl ?? null),
@@ -1258,7 +1251,6 @@ class TurnoInteligente
                 $query->whereNull('cod_pho')
                     ->orWhere('cod_pho', '');
             })
-            ->orderBy('cod_tur')
             ->orderBy('num_hbl')
             ->get();
     }
@@ -1687,14 +1679,17 @@ class TurnoInteligente
 
     private function bloquesPorTurno(string $codTur): Collection
     {
-        if (! $this->tablaExiste('horario_bloque')) {
+        if (! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('plantilla_horaria')) {
             return collect();
         }
 
+        // horario_bloque ya no tiene cod_tur; se obtiene a través de plantilla_horaria
         return DB::table('horario_bloque')
-            ->where('cod_tur', $codTur)
-            ->orderBy('num_hbl')
-            ->orderBy('hor_ini_hbl')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario_bloque.cod_pho')
+            ->where('plantilla_horaria.cod_tur', $codTur)
+            ->select('horario_bloque.*')
+            ->orderBy('horario_bloque.num_hbl')
+            ->orderBy('horario_bloque.hor_ini_hbl')
             ->get();
     }
 
@@ -1713,12 +1708,12 @@ class TurnoInteligente
 
     private function bloquesSinPlantillaPorTurno(string $codTur): Collection
     {
+        // horario_bloque ya no tiene cod_tur; los bloques huérfanos se detectan globalmente por cod_pho vacío
         if (! $this->tablaExiste('horario_bloque') || ! Schema::hasColumn('horario_bloque', 'cod_pho')) {
             return collect();
         }
 
         return DB::table('horario_bloque')
-            ->where('cod_tur', $codTur)
             ->where(function ($query) {
                 $query->whereNull('cod_pho')
                     ->orWhere('cod_pho', '');
@@ -1792,16 +1787,30 @@ class TurnoInteligente
 
     private function usoTurno(string $codTur): array
     {
+        // El turno se relaciona con horario_bloque y horario a través de plantilla_horaria
+        $bloquesConteo = 0;
+        $horariosConteo = 0;
+
+        if ($this->tablaExiste('horario_bloque') && $this->tablaExiste('plantilla_horaria')) {
+            $bloquesConteo = DB::table('horario_bloque')
+                ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario_bloque.cod_pho')
+                ->where('plantilla_horaria.cod_tur', $codTur)
+                ->count();
+        }
+
+        if ($this->tablaExiste('horario') && $this->tablaExiste('plantilla_horaria')) {
+            $horariosConteo = DB::table('horario')
+                ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
+                ->where('plantilla_horaria.cod_tur', $codTur)
+                ->count();
+        }
+
         return [
             'plantillas' => $this->tablaExiste('plantilla_horaria')
                 ? DB::table('plantilla_horaria')->where('cod_tur', $codTur)->count()
                 : 0,
-            'bloques' => $this->tablaExiste('horario_bloque')
-                ? DB::table('horario_bloque')->where('cod_tur', $codTur)->count()
-                : 0,
-            'horarios' => $this->tablaExiste('horario') && Schema::hasColumn('horario', 'cod_tur')
-                ? DB::table('horario')->where('cod_tur', $codTur)->count()
-                : 0,
+            'bloques' => $bloquesConteo,
+            'horarios' => $horariosConteo,
             'detalles_horario' => $this->cantidadDetallesPorTurno($codTur),
         ];
     }
@@ -1831,13 +1840,14 @@ class TurnoInteligente
 
     private function cantidadDetallesPorTurno(string $codTur): int
     {
-        if (! $this->tablaExiste('horario_detalle') || ! $this->tablaExiste('horario_bloque')) {
+        if (! $this->tablaExiste('horario_detalle') || ! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('plantilla_horaria')) {
             return 0;
         }
 
         $bloques = DB::table('horario_bloque')
-            ->where('cod_tur', $codTur)
-            ->pluck('cod_hbl');
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario_bloque.cod_pho')
+            ->where('plantilla_horaria.cod_tur', $codTur)
+            ->pluck('horario_bloque.cod_hbl');
 
         if ($bloques->isEmpty()) {
             return 0;
