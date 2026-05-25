@@ -1008,7 +1008,7 @@
                                         {!! $icon('download', 'h-4 w-4') !!}
                                     </button>
 
-                                    @if (in_array($inscripcion->est_ins ?? '', ['ANULADO', 'RETIRADO']))
+                                    @if (in_array($inscripcion->est_ins ?? '', ['ANULADA', 'RETIRADA']))
                                         <button type="button" wire:click="reactivarInscripcion('{{ $inscripcion->cod_ins }}')" class="ui-icon-btn" title="Reactivar">
                                             {!! $icon('refresh', 'h-4 w-4') !!}
                                         </button>
@@ -2121,292 +2121,249 @@
 
                             {{-- PASO 3: DOCUMENTOS --}}
                             @if ($pasoInscripcion === 3)
-                                <div class="space-y-5">
-                                    {{-- CABECERA DEL PASO --}}
+                                @php
+                                    $etiquetasEstadoDoc = [
+                                        'PENDIENTE'  => 'Pendiente de regularización',
+                                        'PRESENTADO' => 'Archivo recibido',
+                                        'VALIDADO'   => 'Validado',
+                                        'OBSERVADO'  => 'Observado',
+                                        'NO_APLICA'  => 'No aplica',
+                                    ];
+                                @endphp
+                                <div class="space-y-4">
+
+                                    {{-- Cabecera + selector compacto --}}
                                     <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                                        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                                             <div>
                                                 <div class="flex flex-wrap items-center gap-2">
                                                     <span class="ui-badge-success">Paso 3</span>
-                                                    <span class="ui-badge-muted">Documentos requeridos</span>
-
-                                                    @if (($panelDoc['pendientes'] ?? 0) > 0 || ($panelDoc['observados'] ?? 0) > 0)
-                                                        <span class="ui-badge-warning">Con pendientes</span>
-                                                    @elseif (($panelDoc['total'] ?? 0) > 0)
-                                                        <span class="ui-badge-success">Sin pendientes críticos</span>
-                                                    @else
-                                                        <span class="ui-badge-muted">Sin lista documental</span>
-                                                    @endif
+                                                    <span class="ui-badge-muted">Revisión documental</span>
                                                 </div>
-
-                                                <h4 class="ui-title mt-3 text-2xl font-black">
-                                                    Lista documental de inscripción
-                                                </h4>
-
-                                                <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-                                                    Registre el estado de la documentación requerida para la inscripción.
-                                                </p>
+                                                <h4 class="ui-title mt-2 text-xl font-black">Lista documental</h4>
                                             </div>
 
-                                            <div class="ui-card-soft min-w-[260px] p-4">
-                                                <p class="ui-muted text-xs">Tipo de inscripción</p>
-                                                <p class="ui-title mt-1 text-lg font-black">
-                                                    {{ ucfirst(strtolower($formInscripcion['tip_ins'] ?? 'REGULAR')) }}
-                                                </p>
+                                            {{-- Selector de catálogo oculto por defecto (Alpine toggle) --}}
+                                            <div x-data="{ abierto: false }" class="flex flex-wrap items-center gap-2">
+                                                <button
+                                                    type="button"
+                                                    x-show="!abierto"
+                                                    @click="abierto = true"
+                                                    class="ui-btn-secondary text-sm"
+                                                >
+                                                    {!! $icon('plus', 'h-4 w-4') !!} Agregar documento
+                                                </button>
 
-                                                <p class="ui-muted mt-2 text-xs">
-                                                    La lista documental requerida se adapta al tipo seleccionado.
-                                                </p>
+                                                <div x-show="abierto" x-transition class="flex flex-wrap items-center gap-2">
+                                                    <select wire:model.live="documentoCatalogoSeleccionado" class="ui-select text-sm">
+                                                        <option value="">Selecciona documento...</option>
+                                                        @foreach ($documentosDisponibles as $docDisponible)
+                                                            <option value="{{ $docDisponible['clave_doc'] }}">{{ $docDisponible['nom_die'] }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <button
+                                                        type="button"
+                                                        wire:click="agregarDocumentoDesdeCatalogo"
+                                                        class="ui-btn-primary text-sm"
+                                                    >Agregar</button>
+                                                    <button
+                                                        type="button"
+                                                        @click="abierto = false"
+                                                        class="ui-btn-secondary text-sm"
+                                                    >Cancelar</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </section>
 
-                                    @if ($sugerenciaDocumentalVisible)
-                                        <section class="ui-panel">
-                                            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                                                <div>
-                                                    <p class="ui-kicker">Sugerencia</p>
-                                                    <h5 class="ui-title mt-1 text-xl font-black">Documentos faltantes para este tipo</h5>
-                                                    <p class="ui-muted mt-1 text-sm">
-                                                        Se detectaron {{ count($documentosFaltantesSugeridos) }} documento(s) faltante(s) según el tipo de inscripción actual.
-                                                    </p>
-                                                </div>
-                                                <button type="button" wire:click="aplicarChecklistAgregarFaltantes" class="ui-btn-secondary">
-                                                    Agregar faltantes
-                                                </button>
-                                            </div>
-                                        </section>
-                                    @endif
+                                    {{-- Grid de fichas documentales --}}
+                                    <div class="grid gap-4 xl:grid-cols-2">
+                                        @forelse ($documentos as $index => $documento)
+                                             @php
+                                                 $estadoDoc      = $documento['est_die'] ?? 'PENDIENTE';
+                                                 $tieneArchivo   = ! empty($documento['rut_die']);
+                                                $editableFecha  = (bool) ($documento['fecha_limite_editable'] ?? false);
+                                                $tieneSugerencia = ! empty($documento['obs_sugerida'] ?? '');
+                                                $mostrarObsFecha = in_array($estadoDoc, ['OBSERVADO', 'PENDIENTE']);
+                                                $mostrarUpload   = ! in_array($estadoDoc, ['NO_APLICA', 'VALIDADO']);
+                                                 $etiquetaEst     = $etiquetasEstadoDoc[$estadoDoc] ?? ucfirst(strtolower($estadoDoc));
+                                                 if ($estadoDoc === 'PRESENTADO' && ! $tieneArchivo) {
+                                                     $etiquetaEst = 'Esperando archivo PDF';
+                                                 }
+                                             @endphp
 
-                                    <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                                            <div>
-                                                <p class="ui-kicker">Acciones</p>
-                                                <h5 class="ui-title mt-1 text-xl font-black">Documentos requeridos</h5>
-                                                <p class="ui-muted mt-1 text-sm">Agrega documentos adicionales solo si corresponde.</p>
-                                            </div>
+                                            <article class="ui-card-soft flex flex-col gap-3 p-4">
 
-                                            <div class="flex flex-wrap gap-2">
-                                                <button type="button" wire:click="agregarDocumentoManual" class="ui-btn-secondary">
-                                                    {!! $icon('plus', 'h-4 w-4') !!}
-                                                    Agregar documento
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                    {{-- LISTA DOCUMENTAL ACTUAL --}}
-                                    <section class="ui-panel">
-                                        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                                            <div>
-                                                <p class="ui-kicker">Lista documental</p>
-                                                <h5 class="ui-title mt-1 text-xl font-black">
-                                                    Documentos de la inscripción
-                                                </h5>
-                                            </div>
-
-                                            <span class="ui-badge-muted">
-                                                {{ count($documentos) }} registro(s)
-                                            </span>
-                                        </div>
-
-                                        <div class="mt-5 space-y-3">
-                                            @forelse ($documentos as $index => $documento)
-                                                @php
-                                                    $estadoDoc = $documento['est_die'] ?? 'PENDIENTE';
-                                                @endphp
-
-                                                <article class="ui-card-soft savp-doc-card p-4">
-                                                    <div class="grid gap-4 xl:grid-cols-[1.15fr_170px_1fr_240px_auto] xl:items-start">
-                                                        {{-- NOMBRE --}}
-                                                        <div>
-                                                            <label class="ui-label">Documento</label>
-                                                            <input
-                                                                type="text"
-                                                                wire:model.live.debounce.800ms="documentos.{{ $index }}.nom_die"
-                                                                class="ui-input"
-                                                                placeholder="Nombre del documento"
-                                                            >
-
-                                                            <div class="mt-3">
-                                                                <label class="ui-label">Tipo documental</label>
-                                                                <select wire:model.live="documentos.{{ $index }}.tip_die" class="ui-select">
-                                                                    @php
-                                                                        $labelsTipoDoc = [
-                                                                            'RUDE' => 'Formulario RUDE',
-                                                                            'IDENTIDAD' => 'Identidad (estudiante/tutor)',
-                                                                            'VACUNAS' => 'Salud / vacunas',
-                                                                            'ACADEMICO' => 'Académico',
-                                                                            'TRASLADO' => 'Traslado',
-                                                                            'EXTERIOR' => 'Extranjero',
-                                                                            'VULNERABILIDAD' => 'Caso vulnerable',
-                                                                            'ESPECIALIDAD' => 'Especialidad técnica BTH',
-                                                                            'AUTORIZACION' => 'Autorización',
-                                                                            'GENERAL' => 'General',
-                                                                        ];
-                                                                    @endphp
-                                                                    @foreach (($catalogos['tipos_documento_inscripcion'] ?? []) as $tipo)
-                                                                        <option value="{{ $tipo }}">{{ $labelsTipoDoc[$tipo] ?? str_replace('_', ' ', $tipo) }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-
-                                                            <div class="mt-2 flex flex-wrap gap-2">
-                                                                <span class="{{ $this->badgeDocumento($estadoDoc) }}">
-                                                                    {{ ucfirst(strtolower($estadoDoc)) }}
-                                                                </span>
-
-                                                                @if (($documento['obligatorio'] ?? false))
-                                                                    <span class="ui-badge-warning">Obligatorio</span>
-                                                                @else
-                                                                    <span class="ui-badge-muted">Complementario</span>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- ESTADO Y ACCIONES CONTEXTUALES --}}
-                                                        <div>
-                                                            <label class="ui-label">Estado</label>
-                                                            <select wire:model.live="documentos.{{ $index }}.est_die" class="ui-select">
-                                                                @foreach ($catalogos['estados_documento'] ?? [] as $estado)
-                                                                    <option value="{{ $estado }}">{{ ucfirst(strtolower($estado)) }}</option>
-                                                                @endforeach
-                                                            </select>
-
-                                                            <div class="mt-2 flex flex-wrap gap-2">
-                                                                @if ($estadoDoc === 'PENDIENTE')
-                                                                    <button type="button" wire:click="documentoPresentado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Marcar como presentado</button>
-                                                                    <button type="button" wire:click="documentoNoAplica({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">No aplica</button>
-                                                                @elseif ($estadoDoc === 'PRESENTADO')
-                                                                    <button type="button" wire:click="documentoValidado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Validar</button>
-                                                                    <button type="button" wire:click="documentoObservado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Observar</button>
-                                                                @elseif ($estadoDoc === 'OBSERVADO')
-                                                                    <button type="button" wire:click="documentoPresentado({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Marcar corregido</button>
-                                                                @elseif ($estadoDoc === 'NO_APLICA')
-                                                                    <button type="button" wire:click="documentoPendiente({{ $index }})" class="ui-btn-secondary px-3 py-2 text-xs">Requerir documento</button>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- OBSERVACIÓN --}}
-                                                        <div>
-                                                            <label class="ui-label">
-                                                                Observación
-                                                                @if (($estadoDoc ?? '') === 'OBSERVADO')
-                                                                    <span class="ui-badge-danger ml-2">Obligatoria</span>
-                                                                @endif
-                                                            </label>
-                                                            <textarea
-                                                                wire:model.live.debounce.800ms="documentos.{{ $index }}.obs_die"
-                                                                rows="3"
-                                                                class="ui-textarea"
-                                                                placeholder="Observación documental"
-                                                            ></textarea>
-                                                            <p class="ui-help">
-                                                                @if (($estadoDoc ?? '') === 'PENDIENTE')
-                                                                    PENDIENTE: requiere fecha límite si es obligatorio. No admite archivo.
-                                                                @elseif (($estadoDoc ?? '') === 'PRESENTADO')
-                                                                    PRESENTADO: registra fecha de presentación y permite pasar a validación.
-                                                                @elseif (($estadoDoc ?? '') === 'VALIDADO')
-                                                                    VALIDADO: requiere archivo.
-                                                                @elseif (($estadoDoc ?? '') === 'NO_APLICA')
-                                                                    NO APLICA: no requiere archivo ni fechas.
-                                                                @else
-                                                                    OBSERVADO: requiere motivo y fecha límite de corrección.
-                                                                @endif
-                                                            </p>
-                                                        </div>
-
-                                                        {{-- ARCHIVO Y FECHAS --}}
-                                                        <div>
-                                                            <label class="ui-label">Archivo y fechas</label>
-
-                                                            @php
-                                                                $tieneArchivo = ! empty($documento['rut_die']) || ! empty($documento['has_die']);
-                                                            @endphp
-
-                                                            @if (($estadoDoc ?? '') === 'PENDIENTE')
-                                                                <input type="date" wire:model.live="documentos.{{ $index }}.fec_lim_die" class="ui-input" @if(($documento['obligatorio'] ?? false)) required @endif>
-                                                                <p class="ui-muted text-xs mt-2">
-                                                                    @if (($documento['obligatorio'] ?? false))
-                                                                        Obligatorio: fecha límite requerida.
-                                                                    @else
-                                                                        Fecha límite opcional.
-                                                                    @endif
-                                                                </p>
-
-                                                                <div class="mt-3 ui-card-soft p-3 opacity-60">
-                                                                    <p class="ui-muted text-xs font-bold">Archivo deshabilitado</p>
-                                                                    <p class="ui-muted text-xs mt-1">Un documento pendiente no debe tener archivo cargado.</p>
-                                                                </div>
-                                                            @elseif (in_array(($estadoDoc ?? ''), ['PRESENTADO', 'VALIDADO', 'OBSERVADO'], true))
-                                                                <input type="date" wire:model.live="documentos.{{ $index }}.fec_pre_die" class="ui-input" title="Fecha de presentación">
-
-                                                                <div class="mt-3">
-                                                                    <label class="ui-label text-xs">Archivo PDF</label>
-                                                                    <input
-                                                                        type="file"
-                                                                        wire:model="archivosDocumentos.{{ $index }}"
-                                                                        accept="application/pdf,.pdf"
-                                                                        class="ui-input mt-1"
-                                                                    >
-                                                                    @error("archivosDocumentos.$index")
-                                                                        <p class="ui-error">{{ $message }}</p>
-                                                                    @enderror
-                                                                </div>
-
-                                                                @if (($estadoDoc ?? '') === 'OBSERVADO')
-                                                                    <div class="mt-3">
-                                                                        <label class="ui-label text-xs">Fecha límite (corrección)</label>
-                                                                        <input type="date" wire:model.live="documentos.{{ $index }}.fec_lim_die" class="ui-input mt-1" required>
-                                                                    </div>
-                                                                @endif
-
-                                                                <div class="mt-3 ui-card-soft p-3">
-                                                                    <div class="flex items-center justify-between gap-2">
-                                                                        <p class="ui-muted text-xs font-bold">Archivo</p>
-                                                                        <span class="{{ $tieneArchivo ? 'ui-badge-success' : 'ui-badge-warning' }}">
-                                                                            {{ $tieneArchivo ? 'Registrado' : 'Sin archivo' }}
-                                                                        </span>
-                                                                    </div>
-                                                                    <p class="ui-muted text-xs mt-1">
-                                                                        {{ $tieneArchivo ? 'Existe metadata de archivo registrada.' : 'Carga de archivo pendiente de conexión backend.' }}
-                                                                    </p>
-                                                                </div>
+                                                {{-- 1. Encabezado: nombre, tipo, obligatorio, estado --}}
+                                                <div class="flex items-start justify-between gap-3">
+                                                    <div class="min-w-0">
+                                                        <p class="ui-title text-sm font-black leading-snug">
+                                                            {{ $documento['nom_die'] ?? 'Documento' }}
+                                                        </p>
+                                                        <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                                            <span class="ui-badge-muted text-xs">{{ $documento['tip_die'] ?? 'GENERAL' }}</span>
+                                                            @if ($documento['obligatorio'] ?? false)
+                                                                <span class="ui-badge-warning text-xs">Obligatorio</span>
                                                             @else
-                                                                <input type="text" disabled class="ui-input opacity-60" value="No aplica">
+                                                                <span class="ui-badge-muted text-xs">Opcional</span>
+                                                            @endif
+                                                            <span class="{{ $this->badgeDocumento($estadoDoc) }} text-xs">{{ $etiquetaEst }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        wire:click="quitarDocumento({{ $index }})"
+                                                        class="ui-icon-btn shrink-0"
+                                                        title="Quitar documento"
+                                                    >{!! $icon('trash', 'h-4 w-4') !!}</button>
+                                                </div>
+
+                                                {{-- 2. Archivo PDF --}}
+                                                @if ($estadoDoc === 'VALIDADO')
+                                                    @if ($tieneArchivo)
+                                                        <div class="flex items-center gap-1.5 text-xs">
+                                                            <span class="ui-badge-success p-1">{!! $icon('check', 'h-3 w-3') !!}</span>
+                                                            <span class="ui-muted">Archivo validado</span>
+                                                        </div>
+                                                    @endif
+                                                @elseif ($mostrarUpload)
+                                                    <div>
+                                                        <label class="ui-label text-xs">Archivo PDF</label>
+                                                        <input
+                                                            type="file"
+                                                            wire:model="archivosDocumentos.{{ $index }}"
+                                                            accept="application/pdf,.pdf"
+                                                            class="ui-input mt-1 text-xs"
+                                                        >
+                                                        @error("archivosDocumentos.$index")
+                                                            <p class="ui-error text-xs">{{ $message }}</p>
+                                                        @enderror
+                                                        @if ($tieneArchivo)
+                                                            <p class="ui-muted mt-1 text-xs">Archivo cargado · Selecciona otro para reemplazar</p>
+                                                        @endif
+                                                    </div>
+                                                @endif
+
+                                                {{-- 3. Acciones contextuales --}}
+                                                @if ($estadoDoc === 'PENDIENTE')
+                                                    <div class="flex flex-wrap gap-1.5">
+                                                        <button type="button" wire:click="documentoNoAplica({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">No aplica</button>
+                                                    </div>
+                                                @elseif ($estadoDoc === 'PRESENTADO')
+                                                    <div class="flex flex-wrap gap-1.5">
+                                                        @if ($tieneArchivo)
+                                                            <button type="button" wire:click="documentoValidado({{ $index }})" class="ui-btn-primary px-2.5 py-1.5 text-xs">Todo en orden</button>
+                                                        @endif
+                                                        <button type="button" wire:click="observarDocumento({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Observar</button>
+                                                        <button type="button" wire:click="dejarDocumentoPendiente({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Dejar pendiente</button>
+                                                        <button type="button" wire:click="documentoNoAplica({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">No aplica</button>
+                                                    </div>
+                                                @elseif ($estadoDoc === 'VALIDADO')
+                                                    <div class="flex flex-wrap gap-1.5">
+                                                        <button type="button" wire:click="observarDocumento({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Corregir</button>
+                                                        <button type="button" wire:click="documentoNoAplica({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">No aplica</button>
+                                                    </div>
+                                                @elseif ($estadoDoc === 'OBSERVADO')
+                                                    <div class="flex flex-wrap gap-1.5">
+                                                        @if ($tieneArchivo)
+                                                            <button type="button" wire:click="documentoValidado({{ $index }})" class="ui-btn-primary px-2.5 py-1.5 text-xs">Todo en orden</button>
+                                                        @endif
+                                                        <button type="button" wire:click="dejarDocumentoPendiente({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Dejar pendiente</button>
+                                                        <button type="button" wire:click="documentoNoAplica({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">No aplica</button>
+                                                    </div>
+                                                @elseif ($estadoDoc === 'NO_APLICA')
+                                                    <div class="flex flex-wrap gap-1.5">
+                                                        <button type="button" wire:click="dejarDocumentoPendiente({{ $index }})" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Reactivar</button>
+                                                    </div>
+                                                @endif
+
+                                                {{-- 4. Observación documental: solo si OBSERVADO o PENDIENTE --}}
+                                                @if ($mostrarObsFecha)
+                                                    <div>
+                                                        <label class="ui-label text-xs">Observación documental</label>
+                                                        <textarea
+                                                            data-doc-index="{{ $index }}"
+                                                            data-suggestion="{{ $documento['obs_sugerida'] ?? '' }}"
+                                                            x-data="window.documentoAutocomplete.component()"
+                                                            x-on:keydown.arrow-right.prevent="acceptNextWord($event)"
+                                                            x-on:keydown.tab.prevent="acceptAll($event)"
+                                                            wire:model.live.debounce.700ms="documentos.{{ $index }}.obs_die"
+                                                            rows="2"
+                                                            class="ui-textarea mt-1 text-sm"
+                                                            placeholder="Describe la observación..."
+                                                        ></textarea>
+                                                        @if ($tieneSugerencia)
+                                                            <p class="ui-muted mt-0.5 text-xs opacity-75">
+                                                                Sugerencia: {{ \Illuminate\Support\Str::limit($documento['obs_sugerida'] ?? '', 70) }} · → completar palabra · TAB aplicar
+                                                            </p>
+                                                        @endif
+                                                    </div>
+
+                                                    {{-- 5. Fecha límite: solo si OBSERVADO o PENDIENTE --}}
+                                                    <div>
+                                                        <div class="flex items-center justify-between gap-2">
+                                                            <label class="ui-label text-xs">Fecha límite</label>
+                                                            @if (! $editableFecha)
+                                                                <button
+                                                                    type="button"
+                                                                    wire:click="abrirConfirmacionModificarFechaDocumento({{ $index }})"
+                                                                    class="ui-muted text-xs underline"
+                                                                >Modificar</button>
                                                             @endif
                                                         </div>
-
-                                                        {{-- ACCIONES --}}
-                                                        <div class="flex xl:justify-end">
-                                                            <button
-                                                                type="button"
-                                                                wire:click="quitarDocumento({{ $index }})"
-                                                                class="ui-icon-btn"
-                                                                title="Quitar documento"
-                                                            >
-                                                                {!! $icon('trash', 'h-4 w-4') !!}
-                                                            </button>
-                                                        </div>
+                                                        <input
+                                                            type="date"
+                                                            wire:model.live="documentos.{{ $index }}.fec_lim_die"
+                                                            class="ui-input mt-1 text-sm"
+                                                            @disabled(! $editableFecha)
+                                                        >
                                                     </div>
-                                                </article>
-                                            @empty
-                                                <div class="ui-card-soft p-8 text-center">
-                                                    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl ui-badge-muted">
-                                                        {!! $icon('file', 'h-8 w-8') !!}
-                                                    </div>
+                                                @endif
 
-                                                    <h5 class="ui-title mt-4 font-black">No se generó la lista documental</h5>
-                                                    <p class="ui-muted mt-2 text-sm">Agrega un documento adicional o vuelve al paso anterior para revisar el tipo de inscripción.</p>
-
-                                                    <div class="mt-5 flex flex-wrap justify-center gap-2">
-                                                        <button type="button" wire:click="agregarDocumentoManual" class="ui-btn-secondary">Agregar documento</button>
-                                                    </div>
+                                            </article>
+                                        @empty
+                                            <div class="col-span-2 ui-card-soft p-8 text-center">
+                                                <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl ui-badge-muted">
+                                                    {!! $icon('file', 'h-7 w-7') !!}
                                                 </div>
-                                            @endforelse
+                                                <h5 class="ui-title mt-4 font-black">Sin documentos en lista</h5>
+                                                <p class="ui-muted mt-2 text-sm">
+                                                    Usa "Agregar documento" para añadir fichas documentales al expediente.
+                                                </p>
+                                            </div>
+                                        @endforelse
+                                    </div>
+
+                                </div>
+                            @endif
+
+                            @if ($modalConfirmarFechaDocumento)
+                                <div class="savp-nested-modal-wrap fixed inset-0 z-[9999] flex items-center justify-center px-4">
+                                    <div class="savp-nested-modal-backdrop absolute inset-0 bg-slate-950/70"></div>
+                                    <div class="savp-nested-modal-card relative z-[10000] w-full max-w-2xl rounded-xl border shadow-2xl" style="background: var(--ui-bg); border-color: var(--ui-border);">
+                                        <div class="ui-modal-header">
+                                            <h4 class="ui-title text-lg font-black">Modificar fecha límite</h4>
                                         </div>
-                                    </section>
+                                        <div class="p-5 space-y-4">
+                                            <p class="ui-muted text-sm">
+                                                La fecha límite fue definida según normas educativas y reglas de regularización documental aplicadas por el sistema.
+                                            </p>
+                                            <p class="ui-muted text-sm">
+                                                Si modifica esta fecha, el cambio quedará registrado en el sistema para fines de trazabilidad.
+                                            </p>
+                                            <p class="ui-muted text-sm">
+                                                ¿Desea habilitar la edición de la fecha límite?
+                                            </p>
+                                            <div>
+                                                <label class="ui-label">Motivo</label>
+                                                <textarea wire:model.live.debounce.500ms="motivoModificarFechaDocumento" rows="3" class="ui-textarea" placeholder="Motivo obligatorio"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="ui-modal-footer flex justify-end gap-2">
+                                            <button type="button" wire:click="cancelarModificarFechaDocumento" class="ui-btn-secondary">Cancelar</button>
+                                            <button type="button" wire:click="aceptarModificarFechaDocumento" class="ui-btn-primary">Aceptar</button>
+                                        </div>
+                                    </div>
                                 </div>
                             @endif
 
@@ -2895,7 +2852,7 @@
                         Constancia
                     </button>
 
-                    @if (in_array(($accionesInscripcion['estado'] ?? ''), ['ANULADO', 'RETIRADO'], true))
+                    @if (in_array(($accionesInscripcion['estado'] ?? ''), ['ANULADA', 'RETIRADA'], true))
                         <button type="button" wire:click="reactivarInscripcion('{{ $accionesInscripcion['cod_ins'] ?? '' }}')" class="ui-btn-secondary justify-center">
                             {!! $icon('refresh', 'h-4 w-4') !!}
                             Reactivar
@@ -2941,32 +2898,61 @@
 
                     <div class="space-y-3">
                         @forelse ($documentosModal as $index => $documento)
-                            <div class="ui-card-soft grid gap-3 p-4 xl:grid-cols-[1fr_160px_1fr_160px_auto] xl:items-center">
-                                <input type="text" wire:model.live.debounce.800ms="documentosModal.{{ $index }}.nom_die" class="ui-input" placeholder="Nombre del documento">
+                            @php
+                                $estadoDoc = $documento['est_die'] ?? 'PRESENTADO';
+                                $tieneArchivo = ! empty($documento['rut_die']);
+                                $mostrarObsFecha = in_array($estadoDoc, ['OBSERVADO', 'PENDIENTE'], true);
+                                $etiqueta = match (true) {
+                                    $estadoDoc === 'PRESENTADO' && ! $tieneArchivo => 'Esperando archivo PDF',
+                                    $estadoDoc === 'PRESENTADO' && $tieneArchivo => 'Archivo recibido',
+                                    $estadoDoc === 'VALIDADO' => 'Validado',
+                                    $estadoDoc === 'OBSERVADO' => 'Observado',
+                                    $estadoDoc === 'PENDIENTE' => 'Pendiente de regularización',
+                                    $estadoDoc === 'NO_APLICA' => 'No aplica',
+                                    default => $estadoDoc,
+                                };
+                            @endphp
 
-                                <select wire:model.live="documentosModal.{{ $index }}.est_die" class="ui-select">
-                                    @foreach ($catalogos['estados_documento'] ?? [] as $estado)
-                                        <option value="{{ $estado }}">{{ ucfirst(strtolower($estado)) }}</option>
-                                    @endforeach
-                                </select>
+                            <article class="ui-card-soft flex flex-col gap-3 p-4">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <p class="ui-title text-sm font-black leading-snug">{{ $documento['nom_die'] ?? 'Documento' }}</p>
+                                        <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                                            <span class="ui-badge-muted text-xs">{{ $documento['tip_die'] ?? 'GENERAL' }}</span>
+                                            <span class="{{ $this->badgeDocumento($estadoDoc) }} text-xs">{{ $etiqueta }}</span>
+                                        </div>
+                                    </div>
 
-                                <input type="text" wire:model.live.debounce.800ms="documentosModal.{{ $index }}.obs_die" class="ui-input" placeholder="Observación">
+                                    <button type="button" wire:click="quitarDocumentoEnModal({{ $index }})" class="ui-icon-btn shrink-0" title="Quitar documento">
+                                        {!! $icon('trash', 'h-4 w-4') !!}
+                                    </button>
+                                </div>
 
-                                @php
-                                    $estMod = $documento['est_die'] ?? 'PENDIENTE';
-                                @endphp
-                                @if (in_array($estMod, ['PRESENTADO', 'VALIDADO'], true))
-                                    <input type="date" wire:model.live="documentosModal.{{ $index }}.fec_pre_die" class="ui-input" title="Fecha Presentación">
-                                @elseif (in_array($estMod, ['PENDIENTE', 'OBSERVADO'], true))
-                                    <input type="date" wire:model.live="documentosModal.{{ $index }}.fec_lim_die" class="ui-input" title="Fecha Límite">
-                                @else
-                                    <input type="text" disabled class="ui-input opacity-50" placeholder="N/A" title="No aplica">
+                                <div class="flex flex-wrap gap-1.5">
+                                    @if ($estadoDoc !== 'VALIDADO' && $estadoDoc !== 'NO_APLICA' && $tieneArchivo)
+                                        <button type="button" wire:click="marcarDocumentoEnModal({{ $index }}, 'VALIDADO')" class="ui-btn-primary px-2.5 py-1.5 text-xs">Todo en orden</button>
+                                    @endif
+                                    @if ($estadoDoc !== 'NO_APLICA')
+                                        <button type="button" wire:click="marcarDocumentoEnModal({{ $index }}, 'OBSERVADO')" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Observar</button>
+                                        <button type="button" wire:click="marcarDocumentoEnModal({{ $index }}, 'PENDIENTE')" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Dejar pendiente</button>
+                                        <button type="button" wire:click="marcarDocumentoEnModal({{ $index }}, 'NO_APLICA')" class="ui-btn-secondary px-2.5 py-1.5 text-xs">No aplica</button>
+                                    @else
+                                        <button type="button" wire:click="marcarDocumentoEnModal({{ $index }}, 'PRESENTADO')" class="ui-btn-secondary px-2.5 py-1.5 text-xs">Reactivar</button>
+                                    @endif
+                                </div>
+
+                                @if ($mostrarObsFecha)
+                                    <div>
+                                        <label class="ui-label text-xs">Observación documental</label>
+                                        <textarea wire:model.live.debounce.700ms="documentosModal.{{ $index }}.obs_die" rows="2" class="ui-textarea mt-1 text-sm" placeholder="Describe la observación..."></textarea>
+                                    </div>
+
+                                    <div>
+                                        <label class="ui-label text-xs">Fecha límite</label>
+                                        <input type="date" wire:model.live="documentosModal.{{ $index }}.fec_lim_die" class="ui-input mt-1 text-sm" disabled>
+                                    </div>
                                 @endif
-
-                                <button type="button" wire:click="quitarDocumentoEnModal({{ $index }})" class="ui-icon-btn">
-                                    {!! $icon('trash', 'h-4 w-4') !!}
-                                </button>
-                            </div>
+                            </article>
                         @empty
                             <div class="ui-alert-info">No hay documentos registrados para esta inscripción.</div>
                         @endforelse

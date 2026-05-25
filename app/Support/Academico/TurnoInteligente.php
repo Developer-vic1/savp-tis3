@@ -57,7 +57,8 @@ class TurnoInteligente
     public const CANTIDAD_TRIMESTRES = 3;
     public const DESCANSO_PEDAGOGICO_DIAS_HABILES = 10;
 
-    public const DURACION_BLOQUE_REGULAR_REFERENCIAL = 45;
+    // Referencia normativa (sugerencia, no bloqueo rígido)
+    public const DURACION_BLOQUE_REGULAR_REFERENCIAL = 40;
     public const DURACION_BLOQUE_INVIERNO_REFERENCIAL = 30;
 
     public const DURACION_MINIMA_BLOQUE = 5;
@@ -593,7 +594,7 @@ class TurnoInteligente
             }
 
             if ($tipo === self::TIPO_REGULAR && $duracionBase !== self::DURACION_BLOQUE_REGULAR_REFERENCIAL) {
-                $advertencias[] = 'La plantilla regular suele trabajar con bloques cercanos a 45 minutos.';
+                $advertencias[] = 'La plantilla regular suele trabajar con bloques cercanos a 40 minutos.';
             }
 
             if ($tipo === self::TIPO_INVIERNO && $duracionBase !== self::DURACION_BLOQUE_INVIERNO_REFERENCIAL) {
@@ -2243,7 +2244,6 @@ class TurnoInteligente
                 'reg_bit' => $registro,
                 'cod_usu' => auth()->user()->cod_usu ?? auth()->id(),
                 'fec_bit' => now(),
-                'est_bit' => self::ACTIVO,
             ];
 
             DB::table('bitacora')->insert($this->filtrarColumnas('bitacora', $payload));
@@ -2360,6 +2360,397 @@ class TurnoInteligente
             return true;
         } catch (Throwable) {
             return false;
+        }
+    }
+
+    /**
+     * Analiza y genera una vista previa de bloques con parámetros configurables.
+     *
+     * NOTA: horario_bloque ya no usa cod_tur; el turno se deriva desde plantilla_horaria.
+     */
+    public function analizarGeneracionAutomaticaBloques(array $datos): array
+    {
+        $bloqueos = [];
+        $advertencias = [];
+        $sugerencias = [];
+        $preview = [];
+
+        $codPho = $datos['cod_pho'] ?? null;
+        $horaInicioInput = $datos['hora_inicio'] ?? ($datos['hor_ini'] ?? null);
+        $cantBloques = isset($datos['cantidad_bloques'])
+            ? (int) $datos['cantidad_bloques']
+            : (isset($datos['cant_bloques']) ? (int) $datos['cant_bloques'] : 0);
+        $durBloqueInput = isset($datos['duracion_bloque_min']) ? (int) $datos['duracion_bloque_min'] : null;
+        $usaRecreo = isset($datos['usa_recreo']) ? (bool) $datos['usa_recreo'] : false;
+        $recreoDespuesDe = isset($datos['recreo_despues_de']) ? (int) $datos['recreo_despues_de'] : 4;
+        $durRecreo = isset($datos['duracion_recreo_min'])
+            ? (int) $datos['duracion_recreo_min']
+            : (isset($datos['dur_recreo']) ? (int) $datos['dur_recreo'] : 0);
+
+        if (! $this->tieneValor($codPho)) {
+            $bloqueos[] = 'Debes seleccionar una plantilla horaria.';
+            return $this->resultadoGeneracion(
+                false,
+                self::ESTADO_BLOQUEADO,
+                'ALTO',
+                'Plantilla no seleccionada.',
+                $bloqueos,
+                $advertencias,
+                $sugerencias,
+                $this->resumenGeneracion($horaInicioInput, $cantBloques, $durBloqueInput, $usaRecreo, $recreoDespuesDe, $durRecreo, $datos['tipo_plantilla'] ?? null, null, null),
+                []
+            );
+        }
+
+        $plantilla = $this->obtenerPlantilla($codPho);
+        if (! $plantilla) {
+            $bloqueos[] = 'La plantilla seleccionada no existe.';
+            return $this->resultadoGeneracion(
+                false,
+                self::ESTADO_BLOQUEADO,
+                'ALTO',
+                'Plantilla inexistente.',
+                $bloqueos,
+                $advertencias,
+                $sugerencias,
+                $this->resumenGeneracion($horaInicioInput, $cantBloques, $durBloqueInput, $usaRecreo, $recreoDespuesDe, $durRecreo, $datos['tipo_plantilla'] ?? null, null, null),
+                []
+            );
+        }
+
+        $codTur = $plantilla->cod_tur ?? null;
+        $turno = $codTur ? $this->obtenerTurno($codTur) : null;
+        if (! $turno) {
+            $bloqueos[] = 'La plantilla seleccionada no está asociada a un turno válido.';
+            return $this->resultadoGeneracion(
+                false,
+                self::ESTADO_BLOQUEADO,
+                'ALTO',
+                'Turno no asociado.',
+                $bloqueos,
+                $advertencias,
+                $sugerencias,
+                $this->resumenGeneracion($horaInicioInput, $cantBloques, $durBloqueInput, $usaRecreo, $recreoDespuesDe, $durRecreo, $plantilla->tip_pho ?? null, null, null),
+                []
+            );
+        }
+
+        $tipPho = (string) ($datos['tipo_plantilla'] ?? ($plantilla->tip_pho ?? self::TIPO_REGULAR));
+        $durBloque = $durBloqueInput ?: (int) ($plantilla->dur_blo_pho ?? $this->duracionSugeridaPorTipo($tipPho));
+
+        if ($durBloque === 45) {
+            $advertencias[] = 'Se configuró duración de 45 minutos por bloque como adecuación institucional (permitido).';
+            $sugerencias[] = 'Si el rango horario supera el turno, ajusta la hora de inicio, la cantidad de bloques o la duración.';
+        }
+
+        if ($tipPho === self::TIPO_REGULAR && $durBloque !== self::DURACION_BLOQUE_REGULAR_REFERENCIAL) {
+            $sugerencias[] = 'Referencia normativa: 6 horas pedagógicas de 40 minutos (sugerencia, no bloqueo).';
+        }
+
+        if (! $this->horaValida($horaInicioInput)) {
+            $bloqueos[] = 'La hora de inicio no es válida.';
+        }
+
+        if ($cantBloques <= 0) {
+            $bloqueos[] = 'La cantidad de bloques de clase debe ser mayor a cero.';
+        } elseif ($cantBloques > 15) {
+            $bloqueos[] = 'La cantidad de bloques no puede superar los 15 bloques.';
+        }
+
+        if ($durBloque <= 0) {
+            $bloqueos[] = 'La duración del bloque debe ser mayor a cero.';
+        } elseif ($durBloque < 30 || $durBloque > 60) {
+            $advertencias[] = 'La duración del bloque está fuera del rango institucional sugerido (30 a 60 min).';
+            $sugerencias[] = 'Sugerencia institucional: 40 min por bloque. Se permite 45 min si aplica.';
+        }
+
+        if ($cantBloques > 6) {
+            $advertencias[] = 'La cantidad de bloques de clase supera la referencia oficial de 6 horas pedagógicas.';
+            $sugerencias[] = 'El sistema permite configurar de forma flexible hasta 8 bloques (u otros según la necesidad institucional).';
+        }
+
+        if ($usaRecreo) {
+            if ($durRecreo <= 0) {
+                $bloqueos[] = 'La duración del recreo debe ser mayor a cero.';
+            }
+
+            if ($recreoDespuesDe <= 0 || $recreoDespuesDe >= $cantBloques) {
+                $bloqueos[] = 'La posición del recreo está fuera del rango de bloques.';
+            }
+
+            if ($durRecreo >= $durBloque) {
+                $advertencias[] = "La duración del recreo ({$durRecreo} min) es mayor o igual a la duración del bloque ({$durBloque} min).";
+                $sugerencias[] = 'Sugerencia: configura un recreo menor a la duración de una clase.';
+            }
+
+            if ($tipPho === 'REGULAR' && $durRecreo > 20) {
+                $advertencias[] = 'La duración del recreo supera el máximo sugerido de 20 minutos para plantillas regulares.';
+                $sugerencias[] = 'Ajusta el recreo a 20 minutos o menos para cumplir con la reglamentación regular.';
+            } elseif ($tipPho === 'INVIERNO' && $durRecreo > 30) {
+                $advertencias[] = 'La duración del recreo supera el máximo sugerido de 30 minutos para plantillas de invierno.';
+                $sugerencias[] = 'Reduce el recreo a 30 minutos o menos para cumplir con el horario de invierno.';
+            }
+        }
+
+        $uso = $this->usoPlantilla($codPho);
+        if (($uso['detalles_horario'] ?? 0) > 0) {
+            $bloqueos[] = 'La plantilla ya tiene bloques utilizados en horarios académicos. No se pueden regenerar.';
+        } elseif (($uso['bloques'] ?? 0) > 0) {
+            $advertencias[] = 'Esta plantilla ya tiene bloques guardados. Regenerar requiere confirmación.';
+            $sugerencias[] = 'Activa la confirmación de regeneración para inactivar los bloques actuales y generar una nueva estructura.';
+        }
+
+        if (! empty($bloqueos)) {
+            return $this->resultadoGeneracion(
+                false,
+                self::ESTADO_BLOQUEADO,
+                'ALTO',
+                'Existen errores críticos que impiden generar los bloques.',
+                $bloqueos,
+                $advertencias,
+                $sugerencias,
+                $this->resumenGeneracion($horaInicioInput, $cantBloques, $durBloque, $usaRecreo, $recreoDespuesDe, $durRecreo, $tipPho, null, null) + ['uso' => $uso],
+                []
+            );
+        }
+
+        $horaActual = Carbon::createFromFormat('H:i', substr((string) $horaInicioInput, 0, 5));
+        $numero = 1;
+
+        for ($i = 1; $i <= $cantBloques; $i++) {
+            $ini = $horaActual->format('H:i');
+            $horaActual->addMinutes($durBloque);
+            $fin = $horaActual->format('H:i');
+
+            if (! $this->bloqueDentroDelTurno($ini, $fin, $turno)) {
+                $bloqueos[] = "El bloque {$i} ({$ini} - {$fin}) excede el rango del turno ({$turno->hor_ini_tur} - {$turno->hor_fin_tur}).";
+            }
+
+            $preview[] = [
+                'numero' => $numero,
+                'nombre' => "Bloque {$i}",
+                'tipo' => 'CLASE',
+                'hora_inicio' => $ini,
+                'hora_fin' => $fin,
+                'duracion_min' => $durBloque,
+                'es_recreo' => false,
+            ];
+            $numero++;
+
+            if ($usaRecreo && $i === $recreoDespuesDe) {
+                $iniRecreo = $horaActual->format('H:i');
+                $horaActual->addMinutes($durRecreo);
+                $finRecreo = $horaActual->format('H:i');
+
+                if (! $this->bloqueDentroDelTurno($iniRecreo, $finRecreo, $turno)) {
+                    $bloqueos[] = "El recreo ({$iniRecreo} - {$finRecreo}) excede el rango del turno ({$turno->hor_ini_tur} - {$turno->hor_fin_tur}).";
+                }
+
+                $preview[] = [
+                    'numero' => $numero,
+                    'nombre' => 'Recreo',
+                    'tipo' => 'RECREO',
+                    'hora_inicio' => $iniRecreo,
+                    'hora_fin' => $finRecreo,
+                    'duracion_min' => $durRecreo,
+                    'es_recreo' => true,
+                ];
+                $numero++;
+            }
+        }
+
+        $horaFinCalculada = $preview ? ($preview[array_key_last($preview)]['hora_fin'] ?? null) : null;
+
+        if (! empty($bloqueos)) {
+            return $this->resultadoGeneracion(
+                false,
+                self::ESTADO_BLOQUEADO,
+                'ALTO',
+                'Los bloques exceden el rango del turno.',
+                $bloqueos,
+                $advertencias,
+                $sugerencias,
+                $this->resumenGeneracion($horaInicioInput, $cantBloques, $durBloque, $usaRecreo, $recreoDespuesDe, $durRecreo, $tipPho, $horaFinCalculada, $codPho) + ['uso' => $uso],
+                $preview
+            );
+        }
+
+        $estado = ! empty($advertencias) ? self::ESTADO_ADVERTENCIA : self::ESTADO_VALIDO;
+        $riesgo = ! empty($advertencias) ? 'MEDIO' : 'BAJO';
+
+        return $this->resultadoGeneracion(
+            true,
+            $estado,
+            $riesgo,
+            'La configuración es válida. Puedes generar y guardar la estructura.',
+            $bloqueos,
+            $advertencias,
+            $sugerencias,
+            $this->resumenGeneracion($horaInicioInput, $cantBloques, $durBloque, $usaRecreo, $recreoDespuesDe, $durRecreo, $tipPho, $horaFinCalculada, $codPho) + ['uso' => $uso],
+            $preview
+        );
+    }
+
+    private function resultadoGeneracion(
+        bool $puedeContinuar,
+        string $estado,
+        string $riesgo,
+        string $mensaje,
+        array $bloqueos,
+        array $advertencias,
+        array $sugerencias,
+        array $resumen,
+        array $preview
+    ): array {
+        return [
+            'puede_continuar' => $puedeContinuar,
+            'estado_inteligente' => $estado,
+            'nivel_riesgo' => $riesgo,
+            'mensaje' => $mensaje,
+            'bloqueos' => array_values(array_unique($bloqueos)),
+            'advertencias' => array_values(array_unique($advertencias)),
+            'sugerencias' => array_values(array_unique($sugerencias)),
+            'resumen' => $resumen,
+            'preview_bloques' => $preview
+        ];
+    }
+
+    private function resumenGeneracion(
+        ?string $horaInicio,
+        int $cantidadBloques,
+        ?int $duracionBloque,
+        bool $usaRecreo,
+        int $recreoDespuesDe,
+        ?int $duracionRecreo,
+        ?string $tipoPlantilla,
+        ?string $horaFinCalculada,
+        ?string $codPho
+    ): array {
+        return [
+            'cantidad_bloques' => $cantidadBloques,
+            'duracion_bloque_min' => $duracionBloque,
+            'duracion_recreo_min' => $usaRecreo ? $duracionRecreo : 0,
+            'hora_inicio' => $horaInicio ? substr($horaInicio, 0, 5) : null,
+            'hora_fin_calculada' => $horaFinCalculada,
+            'tipo_plantilla' => $tipoPlantilla,
+            // cod_pho no se debe mostrar en UI, pero es útil para depuración interna.
+            'cod_pho' => $codPho,
+            'usa_recreo' => $usaRecreo,
+            'recreo_despues_de' => $usaRecreo ? $recreoDespuesDe : null,
+        ];
+    }
+
+    public function guardarBloquesAutomaticos(array $datos): array
+    {
+        $analisis = $this->analizarGeneracionAutomaticaBloques($datos);
+        if (!$analisis['puede_continuar']) {
+            return [
+                'success' => false,
+                'mensaje' => $analisis['mensaje'] ?? 'Error de validación inteligente.',
+                'bloqueos' => $analisis['bloqueos'] ?? []
+            ];
+        }
+
+        $codPho = $datos['cod_pho'] ?? null;
+        if (! $this->tieneValor($codPho)) {
+            return [
+                'success' => false,
+                'mensaje' => 'Plantilla no seleccionada.',
+                'bloqueos' => ['Debes seleccionar una plantilla antes de guardar.'],
+            ];
+        }
+
+        $confirmar = (bool) ($datos['confirmar_regenerar'] ?? false);
+        $uso = $analisis['resumen']['uso']['bloques'] ?? null;
+        if (! $confirmar && is_int($uso) && $uso > 0) {
+            return [
+                'success' => false,
+                'mensaje' => 'La plantilla ya tiene bloques. Confirma para regenerar (se inactivarán los actuales).',
+                'bloqueos' => ['Confirma la regeneración para continuar.'],
+            ];
+        }
+
+        try {
+            DB::beginTransaction();
+
+            // No eliminamos físicamente: inactivamos para preservar historial.
+            $bloquesExistentes = DB::table('horario_bloque')->where('cod_pho', $codPho)->get();
+            foreach ($bloquesExistentes as $bloque) {
+                DB::table('horario_bloque')
+                    ->where('cod_hbl', $bloque->cod_hbl)
+                    ->update($this->filtrarColumnas('horario_bloque', [
+                        'est_hbl' => self::INACTIVO,
+                        'updated_at' => now(),
+                    ]));
+
+                $this->registrarBitacoraSeguro(
+                    'INACTIVAR',
+                    'horario_bloque',
+                    $bloque->cod_hbl,
+                    "Inactivación por regeneración automática: {$bloque->nom_hbl} ({$bloque->hor_ini_hbl} - {$bloque->hor_fin_hbl})."
+                );
+            }
+
+            // Insertamos los nuevos bloques
+            foreach ($analisis['preview_bloques'] as $bloqueData) {
+                $bloque = new \App\Models\HorarioBloque();
+                $bloque->cod_pho = $codPho;
+                $bloque->num_hbl = $bloqueData['numero'];
+                $bloque->nom_hbl = $bloqueData['nombre'];
+                $bloque->tip_hbl = $bloqueData['tipo'];
+                $bloque->hor_ini_hbl = $bloqueData['hora_inicio'];
+                $bloque->hor_fin_hbl = $bloqueData['hora_fin'];
+                $bloque->est_hbl = 'ACTIVO';
+                $bloque->save();
+
+                $this->registrarBitacoraSeguro(
+                    'CREAR',
+                    'horario_bloque',
+                    $bloque->cod_hbl,
+                    "Generación automática de bloque: {$bloque->nom_hbl} ({$bloque->hor_ini_hbl} - {$bloque->hor_fin_hbl})."
+                );
+            }
+
+            // Bitácora humanizada (actividad / historial funcional)
+            try {
+                $plantilla = $this->obtenerPlantilla($codPho);
+                $turno = $plantilla?->cod_tur ? $this->obtenerTurno($plantilla->cod_tur) : null;
+
+                $cant = (int) ($analisis['resumen']['cantidad_bloques'] ?? 0);
+                $dur = (int) ($analisis['resumen']['duracion_bloque_min'] ?? 0);
+                $usaRecreo = (bool) ($analisis['resumen']['usa_recreo'] ?? false);
+                $durRecreo = (int) ($analisis['resumen']['duracion_recreo_min'] ?? 0);
+                $posRecreo = (int) ($analisis['resumen']['recreo_despues_de'] ?? 0);
+                $tipo = (string) ($analisis['resumen']['tipo_plantilla'] ?? ($plantilla->tip_pho ?? self::TIPO_REGULAR));
+
+                $nombrePlantilla = (string) ($plantilla->nom_pho ?? 'Plantilla');
+                $nombreTurno = (string) ($turno->nom_tur ?? 'Turno');
+
+                $desc = "Se generó automáticamente una estructura de {$cant} bloques de {$dur} minutos para la plantilla {$tipo} del turno {$nombreTurno} ({$nombrePlantilla})";
+                if ($usaRecreo) {
+                    $desc .= ", con recreo de {$durRecreo} minutos después del bloque {$posRecreo}.";
+                } else {
+                    $desc .= ', sin recreo.';
+                }
+
+                $this->registrarBitacoraSeguro('GENERAR', 'horario_bloque', (string) $codPho, $desc);
+            } catch (Throwable) {
+                //
+            }
+
+            DB::commit();
+
+            return [
+                'success' => true,
+                'mensaje' => 'Bloques autogenerados y guardados correctamente (sin eliminación física).',
+                'cantidad' => count($analisis['preview_bloques'])
+            ];
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return [
+                'success' => false,
+                'mensaje' => 'Error al guardar los bloques autogenerados: ' . $e->getMessage()
+            ];
         }
     }
 }

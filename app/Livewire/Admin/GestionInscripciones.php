@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Bitacora;
 use App\Models\DocumentoInscripcionEstudiante;
 use App\Models\InscripcionEstudiante;
 use App\Support\Academico\InscripcionAcademica;
@@ -55,6 +56,9 @@ class GestionInscripciones extends Component
     public array $confirmacionFinal = [];
     public array $pasos = [];
     public array $documentos = [];
+    public array $documentosDisponibles = [];
+    public string $documentoCatalogoSeleccionado = '';
+    public array $documentosEliminados = [];
     public array $previsualizacionChecklist = [];
 
     // Sugerencias aplicadas (UX): ocultan botones contextuales al aplicarse.
@@ -68,6 +72,9 @@ class GestionInscripciones extends Component
     // Paso 3: sugerencia compacta de documentos faltantes para el tipo actual.
     public bool $sugerenciaDocumentalVisible = false;
     public array $documentosFaltantesSugeridos = [];
+    public bool $modalConfirmarFechaDocumento = false;
+    public ?int $indiceDocumentoFecha = null;
+    public string $motivoModificarFechaDocumento = '';
 
     public bool $modalInscripcion = false;
     public bool $modalDetalle = false;
@@ -340,12 +347,25 @@ class GestionInscripciones extends Component
         $this->recalcularTodo();
     }
 
-    public function updatedDocumentos(): void
+    public function updatedDocumentos($value, string $key): void
     {
-        // Normaliza combinaciones incoherentes (archivo vs estado) en edición directa.
-        foreach (array_keys($this->documentos) as $i) {
-            $this->normalizarDocumento($i);
+        $segmentos = explode('.', $key);
+        $indice = isset($segmentos[0]) ? (int) $segmentos[0] : null;
+        $campo = $segmentos[1] ?? '';
+
+        if ($indice !== null && isset($this->documentos[$indice])) {
+            if ($campo === 'obs_die') {
+                $this->generarSugerenciaObservacion($indice);
+                return;
+            }
+
+            if ($campo === 'fec_lim_die' && (bool) ($this->documentos[$indice]['fecha_limite_editable'] ?? false)) {
+                $this->documentos[$indice]['fecha_limite_modificada'] = true;
+            }
+
+            $this->normalizarDocumento($indice);
         }
+
         $this->recalcularTodo();
     }
 
@@ -374,9 +394,9 @@ class GestionInscripciones extends Component
         $this->documentos[$indice]['tam_die'] = method_exists($archivo, 'getSize') ? $archivo->getSize() : null;
         $this->documentos[$indice]['has_die'] = method_exists($archivo, 'hashName') ? $archivo->hashName() : null;
 
-        // Regla: subir PDF implica minimo PRESENTADO.
+        // Regla: al subir PDF se marca como PRESENTADO y se registra fecha de presentación.
         $this->documentos[$indice]['est_die'] = 'PRESENTADO';
-        $this->documentos[$indice]['fec_pre_die'] = $this->documentos[$indice]['fec_pre_die'] ?? now()->toDateString();
+        $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
         $this->documentos[$indice]['fec_lim_die'] = null;
 
         $this->normalizarDocumento($indice);
@@ -441,7 +461,11 @@ class GestionInscripciones extends Component
             }
         }
 
-        if (in_array($estado, ['PRESENTADO', 'VALIDADO'], true) && empty($this->documentos[$indice]['fec_pre_die'])) {
+        if ($estado === 'VALIDADO' && empty($this->documentos[$indice]['fec_pre_die'])) {
+            $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
+        }
+
+        if ($estado === 'PRESENTADO' && $tieneArchivo && empty($this->documentos[$indice]['fec_pre_die'])) {
             $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
         }
     }
@@ -526,8 +550,14 @@ class GestionInscripciones extends Component
         $this->situacionEstudiante = [];
         $this->cursoSugerido = [];
         $this->documentos = [];
+        $this->documentosDisponibles = [];
+        $this->documentoCatalogoSeleccionado = '';
+        $this->documentosEliminados = [];
         $this->previsualizacionChecklist = [];
         $this->archivosDocumentos = [];
+        $this->modalConfirmarFechaDocumento = false;
+        $this->indiceDocumentoFecha = null;
+        $this->motivoModificarFechaDocumento = '';
 
         $this->prepararFormularioInicial();
         $this->aplicarTurnoMananaPorDefecto();
@@ -816,12 +846,14 @@ class GestionInscripciones extends Component
             return;
         }
 
+        $this->actualizarDocumentosDisponibles();
         $this->evaluarSugerenciaDocumental();
     }
 
     public function generarDocumentosRequeridos(): void
     {
         $this->documentos = $this->soporte()->documentosBase($this->formInscripcion['tip_ins'] ?? 'REGULAR');
+        $this->actualizarDocumentosDisponibles();
 
         $this->registrarBitacora('GENERAR_LISTA_DOCUMENTAL', 'documento_inscripcion_estudiante', $this->codInscripcionEditando ?: 'SIN_REGISTRO', [
             'estudiante' => $this->estudianteSeleccionado['nombre_completo'] ?? null,
@@ -830,6 +862,70 @@ class GestionInscripciones extends Component
 
         $this->recalcularTodo();
         $this->notificar('success', 'Se generó automáticamente la lista documental requerida.');
+    }
+
+    public function actualizarDocumentosDisponibles(): void
+    {
+        $catalogo = $this->soporte()->catalogoDocumentosRequeridos();
+        $usados = collect($this->documentos)
+            ->map(fn(array $doc) => $this->normalizarMayuscula($doc['clave_doc'] ?? ''))
+            ->filter()
+            ->values()
+            ->all();
+
+        $this->documentosDisponibles = collect($catalogo)
+            ->filter(fn(array $doc) => ! in_array($this->normalizarMayuscula($doc['clave_doc'] ?? ''), $usados, true))
+            ->values()
+            ->all();
+
+        if ($this->documentoCatalogoSeleccionado !== '' && ! collect($this->documentosDisponibles)->firstWhere('clave_doc', $this->documentoCatalogoSeleccionado)) {
+            $this->documentoCatalogoSeleccionado = '';
+        }
+    }
+
+    public function agregarDocumentoDesdeCatalogo(): void
+    {
+        $claveDoc = $this->normalizarMayuscula($this->documentoCatalogoSeleccionado);
+        if ($claveDoc === '') {
+            return;
+        }
+
+        $catalogo = collect($this->soporte()->catalogoDocumentosRequeridos());
+        $item = $catalogo->firstWhere('clave_doc', $claveDoc);
+        if (! $item) {
+            return;
+        }
+
+        foreach ($this->documentos as $doc) {
+            if (($this->normalizarMayuscula($doc['clave_doc'] ?? '')) === $claveDoc) {
+                $this->notificar('warning', 'El documento ya existe en la lista.');
+                return;
+            }
+        }
+
+        $this->documentos[] = [
+            'cod_die' => null,
+            'clave_doc' => $claveDoc,
+            'nom_die' => $item['nom_die'],
+            'tip_die' => $item['tip_die'],
+            // Documento nuevo: "esperando archivo" (internamente PRESENTADO sin PDF).
+            'est_die' => 'PRESENTADO',
+            'obl_die' => (bool) ($item['obligatorio'] ?? false),
+            'obligatorio' => (bool) ($item['obligatorio'] ?? false),
+            'obs_die' => null,
+            'fec_pre_die' => null,
+            'fec_lim_die' => null,
+            'fecha_limite_editable' => false,
+            'fecha_limite_modificada' => false,
+            'rut_die' => null,
+            'for_die' => null,
+            'tam_die' => null,
+            'has_die' => null,
+        ];
+
+        $this->documentoCatalogoSeleccionado = '';
+        $this->actualizarDocumentosDisponibles();
+        $this->recalcularTodo();
     }
 
     private function evaluarSugerenciaDocumental(): void
@@ -859,7 +955,7 @@ class GestionInscripciones extends Component
 
     public function documentoPendiente(int $indice): void
     {
-        $this->marcarDocumento($indice, 'PENDIENTE');
+        $this->dejarDocumentoPendiente($indice);
     }
 
     public function documentoPresentado(int $indice): void
@@ -869,7 +965,7 @@ class GestionInscripciones extends Component
 
     public function documentoObservado(int $indice): void
     {
-        $this->marcarDocumento($indice, 'OBSERVADO');
+        $this->observarDocumento($indice);
     }
 
     public function documentoValidado(int $indice): void
@@ -880,6 +976,78 @@ class GestionInscripciones extends Component
     public function documentoNoAplica(int $indice): void
     {
         $this->marcarDocumento($indice, 'NO_APLICA');
+    }
+
+    public function dejarDocumentoPendiente(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'PENDIENTE');
+    }
+
+    public function observarDocumento(int $indice): void
+    {
+        $this->marcarDocumento($indice, 'OBSERVADO');
+    }
+
+    public function abrirConfirmacionModificarFechaDocumento(int $indice): void
+    {
+        if (! isset($this->documentos[$indice])) {
+            return;
+        }
+        $this->indiceDocumentoFecha = $indice;
+        $this->motivoModificarFechaDocumento = '';
+        $this->modalConfirmarFechaDocumento = true;
+    }
+
+    public function aceptarModificarFechaDocumento(): void
+    {
+        if ($this->indiceDocumentoFecha === null || ! isset($this->documentos[$this->indiceDocumentoFecha])) {
+            $this->cancelarModificarFechaDocumento();
+            return;
+        }
+        $motivo = trim($this->motivoModificarFechaDocumento);
+        if (mb_strlen($motivo) < 5) {
+            $this->notificar('warning', 'Registra un motivo de al menos 5 caracteres para modificar la fecha límite.');
+            return;
+        }
+        $this->documentos[$this->indiceDocumentoFecha]['fecha_limite_editable'] = true;
+        $this->documentos[$this->indiceDocumentoFecha]['motivo_modificacion_fecha'] = $motivo;
+        $this->documentos[$this->indiceDocumentoFecha]['fecha_limite_modificada'] = false;
+        $this->registrarBitacora('HABILITAR_EDICION_FECHA_LIMITE_DOCUMENTO', 'documento_inscripcion_estudiante', $this->codInscripcionEditando ?: 'SIN_REGISTRO', [
+            'estudiante' => $this->estudianteSeleccionado['nombre_completo'] ?? null,
+            'motivo' => $motivo,
+            'documento' => $this->documentos[$this->indiceDocumentoFecha]['nom_die'] ?? 'Documento',
+        ]);
+        $this->cancelarModificarFechaDocumento();
+    }
+
+    public function cancelarModificarFechaDocumento(): void
+    {
+        $this->modalConfirmarFechaDocumento = false;
+        $this->indiceDocumentoFecha = null;
+        $this->motivoModificarFechaDocumento = '';
+    }
+
+    public function generarSugerenciaObservacion(int $indice): void
+    {
+        if (! isset($this->documentos[$indice])) {
+            return;
+        }
+        $textoActual = (string) ($this->documentos[$indice]['obs_die'] ?? '');
+        $contexto = $this->normalizarMayuscula($this->documentos[$indice]['est_die'] ?? 'OBSERVADO');
+        $sugerida = $this->soporte()->sugerirObservacionInteligente($this->documentos[$indice], $textoActual, $contexto);
+        $this->documentos[$indice]['obs_sugerida'] = $sugerida['sugerencia'] ?? '';
+        $this->documentos[$indice]['obs_sugerida_confianza'] = $sugerida['confianza'] ?? 'BAJA';
+        $this->documentos[$indice]['obs_sugerida_patron'] = $sugerida['patron'] ?? '';
+    }
+
+    public function limpiarSugerenciaObservacion(int $indice): void
+    {
+        if (! isset($this->documentos[$indice])) {
+            return;
+        }
+        $this->documentos[$indice]['obs_sugerida'] = '';
+        $this->documentos[$indice]['obs_sugerida_confianza'] = null;
+        $this->documentos[$indice]['obs_sugerida_patron'] = null;
     }
 
     private function validarPaso(int $paso): bool
@@ -913,9 +1081,10 @@ class GestionInscripciones extends Component
         if ($paso === 3) {
             // Paso 3: reglas mínimas para confirmar consistencia documental.
             $doc = $this->analisis['documentos'] ?? [];
-            if (! empty($doc['bloqueos'] ?? [])) {
+            if (! empty($doc['bloqueos_criticos'] ?? $doc['bloqueos'] ?? [])) {
                 $this->mostrarValidaciones = true;
-                $this->notificar('warning', 'Existen bloqueos documentales que deben corregirse.');
+                $primerBloqueo = ($doc['bloqueos_criticos'][0] ?? $doc['bloqueos'][0] ?? 'Existen bloqueos documentales que deben corregirse.');
+                $this->notificar('warning', $primerBloqueo);
                 return false;
             }
         }
@@ -986,12 +1155,16 @@ class GestionInscripciones extends Component
     {
         $this->documentos[] = [
             'cod_die' => null,
+            'clave_doc' => null,
             'nom_die' => 'Documento adicional',
             'tip_die' => 'GENERAL',
-            'est_die' => 'PENDIENTE',
+            // Documento nuevo: "esperando archivo" (internamente PRESENTADO sin PDF).
+            'est_die' => 'PRESENTADO',
             'obs_die' => null,
             'fec_pre_die' => null,
             'fec_lim_die' => null,
+            'fecha_limite_editable' => false,
+            'fecha_limite_modificada' => false,
             'rut_die' => null,
             'for_die' => null,
             'tam_die' => null,
@@ -999,6 +1172,7 @@ class GestionInscripciones extends Component
             'obligatorio' => false,
         ];
 
+        $this->actualizarDocumentosDisponibles();
         $this->recalcularTodo();
     }
 
@@ -1008,8 +1182,14 @@ class GestionInscripciones extends Component
             return;
         }
 
+        $codDie = $this->documentos[$indice]['cod_die'] ?? null;
+        if (! empty($codDie)) {
+            $this->documentosEliminados[] = $codDie;
+        }
+
         unset($this->documentos[$indice]);
         $this->documentos = array_values($this->documentos);
+        $this->actualizarDocumentosDisponibles();
         $this->recalcularTodo();
     }
 
@@ -1027,8 +1207,12 @@ class GestionInscripciones extends Component
 
         $this->documentos[$indice]['est_die'] = $estado;
 
-        if ($estado === 'PRESENTADO' && empty($this->documentos[$indice]['fec_pre_die'])) {
-            $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
+        $tieneArchivo = ! empty($this->documentos[$indice]['rut_die']);
+
+        // PRESENTADO: no debe autogenerar fecha si no hay PDF.
+        if ($estado === 'PRESENTADO') {
+            $this->documentos[$indice]['fec_pre_die'] = $tieneArchivo ? ($this->documentos[$indice]['fec_pre_die'] ?? now()->toDateString()) : null;
+            $this->documentos[$indice]['fec_lim_die'] = null;
         }
 
         if ($estado === 'PENDIENTE') {
@@ -1038,20 +1222,37 @@ class GestionInscripciones extends Component
             $this->documentos[$indice]['tam_die'] = null;
             $this->documentos[$indice]['has_die'] = null;
             $this->documentos[$indice]['fec_pre_die'] = null;
+            $this->documentos[$indice]['for_die'] = null;
+
+            // Fecha límite solo cuando el usuario deja PENDIENTE.
+            $this->documentos[$indice]['fec_lim_die'] = $this->soporte()->calcularFechaLimiteDocumento(
+                $this->documentos[$indice]['clave_doc'] ?? null,
+                ['fecha_inscripcion' => $this->formInscripcion['fei_ins'] ?? null]
+            );
         }
 
         if ($estado === 'OBSERVADO') {
-            // OBSERVADO exige motivo en UI; mantenemos los campos para que se complete.
-            if (empty($this->documentos[$indice]['fec_lim_die'])) {
-                $this->documentos[$indice]['fec_lim_die'] = null;
-            }
+            // Fecha límite solo cuando el usuario marca OBSERVADO.
+            $this->documentos[$indice]['fec_lim_die'] = $this->soporte()->calcularFechaLimiteDocumento(
+                $this->documentos[$indice]['clave_doc'] ?? null,
+                ['fecha_inscripcion' => $this->formInscripcion['fei_ins'] ?? null]
+            );
         }
 
         if ($estado === 'VALIDADO') {
             // VALIDADO exige archivo (validación/bloqueo se aplica en el análisis documental).
-            if (empty($this->documentos[$indice]['fec_pre_die'])) {
-                $this->documentos[$indice]['fec_pre_die'] = now()->toDateString();
+            if (! $tieneArchivo) {
+                $this->notificar('warning', 'No se puede validar este documento porque aún no se adjuntó el archivo PDF.');
+                // Revertir a PRESENTADO (esperando archivo).
+                $this->documentos[$indice]['est_die'] = 'PRESENTADO';
+                $this->documentos[$indice]['fec_pre_die'] = null;
+                $this->documentos[$indice]['fec_lim_die'] = null;
+                $this->recalcularTodo();
+                return;
             }
+
+            $this->documentos[$indice]['fec_pre_die'] = $this->documentos[$indice]['fec_pre_die'] ?? now()->toDateString();
+            $this->documentos[$indice]['fec_lim_die'] = null;
         }
 
         if ($estado === 'NO_APLICA') {
@@ -1106,7 +1307,7 @@ class GestionInscripciones extends Component
 
         if (! ($this->analisis['puede_continuar'] ?? false) && ! $forzarPendiente) {
             $this->pasoInscripcion = 4;
-            $this->notificar('warning', 'La inscripción tiene bloqueos. Corrige los datos antes de confirmar.');
+            $this->notificarBloqueosActuales();
             return;
         }
 
@@ -1121,26 +1322,27 @@ class GestionInscripciones extends Component
 
         if ($forzarPendiente) {
             $datos['est_ins'] = 'PENDIENTE';
-            $datos['con_ins'] = $datos['con_ins'] === 'NORMAL' ? 'OBSERVADA' : $datos['con_ins'];
+            $datos['con_ins'] = 'PROVISIONAL';
+            $datos['doc_com_ins'] = false;
         }
 
         // Columnas confirmadas en BD (fec_con_ins SÍ existe; confirmado_por NO existe).
-        if (! $forzarPendiente && ($datos['est_ins'] ?? null) === 'INSCRITO') {
+        if (! $forzarPendiente && ($datos['est_ins'] ?? null) === 'ACTIVA') {
             $datos['fec_con_ins'] = now();
         }
 
         // Capa de seguridad definitiva: solo guardar campos del $fillable del modelo.
         // Esto garantiza que ninguna columna fantasma llegue al INSERT, independientemente
         // del comportamiento del Schema::hasColumn con el driver de PgSQL en Livewire.
-        $fillablePermitidos = (new \App\Models\InscripcionEstudiante())->getFillable();
+        $fillablePermitidos = (new InscripcionEstudiante())->getFillable();
         $datos = array_intersect_key($datos, array_flip($fillablePermitidos));
 
         try {
             DB::transaction(function () use ($datos, $forzarPendiente) {
                 if ($this->modoFormulario === 'editar' && $this->codInscripcionEditando) {
-                    DB::table('inscripcion_estudiante')
-                        ->where('cod_ins', $this->codInscripcionEditando)
-                        ->update(array_merge($datos, ['updated_at' => now()]));
+                    $modeloEditar = InscripcionEstudiante::query()->where('cod_ins', $this->codInscripcionEditando)->firstOrFail();
+                    $modeloEditar->fill($datos);
+                    $modeloEditar->save();
 
                     $codIns = $this->codInscripcionEditando;
                     $accion = 'ACTUALIZAR_INSCRIPCION';
@@ -1158,9 +1360,7 @@ class GestionInscripciones extends Component
 
                     $accion = match (true) {
                         $forzarPendiente => 'GUARDAR_INSCRIPCION_PENDIENTE',
-                        ($datos['est_ins'] ?? null) === 'OBSERVADO' => 'CREAR_INSCRIPCION_OBSERVADA',
-                        ($datos['est_ins'] ?? null) === 'CONDICIONAL' => 'CREAR_INSCRIPCION_CONDICIONAL',
-                        ($datos['est_ins'] ?? null) === 'PROVISIONAL' => 'CREAR_INSCRIPCION_PROVISIONAL',
+                        ($datos['est_ins'] ?? null) === 'OBSERVADA' => 'CREAR_INSCRIPCION_OBSERVADA',
                         default => 'CREAR_INSCRIPCION',
                     };
                 }
@@ -1185,15 +1385,54 @@ class GestionInscripciones extends Component
             }
 
             $this->cerrarModalInscripcion();
+        } catch (ValidationException $e) {
+            $mensajes = $e->errors();
+            $primero = collect($mensajes)->flatten()->first();
+            $this->notificar('warning', (string) ($primero ?: 'No se pudo guardar la documentación. Revisa documentos duplicados, archivo PDF o fecha límite.'));
         } catch (Throwable $e) {
             report($e);
             logger()->error('Error al guardar inscripción', [
                 'mensaje' => $e->getMessage(),
                 'archivo' => $e->getFile(),
                 'linea' => $e->getLine(),
+                'tip_ins_final' => $datos['tip_ins'] ?? null,
+                'con_ins_final' => $datos['con_ins'] ?? null,
+                'est_ins_final' => $datos['est_ins'] ?? null,
+                'est_esp_tec_ins_final' => $datos['est_esp_tec_ins'] ?? null,
+                'datos_fillable' => $datos,
             ]);
-            $this->notificar('error', 'No se pudo guardar la inscripción. Revisa los datos e intenta nuevamente.');
+            $this->notificar('error', $this->mensajeErrorGuardado($e));
         }
+    }
+
+    private function notificarBloqueosActuales(): void
+    {
+        $bloqueos = $this->analisis['bloqueos'] ?? [];
+        $docBloqueos = $this->analisis['documentos']['bloqueos_criticos'] ?? $this->analisis['documentos']['bloqueos'] ?? [];
+        $mensaje = $docBloqueos[0] ?? $bloqueos[0] ?? 'La inscripción tiene bloqueos. Corrige los datos antes de confirmar.';
+        $this->notificar('warning', (string) $mensaje);
+    }
+
+    private function mensajeErrorGuardado(Throwable $e): string
+    {
+        $error = mb_strtolower($e->getMessage());
+        if (str_contains($error, 'inscripcion_est_check')) {
+            return 'No se pudo guardar la inscripción porque el estado de inscripción no es permitido por la base de datos.';
+        }
+        if (str_contains($error, 'inscripcion_tip_check')) {
+            return 'No se pudo guardar la inscripción porque el tipo de inscripción no es permitido.';
+        }
+        if (str_contains($error, 'inscripcion_con_check')) {
+            return 'No se pudo guardar la inscripción porque la condición de inscripción no es permitida.';
+        }
+        if (str_contains($error, 'inscripcion_esp_tec_est_check')) {
+            return 'No se pudo guardar la inscripción porque el estado de especialidad técnica no es permitido.';
+        }
+        $base = 'No se pudo guardar la inscripción. Revisa los datos del formulario y la documentación.';
+        if (app()->environment('local')) {
+            return $base . ' Detalle técnico: ' . mb_substr($e->getMessage(), 0, 160);
+        }
+        return $base;
     }
 
     private function procedenciaParaGuardar(?string $tipo, ?string $detalle): ?string
@@ -1283,6 +1522,7 @@ class GestionInscripciones extends Component
             : [];
 
         $this->documentos = $this->obtenerDocumentosDeInscripcion($codIns);
+        $this->actualizarDocumentosDisponibles();
 
         $this->actualizarEstadoEspecialidad();
         $this->recalcularTodo();
@@ -1355,7 +1595,8 @@ class GestionInscripciones extends Component
             'cod_die' => null,
             'nom_die' => 'Documento adicional',
             'tip_die' => 'GENERAL',
-            'est_die' => 'PENDIENTE',
+            // Documento nuevo: "esperando archivo" (internamente PRESENTADO sin PDF).
+            'est_die' => 'PRESENTADO',
             'obs_die' => null,
             'fec_pre_die' => null,
             'fec_lim_die' => null,
@@ -1365,6 +1606,70 @@ class GestionInscripciones extends Component
             'has_die' => null,
             'obligatorio' => false,
         ];
+    }
+
+    public function marcarDocumentoEnModal(int $indice, string $estado): void
+    {
+        if (! isset($this->documentosModal[$indice])) {
+            return;
+        }
+
+        $estado = $this->normalizarMayuscula($estado);
+
+        if (! in_array($estado, InscripcionAcademica::ESTADOS_DOCUMENTO, true)) {
+            return;
+        }
+
+        $this->documentosModal[$indice]['est_die'] = $estado;
+
+        $tieneArchivo = ! empty($this->documentosModal[$indice]['rut_die']);
+
+        if ($estado === 'PRESENTADO') {
+            $this->documentosModal[$indice]['fec_pre_die'] = $tieneArchivo ? ($this->documentosModal[$indice]['fec_pre_die'] ?? now()->toDateString()) : null;
+            $this->documentosModal[$indice]['fec_lim_die'] = null;
+        }
+
+        if ($estado === 'PENDIENTE') {
+            $this->documentosModal[$indice]['rut_die'] = null;
+            $this->documentosModal[$indice]['for_die'] = null;
+            $this->documentosModal[$indice]['tam_die'] = null;
+            $this->documentosModal[$indice]['has_die'] = null;
+            $this->documentosModal[$indice]['fec_pre_die'] = null;
+            $this->documentosModal[$indice]['fec_lim_die'] = $this->soporte()->calcularFechaLimiteDocumento(
+                $this->documentosModal[$indice]['clave_doc'] ?? null,
+                ['fecha_inscripcion' => $this->formInscripcion['fei_ins'] ?? null]
+            );
+        }
+
+        if ($estado === 'OBSERVADO') {
+            $this->documentosModal[$indice]['fec_lim_die'] = $this->soporte()->calcularFechaLimiteDocumento(
+                $this->documentosModal[$indice]['clave_doc'] ?? null,
+                ['fecha_inscripcion' => $this->formInscripcion['fei_ins'] ?? null]
+            );
+        }
+
+        if ($estado === 'VALIDADO') {
+            if (! $tieneArchivo) {
+                $this->notificar('warning', 'No se puede validar este documento porque aún no se adjuntó el archivo PDF.');
+                $this->documentosModal[$indice]['est_die'] = 'PRESENTADO';
+                $this->documentosModal[$indice]['fec_pre_die'] = null;
+                $this->documentosModal[$indice]['fec_lim_die'] = null;
+                return;
+            }
+
+            $this->documentosModal[$indice]['fec_pre_die'] = $this->documentosModal[$indice]['fec_pre_die'] ?? now()->toDateString();
+            $this->documentosModal[$indice]['fec_lim_die'] = null;
+        }
+
+        if ($estado === 'NO_APLICA') {
+            $this->documentosModal[$indice]['rut_die'] = null;
+            $this->documentosModal[$indice]['for_die'] = null;
+            $this->documentosModal[$indice]['tam_die'] = null;
+            $this->documentosModal[$indice]['has_die'] = null;
+            $this->documentosModal[$indice]['fec_pre_die'] = null;
+            $this->documentosModal[$indice]['fec_lim_die'] = null;
+            $this->documentosModal[$indice]['obs_die'] = null;
+        }
     }
 
     public function quitarDocumentoEnModal(int $indice): void
@@ -1386,44 +1691,38 @@ class GestionInscripciones extends Component
 
         try {
             DB::transaction(function () {
-                $existentes = DB::table('documento_inscripcion_estudiante')
-                    ->where('cod_ins', $this->codInscripcionAccion)
-                    ->get()
-                    ->keyBy('cod_die');
-
-                $procesados = [];
-
                 $normalizados = $this->soporte()->normalizarDocumentosParaGuardar($this->documentosModal);
-
+                $claves = [];
                 foreach ($normalizados as $documento) {
-                    $codDie = $documento['cod_die'] ?? null;
+                    $clave = $this->normalizarMayuscula($documento['clave_doc'] ?? '');
+                    if ($clave !== '' && isset($claves[$clave])) {
+                        throw ValidationException::withMessages([
+                            'documentos' => 'No se puede guardar: hay documentos duplicados en el catálogo.',
+                        ]);
+                    }
+                    $claves[$clave] = true;
+                }
 
-                    if ($codDie && $existentes->has($codDie)) {
-                        DB::table('documento_inscripcion_estudiante')
-                            ->where('cod_die', $codDie)
-                            ->update(array_merge(
-                                collect($documento)->except(['cod_die', 'cod_ins'])->all(),
-                                ['updated_at' => now()]
-                            ));
-                        $procesados[] = $codDie;
+                $fillable = (new DocumentoInscripcionEstudiante())->getFillable();
+                foreach ($normalizados as $documento) {
+                    $payload = collect($documento)
+                        ->only($fillable)
+                        ->except(['cod_die'])
+                        ->all();
+
+                    $modelo = ! empty($documento['cod_die'])
+                        ? DocumentoInscripcionEstudiante::query()->where('cod_die', $documento['cod_die'])->first()
+                        : null;
+
+                    if ($modelo) {
+                        $modelo->fill($payload);
+                        $modelo->save();
                         continue;
                     }
 
-                    DocumentoInscripcionEstudiante::create(array_merge(
-                        collect($documento)->except(['cod_die'])->all(),
-                        ['cod_ins' => $this->codInscripcionAccion]
-                    ));
-                }
-
-                // Anular los omitidos (no eliminar físicamente).
-                $noProcesados = $existentes->keys()->diff($procesados);
-                foreach ($noProcesados as $codDie) {
-                    DB::table('documento_inscripcion_estudiante')
-                        ->where('cod_die', $codDie)
-                        ->update([
-                            'est_die' => 'ANULADO',
-                            'updated_at' => now(),
-                        ]);
+                    DocumentoInscripcionEstudiante::create(array_merge($payload, [
+                        'cod_ins' => $this->codInscripcionAccion,
+                    ]));
                 }
 
                 $revision = $this->soporte()->analizarDocumentos($normalizados);
@@ -1494,6 +1793,9 @@ class GestionInscripciones extends Component
 
         try {
             DB::transaction(function () use ($evaluacion) {
+                // DB::table directo: prepararDatosAnulacion incluye 'anulado_por' que
+                // no está en InscripcionEstudiante::$fillable, por lo que no se puede
+                // usar fill/save sin agregar la columna al modelo.
                 DB::table('inscripcion_estudiante')
                     ->where('cod_ins', $this->codInscripcionAccion)
                     ->update($this->soporte()->prepararDatosAnulacion($this->motivoAccion));
@@ -1560,6 +1862,8 @@ class GestionInscripciones extends Component
                 $datos = $this->soporte()->prepararDatosRetiro($this->motivoAccion);
                 $datos['fec_anu_ins'] = $this->fechaRetiro;
 
+                // DB::table directo: prepararDatosRetiro incluye 'anulado_por' que
+                // no está en InscripcionEstudiante::$fillable, igual que en anulación.
                 DB::table('inscripcion_estudiante')
                     ->where('cod_ins', $this->codInscripcionAccion)
                     ->update($datos);
@@ -1651,12 +1955,10 @@ class GestionInscripciones extends Component
 
         $this->confirmacionFinal = [
             'puede_confirmar' => (bool) ($this->analisis['puede_continuar'] ?? false),
-            'accion_recomendada' => $estadoSugerido === 'INSCRITO' ? 'CONFIRMAR' : 'GUARDAR_CON_SEGUIMIENTO',
+            'accion_recomendada' => $estadoSugerido === 'ACTIVA' ? 'CONFIRMAR' : 'GUARDAR_CON_SEGUIMIENTO',
             'texto_boton' => match ($estadoSugerido) {
-                'INSCRITO' => 'Confirmar inscripción',
-                'OBSERVADO' => 'Guardar como observada',
-                'CONDICIONAL' => 'Guardar como condicional',
-                'PROVISIONAL' => 'Guardar como provisional',
+                'ACTIVA' => 'Confirmar inscripción',
+                'OBSERVADA' => 'Guardar con seguimiento',
                 default => 'Guardar pendiente',
             },
             'estado_final' => $estadoSugerido,
@@ -1826,12 +2128,10 @@ class GestionInscripciones extends Component
     public function badgeEstado(string $estado): string
     {
         return match ($this->normalizarMayuscula($estado)) {
-            'INSCRITO', 'ACTIVO' => 'ui-badge-success',
-            'OBSERVADO', 'PENDIENTE' => 'ui-badge-warning',
-            'CONDICIONAL' => 'ui-badge-warning',
-            'PROVISIONAL' => 'ui-badge-violet',
-            'ANULADO' => 'ui-badge-danger',
-            'RETIRADO', 'INACTIVO' => 'ui-badge-muted',
+            'ACTIVA', 'CONFIRMADA' => 'ui-badge-success',
+            'OBSERVADA', 'PENDIENTE' => 'ui-badge-warning',
+            'ANULADA' => 'ui-badge-danger',
+            'RETIRADA', 'ARCHIVADA', 'INACTIVO' => 'ui-badge-muted',
             default => 'ui-badge-muted',
         };
     }
@@ -2028,7 +2328,8 @@ class GestionInscripciones extends Component
         }
 
         if ($this->vista === 'observados') {
-            $query->whereIn('inscripcion_estudiante.est_ins', ['OBSERVADO', 'CONDICIONAL', 'PROVISIONAL']);
+            $query->whereIn('inscripcion_estudiante.est_ins', ['OBSERVADA', 'PENDIENTE'])
+                ->whereIn('inscripcion_estudiante.con_ins', ['OBSERVADA', 'CONDICIONAL', 'PROVISIONAL', 'SOBRECUPO', 'REZAGO_ESCOLAR']);
         }
 
         if ($this->vista === 'documentos' && Schema::hasTable('documento_inscripcion_estudiante')) {
@@ -2040,7 +2341,7 @@ class GestionInscripciones extends Component
         }
 
         if ($this->vista === 'historial') {
-            $query->whereIn('inscripcion_estudiante.est_ins', ['ANULADO', 'RETIRADO']);
+            $query->whereIn('inscripcion_estudiante.est_ins', ['ANULADA', 'RETIRADA', 'ARCHIVADA']);
         }
 
         return $query;
@@ -2058,12 +2359,15 @@ class GestionInscripciones extends Component
             ->get()
             ->map(fn($documento) => [
                 'cod_die' => $documento->cod_die ?? null,
+                'clave_doc' => null,
                 'nom_die' => $documento->nom_die ?? 'Documento',
                 'tip_die' => $documento->tip_die ?? 'GENERAL',
                 'est_die' => $documento->est_die ?? 'PENDIENTE',
                 'obl_die' => (bool) ($documento->obl_die ?? false),
                 'fec_lim_die' => $documento->fec_lim_die ?? null,
                 'obs_die' => $documento->obs_die ?? null,
+                'fecha_limite_editable' => false,
+                'fecha_limite_modificada' => false,
                 'fec_pre_die' => $documento->fec_pre_die ?? null,
                 'rut_die' => $documento->rut_die ?? null,
                 'for_die' => $documento->for_die ?? null,
@@ -2081,45 +2385,77 @@ class GestionInscripciones extends Component
             return;
         }
 
-        $existentes = DB::table('documento_inscripcion_estudiante')
-            ->where('cod_ins', $codIns)
-            ->get()
-            ->keyBy('cod_die');
+        $normalizados = $this->soporte()->normalizarDocumentosParaGuardar($this->documentos);
+        $claves = [];
+        foreach ($normalizados as $i => $documento) {
+            $clave = $this->normalizarMayuscula($documento['clave_doc'] ?? '');
+            $nombre = $documento['nom_die'] ?? 'Documento';
+            if ($clave !== '' && isset($claves[$clave])) {
+                throw ValidationException::withMessages([
+                    'documentos' => "{$nombre}: documento duplicado detectado en el catálogo.",
+                ]);
+            }
+            $claves[$clave] = true;
 
-        $procesados = [];
+            $original = $this->documentos[$i] ?? [];
+            if ((bool) ($original['fecha_limite_modificada'] ?? false)) {
+                if (empty(trim((string) ($original['motivo_modificacion_fecha'] ?? '')))) {
+                    throw ValidationException::withMessages([
+                        'documentos' => "{$nombre}: la fecha límite fue modificada y requiere motivo.",
+                    ]);
+                }
 
-        foreach ($this->soporte()->normalizarDocumentosParaGuardar($this->documentos) as $documento) {
-            $codDie = $documento['cod_die'] ?? null;
+                $revisionFecha = $this->soporte()->validarFechaLimiteDocumento(
+                    $documento['fec_lim_die'] ?? null,
+                    $this->formInscripcion['fei_ins'] ?? null
+                );
+                if (! ($revisionFecha['valida'] ?? false)) {
+                    throw ValidationException::withMessages([
+                        'documentos' => "{$nombre}: " . (($revisionFecha['bloqueos'][0] ?? 'fecha límite inválida.')),
+                    ]);
+                }
 
-            if ($codDie && $existentes->has($codDie)) {
-                DB::table('documento_inscripcion_estudiante')
-                    ->where('cod_die', $codDie)
-                    ->update(array_merge(
-                        collect($documento)
-                            ->except(['cod_die', 'cod_ins'])
-                            ->all(),
-                        ['updated_at' => now()]
-                    ));
+                $this->registrarBitacora('MODIFICAR_FECHA_LIMITE_DOCUMENTO', 'documento_inscripcion_estudiante', $documento['cod_die'] ?: 'SIN_REGISTRO', [
+                    'estudiante' => $this->estudianteSeleccionado['nombre_completo'] ?? null,
+                    'documento' => $nombre,
+                    'motivo' => $original['motivo_modificacion_fecha'] ?? null,
+                    'fecha_limite' => $documento['fec_lim_die'] ?? null,
+                ]);
+            }
+        }
 
-                $procesados[] = $codDie;
+        $fillable = (new DocumentoInscripcionEstudiante())->getFillable();
+        foreach ($normalizados as $documento) {
+            $payload = collect($documento)
+                ->only($fillable)
+                ->except(['cod_die'])
+                ->all();
+            $modelo = ! empty($documento['cod_die'])
+                ? DocumentoInscripcionEstudiante::query()->where('cod_die', $documento['cod_die'])->first()
+                : null;
+
+            if ($modelo) {
+                $modelo->fill($payload);
+                $modelo->save();
                 continue;
             }
 
-            DocumentoInscripcionEstudiante::create(array_merge(
-                collect($documento)->except(['cod_die'])->all(),
-                ['cod_ins' => $codIns]
-            ));
+            DocumentoInscripcionEstudiante::create(array_merge($payload, [
+                'cod_ins' => $codIns,
+            ]));
         }
 
-        // No eliminamos documentos omitidos: los anulamos para conservar historial.
-        $noProcesados = $existentes->keys()->diff($procesados);
-        foreach ($noProcesados as $codDie) {
-            DB::table('documento_inscripcion_estudiante')
+        foreach (array_values(array_unique($this->documentosEliminados)) as $codDie) {
+            $modelo = DocumentoInscripcionEstudiante::query()
+                ->where('cod_ins', $codIns)
                 ->where('cod_die', $codDie)
-                ->update([
-                    'est_die' => 'ANULADO',
-                    'updated_at' => now(),
-                ]);
+                ->first();
+            if (! $modelo) {
+                continue;
+            }
+            // NO_APLICA es el estado coherente con ESTADOS_DOCUMENTO para documentos quitados.
+            $modelo->est_die = 'NO_APLICA';
+            $modelo->save();
         }
     }
 
@@ -2268,14 +2604,14 @@ class GestionInscripciones extends Component
         string $nombreVisible = '',
         string $nivel = 'SUCCESS'
     ): void {
+        // Spatie: solo log con propiedades, sin performedOn() sobre stdClass.
         try {
             if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
                 activity()
-                    ->performedOn(Schema::hasTable($tabla) ? DB::table($tabla)->where('cod_' . substr($tabla, 0, 3), $registro)->first() : null)
                     ->causedBy(auth()->user())
                     ->withProperties([
                         'modulo' => 'Gestión de Inscripciones',
-                        'tabla' => $tabla,
+                        'tabla'  => $tabla,
                         'registro' => $registro,
                         'descripcion' => $descripcion,
                     ])
@@ -2289,23 +2625,13 @@ class GestionInscripciones extends Component
             return;
         }
 
+        // cod_bit lo genera Bitacora::booted() automáticamente; no se genera aquí.
         try {
             $columnas = Schema::getColumnListing('bitacora');
-            $request = request();
-            $usuario = auth()->user();
-            $payload = [];
+            $request  = request();
+            $usuario  = auth()->user();
+            $payload  = [];
 
-            if (in_array('cod_bit', $columnas, true)) {
-                $ultimo = DB::table('bitacora')
-                    ->where('cod_bit', 'like', 'BIT_%')
-                    ->orderByDesc('cod_bit')
-                    ->value('cod_bit');
-
-                $numero = $ultimo
-                    ? ((int) str_replace('BIT_', '', $ultimo)) + 1
-                    : 1;
-                $payload['cod_bit'] = 'BIT_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
-            }
             if (in_array('acc_bit', $columnas, true)) {
                 $payload['acc_bit'] = mb_substr($descripcion, 0, 500);
             }
@@ -2352,7 +2678,7 @@ class GestionInscripciones extends Component
                 $payload['met_bit'] = $request?->method() ?? 'POST';
             }
 
-            DB::table('bitacora')->insert($payload);
+            Bitacora::create($payload);
         } catch (Throwable $e) {
             report($e);
         }

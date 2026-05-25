@@ -15,11 +15,10 @@ class InscripcionAcademica
         'NUEVO',
         'REGULAR',
         'TRASLADO',
-        'REINSCRIPCION',
-        'REPITENTE',
+        'EXTERIOR',
+        'VULNERABLE',
         'EXCEPCIONAL',
-        'VULNERABILIDAD',
-        'EXTRANJERO',
+        'PREINSCRIPCION',
     ];
 
     public const CONDICIONES_INSCRIPCION = [
@@ -28,24 +27,24 @@ class InscripcionAcademica
         'CONDICIONAL',
         'PROVISIONAL',
         'SOBRECUPO',
-        'TRASLADO',
-        'VULNERABILIDAD',
+        'REZAGO_ESCOLAR',
     ];
 
     public const ESTADOS_INSCRIPCION = [
         'PENDIENTE',
-        'INSCRITO',
-        'OBSERVADO',
-        'CONDICIONAL',
-        'PROVISIONAL',
-        'ANULADO',
-        'RETIRADO',
+        'CONFIRMADA',
+        'ACTIVA',
+        'OBSERVADA',
+        'ANULADA',
+        'RETIRADA',
+        'ARCHIVADA',
     ];
 
     public const ESTADOS_NO_ACTIVOS = [
         'INACTIVO',
-        'ANULADO',
-        'RETIRADO',
+        'ANULADA',
+        'RETIRADA',
+        'ARCHIVADA',
     ];
 
     public const ESTADOS_DOCUMENTO = [
@@ -61,6 +60,7 @@ class InscripcionAcademica
         'PENDIENTE',
         'ASIGNADA',
         'OBSERVADA',
+        'RETIRADA',
     ];
 
     public const TIPOS_PROCEDENCIA = [
@@ -84,6 +84,33 @@ class InscripcionAcademica
         'ESPECIALIDAD',
         'AUTORIZACION',
         'GENERAL',
+    ];
+
+    public const DOCUMENTOS_REQUERIDOS = [
+        'RUDE' => ['nombre' => 'Formulario RUDE', 'tip_die' => 'RUDE', 'obligatorio' => true],
+        'CERT_NAC' => ['nombre' => 'Certificado de nacimiento', 'tip_die' => 'IDENTIDAD', 'obligatorio' => true],
+        'CI_EST' => ['nombre' => 'Cédula de identidad del estudiante', 'tip_die' => 'IDENTIDAD', 'obligatorio' => true],
+        'CI_TUTOR' => ['nombre' => 'Cédula de identidad del padre, madre o tutor', 'tip_die' => 'IDENTIDAD', 'obligatorio' => true],
+        'LIBRETA' => ['nombre' => 'Libreta o boletín anterior', 'tip_die' => 'ACADEMICO', 'obligatorio' => true],
+        'VACUNAS' => ['nombre' => 'Carnet de vacunas', 'tip_die' => 'VACUNAS', 'obligatorio' => false],
+        'TRASLADO' => ['nombre' => 'Documento o respaldo de traslado', 'tip_die' => 'TRASLADO', 'obligatorio' => true],
+        'VULNERABILIDAD' => ['nombre' => 'Declaración jurada o respaldo institucional', 'tip_die' => 'VULNERABILIDAD', 'obligatorio' => false],
+    ];
+
+    public const MOTIVOS_PENDIENTE_DOCUMENTO = [
+        'EN_TRAMITE',
+        'FALTA_PRESENTACION_TUTOR',
+        'FALTA_LEGALIZACION',
+        'REGULARIZACION_POSTERIOR',
+        'CASO_SOCIAL_PRIORIZADO',
+    ];
+
+    public const MOTIVOS_OBSERVACION_DOCUMENTO = [
+        'ILEGIBLE',
+        'INCOMPLETO',
+        'DATOS_INCONSISTENTES',
+        'NO_CORRESPONDE_CURSO',
+        'REQUIERE_ACTUALIZACION',
     ];
 
     public const CURSOS_EDAD_REFERENCIAL = [
@@ -185,6 +212,9 @@ class InscripcionAcademica
             'estados_especialidad' => self::ESTADOS_ESPECIALIDAD,
             'tipos_procedencia' => self::TIPOS_PROCEDENCIA,
             'tipos_documento_inscripcion' => self::TIPOS_DOCUMENTO_INSCRIPCION,
+            'documentos_requeridos' => $this->catalogoDocumentosRequeridos(),
+            'motivos_pendiente_documento' => self::MOTIVOS_PENDIENTE_DOCUMENTO,
+            'motivos_observacion_documento' => self::MOTIVOS_OBSERVACION_DOCUMENTO,
             'cursos_edad_referencial' => self::CURSOS_EDAD_REFERENCIAL,
         ];
     }
@@ -204,13 +234,13 @@ class InscripcionAcademica
         return [
             'total' => (clone $base)->count(),
             'activos' => (clone $activos)->count(),
-            'inscritos' => (clone $base)->where('est_ins', 'INSCRITO')->count(),
+            'inscritos' => (clone $base)->where('est_ins', 'ACTIVA')->count(),
             'pendientes' => (clone $base)->where('est_ins', 'PENDIENTE')->count(),
-            'observados' => (clone $base)->where('est_ins', 'OBSERVADO')->count(),
-            'condicionales' => (clone $base)->where('est_ins', 'CONDICIONAL')->count(),
-            'provisionales' => (clone $base)->where('est_ins', 'PROVISIONAL')->count(),
-            'anulados' => (clone $base)->where('est_ins', 'ANULADO')->count(),
-            'retirados' => (clone $base)->where('est_ins', 'RETIRADO')->count(),
+            'observados' => (clone $base)->where('est_ins', 'OBSERVADA')->count(),
+            'condicionales' => (clone $base)->where('con_ins', 'CONDICIONAL')->count(),
+            'provisionales' => (clone $base)->where('con_ins', 'PROVISIONAL')->count(),
+            'anulados' => (clone $base)->where('est_ins', 'ANULADA')->count(),
+            'retirados' => (clone $base)->where('est_ins', 'RETIRADA')->count(),
             'nuevos' => (clone $base)->where('tip_ins', 'NUEVO')->count(),
             'regulares' => (clone $base)->where('tip_ins', 'REGULAR')->count(),
             'traslados' => (clone $base)->where('tip_ins', 'TRASLADO')->count(),
@@ -414,18 +444,18 @@ class InscripcionAcademica
 
         $ultimo = $historial[0];
 
-        if (($ultimo['estado'] ?? null) === 'RETIRADO') {
+        if (($ultimo['estado'] ?? null) === 'RETIRADA') {
             return [
                 'situacion' => 'RETORNO',
-                'tipo_sugerido' => 'REINSCRIPCION',
-                'mensaje' => 'El estudiante tiene retiro anterior. Se sugiere reinscripción con revisión institucional.',
+                'tipo_sugerido' => 'REGULAR',
+                'mensaje' => 'El estudiante tiene retiro anterior. Se sugiere inscripción regular con revisión institucional.',
             ];
         }
 
-        if (($ultimo['estado'] ?? null) === 'ANULADO') {
+        if (($ultimo['estado'] ?? null) === 'ANULADA') {
             return [
                 'situacion' => 'REVISAR',
-                'tipo_sugerido' => 'REINSCRIPCION',
+                'tipo_sugerido' => 'REGULAR',
                 'mensaje' => 'El estudiante tiene una inscripción anulada anteriormente. Revisa el historial antes de continuar.',
             ];
         }
@@ -460,13 +490,13 @@ class InscripcionAcademica
         $ultimo = $historial[0];
 
         return match ($ultimo['estado'] ?? null) {
-            'RETIRADO' => [
-                'tipo' => 'REINSCRIPCION',
-                'mensaje' => 'El estudiante tuvo retiro anterior. Se sugiere reinscripción.',
+            'RETIRADA' => [
+                'tipo' => 'REGULAR',
+                'mensaje' => 'El estudiante tuvo retiro anterior. Se sugiere inscripción regular con revisión institucional.',
                 'confianza' => 'MEDIA',
             ],
-            'ANULADO' => [
-                'tipo' => 'REINSCRIPCION',
+            'ANULADA' => [
+                'tipo' => 'REGULAR',
                 'mensaje' => 'Tiene inscripción anulada en historial. Revisar antes de inscribir.',
                 'confianza' => 'BAJA',
             ],
@@ -904,7 +934,7 @@ class InscripcionAcademica
         $situacion = $this->clasificarSituacionEstudiante($codEst, $codGea);
         $tipoSugerido = $this->sugerirTipoInscripcion($codEst, $codEst ? $this->historialEstudiante($codEst) : []);
 
-        if (($tipoSugerido['tipo'] ?? null) && $tipo !== ($tipoSugerido['tipo'] ?? null) && ! in_array($tipo, ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO'], true)) {
+        if (($tipoSugerido['tipo'] ?? null) && $tipo !== ($tipoSugerido['tipo'] ?? null) && ! in_array($tipo, ['EXCEPCIONAL', 'VULNERABLE', 'EXTERIOR'], true)) {
             $sugerencias[] = 'Tipo sugerido por historial: ' . $tipoSugerido['tipo'] . '. ' . $tipoSugerido['mensaje'];
         }
 
@@ -949,6 +979,7 @@ class InscripcionAcademica
         }
 
         $especialidad = $this->validarEspecialidadTecnica($form);
+        $cupoEspecialidad = $this->validarCupoEspecialidad($form);
 
         if (! empty($especialidad['advertencia'])) {
             $advertencias[] = $especialidad['advertencia'];
@@ -956,6 +987,12 @@ class InscripcionAcademica
             $sugerencias[] = 'La especialidad técnica BTH quedó asignada correctamente.';
         } elseif (($especialidad['estado'] ?? null) === 'NO_APLICA') {
             $sugerencias[] = 'La especialidad técnica no aplica para el curso seleccionado.';
+        }
+        foreach ($cupoEspecialidad['bloqueos'] as $mensaje) {
+            $bloqueos[] = $mensaje;
+        }
+        foreach ($cupoEspecialidad['advertencias'] as $mensaje) {
+            $advertencias[] = $mensaje;
         }
 
         $cupo = $this->calcularCupo($codGea, $codCur, $codPar, $codTur, $ignorarCodIns);
@@ -976,15 +1013,17 @@ class InscripcionAcademica
             $advertencias[] = 'Para una inscripción por traslado se recomienda registrar la unidad educativa de procedencia.';
         }
 
-        if (in_array($tipo, ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO'], true)) {
+        if (in_array($tipo, ['EXCEPCIONAL', 'VULNERABLE', 'EXTERIOR'], true)) {
             $advertencias[] = 'Este tipo de inscripción requiere seguimiento documental y observación institucional.';
         }
 
-        if (in_array($tipo, ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO'], true) && $this->estaVacio($form['mot_obs_ins'] ?? null)) {
+        if (in_array($tipo, ['EXCEPCIONAL', 'VULNERABLE', 'EXTERIOR'], true) && $this->estaVacio($form['mot_obs_ins'] ?? null)) {
             $advertencias[] = 'Registra una justificación u observación para respaldar el caso especial.';
         }
 
-        $revisionDocumentos = $this->analizarDocumentos($documentos, $tipo);
+        $revisionDocumentos = $this->analizarDocumentos($documentos, $tipo, [
+            'fecha_inscripcion' => $fecha,
+        ]);
 
         foreach (($revisionDocumentos['bloqueos'] ?? []) as $mensaje) {
             $bloqueos[] = $mensaje;
@@ -1090,15 +1129,13 @@ class InscripcionAcademica
 
         return [
             'puede_confirmar' => true,
-            'accion_recomendada' => $estado === 'INSCRITO' ? 'CONFIRMAR' : 'GUARDAR_CON_SEGUIMIENTO',
+            'accion_recomendada' => $estado === 'ACTIVA' ? 'CONFIRMAR' : 'GUARDAR_CON_SEGUIMIENTO',
             'texto_boton' => match ($estado) {
-                'INSCRITO' => 'Confirmar inscripción',
-                'OBSERVADO' => 'Guardar como observada',
-                'CONDICIONAL' => 'Guardar como condicional',
-                'PROVISIONAL' => 'Guardar como provisional',
+                'ACTIVA' => 'Confirmar inscripción',
+                'OBSERVADA' => 'Guardar con seguimiento',
                 default => 'Guardar pendiente',
             },
-            'mensaje' => $estado === 'INSCRITO'
+            'mensaje' => $estado === 'ACTIVA'
                 ? 'La inscripción puede confirmarse sin observaciones críticas.'
                 : 'La inscripción puede guardarse con seguimiento institucional.',
             'estado_final' => $estado,
@@ -1218,83 +1255,67 @@ class InscripcionAcademica
 
         $base = [
             'cod_die' => null,
-            'fec_lim_die' => null,
+            'clave_doc' => null,
+            'fecha_limite_editable' => false,
+            'fecha_limite_modificada' => false,
             'fec_pre_die' => null,
+            'fec_lim_die' => null,
+            'obs_die' => null,
             'rut_die' => null,
             'for_die' => null,
             'tam_die' => null,
             'has_die' => null,
         ];
 
-        $documentos = [
-            [
-                ...$base,
-                'nom_die' => 'Formulario RUDE',
-                'tip_die' => 'RUDE',
-                'est_die' => 'PENDIENTE',
-                'obs_die' => null,
-                'obligatorio' => true,
-            ],
-            [
-                ...$base,
-                'nom_die' => 'Certificado de nacimiento',
-                'tip_die' => 'IDENTIDAD',
-                'est_die' => in_array($tipoInscripcion, ['NUEVO', 'EXTRANJERO'], true) ? 'PENDIENTE' : 'NO_APLICA',
-                'obs_die' => null,
-                'obligatorio' => in_array($tipoInscripcion, ['NUEVO', 'EXTRANJERO'], true),
-            ],
-            [
-                ...$base,
-                'nom_die' => 'Cédula de identidad del estudiante',
-                'tip_die' => 'IDENTIDAD',
-                'est_die' => 'PENDIENTE',
-                'obs_die' => null,
-                'obligatorio' => true,
-            ],
-            [
-                ...$base,
-                'nom_die' => 'Cédula de identidad del padre, madre o tutor',
-                'tip_die' => 'IDENTIDAD',
-                'est_die' => 'PENDIENTE',
-                'obs_die' => null,
-                'obligatorio' => true,
-            ],
-            [
-                ...$base,
-                'nom_die' => 'Libreta o boletín anterior',
-                'tip_die' => 'ACADEMICO',
-                'est_die' => in_array($tipoInscripcion, ['REGULAR', 'REINSCRIPCION'], true) ? 'NO_APLICA' : 'PENDIENTE',
-                'obs_die' => null,
-                'obligatorio' => ! in_array($tipoInscripcion, ['REGULAR', 'REINSCRIPCION'], true),
-            ],
-            [
-                ...$base,
-                'nom_die' => 'Carnet de vacunas',
-                'tip_die' => 'VACUNAS',
-                'est_die' => 'PENDIENTE',
-                'obs_die' => 'Puede regularizarse durante la gestión con seguimiento institucional.',
-                'obligatorio' => false,
-            ],
-        ];
+        $claves = ['RUDE', 'CERT_NAC', 'CI_EST', 'CI_TUTOR', 'LIBRETA', 'VACUNAS'];
+        $documentos = [];
+        foreach ($claves as $claveDoc) {
+            $nombre = $this->nombreDocumentoDesdeCatalogo($claveDoc);
+            $meta = self::DOCUMENTOS_REQUERIDOS[$claveDoc] ?? null;
+            if (! $meta) {
+                continue;
+            }
+            $estado = 'PRESENTADO';
+            $obligatorio = (bool) ($meta['obligatorio'] ?? false);
+            if ($claveDoc === 'CERT_NAC' && ! in_array($tipoInscripcion, ['NUEVO', 'EXTERIOR'], true)) {
+                $estado = 'NO_APLICA';
+                $obligatorio = false;
+            }
+            if ($claveDoc === 'LIBRETA' && in_array($tipoInscripcion, ['REGULAR'], true)) {
+                $estado = 'NO_APLICA';
+                $obligatorio = false;
+            }
 
-        if ($tipoInscripcion === 'TRASLADO') {
             $documentos[] = [
                 ...$base,
-                'nom_die' => 'Documento o respaldo de traslado',
-                'tip_die' => 'TRASLADO',
-                'est_die' => 'PENDIENTE',
-                'obs_die' => null,
+                'clave_doc' => $claveDoc,
+                'nom_die' => $nombre,
+                'tip_die' => $meta['tip_die'],
+                'est_die' => $estado,
+                'obligatorio' => $obligatorio,
+            ];
+        }
+
+        if ($tipoInscripcion === 'TRASLADO') {
+            $meta = self::DOCUMENTOS_REQUERIDOS['TRASLADO'];
+            $documentos[] = [
+                ...$base,
+                'clave_doc' => 'TRASLADO',
+                'nom_die' => $meta['nombre'],
+                'tip_die' => $meta['tip_die'],
+                'est_die' => 'PRESENTADO',
                 'obligatorio' => true,
             ];
         }
 
-        if (in_array($tipoInscripcion, ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO'], true)) {
+        if (in_array($tipoInscripcion, ['EXCEPCIONAL', 'VULNERABLE', 'EXTERIOR'], true)) {
+            $meta = self::DOCUMENTOS_REQUERIDOS['VULNERABILIDAD'];
             $documentos[] = [
                 ...$base,
-                'nom_die' => 'Declaración jurada o respaldo institucional',
-                'tip_die' => 'VULNERABILIDAD',
-                'est_die' => 'PENDIENTE',
-                'obs_die' => 'Permite registrar seguimiento sin bloquear abruptamente el acceso educativo.',
+                'clave_doc' => 'VULNERABILIDAD',
+                'nom_die' => $meta['nombre'],
+                'tip_die' => $meta['tip_die'],
+                'est_die' => 'PRESENTADO',
                 'obligatorio' => false,
             ];
         }
@@ -1302,99 +1323,262 @@ class InscripcionAcademica
         return $documentos;
     }
 
-    public function analizarDocumentos(array $documentos, string $tipoInscripcion = 'REGULAR'): array
+    public function catalogoDocumentosRequeridos(): array
+    {
+        return collect(self::DOCUMENTOS_REQUERIDOS)
+            ->map(fn(array $doc, string $clave) => [
+                'clave_doc' => $clave,
+                'nom_die' => $doc['nombre'],
+                'tip_die' => $doc['tip_die'],
+                'obligatorio' => (bool) ($doc['obligatorio'] ?? false),
+            ])
+            ->values()
+            ->all();
+    }
+
+    public function nombreDocumentoDesdeCatalogo(?string $claveDoc): string
+    {
+        $claveDoc = $this->normalizarMayuscula($claveDoc ?? '');
+        return self::DOCUMENTOS_REQUERIDOS[$claveDoc]['nombre'] ?? 'Documento';
+    }
+
+    public function calcularFechaLimiteDocumento(?string $claveDoc, array $contexto = []): ?string
+    {
+        $gestion = $this->gestionTrabajo();
+        if (! $gestion) {
+            return null;
+        }
+        $base = ! empty($contexto['fecha_inscripcion'])
+            ? Carbon::parse($contexto['fecha_inscripcion'])
+            : now();
+        $finGestion = ! empty($gestion['fin']) ? Carbon::parse($gestion['fin']) : null;
+        if (! $finGestion) {
+            return null;
+        }
+        $dias = match ($this->normalizarMayuscula($claveDoc ?? '')) {
+            'RUDE' => 10,
+            'CI_EST', 'CI_TUTOR', 'CERT_NAC' => 20,
+            'TRASLADO' => 15,
+            default => 30,
+        };
+        $limite = $base->copy()->addDays($dias);
+        if ($limite->gt($finGestion)) {
+            $limite = $finGestion;
+        }
+        return $limite->toDateString();
+    }
+
+    public function validarFechaLimiteDocumento(?string $fechaLimite, ?string $fechaInscripcion = null): array
+    {
+        $bloqueos = [];
+        if ($this->estaVacio($fechaLimite)) {
+            return ['valida' => true, 'bloqueos' => []];
+        }
+        try {
+            $fechaLim = Carbon::parse($fechaLimite)->startOfDay();
+        } catch (Throwable) {
+            return ['valida' => false, 'bloqueos' => ['La fecha límite documental no es válida.']];
+        }
+        if ($fechaLim->lt(now()->startOfDay())) {
+            $bloqueos[] = 'La fecha límite documental no puede ser anterior a hoy.';
+        }
+        if (! $this->estaVacio($fechaInscripcion) && $fechaLim->lt(Carbon::parse($fechaInscripcion)->startOfDay())) {
+            $bloqueos[] = 'La fecha límite documental no puede ser anterior a la fecha de inscripción.';
+        }
+        $gestion = $this->gestionTrabajo();
+        if ($gestion && ! empty($gestion['inicio']) && ! empty($gestion['fin'])) {
+            $ini = Carbon::parse($gestion['inicio'])->startOfDay();
+            $fin = Carbon::parse($gestion['fin'])->startOfDay();
+            if ($fechaLim->lt($ini) || $fechaLim->gt($fin)) {
+                $bloqueos[] = 'La fecha límite documental está fuera del rango de la gestión académica activa.';
+            }
+        }
+        return ['valida' => empty($bloqueos), 'bloqueos' => $bloqueos];
+    }
+
+    public function sugerirObservacionInteligente(array $documento, string $textoActual = '', string $contexto = 'OBSERVADO'): array
+    {
+        $texto = $this->normalizarTextoBusqueda(
+            trim(($textoActual ?: '') . ' ' . ($documento['obs_die'] ?? '') . ' ' . ($documento['nom_die'] ?? '') . ' ' . ($documento['tip_die'] ?? '') . ' ' . ($documento['clave_doc'] ?? ''))
+        );
+        $contexto = $this->normalizarMayuscula($contexto ?: ($documento['est_die'] ?? 'OBSERVADO'));
+
+        $patronesObservado = [
+            'NO_CORRESPONDE' => [
+                'keywords' => [
+                    'no corresponde', 'no es', 'no es el documento',
+                    'documento equivocado', 'documento incorrecto', 'archivo equivocado',
+                    'no requerido', 'otro documento',
+                    'documento no', 'no documento', 'documento mal', 'documento invalido', 'documento inválido',
+                ],
+                'sugerencia' => 'El documento presentado no corresponde al requisito solicitado para la inscripción.',
+                'confianza' => 'ALTA',
+            ],
+            'FIRMA' => [
+                'keywords' => ['firma', 'sin firma', 'falta firma', 'no firmado'],
+                'sugerencia' => 'El documento fue observado porque no cuenta con la firma requerida.',
+                'confianza' => 'ALTA',
+            ],
+            'SELLO' => [
+                'keywords' => ['sello', 'falta sello'],
+                'sugerencia' => 'El documento fue observado porque no cuenta con el sello requerido para validación.',
+                'confianza' => 'MEDIA',
+            ],
+            'VACIO' => [
+                'keywords' => ['vacio', 'vacío', 'archivo vacio', 'archivo vacío', 'vacío', 'vacio'],
+                'sugerencia' => 'El documento fue observado porque el archivo se encuentra vacío o no contiene información verificable.',
+                'confianza' => 'ALTA',
+            ],
+            'ILEGIBLE' => [
+                'keywords' => ['ilegible', 'borroso', 'baja calidad', 'pdf invalido', 'pdf inválido'],
+                'sugerencia' => 'El documento fue observado porque el archivo es ilegible o presenta baja calidad para verificación.',
+                'confianza' => 'MEDIA',
+            ],
+            'INCOMPLETO' => [
+                'keywords' => ['incompleto', 'falta reverso', 'reverso', 'datos inconsistentes', 'dañado', 'archivo dañado'],
+                'sugerencia' => 'El documento fue observado por estar incompleto o contener información inconsistente.',
+                'confianza' => 'MEDIA',
+            ],
+            // Patrón genérico: debe ir último para no solapar los específicos anteriores.
+            'DOCUMENTO_GENERICO' => [
+                'keywords' => ['documento'],
+                'sugerencia' => 'El documento presentado requiere revisión. Especifique el motivo de la observación para el seguimiento institucional.',
+                'confianza' => 'MEDIA',
+            ],
+        ];
+
+        $patronesPendiente = [
+            'TRAMITE' => [
+                'keywords' => ['tramite', 'trámite'],
+                'sugerencia' => 'El documento queda pendiente porque se encuentra en trámite y será regularizado dentro del plazo establecido.',
+                'confianza' => 'ALTA',
+            ],
+            'JURADA' => [
+                'keywords' => ['jurada', 'declaracion jurada', 'declaración jurada', 'compromiso', 'carta compromiso'],
+                'sugerencia' => 'El documento queda pendiente y se registra compromiso de presentación posterior dentro del plazo establecido.',
+                'confianza' => 'MEDIA',
+            ],
+            'SOCIAL' => [
+                'keywords' => ['extravio', 'extravío', 'vulnerable', 'extranjero'],
+                'sugerencia' => 'El documento queda pendiente por situación especial y se mantiene seguimiento institucional.',
+                'confianza' => 'MEDIA',
+            ],
+        ];
+
+        $patrones = $contexto === 'PENDIENTE' ? $patronesPendiente : $patronesObservado;
+        foreach ($patrones as $patron => $config) {
+            foreach ($config['keywords'] as $keyword) {
+                if ($texto !== '' && str_contains($texto, $this->normalizarTextoBusqueda($keyword))) {
+                    return [
+                        'existe' => true,
+                        'sugerencia' => $config['sugerencia'],
+                        'patron' => $patron,
+                        'confianza' => $config['confianza'],
+                    ];
+                }
+            }
+        }
+
+        return [
+            'existe' => false,
+            'sugerencia' => '',
+            'patron' => '',
+            'confianza' => 'BAJA',
+        ];
+    }
+
+    public function validarDocumentoIndividual(array $documento, array $contexto = []): array
+    {
+        $bloqueosCriticos = [];
+        $seguimiento = [];
+        $estado = $this->normalizarMayuscula($documento['est_die'] ?? 'PENDIENTE');
+        $obligatorio = (bool) ($documento['obl_die'] ?? $documento['obligatorio'] ?? false);
+        $nombre = $documento['nom_die'] ?? 'Documento';
+        $tieneArchivo = ! $this->estaVacio($documento['rut_die'] ?? null)
+            || ! $this->estaVacio($documento['for_die'] ?? null)
+            || ! $this->estaVacio($documento['tam_die'] ?? null)
+            || ! $this->estaVacio($documento['has_die'] ?? null);
+        $esPdf = $this->normalizarMayuscula($documento['for_die'] ?? '') === 'PDF';
+
+        if ($estado === 'PENDIENTE') {
+            if ($tieneArchivo) {
+                $bloqueosCriticos[] = "{$nombre}: PENDIENTE no permite archivo PDF.";
+            }
+            if ($this->estaVacio($documento['obs_die'] ?? null)) {
+                $bloqueosCriticos[] = "{$nombre}: requiere observación documental.";
+            } else {
+                $seguimiento[] = "{$nombre}: pendiente con detalle registrado para seguimiento.";
+            }
+        }
+
+        if ($estado === 'OBSERVADO') {
+            if ($this->estaVacio($documento['obs_die'] ?? null)) {
+                $bloqueosCriticos[] = "{$nombre}: requiere observación documental.";
+            } else {
+                $seguimiento[] = "{$nombre}: observado con detalle registrado para seguimiento.";
+            }
+        }
+
+        if ($estado === 'VALIDADO' && (! $tieneArchivo || ! $esPdf)) {
+            $bloqueosCriticos[] = "{$nombre}: VALIDADO exige archivo PDF.";
+        }
+
+        if ($estado === 'PRESENTADO' && $tieneArchivo && ! $esPdf) {
+            $bloqueosCriticos[] = "{$nombre}: PRESENTADO solo admite archivo PDF.";
+        }
+
+        if ($estado === 'NO_APLICA' && ($tieneArchivo || ! $this->estaVacio($documento['fec_lim_die'] ?? null))) {
+            $bloqueosCriticos[] = "{$nombre}: NO_APLICA debe limpiar archivo y fechas.";
+        }
+
+        if (! $this->estaVacio($documento['fec_lim_die'] ?? null)) {
+            $revision = $this->validarFechaLimiteDocumento($documento['fec_lim_die'], $contexto['fecha_inscripcion'] ?? null);
+            foreach ($revision['bloqueos'] as $mensaje) {
+                $bloqueosCriticos[] = "{$nombre}: {$mensaje}";
+            }
+        } elseif ($obligatorio && in_array($estado, ['PENDIENTE', 'OBSERVADO'], true)) {
+            $bloqueosCriticos[] = "{$nombre}: requiere fecha límite.";
+        }
+
+        return [
+            'bloqueos_criticos' => $bloqueosCriticos,
+            'seguimiento' => $seguimiento,
+        ];
+    }
+
+    public function analizarDocumentos(array $documentos, string $tipoInscripcion = 'REGULAR', array $contexto = []): array
     {
         $pendientes = 0;
         $observados = 0;
         $presentados = 0;
         $noAplica = 0;
         $obligatoriosPendientes = 0;
-        $bloqueos = [];
-        $advertencias = [];
-        $sugerencias = [];
+        $bloqueosCriticos = [];
+        $seguimiento = [];
+        $claves = [];
 
         foreach ($documentos as $documento) {
             $estado = $this->normalizarMayuscula($documento['est_die'] ?? 'PENDIENTE');
             $obligatorio = (bool) ($documento['obl_die'] ?? $documento['obligatorio'] ?? false);
-
-            $tieneArchivo = ! $this->estaVacio($documento['rut_die'] ?? null)
-                || ! $this->estaVacio($documento['for_die'] ?? null)
-                || ! $this->estaVacio($documento['tam_die'] ?? null)
-                || ! $this->estaVacio($documento['has_die'] ?? null);
-
-            $esPdf = $this->normalizarMayuscula($documento['for_die'] ?? '') === 'PDF';
-
-            // Reglas coherencia estado/archivo
-            if ($estado === 'PENDIENTE' && $tieneArchivo) {
-                $advertencias[] = 'El documento tiene archivo cargado, por lo que se recomienda marcarlo como PRESENTADO u OBSERVADO.';
-            }
-
-            if ($estado === 'NO_APLICA' && $tieneArchivo) {
-                $advertencias[] = 'El documento está marcado como NO APLICA pero tiene archivo cargado. Revisa si corresponde.';
-            }
-
-            if (in_array($estado, ['PRESENTADO', 'VALIDADO', 'OBSERVADO'], true) && $tieneArchivo && ! $esPdf) {
-                if ($estado === 'VALIDADO') {
-                    $bloqueos[] = 'No se puede validar un documento si el archivo no es PDF.';
-                } else {
-                    $advertencias[] = 'El archivo registrado no es PDF. Para esta fase solo se aceptan PDFs.';
+            $clave = $this->normalizarMayuscula($documento['clave_doc'] ?? $this->claveDocumento($documento['nom_die'] ?? ''));
+            if ($clave !== '') {
+                if (isset($claves[$clave])) {
+                    $bloqueosCriticos[] = 'Documento duplicado detectado en el catálogo documental.';
                 }
+                $claves[$clave] = true;
             }
-
-            if ($estado === 'OBSERVADO' && $this->estaVacio($documento['obs_die'] ?? null)) {
-                $bloqueos[] = 'OBSERVADO requiere observación obligatoria.';
-            }
-
-            if ($estado === 'OBSERVADO' && $this->estaVacio($documento['fec_lim_die'] ?? null)) {
-                if ($obligatorio) {
-                    $bloqueos[] = 'Documento obligatorio OBSERVADO requiere fecha límite.';
-                } else {
-                    $advertencias[] = 'OBSERVADO sin fecha límite. Se recomienda registrar fecha de corrección.';
-                }
-            }
-
-            if ($estado === 'VALIDADO' && ! $tieneArchivo) {
-                $bloqueos[] = 'No se puede validar un documento sin archivo PDF.';
-            }
-
-            if ($estado === 'PRESENTADO' && ! $tieneArchivo) {
-                $advertencias[] = 'PRESENTADO sin archivo PDF. Se recomienda adjuntar respaldo.';
-            }
-
-            if ($estado === 'PENDIENTE' && $obligatorio && $this->estaVacio($documento['fec_lim_die'] ?? null)) {
-                $bloqueos[] = 'Documento obligatorio PENDIENTE requiere fecha límite.';
-            }
-
+            $validacion = $this->validarDocumentoIndividual($documento, $contexto);
+            $bloqueosCriticos = array_merge($bloqueosCriticos, $validacion['bloqueos_criticos'] ?? []);
+            $seguimiento = array_merge($seguimiento, $validacion['seguimiento'] ?? []);
             match ($estado) {
                 'PRESENTADO', 'VALIDADO' => $presentados++,
                 'OBSERVADO' => $observados++,
                 'NO_APLICA' => $noAplica++,
                 default => $pendientes++,
             };
-
             if ($obligatorio && in_array($estado, ['PENDIENTE', 'OBSERVADO'], true)) {
                 $obligatoriosPendientes++;
             }
-        }
-
-        if ($pendientes > 0) {
-            $advertencias[] = "Existen {$pendientes} documento(s) pendiente(s).";
-        }
-
-        if ($observados > 0) {
-            $advertencias[] = "Existen {$observados} documento(s) observado(s).";
-        }
-
-        if ($obligatoriosPendientes > 0) {
-            $advertencias[] = "Existen {$obligatoriosPendientes} documento(s) obligatorio(s) pendiente(s) u observado(s).";
-        }
-
-        if ($pendientes === 0 && $observados === 0 && count($documentos) > 0) {
-            $sugerencias[] = 'La documentación registrada no presenta pendientes críticos.';
-        }
-
-        if (empty($documentos)) {
-            $sugerencias[] = 'Genera la lista documental inicial para controlar la inscripción.';
         }
 
         return [
@@ -1404,10 +1588,12 @@ class InscripcionAcademica
             'observados' => $observados,
             'no_aplica' => $noAplica,
             'obligatorios_pendientes' => $obligatoriosPendientes,
-            'completos' => $pendientes === 0 && $observados === 0 && count($documentos) > 0,
-            'bloqueos' => array_values(array_unique($bloqueos)),
-            'advertencias' => $advertencias,
-            'sugerencias' => $sugerencias,
+            'completos' => count($documentos) > 0 && empty($bloqueosCriticos),
+            'bloqueos_criticos' => array_values(array_unique($bloqueosCriticos)),
+            'bloqueos' => array_values(array_unique($bloqueosCriticos)),
+            'seguimiento' => array_values(array_unique($seguimiento)),
+            'advertencias' => array_values(array_unique($seguimiento)),
+            'sugerencias' => empty($documentos) ? ['Genera la lista documental inicial para controlar la inscripción.'] : [],
         ];
     }
 
@@ -1492,8 +1678,12 @@ class InscripcionAcademica
                     $documento['obs_die'] = null;
                 }
 
+                // UI única: solo obs_die (no persistimos motivos auxiliares).
+                $observacion = $this->limpiarTexto($documento['obs_die'] ?? null);
+
                 return [
                     'cod_die' => $documento['cod_die'] ?? null,
+                    'clave_doc' => $this->normalizarMayuscula($documento['clave_doc'] ?? ''),
                     'nom_die' => $this->limpiarTexto($documento['nom_die'] ?? 'Documento') ?: 'Documento',
                     'tip_die' => ($tipo = $this->normalizarMayuscula($documento['tip_die'] ?? 'GENERAL'))
                         && in_array($tipo, self::TIPOS_DOCUMENTO_INSCRIPCION, true)
@@ -1502,7 +1692,7 @@ class InscripcionAcademica
                     'est_die' => $estado,
                     'obl_die' => (bool) ($documento['obl_die'] ?? $documento['obligatorio'] ?? false),
                     'fec_lim_die' => !empty($documento['fec_lim_die']) ? trim($documento['fec_lim_die']) : null,
-                    'obs_die' => $this->limpiarTexto($documento['obs_die'] ?? null),
+                    'obs_die' => $observacion,
                     'fec_pre_die' => in_array($estado, ['PRESENTADO', 'VALIDADO'], true)
                         ? ($documento['fec_pre_die'] ?? now()->toDateString())
                         : ($documento['fec_pre_die'] ?? null),
@@ -1514,6 +1704,47 @@ class InscripcionAcademica
             })
             ->values()
             ->all();
+    }
+
+    public function validarCupoEspecialidad(array $form): array
+    {
+        $revisionCurso = $this->cursoRequiereEspecialidad($form['cod_cur'] ?? null);
+        if (! ($revisionCurso['requiere'] ?? false)) {
+            return ['bloqueos' => [], 'advertencias' => []];
+        }
+
+        if (empty($form['cod_esp_tec'])) {
+            return ['bloqueos' => [], 'advertencias' => ['La especialidad técnica puede quedar pendiente con seguimiento.']];
+        }
+
+        if (! Schema::hasTable('inscripcion_estudiante')) {
+            return ['bloqueos' => [], 'advertencias' => ['No se encontró configuración de capacidad para especialidad técnica.']];
+        }
+
+        $capacidad = null;
+        if (Schema::hasTable('especialidad_tecnica') && Schema::hasColumn('especialidad_tecnica', 'cap_esp_tec')) {
+            $capacidad = DB::table('especialidad_tecnica')
+                ->where($this->primeraColumna('especialidad_tecnica', ['cod_esp_tec', 'cod_esp', 'id']) ?? 'cod_esp', $form['cod_esp_tec'])
+                ->value('cap_esp_tec');
+        }
+
+        if ($capacidad === null) {
+            return ['bloqueos' => [], 'advertencias' => ['La especialidad seleccionada no tiene capacidad configurada.']];
+        }
+
+        $usados = DB::table('inscripcion_estudiante')
+            ->where('cod_gea', $form['cod_gea'] ?? null)
+            ->where('cod_esp_tec', $form['cod_esp_tec'])
+            ->whereNotIn('est_ins', self::ESTADOS_NO_ACTIVOS)
+            ->count();
+        if ($usados >= (int) $capacidad && ! (bool) ($form['sob_aut_ins'] ?? false)) {
+            return ['bloqueos' => ['La especialidad técnica seleccionada no tiene cupo disponible.'], 'advertencias' => []];
+        }
+        if ($usados >= (int) $capacidad) {
+            return ['bloqueos' => [], 'advertencias' => ['La especialidad técnica está llena, se aplicará sobrecupo autorizado.']];
+        }
+
+        return ['bloqueos' => [], 'advertencias' => []];
     }
 
     /* -------------------------------------------------------------------------
@@ -1728,7 +1959,7 @@ class InscripcionAcademica
 
         $advertencias = [];
 
-        if (in_array($inscripcion['estado'], ['ANULADO', 'RETIRADO'], true)) {
+        if (in_array($inscripcion['estado'], ['ANULADA', 'RETIRADA'], true)) {
             $advertencias[] = 'La inscripción está anulada o retirada. Se recomienda reactivar o revisar antes de editar.';
         }
 
@@ -1747,18 +1978,18 @@ class InscripcionAcademica
 
     public function evaluarAnulacion(?string $codIns, string $motivo = ''): array
     {
-        return $this->evaluarAccionLogica($codIns, $motivo, 'anulación', ['ANULADO', 'RETIRADO']);
+        return $this->evaluarAccionLogica($codIns, $motivo, 'anulación', ['ANULADA', 'RETIRADA']);
     }
 
     public function evaluarRetiro(?string $codIns, string $motivo = ''): array
     {
-        return $this->evaluarAccionLogica($codIns, $motivo, 'retiro', ['ANULADO', 'RETIRADO']);
+        return $this->evaluarAccionLogica($codIns, $motivo, 'retiro', ['ANULADA', 'RETIRADA']);
     }
 
     public function prepararDatosAnulacion(string $motivo): array
     {
         return [
-            'est_ins' => 'ANULADO',
+            'est_ins' => 'ANULADA',
             'con_ins' => 'OBSERVADA',
             'fec_anu_ins' => now(),
             'anulado_por' => auth()->user()->cod_usu ?? auth()->id(),
@@ -1770,7 +2001,7 @@ class InscripcionAcademica
     public function prepararDatosRetiro(string $motivo): array
     {
         return [
-            'est_ins' => 'RETIRADO',
+            'est_ins' => 'RETIRADA',
             'con_ins' => 'OBSERVADA',
             'fec_anu_ins' => now(),
             'anulado_por' => auth()->user()->cod_usu ?? auth()->id(),
@@ -1788,6 +2019,8 @@ class InscripcionAcademica
         $gestion = $this->gestionTrabajo();
         $turnoManana = $this->turnoManana();
         $especialidad = $this->validarEspecialidadTecnica($form);
+
+        $estadoUI = $this->normalizarMayuscula($form['est_ins'] ?? '');
 
         // Columnas confirmadas en la tabla inscripcion_estudiante (verificadas contra el schema real de PgSQL).
         // NO usar Schema::hasColumn para columnas opcionales: genera falso positivo en el contexto web de Livewire.
@@ -1807,9 +2040,9 @@ class InscripcionAcademica
             'cod_par' => $form['cod_par'] ?? null,
             'cod_tur' => $form['cod_tur'] ?? ($turnoManana['cod_tur'] ?? null),
             'fei_ins' => $form['fei_ins'] ?? now()->toDateString(),
-            'tip_ins' => $this->normalizarMayuscula($form['tip_ins'] ?? 'REGULAR'),
-            'con_ins' => $this->normalizarMayuscula($form['con_ins'] ?? ($analisis['condicion_sugerida'] ?? 'NORMAL')),
-            'est_ins' => $this->normalizarMayuscula($form['est_ins'] ?? ($analisis['estado_sugerido'] ?? 'PENDIENTE')),
+            'tip_ins' => $this->normalizarTipoInscripcionParaBD($form['tip_ins'] ?? 'REGULAR'),
+            'con_ins' => $this->normalizarCondicionInscripcionParaBD($form['con_ins'] ?? ($analisis['condicion_sugerida'] ?? 'NORMAL')),
+            'est_ins' => $this->normalizarEstadoInscripcionParaBD($form['est_ins'] ?? ($analisis['estado_sugerido'] ?? 'PENDIENTE')),
             'obs_ins' => $this->limpiarTexto($form['obs_ins'] ?? null),
             'mot_obs_ins' => $this->limpiarTexto($form['mot_obs_ins'] ?? null),
             'pro_ins' => $this->limpiarTexto($form['pro_ins'] ?? null),
@@ -1823,6 +2056,13 @@ class InscripcionAcademica
             'obs_esp_tec_ins' => $this->limpiarTexto($form['obs_esp_tec_ins'] ?? null),
         ];
 
+        $datos = $this->normalizarEstadoCondicionAntesDeGuardar($datos, array_merge($analisis ?? [], [
+            'estado_ui' => $estadoUI,
+        ]));
+        $datos['est_esp_tec_ins'] = in_array($datos['est_esp_tec_ins'] ?? 'NO_APLICA', self::ESTADOS_ESPECIALIDAD, true)
+            ? ($datos['est_esp_tec_ins'] ?? 'NO_APLICA')
+            : 'NO_APLICA';
+
         // Filtrar solo columnas que existen realmente en la tabla.
         $datos = array_filter(
             $datos,
@@ -1830,6 +2070,91 @@ class InscripcionAcademica
             ARRAY_FILTER_USE_KEY
         );
 
+        return $datos;
+    }
+
+    public function normalizarTipoInscripcionParaBD(?string $tipo): string
+    {
+        $tipo = $this->normalizarMayuscula($tipo ?? 'REGULAR');
+        $tipo = match ($tipo) {
+            'EXTRANJERO' => 'EXTERIOR',
+            'VULNERABILIDAD' => 'VULNERABLE',
+            'REINSCRIPCION', 'REPITENTE' => 'REGULAR',
+            default => $tipo,
+        };
+        return in_array($tipo, self::TIPOS_INSCRIPCION, true) ? $tipo : 'REGULAR';
+    }
+
+    public function normalizarEstadoInscripcionParaBD(?string $estado): string
+    {
+        $estado = $this->normalizarMayuscula($estado ?? 'PENDIENTE');
+        $estado = match ($estado) {
+            'INSCRITO' => 'ACTIVA',
+            'OBSERVADO' => 'OBSERVADA',
+            'ANULADO' => 'ANULADA',
+            'RETIRADO' => 'RETIRADA',
+            'CONDICIONAL', 'PROVISIONAL' => 'OBSERVADA',
+            default => $estado,
+        };
+        return in_array($estado, self::ESTADOS_INSCRIPCION, true) ? $estado : 'PENDIENTE';
+    }
+
+    public function normalizarCondicionInscripcionParaBD(?string $condicion): string
+    {
+        $condicion = $this->normalizarMayuscula($condicion ?? 'NORMAL');
+        $condicion = match ($condicion) {
+            'TRASLADO', 'VULNERABILIDAD' => 'NORMAL',
+            default => $condicion,
+        };
+        return in_array($condicion, self::CONDICIONES_INSCRIPCION, true) ? $condicion : 'NORMAL';
+    }
+
+    public function normalizarEstadoCondicionAntesDeGuardar(array $datos, ?array $analisis = null): array
+    {
+        $estadoUI = $this->normalizarMayuscula($analisis['estado_ui'] ?? '');
+        $docs = $analisis['documentos'] ?? [];
+        $pendientes = (int) ($docs['pendientes'] ?? 0);
+        $observados = (int) ($docs['observados'] ?? 0);
+        $bloqueosDoc = $docs['bloqueos_criticos'] ?? $docs['bloqueos'] ?? [];
+
+        if ($estadoUI === 'CONDICIONAL') {
+            $datos['est_ins'] = 'OBSERVADA';
+            $datos['con_ins'] = 'CONDICIONAL';
+            $datos['doc_com_ins'] = false;
+            return $datos;
+        }
+
+        if ($estadoUI === 'PROVISIONAL') {
+            $datos['est_ins'] = 'OBSERVADA';
+            $datos['con_ins'] = 'PROVISIONAL';
+            $datos['doc_com_ins'] = false;
+            return $datos;
+        }
+
+        if (! empty($bloqueosDoc)) {
+            $datos['est_ins'] = 'PENDIENTE';
+            $datos['con_ins'] = 'PROVISIONAL';
+            $datos['doc_com_ins'] = false;
+            return $datos;
+        }
+
+        if ($pendientes > 0) {
+            $datos['est_ins'] = 'OBSERVADA';
+            $datos['con_ins'] = 'PROVISIONAL';
+            $datos['doc_com_ins'] = false;
+            return $datos;
+        }
+
+        if ($observados > 0) {
+            $datos['est_ins'] = 'OBSERVADA';
+            $datos['con_ins'] = 'OBSERVADA';
+            $datos['doc_com_ins'] = false;
+            return $datos;
+        }
+
+        $datos['est_ins'] = 'ACTIVA';
+        $datos['con_ins'] = 'NORMAL';
+        $datos['doc_com_ins'] = true;
         return $datos;
     }
 
@@ -2285,23 +2610,15 @@ class InscripcionAcademica
             return 'PENDIENTE';
         }
 
-        if ($cupo['estado'] === 'LLENO' && $sobrecupoAutorizado) {
-            return 'CONDICIONAL';
-        }
-
-        if (in_array($tipo, ['EXCEPCIONAL', 'VULNERABILIDAD', 'EXTRANJERO'], true)) {
-            return 'PROVISIONAL';
-        }
-
         if (($documentos['pendientes'] ?? 0) > 0 || ($documentos['observados'] ?? 0) > 0) {
-            return 'OBSERVADO';
+            return 'OBSERVADA';
         }
 
         if (! empty($advertencias)) {
-            return 'OBSERVADO';
+            return 'OBSERVADA';
         }
 
-        return 'INSCRITO';
+        return 'ACTIVA';
     }
 
     private function sugerirCondicion(string $estado, string $tipo, array $cupo, bool $sobrecupoAutorizado): string
@@ -2310,18 +2627,8 @@ class InscripcionAcademica
             return 'SOBRECUPO';
         }
 
-        if ($tipo === 'TRASLADO') {
-            return 'TRASLADO';
-        }
-
-        if ($tipo === 'VULNERABILIDAD') {
-            return 'VULNERABILIDAD';
-        }
-
         return match ($estado) {
-            'OBSERVADO' => 'OBSERVADA',
-            'CONDICIONAL' => 'CONDICIONAL',
-            'PROVISIONAL' => 'PROVISIONAL',
+            'OBSERVADA' => 'OBSERVADA',
             default => 'NORMAL',
         };
     }
@@ -2640,6 +2947,14 @@ class InscripcionAcademica
     private function normalizarMayuscula(?string $valor): string
     {
         return mb_strtoupper(trim((string) $valor));
+    }
+
+    private function normalizarTextoBusqueda(?string $valor): string
+    {
+        $valor = mb_strtolower(trim((string) $valor));
+        $map = ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ü' => 'u', 'ñ' => 'n'];
+        $valor = strtr($valor, $map);
+        return preg_replace('/\s+/', ' ', $valor) ?? '';
     }
 
     private function textoSeguro(?string $valor, ?string $fallback = 'registro seleccionado'): string

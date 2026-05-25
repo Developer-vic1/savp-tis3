@@ -165,3 +165,76 @@ window.uiHelpers = {
         });
     },
 };
+
+window.documentoAutocomplete = {
+    component() {
+        return {
+            getSuggestion(el) {
+                return (el?.dataset?.suggestion || '').trim();
+            },
+            syncValue(el, nextValue) {
+                el.value = nextValue;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            },
+            clearSuggestion(el) {
+                if (! el) {
+                    return;
+                }
+                const idx = Number(el.dataset.docIndex || -1);
+                el.dataset.suggestion = '';
+                // Delay Livewire call to avoid re-render collision while the model
+                // debounce is still in flight after syncValue.
+                setTimeout(() => {
+                    const root = el.closest('[wire\\:id]');
+                    const wire = root && window.Livewire ? window.Livewire.find(root.getAttribute('wire:id')) : null;
+                    if (wire && Number.isInteger(idx) && idx >= 0 && typeof wire.call === 'function') {
+                        wire.call('limpiarSugerenciaObservacion', idx);
+                    }
+                }, 80);
+            },
+            acceptNextWord(event) {
+                const el = event.target;
+                const suggestion = this.getSuggestion(el);
+                if (! suggestion) {
+                    return;
+                }
+                event.preventDefault();
+
+                const words = suggestion.trim().split(/\s+/).filter(w => w.length > 0);
+                const currentTrimmed = (el.value || '').trim();
+
+                // Find how many words of the suggestion are fully present in el.value.
+                // This allows word-by-word reconstruction starting from word 1 of the
+                // suggestion, not by appending to whatever the user typed.
+                let matched = 0;
+                for (let i = 1; i <= words.length; i++) {
+                    if (words.slice(0, i).join(' ').toLowerCase() === currentTrimmed.toLowerCase()) {
+                        matched = i;
+                    }
+                }
+
+                const nextCount = matched + 1;
+                if (nextCount > words.length) {
+                    this.clearSuggestion(el);
+                    return;
+                }
+
+                this.syncValue(el, words.slice(0, nextCount).join(' '));
+
+                if (nextCount === words.length) {
+                    this.clearSuggestion(el);
+                }
+            },
+            acceptAll(event) {
+                const el = event.target;
+                const suggestion = this.getSuggestion(el);
+                if (! suggestion) {
+                    return;
+                }
+                event.preventDefault();
+                this.syncValue(el, suggestion);
+                this.clearSuggestion(el);
+            },
+        };
+    },
+};

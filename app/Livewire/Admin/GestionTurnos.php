@@ -42,6 +42,21 @@ class GestionTurnos extends Component
     public bool $modalAplicarPlantilla = false;
     public bool $modalDesactivar = false;
     public bool $modalVistaPrevia = false;
+    public bool $modalAutogenerar = false;
+
+    public array $formAutogenerar = [
+        'cod_pho' => '',
+        'hora_inicio' => '08:00',
+        'cantidad_bloques' => 8,
+        'duracion_bloque_min' => 40,
+        'usa_recreo' => true,
+        'recreo_despues_de' => 4,
+        'duracion_recreo_min' => 20,
+        'tipo_plantilla' => 'REGULAR',
+        'confirmar_regenerar' => false,
+    ];
+
+    public array $analisisAutogenerar = [];
 
     public string $modoTurno = 'crear';
     public string $modoPlantilla = 'crear';
@@ -63,7 +78,8 @@ class GestionTurnos extends Component
         'des_pho' => '',
         'fec_ini_pho' => '',
         'fec_fin_pho' => '',
-        'dur_blo_pho' => 45,
+        // Sugerencia institucional: 40 min por bloque regular.
+        'dur_blo_pho' => 40,
         'ord_pho' => 1,
         'act_pho' => false,
         'est_pho' => true,
@@ -109,6 +125,23 @@ class GestionTurnos extends Component
         $this->auditarEstructuraSilenciosa();
         $this->seleccionarPlantillaInicial();
         $this->actualizarVistaPrevia();
+    }
+
+    // ============================================================
+    // MODALES (CONTROL CENTRALIZADO)
+    // ============================================================
+
+    public function cerrarTodosLosModalesTurnos(): void
+    {
+        $this->modalTurno = false;
+        $this->modalPlantilla = false;
+        $this->modalBloque = false;
+        $this->modalDetalleTurno = false;
+        $this->modalAuditoria = false;
+        $this->modalAplicarPlantilla = false;
+        $this->modalDesactivar = false;
+        $this->modalVistaPrevia = false;
+        $this->modalAutogenerar = false;
     }
 
     public function render(): View
@@ -191,6 +224,7 @@ class GestionTurnos extends Component
 
     public function auditarEstructuraHoraria(): void
     {
+        $this->cerrarTodosLosModalesTurnos();
         $this->auditoriaEstructura = $this->soporte->auditarEstructuraHoraria();
         $this->actualizarVistaPrevia();
         $this->modalAuditoria = true;
@@ -318,6 +352,7 @@ class GestionTurnos extends Component
 
     public function abrirModalCrearTurno(): void
     {
+        $this->cerrarTodosLosModalesTurnos();
         $this->modoTurno = 'crear';
         $this->modalTurno = true;
         $this->resetValidation();
@@ -334,6 +369,7 @@ class GestionTurnos extends Component
             return;
         }
 
+        $this->cerrarTodosLosModalesTurnos();
         $this->modoTurno = 'editar';
         $this->modalTurno = true;
         $this->resetValidation();
@@ -447,6 +483,7 @@ class GestionTurnos extends Component
 
     public function abrirModalCrearPlantilla(?string $codTur = null, string $tipo = 'REGULAR'): void
     {
+        $this->cerrarTodosLosModalesTurnos();
         $this->modoPlantilla = 'crear';
         $this->modalPlantilla = true;
         $this->resetValidation();
@@ -455,7 +492,8 @@ class GestionTurnos extends Component
         $tipo = in_array($tipo, ['REGULAR', 'INVIERNO'], true) ? $tipo : 'REGULAR';
 
         $this->formPlantilla['tip_pho'] = $tipo;
-        $this->formPlantilla['dur_blo_pho'] = $tipo === 'INVIERNO' ? 30 : 45;
+        // Sugerencia institucional: 40 min por bloque regular.
+        $this->formPlantilla['dur_blo_pho'] = $tipo === 'INVIERNO' ? 30 : 40;
 
         if ($codTur) {
             $turno = $this->buscarTurno($codTur);
@@ -487,6 +525,7 @@ class GestionTurnos extends Component
             return;
         }
 
+        $this->cerrarTodosLosModalesTurnos();
         $this->modoPlantilla = 'editar';
         $this->modalPlantilla = true;
         $this->resetValidation();
@@ -670,6 +709,7 @@ class GestionTurnos extends Component
             return;
         }
 
+        $this->cerrarTodosLosModalesTurnos();
         $this->plantillaParaAplicar = $plantilla;
         $this->modalAplicarPlantilla = true;
     }
@@ -822,6 +862,7 @@ class GestionTurnos extends Component
 
     public function abrirModalCrearBloque(?string $codPho = null): void
     {
+        $this->cerrarTodosLosModalesTurnos();
         $this->modoBloque = 'crear';
         $this->modalBloque = true;
         $this->resetValidation();
@@ -852,6 +893,7 @@ class GestionTurnos extends Component
             return;
         }
 
+        $this->cerrarTodosLosModalesTurnos();
         $this->modoBloque = 'editar';
         $this->modalBloque = true;
         $this->resetValidation();
@@ -981,6 +1023,86 @@ class GestionTurnos extends Component
         }
     }
 
+    public function abrirModalGenerarBloques(string $codPho): void
+    {
+        $plantilla = DB::table('plantilla_horaria')->where('cod_pho', $codPho)->first();
+        if (! $plantilla) {
+            $this->dispatch('error-general', mensaje: 'No se encontró la plantilla seleccionada.');
+            return;
+        }
+
+        $turno = DB::table('turno')->where('cod_tur', $plantilla->cod_tur)->first();
+
+        $this->cerrarTodosLosModalesTurnos();
+
+        $this->formAutogenerar = [
+            'cod_pho' => $codPho,
+            'hora_inicio' => $turno ? substr((string) $turno->hor_ini_tur, 0, 5) : '08:00',
+            'cantidad_bloques' => 8,
+            'duracion_bloque_min' => (int) ($plantilla->dur_blo_pho ?? ($plantilla->tip_pho === 'INVIERNO' ? 30 : 40)),
+            'usa_recreo' => true,
+            'recreo_despues_de' => 4,
+            'duracion_recreo_min' => $plantilla->tip_pho === 'INVIERNO' ? 30 : 20,
+            'tipo_plantilla' => $plantilla->tip_pho ?? 'REGULAR',
+            'confirmar_regenerar' => false,
+        ];
+
+        $this->actualizarPreviewBloques();
+        $this->modalAutogenerar = true;
+    }
+
+    public function abrirModalAutogenerar(string $codPho): void
+    {
+        // Backward-compat interno: la vista vieja puede seguir llamando abrirModalAutogenerar.
+        $this->abrirModalGenerarBloques($codPho);
+    }
+
+    public function cerrarModalGenerarBloques(): void
+    {
+        $this->modalAutogenerar = false;
+        $this->analisisAutogenerar = [];
+        $this->formAutogenerar['confirmar_regenerar'] = false;
+        $this->resetValidation();
+    }
+
+    public function actualizarPreviewBloques(): void
+    {
+        $this->analisisAutogenerar = $this->soporte->analizarGeneracionAutomaticaBloques($this->formAutogenerar);
+    }
+
+    public function generarPreviewBloques(): void
+    {
+        $this->actualizarPreviewBloques();
+    }
+
+    public function guardarBloquesAutomaticos(): void
+    {
+        $resultado = $this->soporte->guardarBloquesAutomaticos($this->formAutogenerar);
+
+        if (! ($resultado['success'] ?? false)) {
+            if (isset($resultado['bloqueos']) && !empty($resultado['bloqueos'])) {
+                $this->analisisAutogenerar['bloqueos'] = $resultado['bloqueos'];
+            }
+            $this->dispatch('error-general', mensaje: $resultado['mensaje'] ?? 'No se pudo generar la estructura de bloques.');
+            return;
+        }
+
+        $codPho = $this->formAutogenerar['cod_pho'];
+
+        $this->cerrarModalGenerarBloques();
+        $this->auditarEstructuraSilenciosa();
+        $this->actualizarVistaPrevia();
+        $this->plantillaSeleccionada = $codPho;
+
+        $this->dispatch('success-general', mensaje: 'Estructura de bloques generada correctamente.');
+    }
+
+    public function guardarAutogenerados(): void
+    {
+        // Compatibilidad interna con la vista actual.
+        $this->guardarBloquesAutomaticos();
+    }
+
     public function validarBloquesDePlantilla(?string $codPho = null): void
     {
         $codPho = $codPho ?: $this->plantillaSeleccionada;
@@ -1081,6 +1203,7 @@ class GestionTurnos extends Component
             return;
         }
 
+        $this->cerrarTodosLosModalesTurnos();
         $this->turnoSeleccionado = $codTur;
         $this->detalleTurno = $this->detalleTurno($codTur);
         $this->modalDetalleTurno = true;
@@ -1094,6 +1217,7 @@ class GestionTurnos extends Component
 
     public function abrirVistaPreviaAplicacion(): void
     {
+        $this->cerrarTodosLosModalesTurnos();
         $this->actualizarVistaPrevia();
         $this->modalVistaPrevia = true;
     }
@@ -1144,6 +1268,7 @@ class GestionTurnos extends Component
             'analisis' => $analisis,
         ];
 
+        $this->cerrarTodosLosModalesTurnos();
         $this->modalDesactivar = true;
     }
 
@@ -1864,7 +1989,7 @@ class GestionTurnos extends Component
             'des_pho' => '',
             'fec_ini_pho' => '',
             'fec_fin_pho' => '',
-            'dur_blo_pho' => 45,
+            'dur_blo_pho' => 40,
             'ord_pho' => 1,
             'act_pho' => false,
             'est_pho' => true,
@@ -2092,11 +2217,25 @@ class GestionTurnos extends Component
         ];
     }
 
-    private function registrarBitacora(string $accion, string $tabla, string $registro, string $descripcion): void
+    public function registrarBitacora(string $accion, string $tabla, string $registro, string $descripcion): void
     {
+        $this->registrarBitacoraSeguro($accion, $tabla, $registro, $descripcion);
+    }
+
+    private function registrarBitacoraSeguro(
+        string $accion,
+        string $tabla,
+        string $registro,
+        string $descripcion,
+        string $nombreVisible = '',
+        string $nivel = 'SUCCESS',
+        ?array $valoresAnteriores = null,
+        ?array $valoresNuevos = null
+    ): void {
         try {
-            if (function_exists('activity')) {
+            if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
                 activity()
+                    ->performedOn($this->tablaExiste($tabla) ? DB::table($tabla)->where('cod_' . substr($tabla, 0, 3), $registro)->first() : null)
                     ->causedBy(auth()->user())
                     ->withProperties([
                         'modulo' => 'Gestión de Turnos',
@@ -2115,17 +2254,67 @@ class GestionTurnos extends Component
         }
 
         try {
-            $payload = [
-                'cod_bit' => $this->generarCodigo('bitacora', 'cod_bit', 'BIT'),
-                'acc_bit' => $accion,
-                'tab_bit' => $tabla,
-                'reg_bit' => $registro,
-                'cod_usu' => auth()->user()->cod_usu ?? auth()->id(),
-                'fec_bit' => now(),
-                'est_bit' => 'ACTIVO',
-            ];
+            $columnas = Schema::getColumnListing('bitacora');
+            $request = request();
+            $usuario = auth()->user();
+            $payload = [];
 
-            DB::table('bitacora')->insert($this->filtrarColumnas('bitacora', $payload));
+            if (in_array('cod_bit', $columnas, true)) {
+                $payload['cod_bit'] = $this->generarCodigo('bitacora', 'cod_bit', 'BIT');
+            }
+            if (in_array('acc_bit', $columnas, true)) {
+                $payload['acc_bit'] = $accion;
+            }
+            if (in_array('tab_bit', $columnas, true)) {
+                $payload['tab_bit'] = $tabla;
+            }
+            if (in_array('reg_bit', $columnas, true)) {
+                $payload['reg_bit'] = $registro;
+            }
+            if (in_array('cod_usu', $columnas, true)) {
+                $payload['cod_usu'] = $usuario?->cod_usu ?? auth()->id();
+            }
+            if (in_array('rol_bit', $columnas, true)) {
+                $payload['rol_bit'] = $usuario?->getRoleNames()?->first() ?? 'Sin rol';
+            }
+            if (in_array('fec_bit', $columnas, true)) {
+                $payload['fec_bit'] = now();
+            }
+            if (in_array('mod_bit', $columnas, true)) {
+                $payload['mod_bit'] = 'Gestión de Turnos';
+            }
+            if (in_array('nom_reg_bit', $columnas, true)) {
+                $payload['nom_reg_bit'] = $nombreVisible ?: $registro;
+            }
+            if (in_array('des_bit', $columnas, true)) {
+                $payload['des_bit'] = $descripcion;
+            }
+            if (in_array('niv_bit', $columnas, true)) {
+                $payload['niv_bit'] = $nivel;
+            }
+            if (in_array('res_bit', $columnas, true)) {
+                $payload['res_bit'] = 'EXITOSO';
+            }
+            if (in_array('ip_bit', $columnas, true)) {
+                $payload['ip_bit'] = $request?->ip() ?? '127.0.0.1';
+            }
+            if (in_array('age_bit', $columnas, true)) {
+                $payload['age_bit'] = $request?->userAgent() ?? 'SAVP-TIS3';
+            }
+            if (in_array('rut_bit', $columnas, true)) {
+                $payload['rut_bit'] = $request?->path() ?? 'livewire';
+            }
+            if (in_array('met_bit', $columnas, true)) {
+                $payload['met_bit'] = $request?->method() ?? 'POST';
+            }
+            if (in_array('val_ant_bit', $columnas, true) && $valoresAnteriores !== null) {
+                $payload['val_ant_bit'] = json_encode($valoresAnteriores, JSON_UNESCAPED_UNICODE);
+            }
+            if (in_array('val_nue_bit', $columnas, true) && $valoresNuevos !== null) {
+                $payload['val_nue_bit'] = json_encode($valoresNuevos, JSON_UNESCAPED_UNICODE);
+            }
+
+            DB::table('bitacora')->insert($payload);
         } catch (Throwable) {
             //
         }

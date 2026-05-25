@@ -191,12 +191,23 @@
         .savp-modal-wrap {
             position: fixed;
             inset: 0;
-            z-index: 60;
+            z-index: 9999;
             display: flex;
             align-items: flex-start;
             justify-content: center;
             padding: 1rem;
             overflow-y: auto;
+        }
+
+        .savp-modal-wrap .ui-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+        }
+
+        .savp-modal-wrap .ui-modal {
+            position: relative;
+            z-index: 10000;
         }
 
         @media (min-width: 768px) {
@@ -1045,12 +1056,22 @@
                     <div class="mt-4 flex flex-wrap gap-2">
                         <button
                             type="button"
+                            wire:click="abrirModalAutogenerar('{{ $plantillaSeleccionada }}')"
+                            @disabled(! $plantillaSeleccionada)
+                            class="ui-btn-primary px-3 py-2 text-xs"
+                        >
+                            {!! $icon('bolt', 'h-4 w-4') !!} Autogenerar
+                        </button>
+
+                        <button
+                            type="button"
                             wire:click="validarBloquesDePlantilla"
                             @disabled(! $plantillaSeleccionada)
                             class="ui-btn-secondary px-3 py-2 text-xs"
                         >
                             Validar bloques
                         </button>
+
 
                         <button
                             type="button"
@@ -1383,7 +1404,7 @@
                                         wire:model.live.debounce.800ms="formPlantilla.dur_blo_pho"
                                         wire:blur="analizarPlantillaTiempoReal"
                                         class="ui-input pr-14"
-                                        placeholder="45"
+                                        placeholder="40"
                                     >
                                     <span class="ui-muted pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold">
                                         min
@@ -1395,7 +1416,7 @@
                                 @enderror
 
                                 <p class="ui-help">
-                                    Regular suele usar una duración base mayor; invierno puede reducir la duración.
+                                    Sugerencia: Regular 40 min por bloque. Invierno suele usar 30 min. Puedes ajustar según norma institucional.
                                 </p>
                             </div>
 
@@ -3542,9 +3563,288 @@
         </div>
     @endif
 
+    {{-- MODAL AUTOGENERAR ESTRUCTURA DE BLOQUES --}}
+    @if ($modalAutogenerar)
+        <div class="savp-modal-wrap">
+            <div class="ui-modal-backdrop" wire:click="cerrarModalGenerarBloques"></div>
+
+            <div class="ui-modal max-h-[92vh] w-full max-w-5xl overflow-y-auto z-[9999] relative savp-appear">
+                <div class="ui-modal-header flex items-center justify-between gap-4">
+                    <div>
+                        <p class="ui-kicker">Herramienta inteligente de automatización</p>
+                        <h3 class="ui-title text-xl font-black">
+                            Autogenerar secuencia de bloques
+                        </h3>
+                        <p class="ui-muted mt-1 text-sm">
+                            Genera de manera automática los bloques de clase y el recreo correspondiente para la plantilla seleccionada.
+                        </p>
+                    </div>
+
+                    <button type="button" wire:click="cerrarModalGenerarBloques" class="ui-icon-btn">
+                        {!! $icon('x') !!}
+                    </button>
+                </div>
+
+                <div class="grid gap-6 p-5 lg:grid-cols-[1fr_1.2fr]">
+                    {{-- FORMULARIO DE ENTRADA --}}
+                    <div class="space-y-5">
+                        @php
+                            $plantilla = collect($plantillasCatalogo)->firstWhere('cod_pho', $formAutogenerar['cod_pho']);
+                        @endphp
+                        
+                        <div class="ui-card-soft p-4 rounded-2xl border border-ui-border bg-ui-surface">
+                            <p class="ui-muted text-xs font-bold uppercase tracking-wider">Plantilla destino</p>
+                            <h4 class="text-base font-black mt-1 text-ui-text">
+                                {{ $plantilla['nombre'] ?? 'Plantilla' }}
+                            </h4>
+                            <div class="mt-2 flex flex-wrap gap-2">
+                                <span class="ui-badge-success">
+                                    {{ $plantilla['tipo'] ?? 'REGULAR' }}
+                                </span>
+                                <span class="ui-badge-info">
+                                    {!! $icon('clock', 'h-3.5 w-3.5 mr-1') !!} Base {{ $plantilla['duracion_base'] ?? 40 }} min
+                                </span>
+                                @if (isset($plantilla['turno']['nombre']))
+                                    <span class="ui-badge-muted">
+                                        {{ $plantilla['turno']['nombre'] }} ({{ $plantilla['turno']['hora_inicio'] }} - {{ $plantilla['turno']['hora_fin'] }})
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="ui-label font-bold">Hora de inicio de jornada</label>
+                                <input
+                                    type="time"
+                                    wire:model.live="formAutogenerar.hora_inicio"
+                                    wire:change="actualizarPreviewBloques"
+                                    class="ui-input mt-1"
+                                >
+                                <p class="ui-muted text-xs mt-1">Hora de inicio del primer bloque académico.</p>
+                            </div>
+
+                            <div>
+                                <label class="ui-label font-bold">Cantidad de bloques de clase</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max="15"
+                                    wire:model.live="formAutogenerar.cantidad_bloques"
+                                    wire:change="actualizarPreviewBloques"
+                                    class="ui-input mt-1"
+                                >
+                                <p class="ui-muted text-xs mt-1">Número de periodos lectivos a generar (entre 1 y 15).</p>
+                            </div>
+
+                            <div>
+                                <label class="ui-label font-bold">Duración por bloque (minutos)</label>
+                                <input
+                                    type="number"
+                                    min="30"
+                                    max="60"
+                                    wire:model.live="formAutogenerar.duracion_bloque_min"
+                                    wire:change="actualizarPreviewBloques"
+                                    class="ui-input mt-1"
+                                    placeholder="40"
+                                >
+                                <p class="ui-muted text-xs mt-1">Sugerencia institucional: 40 min. Se permite 45 min u otros valores razonables.</p>
+                            </div>
+
+                            <div class="ui-card-soft p-4 rounded-xl border border-ui-border">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <input
+                                            type="checkbox"
+                                            id="usa_recreo"
+                                            wire:model.live="formAutogenerar.usa_recreo"
+                                            wire:change="actualizarPreviewBloques"
+                                            class="ui-checkbox"
+                                        >
+                                        <label for="usa_recreo" class="text-sm font-black text-ui-text cursor-pointer">
+                                            Insertar bloque de recreo
+                                        </label>
+                                    </div>
+                                    <span class="ui-badge-success text-xs">Propio</span>
+                                </div>
+                                <p class="ui-muted text-xs mt-1 pl-7">Puedes definir después de qué bloque se inserta el recreo.</p>
+
+                                @if ($formAutogenerar['usa_recreo'] ?? false)
+                                    <div class="mt-4 pl-7">
+                                        <div class="grid gap-3 sm:grid-cols-2">
+                                            <div>
+                                                <label class="ui-label font-bold">Recreo después del bloque</label>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    wire:model.live="formAutogenerar.recreo_despues_de"
+                                                    wire:change="actualizarPreviewBloques"
+                                                    class="ui-input mt-1"
+                                                >
+                                            </div>
+
+                                            <div>
+                                                <label class="ui-label font-bold">Duración del recreo (minutos)</label>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    wire:model.live="formAutogenerar.duracion_recreo_min"
+                                                    wire:change="actualizarPreviewBloques"
+                                                    class="ui-input mt-1"
+                                                >
+                                                <p class="ui-muted text-xs mt-1">Regular: sugerido max 20 min. Invierno: sugerido max 30 min.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        @if (($analisisAutogenerar['resumen']['uso']['bloques'] ?? 0) > 0)
+                            <div class="ui-alert-warning p-4 rounded-xl">
+                                <p class="text-xs font-black">Esta plantilla ya tiene bloques guardados.</p>
+                                <p class="ui-muted text-xs mt-1">Para regenerar, los bloques actuales se inactivarán (no se eliminan físicamente).</p>
+                                <label class="mt-3 flex items-center gap-3 text-xs font-bold text-ui-text">
+                                    <input type="checkbox" wire:model.live="formAutogenerar.confirmar_regenerar" wire:change="actualizarPreviewBloques" class="ui-checkbox">
+                                    Confirmo regeneración
+                                </label>
+                            </div>
+                        @endif
+
+                        {{-- SECCIÓN DE MENSAJES INTELIGENTES --}}
+                        @if ($analisisAutogenerar)
+                            <div class="space-y-3 pt-2">
+                                @if (!empty($analisisAutogenerar['bloqueos']))
+                                    <div class="ui-alert-danger p-4 rounded-xl">
+                                        <h5 class="font-black text-sm flex items-center gap-2">
+                                            {!! $icon('warning', 'h-4 w-4') !!} Errores críticos (Bloqueo)
+                                        </h5>
+                                        <ul class="list-disc pl-5 mt-2 space-y-1 text-xs">
+                                            @foreach ($analisisAutogenerar['bloqueos'] as $bloqueo)
+                                                <li>{{ $bloqueo }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
+                                @if (!empty($analisisAutogenerar['advertencias']))
+                                    <div class="ui-alert-warning p-4 rounded-xl">
+                                        <h5 class="font-black text-sm flex items-center gap-2">
+                                            {!! $icon('warning', 'h-4 w-4') !!} Advertencias de diseño
+                                        </h5>
+                                        <ul class="list-disc pl-5 mt-2 space-y-1 text-xs">
+                                            @foreach ($analisisAutogenerar['advertencias'] as $advertencia)
+                                                <li>{{ $advertencia }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+
+                                @if (!empty($analisisAutogenerar['sugerencias']))
+                                    <div class="ui-alert-info p-4 rounded-xl">
+                                        <h5 class="font-black text-sm flex items-center gap-2">
+                                            {!! $icon('filter', 'h-4 w-4') !!} Sugerencias de optimización
+                                        </h5>
+                                        <ul class="list-disc pl-5 mt-2 space-y-1 text-xs">
+                                            @foreach ($analisisAutogenerar['sugerencias'] as $sugerencia)
+                                                <li>{{ $sugerencia }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- VISTA PREVIA DE BLOQUES --}}
+                    <div class="ui-card-soft p-4 rounded-2xl border border-ui-border flex flex-col justify-between max-h-[60vh] lg:max-h-[70vh] overflow-y-auto bg-ui-surface-soft">
+                        <div>
+                            <div class="flex items-center justify-between pb-3 border-b border-ui-border">
+                                <h4 class="text-sm font-black text-ui-text flex items-center gap-2">
+                                    {!! $icon('timeline', 'h-4 w-4 text-ui-primary') !!} Vista previa de secuencia horaria
+                                </h4>
+                                <span class="text-xs font-bold ui-muted">
+                                    {{ count($analisisAutogenerar['preview_bloques'] ?? []) }} periodos
+                                </span>
+                            </div>
+
+                            @if (!empty($analisisAutogenerar['preview_bloques']))
+                                <div class="mt-4 space-y-3">
+                                    @foreach ($analisisAutogenerar['preview_bloques'] as $b)
+                                        <div class="flex items-center justify-between p-3 rounded-xl border border-ui-border bg-ui-surface transition hover:border-ui-primary-soft">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-8 w-8 rounded-lg flex items-center justify-center font-black text-xs {{ $b['es_recreo'] ? 'ui-badge-violet' : 'ui-badge-success' }}">
+                                                    {{ $b['numero'] }}
+                                                </div>
+                                                <div>
+                                                    <p class="text-sm font-black text-ui-text">
+                                                        {{ $b['nombre'] }}
+                                                    </p>
+                                                    <p class="text-xs ui-muted">
+                                                        {{ $b['tipo'] }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-sm font-black text-ui-primary">
+                                                    {{ $b['hora_inicio'] }} - {{ $b['hora_fin'] }}
+                                                </p>
+                                                <p class="text-xs ui-muted">
+                                                    {{ $b['duracion_min'] }} minutos
+                                                </p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="py-12 text-center">
+                                    <div class="h-12 w-12 rounded-full ui-badge-muted flex items-center justify-center mx-auto">
+                                        {!! $icon('clock', 'h-6 w-6') !!}
+                                    </div>
+                                    <p class="text-sm font-semibold mt-4 text-ui-muted">
+                                        Ingresa parámetros válidos para calcular la secuencia horaria.
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="pt-4 mt-4 border-t border-ui-border flex items-center justify-between gap-4">
+                            <div>
+                                <span class="text-xs ui-muted">Estado del generador:</span>
+                                <p class="text-sm font-black mt-0.5 {{ ($analisisAutogenerar['puede_continuar'] ?? false) ? 'text-ui-success' : 'text-ui-danger' }}">
+                                    {{ ($analisisAutogenerar['puede_continuar'] ?? false) ? 'Listo para guardar' : 'Incompleto o bloqueado' }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui-modal-footer flex justify-end gap-3 p-5 border-t border-ui-border bg-ui-surface">
+                    <button
+                        type="button"
+                        wire:click="cerrarModalGenerarBloques"
+                        class="ui-btn-secondary"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="button"
+                        wire:click="guardarBloquesAutomaticos"
+                        @disabled(! ($analisisAutogenerar['puede_continuar'] ?? false) || ((($analisisAutogenerar['resumen']['uso']['bloques'] ?? 0) > 0) && ! ($formAutogenerar['confirmar_regenerar'] ?? false)))
+                        class="ui-btn-primary"
+                    >
+                        {!! $icon('check', 'h-4 w-4 mr-1') !!} Guardar estructura
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
     {{-- MODAL VISTA PREVIA DE APLICACIÓN HORARIA --}}
     @if ($modalVistaPrevia)
         <div class="savp-modal-wrap">
+
             <div class="ui-modal-backdrop"></div>
 
             <div class="ui-modal max-h-[92vh] w-full max-w-6xl overflow-y-auto">

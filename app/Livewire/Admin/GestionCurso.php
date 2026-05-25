@@ -2444,13 +2444,14 @@ class GestionCurso extends Component
 
         $registros = DB::table('horario_detalle')
             ->join('horario', 'horario.cod_hor', '=', 'horario_detalle.cod_hor')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
             ->join('horario_bloque', 'horario_bloque.cod_hbl', '=', 'horario_detalle.cod_hbl')
             ->where('horario.cod_cur', $codCur)
             ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn($q) => $q->where('horario.cod_gea', $codGestion))
             ->select([
                 'horario_detalle.*',
                 'horario.cod_gea',
-                'horario.cod_tur',
+                'plantilla_horaria.cod_tur as cod_tur',
                 'horario_bloque.num_hbl',
             ])
             ->get();
@@ -2607,8 +2608,11 @@ class GestionCurso extends Component
             $query->leftJoin('paralelo', 'paralelo.cod_par', '=', 'horario.cod_par');
         }
 
-        if ($this->tablaExiste('turno') && $this->columnaExiste('horario', 'cod_tur')) {
-            $query->leftJoin('turno', 'turno.cod_tur', '=', 'horario.cod_tur');
+        if ($this->tablaExiste('plantilla_horaria') && $this->columnaExiste('horario', 'cod_pho')) {
+            $query->leftJoin('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho');
+            if ($this->tablaExiste('turno') && $this->columnaExiste('plantilla_horaria', 'cod_tur')) {
+                $query->leftJoin('turno', 'turno.cod_tur', '=', 'plantilla_horaria.cod_tur');
+            }
         }
 
         if ($this->tablaExiste('horario_detalle')) {
@@ -2617,10 +2621,14 @@ class GestionCurso extends Component
 
         $select = ['horario.cod_cur'];
 
-        foreach (['cod_hor', 'cod_gea', 'cod_par', 'cod_tur'] as $columna) {
+        foreach (['cod_hor', 'cod_gea', 'cod_par'] as $columna) {
             if ($this->columnaExiste('horario', $columna)) {
                 $select[] = "horario.{$columna}";
             }
+        }
+
+        if ($this->tablaExiste('plantilla_horaria') && $this->columnaExiste('plantilla_horaria', 'cod_tur')) {
+            $select[] = 'plantilla_horaria.cod_tur as cod_tur';
         }
 
         if ($this->tablaExiste('horario_detalle')) {
@@ -2650,7 +2658,7 @@ class GestionCurso extends Component
                 'horario.cod_cur',
                 $this->columnaExiste('horario', 'cod_gea') ? 'horario.cod_gea' : null,
                 $this->columnaExiste('horario', 'cod_par') ? 'horario.cod_par' : null,
-                $this->columnaExiste('horario', 'cod_tur') ? 'horario.cod_tur' : null,
+                ($this->tablaExiste('plantilla_horaria') && $this->columnaExiste('plantilla_horaria', 'cod_tur')) ? 'plantilla_horaria.cod_tur' : null,
             ])))
             ->orderBy('paralelo')
             ->orderBy('turno')
@@ -2796,6 +2804,7 @@ class GestionCurso extends Component
 
         return DB::table('horario_detalle')
             ->join('horario', 'horario.cod_hor', '=', 'horario_detalle.cod_hor')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
             ->join('horario_bloque', 'horario_bloque.cod_hbl', '=', 'horario_detalle.cod_hbl')
             ->where('horario.cod_cur', $codCur)
             ->where('horario_bloque.num_hbl', $numBloque)
@@ -2804,9 +2813,7 @@ class GestionCurso extends Component
             ->when($this->horarioParalelo, fn($q) => $q->where('horario.cod_par', $this->horarioParalelo))
             ->when(
                 $this->horarioTurno,
-                fn($q) => $q
-                    ->where('horario.cod_tur', $this->horarioTurno)
-                    ->where('horario_bloque.cod_tur', $this->horarioTurno)
+                fn($q) => $q->where('plantilla_horaria.cod_tur', $this->horarioTurno)
             )
             ->when($this->columnaExiste('horario_detalle', 'est_hde'), function ($q) {
                 $this->aplicarFiltroEstado($q, 'horario_detalle', 'est_hde', 'ACTIVO');
@@ -2816,7 +2823,7 @@ class GestionCurso extends Component
                 'horario.cod_gea',
                 'horario.cod_cur',
                 'horario.cod_par',
-                'horario.cod_tur',
+                'plantilla_horaria.cod_tur as cod_tur',
                 'horario_bloque.num_hbl',
                 'horario_bloque.hor_ini_hbl',
                 'horario_bloque.hor_fin_hbl',
@@ -2826,25 +2833,33 @@ class GestionCurso extends Component
 
     private function bloquesInstitucionales(): array
     {
-        if ($this->tablaExiste('horario_bloque') && $this->columnaExiste('horario_bloque', 'cod_tur')) {
-            $bloques = DB::table('horario_bloque')
+        if ($this->tablaExiste('horario_bloque') && $this->tablaExiste('plantilla_horaria')) {
+            $plantilla = DB::table('plantilla_horaria')
                 ->where('cod_tur', $this->horarioTurno)
-                ->when($this->columnaExiste('horario_bloque', 'est_hbl'), function ($q) {
-                    $this->aplicarFiltroEstado($q, 'horario_bloque', 'est_hbl', 'ACTIVO');
-                })
-                ->orderBy('num_hbl')
-                ->get();
+                ->where('est_pho', true)
+                ->orderByDesc('act_pho')
+                ->first();
 
-            if ($bloques->isNotEmpty()) {
-                return $bloques
-                    ->map(fn($bloque) => [
-                        'cod_hbl' => $bloque->cod_hbl,
-                        'num_blo_hor' => (int) $bloque->num_hbl,
-                        'hor_ini_hor' => substr((string) $bloque->hor_ini_hbl, 0, 5),
-                        'hor_fin_hor' => substr((string) $bloque->hor_fin_hbl, 0, 5),
-                        'nom_hbl' => $bloque->nom_hbl ?? ('Bloque ' . $bloque->num_hbl),
-                    ])
-                    ->toArray();
+            if ($plantilla) {
+                $bloques = DB::table('horario_bloque')
+                    ->where('cod_pho', $plantilla->cod_pho)
+                    ->when($this->columnaExiste('horario_bloque', 'est_hbl'), function ($q) {
+                        $this->aplicarFiltroEstado($q, 'horario_bloque', 'est_hbl', 'ACTIVO');
+                    })
+                    ->orderBy('num_hbl')
+                    ->get();
+
+                if ($bloques->isNotEmpty()) {
+                    return $bloques
+                        ->map(fn($bloque) => [
+                            'cod_hbl' => $bloque->cod_hbl,
+                            'num_blo_hor' => (int) $bloque->num_hbl,
+                            'hor_ini_hor' => substr((string) $bloque->hor_ini_hbl, 0, 5),
+                            'hor_fin_hor' => substr((string) $bloque->hor_fin_hbl, 0, 5),
+                            'nom_hbl' => $bloque->nom_hbl ?? ('Bloque ' . $bloque->num_hbl),
+                        ])
+                        ->toArray();
+                }
             }
         }
 
@@ -2878,12 +2893,22 @@ class GestionCurso extends Component
 
     private function bloqueHorarioPorNumero(int $numeroBloque): ?object
     {
-        if (! $this->tablaExiste('horario_bloque')) {
+        if (! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('plantilla_horaria')) {
+            return null;
+        }
+
+        $plantilla = DB::table('plantilla_horaria')
+            ->where('cod_tur', $this->horarioTurno)
+            ->where('est_pho', true)
+            ->orderByDesc('act_pho')
+            ->first();
+
+        if (!$plantilla) {
             return null;
         }
 
         return DB::table('horario_bloque')
-            ->where('cod_tur', $this->horarioTurno)
+            ->where('cod_pho', $plantilla->cod_pho)
             ->where('num_hbl', $numeroBloque)
             ->when($this->columnaExiste('horario_bloque', 'est_hbl'), function ($q) {
                 $this->aplicarFiltroEstado($q, 'horario_bloque', 'est_hbl', 'ACTIVO');
@@ -2900,10 +2925,12 @@ class GestionCurso extends Component
         }
 
         return DB::table('horario')
-            ->where('cod_gea', $this->horarioGestion)
-            ->where('cod_cur', $codCur)
-            ->where('cod_par', $this->horarioParalelo)
-            ->where('cod_tur', $this->horarioTurno)
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
+            ->where('horario.cod_gea', $this->horarioGestion)
+            ->where('horario.cod_cur', $codCur)
+            ->where('horario.cod_par', $this->horarioParalelo)
+            ->where('plantilla_horaria.cod_tur', $this->horarioTurno)
+            ->select('horario.*')
             ->first();
     }
 
@@ -2915,7 +2942,19 @@ class GestionCurso extends Component
             return $existente;
         }
 
-        if (! $this->tablaExiste('horario')) {
+        if (! $this->tablaExiste('horario') || ! $this->tablaExiste('plantilla_horaria')) {
+            return null;
+        }
+
+        // Buscar plantilla activa del turno
+        $plantilla = DB::table('plantilla_horaria')
+            ->where('cod_tur', $this->horarioTurno)
+            ->where('est_pho', true)
+            ->orderByDesc('act_pho')
+            ->first();
+
+        if (!$plantilla) {
+            $this->dispatch('error-general', mensaje: 'No hay una plantilla horaria activa para este turno.');
             return null;
         }
 
@@ -2926,7 +2965,7 @@ class GestionCurso extends Component
             'cod_gea' => $this->horarioGestion,
             'cod_cur' => $this->cursoSeleccionado,
             'cod_par' => $this->horarioParalelo,
-            'cod_tur' => $this->horarioTurno,
+            'cod_pho' => $plantilla->cod_pho,
         ];
 
         if ($this->columnaExiste('horario', 'nom_hor')) {
@@ -2961,7 +3000,7 @@ class GestionCurso extends Component
             tabla: 'horario',
             registro: $codHor,
             nombreRegistro: $this->nombreCurso($this->cursoSeleccionado),
-            descripcion: 'Se creó la cabecera institucional del horario para curso, gestión, paralelo y turno.',
+            descripcion: 'Se creó la cabecera del horario para curso, gestión, paralelo y plantilla.',
             nivel: 'INFO',
             resultado: 'EXITOSO',
             valoresNuevos: $data
@@ -3001,11 +3040,12 @@ class GestionCurso extends Component
 
         $registros = DB::table('horario_detalle')
             ->join('horario', 'horario.cod_hor', '=', 'horario_detalle.cod_hor')
+            ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
             ->join('horario_bloque', 'horario_bloque.cod_hbl', '=', 'horario_detalle.cod_hbl')
             ->where('horario_detalle.dia_hde', strtoupper($dia))
             ->where('horario_bloque.num_hbl', $bloque)
             ->when($this->horarioGestion, fn($q) => $q->where('horario.cod_gea', $this->horarioGestion))
-            ->when($this->horarioTurno, fn($q) => $q->where('horario.cod_tur', $this->horarioTurno))
+            ->when($this->horarioTurno, fn($q) => $q->where('plantilla_horaria.cod_tur', $this->horarioTurno))
             ->select('horario_detalle.*')
             ->get();
 
