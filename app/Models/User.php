@@ -40,6 +40,10 @@ class User extends Authenticatable
         'two_factor_recovery_codes',
         'two_factor_confirmed_at',
         'est_usu',
+        'google_id',
+        'avatar',
+        'auth_provider',
+        'last_login_at',
     ];
 
     protected $hidden = [

@@ -12,10 +12,24 @@ use App\Http\Controllers\Admin\GestionAsignaturaController;
 use App\Http\Controllers\Admin\GestionParaleloController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\GoogleAuthController;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
+
+/*
+|--------------------------------------------------------------------------
+| Rutas de Autenticación con Google
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
+        ->name('google.redirect');
+
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+        ->name('google.callback');
+});
 
 /*
 |--------------------------------------------------------------------------

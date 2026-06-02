@@ -510,6 +510,28 @@
                     </div>
                 </form>
 
+                <!-- Divisor y Botón de Google -->
+                <div class="fade-up delay-4 mt-6">
+                    <div class="relative flex items-center justify-center my-4">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-slate-200/80 dark:border-slate-700/70"></div>
+                        </div>
+                        <span class="relative px-4 text-xs font-black uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400" style="background-color: var(--ui-surface);">
+                            O bien
+                        </span>
+                    </div>
+
+                    <a href="{{ route('google.redirect') }}" class="google-auth-button">
+                        <svg class="google-auth-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                        </svg>
+                        <span>Continuar con Google institucional</span>
+                    </a>
+                </div>
+
                 <div class="mt-7 border-t border-slate-200/80 pt-5 text-center dark:border-slate-700/70">
                     <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
                         Acceso exclusivo para usuarios autorizados del sistema institucional.
@@ -517,6 +539,43 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal de cuenta no registrada -->
+        @if (session('google_auth_error'))
+            <div x-data="{ open: true }" x-show="open" class="auth-support-modal" style="display: none;">
+                <div class="auth-support-modal-backdrop" @click="open = false"></div>
+                <div class="auth-support-modal-card">
+                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-100 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    
+                    <h2 class="auth-support-modal-title">Cuenta no registrada</h2>
+                    
+                    <p class="auth-support-modal-message">
+                        Tu cuenta de Google fue verificada correctamente, pero no se encuentra registrada en el sistema institucional. Para solicitar tu habilitación, contacta con soporte.
+                    </p>
+                    
+                    <div class="mb-5 text-sm font-bold text-slate-500 dark:text-slate-400">
+                        Soporte: <span class="text-emerald-600 dark:text-emerald-400 font-extrabold">+591 75836807</span>
+                    </div>
+                    
+                    <div class="auth-support-modal-actions">
+                        <a href="https://wa.me/59175836807?text=Hola%2C%20necesito%20habilitar%20mi%20cuenta%20para%20acceder%20al%20Aula%20Virtual%20SAVP-TIS3" target="_blank" rel="noopener noreferrer" class="auth-support-whatsapp-button">
+                            <svg class="h-5 w-5 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.458L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.42 9.864-9.858.002-2.634-1.02-5.111-2.88-6.973C16.536 1.83 14.053.8 11.415.8c-5.436 0-9.862 4.42-9.866 9.86-.001 1.765.487 3.49 1.411 5.025l-.97 3.548 3.657-.96zM17.06 14.37c-.3-.15-1.774-.875-2.05-.976-.275-.1-.475-.15-.675.15-.2.3-.775.976-.95 1.176-.175.2-.35.225-.65.075-.3-.15-1.267-.467-2.413-1.49-1-.892-1.674-1.994-1.874-2.342-.2-.35-.021-.54.129-.689.135-.134.3-.35.45-.525.15-.175.2-.3.3-.5s.05-.375-.025-.525C8.93 8.795 8.35 7.37 8.1 6.77c-.244-.588-.493-.508-.675-.517-.175-.008-.375-.01-.575-.01s-.525.075-.8.375c-.275.3-1.05 1.025-1.05 2.5s1.07 2.9 1.22 3.1c.15.2 2.106 3.216 5.1 4.508.713.308 1.27.492 1.704.63.716.228 1.368.196 1.883.12.573-.085 1.774-.725 2.025-1.425.25-.7.25-1.3.175-1.425-.075-.125-.275-.2-.575-.35z"/>
+                            </svg>
+                            <span>Contactar por WhatsApp</span>
+                        </a>
+                        
+                        <button type="button" @click="open = false" class="auth-support-close-button">
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
