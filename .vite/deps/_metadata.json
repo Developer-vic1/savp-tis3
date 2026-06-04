@@ -1,8 +1,32 @@
 {
-  "hash": "567f38f7",
-  "configHash": "e3db64d9",
+  "hash": "6d04f321",
+  "configHash": "707a89cd",
   "lockfileHash": "81c37af8",
-  "browserHash": "2cf933db",
-  "optimized": {},
-  "chunks": {}
+  "browserHash": "ddfbf2de",
+  "optimized": {
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "15d0a33c",
+      "needsInterop": false
+    },
+    "chart.js/auto": {
+      "src": "../../node_modules/chart.js/auto/auto.js",
+      "file": "chart__js_auto.js",
+      "fileHash": "7ddb1060",
+      "needsInterop": false
+    },
+    "sweetalert2": {
+      "src": "../../node_modules/sweetalert2/dist/sweetalert2.all.js",
+      "file": "sweetalert2.js",
+      "fileHash": "0647ef02",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-DOseaPKx": {
+      "file": "chunk-DOseaPKx.js",
+      "isDynamicEntry": false
+    }
+  }
 }
