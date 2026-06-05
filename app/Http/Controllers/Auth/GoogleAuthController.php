@@ -32,6 +32,11 @@ class GoogleAuthController extends Controller
     public function callback()
     {
         try {
+            $context = session('google_login_context');
+            $loginRoute = $context === 'aula_virtual'
+                ? 'aula-virtual.login'
+                : 'login';
+
             $googleUser = Socialite::driver('google')->user();
             
             if (!$googleUser || !$googleUser->getEmail()) {
@@ -52,8 +57,12 @@ class GoogleAuthController extends Controller
                     report($e);
                 }
 
+                if ($context === 'aula_virtual') {
+                    session()->forget('google_login_context');
+                }
+
                 return redirect()
-                    ->route('login')
+                    ->route($loginRoute)
                     ->with('error', 'No se pudo iniciar sesión con Google. Intenta nuevamente.');
             }
 
@@ -79,8 +88,12 @@ class GoogleAuthController extends Controller
                     report($e);
                 }
 
+                if ($context === 'aula_virtual') {
+                    session()->forget('google_login_context');
+                }
+
                 return redirect()
-                    ->route('login')
+                    ->route($loginRoute)
                     ->with('google_auth_error', true);
             }
 
@@ -113,6 +126,20 @@ class GoogleAuthController extends Controller
             }
 
             // Redirigir según rol
+            if ($context === 'aula_virtual') {
+                session()->forget('google_login_context');
+
+                if (! $user->can('Acceso_Aula_Virtual')) {
+                    Auth::logout();
+
+                    return redirect()
+                        ->route('aula-virtual.login')
+                        ->with('aula_virtual_access_error', true);
+                }
+
+                return redirect()->route('aula-virtual.inicio');
+            }
+
             if ($user->hasRole('Administrador') && Route::has('admin.dashboard')) {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->hasRole('Director') && Route::has('director.dashboard')) {
@@ -148,6 +175,14 @@ class GoogleAuthController extends Controller
             }
 
             report($e);
+
+            if (session('google_login_context') === 'aula_virtual') {
+                session()->forget('google_login_context');
+
+                return redirect()
+                    ->route('aula-virtual.login')
+                    ->with('error', 'No se pudo iniciar sesion con Google. Intenta nuevamente.');
+            }
 
             return redirect()
                 ->route('login')

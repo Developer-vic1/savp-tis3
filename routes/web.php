@@ -1,26 +1,32 @@
 <?php
 
-use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Admin\BitacoraController;
+use App\Http\Controllers\Admin\GestionAcademicaController;
+use App\Http\Controllers\Admin\GestionAsignaturaController;
+use App\Http\Controllers\Admin\GestionCursosController;
 use App\Http\Controllers\Admin\GestionEstudiantesController;
+use App\Http\Controllers\Admin\GestionParaleloController;
 use App\Http\Controllers\Admin\GestionPersonaController;
 use App\Http\Controllers\Admin\GestionPersonalInstitucional;
 use App\Http\Controllers\Admin\GestionUsuarioController;
-use App\Http\Controllers\Admin\BitacoraController;
-use App\Http\Controllers\Admin\GestionAcademicaController;
-use App\Http\Controllers\Admin\GestionCursosController;
-use App\Http\Controllers\Admin\GestionAsignaturaController;
-use App\Http\Controllers\Admin\GestionParaleloController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\DocenteDashboardController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\GoogleAuthController;
 
+/*
+|--------------------------------------------------------------------------
+| Página principal
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
 /*
 |--------------------------------------------------------------------------
-| Rutas de Autenticación con Google
+| Rutas de autenticación con Google
 |--------------------------------------------------------------------------
 */
 Route::middleware('guest')->group(function () {
@@ -33,7 +39,7 @@ Route::middleware('guest')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Dashboard principal
+| Dashboard principal según rol/permisos
 |--------------------------------------------------------------------------
 */
 Route::middleware([
@@ -47,12 +53,31 @@ Route::middleware([
         return app(AdminDashboardController::class)->index();
     }
 
+    if ($user->can('Panel_Docente') || $user->hasRole('Docente')) {
+        return redirect()->route('docente.dashboard');
+    }
+
     abort(403, 'No tienes un panel asignado.');
 })->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
-| Rutas de administración
+| Panel docente institucional
+|--------------------------------------------------------------------------
+*/
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified',
+    'can:Panel_Docente',
+])->prefix('docente')->name('docente.')->group(function () {
+    Route::get('/dashboard', [DocenteDashboardController::class, 'index'])
+        ->name('dashboard');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Rutas de administración institucional
 |--------------------------------------------------------------------------
 */
 Route::middleware([
@@ -61,6 +86,11 @@ Route::middleware([
     'verified',
 ])->prefix('admin')->name('admin.')->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Administración
+    |--------------------------------------------------------------------------
+    */
     Route::get('/gestion-usuarios', [GestionUsuarioController::class, 'index'])
         ->name('gestion-usuarios')
         ->middleware('can:Gestion_Usuarios');
@@ -73,14 +103,24 @@ Route::middleware([
         ->name('personal-institucional')
         ->middleware('can:Personal_Institucional');
 
-    Route::get('/gestion-estudiantes', [GestionEstudiantesController::class, 'index'])
-        ->name('gestion-estudiantes')
-        ->middleware('can:Estudiantes');
-
     Route::get('/bitacora', [BitacoraController::class, 'index'])
         ->name('bitacora')
         ->middleware('can:Bitacora');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Comunidad educativa
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/gestion-estudiantes', [GestionEstudiantesController::class, 'index'])
+        ->name('gestion-estudiantes')
+        ->middleware('can:Estudiantes');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Gestión académica
+    |--------------------------------------------------------------------------
+    */
     Route::get('/gestion-academica', [GestionAcademicaController::class, 'index'])
         ->name('gestion-academica')
         ->middleware('can:Gestion_Academica');
@@ -97,3 +137,10 @@ Route::middleware([
         ->name('gestion-paralelos')
         ->middleware('can:Paralelos');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Rutas del Aula Virtual LMS
+|--------------------------------------------------------------------------
+*/
+require __DIR__ . '/aula_virtual.php';

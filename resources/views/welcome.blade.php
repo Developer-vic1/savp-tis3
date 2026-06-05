@@ -1077,6 +1077,46 @@
                         </p>
                     </div>
 
+                    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+                        <article class="soft-panel scroll-reveal-left rounded-[2rem] p-6">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl"
+                                style="background: var(--landing-primary-soft); color: var(--landing-primary);">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M3.75 21h16.5M4.5 21V7.5A2.25 2.25 0 0 1 6.75 5.25h10.5A2.25 2.25 0 0 1 19.5 7.5V21M9 8.25h1.5M13.5 8.25H15M9 12h1.5m3 0H15M9 15.75h1.5m3 0H15M11.25 21v-3h1.5v3" />
+                                </svg>
+                            </div>
+
+                            <h3 class="font-display mt-4 text-2xl font-black text-main">Sistema Administrativo</h3>
+                            <p class="mt-3 text-sm leading-7 text-soft">
+                                Acceso al sistema administrativo institucional.
+                            </p>
+
+                            <a href="{{ route('login') }}" class="btn-primary mt-6 inline-flex rounded-2xl px-5 py-3 text-sm font-bold">
+                                Ingresar al Sistema
+                            </a>
+                        </article>
+
+                        <article class="soft-panel scroll-reveal-right rounded-[2rem] p-6">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl"
+                                style="background: var(--landing-sky-soft); color: var(--landing-sky);">
+                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                        d="M12 6.75c-2.25-1.5-5.25-1.5-7.5 0v11.25c2.25-1.5 5.25-1.5 7.5 0m0-11.25c2.25-1.5 5.25-1.5 7.5 0v11.25c-2.25-1.5-5.25-1.5-7.5 0m0-11.25v11.25" />
+                                </svg>
+                            </div>
+
+                            <h3 class="font-display mt-4 text-2xl font-black text-main">Aula Virtual</h3>
+                            <p class="mt-3 text-sm leading-7 text-soft">
+                                Acceso para estudiantes y docentes mediante cuenta Google.
+                            </p>
+
+                            <a href="{{ route('aula-virtual.login') }}" class="btn-secondary mt-6 inline-flex rounded-2xl px-5 py-3 text-sm font-bold">
+                                Ingresar al Aula Virtual
+                            </a>
+                        </article>
+                    </div>
+
                     <div class="soft-panel mt-12 grid gap-8 rounded-[2rem] p-8 lg:grid-cols-[1.05fr_.95fr] lg:p-12">
                         <div class="scroll-reveal-left">
                             <div class="flex items-start gap-4">
