@@ -39,8 +39,8 @@ class PeriodoEvaluacion extends Model
 
     // 🔗 Relaciones
 
-    public function inscripciones()
+    public function calificaciones()
     {
-        return $this->hasMany(InscripcionEstudiante::class, 'cod_pev', 'cod_pev');
+        return $this->hasMany(Calificacion::class, 'cod_pev', 'cod_pev');
     }
 }

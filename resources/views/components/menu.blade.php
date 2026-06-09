@@ -182,9 +182,9 @@
                     @can('Estudiantes')
                         <a href="{{ route('admin.gestion-estudiantes') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);"
+                            style="{{ request()->routeIs('admin.gestion-estudiantes') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}"
                             onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-estudiantes') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-estudiantes') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Estudiantes --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -200,8 +200,8 @@
                     @can('Bitacora')
                         <a href="{{ route('admin.bitacora') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.bitacora') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-primary)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.bitacora') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.bitacora') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Bitácora / auditoría --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +220,7 @@
 
         {{-- ACADÉMICO --}}
         @canany(['Gestion_Academica', 'Cursos', 'Paralelos', 'Turnos', 'Asignaturas', 'Especialidades_Tecnicas', 'Periodo_Evaluacion', 'Planes_Asignatura'])
-            <div x-data="{ openAcademico: false }">
+            <div x-data="{ openAcademico: @js(request()->routeIs(['admin.gestion-academica', 'admin.gestion-cursos', 'admin.gestion-paralelos', 'admin.gestion-turnos', 'admin.gestion-asignaturas', 'admin.especialidades-tecnicas', 'admin.periodo-evaluacion', 'admin.planes-asignatura'])) }">
                 <button type="button" @click="openAcademico = !openAcademico"
                     class="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold transition hover:bg-[var(--ui-surface-muted)]"
                     style="color: var(--ui-text-soft);">
@@ -251,8 +251,8 @@
                     @can('Gestion_Academica')
                         <a href="{{ route('admin.gestion-academica') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-academica') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-academica') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-academica') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Gestión académica / calendario --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,8 +267,8 @@
                     @can('Cursos')
                         <a href="{{ route('admin.gestion-cursos') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-cursos') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-cursos') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-cursos') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Cursos / niveles --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -283,8 +283,8 @@
                     @can('Paralelos')
                         <a href="{{ route('admin.gestion-paralelos') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-paralelos') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-paralelos') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-paralelos') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Paralelos / ramas --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,8 +299,8 @@
                     @can('Turnos')
                         <a href="{{ route('admin.gestion-turnos') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-turnos') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-turnos') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-turnos') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Turnos / reloj --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -315,8 +315,8 @@
                     @can('Asignaturas')
                         <a href="{{ route('admin.gestion-asignaturas') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-asignaturas') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-asignaturas') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-asignaturas') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Asignaturas / documento académico --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -331,10 +331,10 @@
                     @endcan
 
                     @can('Especialidades_Tecnicas')
-                        <a href="#"
+                        <a href="{{ route('admin.especialidades-tecnicas') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.especialidades-tecnicas') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.especialidades-tecnicas') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.especialidades-tecnicas') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Especialidades técnicas / herramientas --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -347,10 +347,10 @@
                     @endcan
 
                     @can('Periodo_Evaluacion')
-                        <a href="#"
+                        <a href="{{ route('admin.periodo-evaluacion') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.periodo-evaluacion') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.periodo-evaluacion') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.periodo-evaluacion') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Periodo evaluación / reloj calendario --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -363,10 +363,10 @@
                     @endcan
 
                     @can('Planes_Asignatura')
-                        <a href="#"
+                        <a href="{{ route('admin.planes-asignatura') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.planes-asignatura') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.planes-asignatura') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.planes-asignatura') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Planes / planificación --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -383,7 +383,7 @@
 
         {{-- COMUNIDAD EDUCATIVA --}}
         @canany(['Estudiantes', 'Docentes', 'Inscripciones', 'Institucion_Procedencia', 'Tipo_Vinculacion_Estudiante'])
-            <div x-data="{ openComunidad: false }">
+            <div x-data="{ openComunidad: @js(request()->routeIs(['admin.gestion-estudiantes', 'admin.gestion-docentes', 'admin.gestion-inscripciones', 'admin.institucion-procedencia', 'admin.tipo-vinculacion-estudiante'])) }">
                 <button type="button" @click="openComunidad = !openComunidad"
                     class="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold transition hover:bg-[var(--ui-surface-muted)]"
                     style="color: var(--ui-text-soft);">
@@ -412,10 +412,10 @@
                     class="mt-2 space-y-1 pl-3">
 
                     @can('Estudiantes')
-                        <a href="#"
+                        <a href="{{ route('admin.gestion-estudiantes') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-estudiantes') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-primary)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-estudiantes') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-estudiantes') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Estudiantes --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -430,10 +430,10 @@
                     @endcan
 
                     @can('Docentes')
-                        <a href="#"
+                        <a href="{{ route('admin.gestion-docentes') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-docentes') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-primary)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-docentes') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-docentes') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Docentes / profesor --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -448,8 +448,8 @@
                     @can('Inscripciones')
                         <a href="{{ route('admin.gestion-inscripciones') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.gestion-inscripciones') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-primary)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.gestion-inscripciones') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.gestion-inscripciones') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Inscripciones / documento firmado --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -464,10 +464,10 @@
                     @endcan
 
                     @can('Institucion_Procedencia')
-                        <a href="#"
+                        <a href="{{ route('admin.institucion-procedencia') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.institucion-procedencia') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-primary)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.institucion-procedencia') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.institucion-procedencia') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Institución procedencia / edificio externo --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -480,10 +480,10 @@
                     @endcan
 
                     @can('Tipo_Vinculacion_Estudiante')
-                        <a href="#"
+                        <a href="{{ route('admin.tipo-vinculacion-estudiante') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-primary)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.tipo-vinculacion-estudiante') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-primary)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.tipo-vinculacion-estudiante') ? 'var(--ui-primary-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.tipo-vinculacion-estudiante') ? 'var(--ui-primary)' : 'var(--ui-muted)' }}'">
 
                             {{-- Tipo vinculación / enlace --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -500,7 +500,7 @@
 
         {{-- EVALUACIÓN Y REPORTES --}}
         @canany(['Calificaciones', 'Reportes_Academicos', 'Reportes_Administrativos'])
-            <div x-data="{ openEvaluacion: false }">
+            <div x-data="{ openEvaluacion: @js(request()->routeIs(['admin.calificaciones', 'admin.reportes-academicos', 'admin.reportes-administrativos'])) }">
                 <button type="button" @click="openEvaluacion = !openEvaluacion"
                     class="flex w-full items-center justify-between rounded-2xl px-3 py-3 text-sm font-semibold transition hover:bg-[var(--ui-surface-muted)]"
                     style="color: var(--ui-text-soft);">
@@ -529,10 +529,10 @@
                     class="mt-2 space-y-1 pl-3">
 
                     @can('Calificaciones')
-                        <a href="#"
+                        <a href="{{ route('admin.calificaciones') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.calificaciones') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.calificaciones') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.calificaciones') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Calificaciones / nota --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -545,10 +545,10 @@
                     @endcan
 
                     @can('Reportes_Academicos')
-                        <a href="#"
+                        <a href="{{ route('admin.reportes-academicos') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.reportes-academicos') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.reportes-academicos') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.reportes-academicos') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Reportes académicos / documento --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -563,10 +563,10 @@
                     @endcan
 
                     @can('Reportes_Administrativos')
-                        <a href="#"
+                        <a href="{{ route('admin.reportes-administrativos') }}"
                             class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
-                            style="color: var(--ui-muted);" onmouseover="this.style.color='var(--ui-info)'"
-                            onmouseout="this.style.color='var(--ui-muted)'">
+                            style="{{ request()->routeIs('admin.reportes-administrativos') ? 'background: var(--ui-info-soft); color: var(--ui-info);' : 'color: var(--ui-muted);' }}" onmouseover="this.style.color='var(--ui-info)'"
+                            onmouseout="this.style.background='{{ request()->routeIs('admin.reportes-administrativos') ? 'var(--ui-info-soft)' : 'transparent' }}'; this.style.color='{{ request()->routeIs('admin.reportes-administrativos') ? 'var(--ui-info)' : 'var(--ui-muted)' }}'">
 
                             {{-- Reportes administrativos / gráfico --}}
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -587,7 +587,7 @@
         @can('Mi_Perfil')
             <a href="{{ route('profile.show') }}"
                 class="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition hover:bg-[var(--ui-surface-muted)]"
-                style="color: var(--ui-text-soft);">
+                style="{{ request()->routeIs('profile.show') ? 'background: var(--ui-surface-muted); color: var(--ui-primary);' : 'color: var(--ui-text-soft);' }}">
 
                 {{-- Perfil --}}
                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

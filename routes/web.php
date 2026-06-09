@@ -12,6 +12,15 @@ use App\Http\Controllers\Admin\GestionAsignaturaController;
 use App\Http\Controllers\Admin\GestionParaleloController;
 use App\Http\Controllers\Admin\GestionTurnoController;
 use App\Http\Controllers\Admin\GestionInscripcionController;
+use App\Http\Controllers\Admin\EspecialidadesTecnicasController;
+use App\Http\Controllers\Admin\PeriodoEvaluacionController;
+use App\Http\Controllers\Admin\PlanesAsignaturaController;
+use App\Http\Controllers\Admin\GestionDocenteController;
+use App\Http\Controllers\Admin\InstitucionProcedenciaController;
+use App\Http\Controllers\Admin\TipoVinculacionEstudianteController;
+use App\Http\Controllers\Admin\CalificacionController;
+use App\Http\Controllers\Admin\ReporteAcademicoController;
+use App\Http\Controllers\Admin\ReporteAdministrativoController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -31,7 +40,14 @@ Route::middleware([
 ])->get('/dashboard', function () {
     $user = Auth::user();
 
-    if ($user->can('Panel_Administrador')) {
+    if ($user->canAny([
+        'Panel_Administrador',
+        'Panel_Director',
+        'Panel_Docente',
+        'Panel_Estudiante',
+        'Panel_Secretaria',
+        'Panel_Regente',
+    ])) {
         return app(AdminDashboardController::class)->index();
     }
 
@@ -92,4 +108,40 @@ Route::middleware([
     Route::get('/gestion-inscripciones', [GestionInscripcionController::class, 'index'])
         ->name('gestion-inscripciones')
         ->middleware('can:Inscripciones');
+
+    Route::get('/especialidades-tecnicas', [EspecialidadesTecnicasController::class, 'index'])
+        ->name('especialidades-tecnicas')
+        ->middleware('can:Especialidades_Tecnicas');
+
+    Route::get('/periodo-evaluacion', [PeriodoEvaluacionController::class, 'index'])
+        ->name('periodo-evaluacion')
+        ->middleware('can:Periodo_Evaluacion');
+
+    Route::get('/planes-asignatura', [PlanesAsignaturaController::class, 'index'])
+        ->name('planes-asignatura')
+        ->middleware('can:Planes_Asignatura');
+
+    Route::get('/gestion-docentes', [GestionDocenteController::class, 'index'])
+        ->name('gestion-docentes')
+        ->middleware('can:Docentes');
+
+    Route::get('/institucion-procedencia', [InstitucionProcedenciaController::class, 'index'])
+        ->name('institucion-procedencia')
+        ->middleware('can:Institucion_Procedencia');
+
+    Route::get('/tipo-vinculacion-estudiante', [TipoVinculacionEstudianteController::class, 'index'])
+        ->name('tipo-vinculacion-estudiante')
+        ->middleware('can:Tipo_Vinculacion_Estudiante');
+
+    Route::get('/calificaciones', [CalificacionController::class, 'index'])
+        ->name('calificaciones')
+        ->middleware('can:Calificaciones');
+
+    Route::get('/reportes-academicos', [ReporteAcademicoController::class, 'index'])
+        ->name('reportes-academicos')
+        ->middleware('can:Reportes_Academicos');
+
+    Route::get('/reportes-administrativos', [ReporteAdministrativoController::class, 'index'])
+        ->name('reportes-administrativos')
+        ->middleware('can:Reportes_Administrativos');
 });

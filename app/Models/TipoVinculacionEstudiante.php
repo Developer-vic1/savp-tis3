@@ -39,8 +39,8 @@ class TipoVinculacionEstudiante extends Model
 
     // 🔗 Relaciones
 
-    public function inscripciones()
+    public function estudiantes()
     {
-        return $this->hasMany(InscripcionEstudiante::class, 'cod_tve', 'cod_tve');
+        return $this->hasMany(Estudiante::class, 'cod_tve', 'cod_tve');
     }
 }
