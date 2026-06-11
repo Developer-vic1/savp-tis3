@@ -31,6 +31,18 @@ class ReportesAcademicos extends Component
     public function render()
     {
         $soporte = app(ReporteAcademicoInteligente::class);
+
+        $filtros = [
+            'cod_pev' => $this->periodoFiltro,
+            'cod_asi' => $this->asignaturaFiltro,
+            'cod_est' => $this->estudianteFiltro,
+            'cod_esp' => $this->especialidadFiltro,
+            'desempeno' => $this->desempenoFiltro,
+        ];
+
+        $reporte = $soporte->generarReporte($filtros);
+
+        // Fetch query for the table listing
         $calificaciones = Calificacion::query()
             ->with(['estudiante.persona', 'estudiante.especialidad', 'asignatura', 'periodoEvaluacion'])
             ->where('est_cal', 'ACTIVO')
@@ -41,70 +53,73 @@ class ReportesAcademicos extends Component
             ->get()
             ->map(function (Calificacion $calificacion) use ($soporte) {
                 $calificacion->setAttribute('desempeno_calculado', $soporte->clasificar((float) $calificacion->not_cal));
-
                 return $calificacion;
             })
             ->when($this->desempenoFiltro !== '', fn ($items) => $items->where('desempeno_calculado', $this->desempenoFiltro))
             ->values();
 
-        $rendimientoAsignatura = $calificaciones
-            ->groupBy('cod_asi')
-            ->map(fn ($items) => [
-                'nombre' => $items->first()->asignatura?->nom_asi ?? 'Sin asignatura',
-                'promedio' => round((float) $items->avg('not_cal'), 2),
-                'registros' => $items->count(),
-                'riesgo' => $items->where('desempeno_calculado', 'En riesgo')->count(),
-            ])
-            ->sortByDesc('promedio')
-            ->values();
+        $totalEstudiantes = max(1, Estudiante::count());
 
-        $rendimientoPeriodo = $calificaciones
-            ->groupBy('cod_pev')
-            ->map(fn ($items) => [
-                'nombre' => $items->first()->periodoEvaluacion?->nom_pev ?? 'Sin periodo',
-                'promedio' => round((float) $items->avg('not_cal'), 2),
-                'registros' => $items->count(),
-            ])
-            ->sortByDesc('promedio')
-            ->values();
+        $hasExtended = \Illuminate\Support\Facades\Schema::hasColumn('especialidad_tecnica', 'exp_voc_esp');
 
-        $totalEstudiantes = max(1, $calificaciones->pluck('cod_est')->unique()->count());
-        $orientaciones = $calificaciones
-            ->filter(fn ($item) => $item->estudiante?->especialidad)
-            ->groupBy(fn ($item) => $item->estudiante->especialidad->nom_esp)
-            ->map(function ($items, $especialidad) use ($soporte, $totalEstudiantes) {
-                [$area, $carreras] = $soporte->orientacionPorEspecialidad($especialidad);
-                $cantidad = $items->pluck('cod_est')->unique()->count();
+        $orientaciones = collect($reporte['promedio_por_especialidad'])->map(function ($item) use ($soporte, $totalEstudiantes, $hasExtended) {
+            [$area, $carreras] = $soporte->orientacionPorEspecialidad($item['nombre']);
 
-                return [
-                    'especialidad' => $especialidad,
-                    'area' => $area,
-                    'carreras' => $carreras,
-                    'estudiantes' => $cantidad,
-                    'porcentaje' => round(($cantidad / $totalEstudiantes) * 100, 1),
-                    'promedio' => round((float) $items->avg('not_cal'), 2),
-                    'explicacion' => "La orientación se calcula con la especialidad BTH y el rendimiento académico disponible.",
-                ];
-            })
-            ->sortByDesc('estudiantes')
-            ->values();
+            $explicacion = "Promedio de rendimiento técnico: {$item['promedio']} pts. Inferencia de perfil vocacional adaptada.";
+            $acciones = [];
+
+            if ($hasExtended) {
+                $record = EspecialidadTecnica::where('nom_esp', $item['nombre'])->first();
+                if ($record && $record->clas_bth_esp) {
+                    if ($record->exp_voc_esp) {
+                        $explicacion = $record->exp_voc_esp;
+                    }
+                    if (!empty($record->acc_rec_esp)) {
+                        $acciones = (array) $record->acc_rec_esp;
+                    }
+                }
+            }
+
+            if (empty($acciones)) {
+                $catalog = \App\Support\Academico\EspecialidadTecnicaInteligente::catalogo();
+                foreach ($catalog as $nombre => $meta) {
+                    similar_text(mb_strtolower($item['nombre']), mb_strtolower($nombre), $sim);
+                    if ($sim >= 80) {
+                        $acciones = $meta['acciones_recomendadas'] ?? [];
+                        break;
+                    }
+                }
+            }
+
+            return [
+                'especialidad' => $item['nombre'],
+                'area' => $area,
+                'carreras' => $carreras,
+                'estudiantes' => $item['registros'],
+                'porcentaje' => round(($item['registros'] / $totalEstudiantes) * 100, 1),
+                'promedio' => $item['promedio'],
+                'explicacion' => $explicacion,
+                'acciones' => array_slice($acciones, 0, 3),
+            ];
+        });
 
         return view('livewire.admin.reportes-academicos', [
             'calificaciones' => $calificaciones,
-            'rendimientoAsignatura' => $rendimientoAsignatura,
-            'rendimientoPeriodo' => $rendimientoPeriodo,
+            'rendimientoAsignatura' => collect($reporte['promedio_por_asignatura']),
+            'rendimientoPeriodo' => collect($reporte['promedio_por_periodo']),
             'orientaciones' => $orientaciones,
             'periodos' => PeriodoEvaluacion::orderBy('ord_pev')->get(),
             'asignaturas' => Asignatura::orderBy('nom_asi')->get(),
             'estudiantes' => Estudiante::with('persona')->get()->sortBy(fn ($item) => $item->persona?->ape_pat_per),
             'especialidades' => EspecialidadTecnica::orderBy('nom_esp')->get(),
             'metricas' => [
-                'promedio' => round((float) $calificaciones->avg('not_cal'), 2),
-                'riesgo' => $calificaciones->where('desempeno_calculado', 'En riesgo')->count(),
-                'destacados' => $calificaciones->where('desempeno_calculado', 'Destacado')->count(),
-                'registros' => $calificaciones->count(),
+                'promedio' => $reporte['promedio_general'],
+                'riesgo' => count($reporte['estudiantes_en_riesgo']),
+                'destacados' => count($reporte['estudiantes_destacados']),
+                'registros' => $reporte['promedio_general'] > 0 ? $calificaciones->count() : 0,
             ],
-            'distribucion' => $calificaciones->countBy('desempeno_calculado'),
+            'distribucion' => $reporte['visualizaciones']['distribucion_desempeno'],
+            'reporteCompleto' => $reporte,
         ]);
     }
 }

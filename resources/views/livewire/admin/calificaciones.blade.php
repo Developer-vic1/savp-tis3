@@ -64,9 +64,88 @@
                         <label><span class="ui-label">Observación</span><textarea rows="4" wire:model.live="form.obs_cal" class="ui-input mt-2"></textarea></label>
                     </div>
                     <aside class="space-y-4">
-                        <div class="ui-card-soft p-5"><p class="ui-kicker">Completitud</p><p class="mt-2 text-3xl font-black" style="color: var(--ui-primary)">{{ $analisis['completitud'] ?? 0 }}%</p></div>
-                        <div class="ui-card-soft p-5"><p class="ui-kicker">Desempeño calculado</p><p class="mt-2 text-xl font-black" style="color: {{ ($analisis['riesgo'] ?? false) ? 'var(--ui-danger)' : 'var(--ui-success)' }}">{{ $analisis['desempeno'] ?? 'Sin nota' }}</p><button wire:click="aplicarObservacion" class="ui-btn-secondary mt-4 w-full">Usar observación sugerida</button></div>
-                        @if(!empty($analisis['bloqueos']))<div class="ui-alert-warning">@foreach($analisis['bloqueos'] as $item)<p>{{ $item }}</p>@endforeach</div>@endif
+                        <div class="ui-card-soft p-5">
+                            <p class="ui-kicker">Completitud Preventiva</p>
+                            <p class="mt-2 text-3xl font-black" style="color: var(--ui-primary)">{{ $analisis['completitud'] ?? 0 }}%</p>
+                            <div class="mt-3 h-2 overflow-hidden rounded-full" style="background: var(--ui-border)">
+                                <div class="h-full rounded-full transition-all" style="width: {{ $analisis['completitud'] ?? 0 }}%; background: var(--ui-primary)"></div>
+                            </div>
+                        </div>
+
+                        <div class="ui-card-soft p-5 space-y-4">
+                            <div>
+                                <p class="ui-kicker">Desempeño & Riesgo</p>
+                                <p class="mt-2 text-xl font-black" style="color: {{ ($analisis['datos']['not_cal'] ?? 0) <= 50 ? 'var(--ui-danger)' : 'var(--ui-success)' }}">
+                                    {{ $analisis['visualizacion']['badge_estado'] ?? 'Sin nota' }}
+                                    {{ $analisis['visualizacion']['categoria_riesgo'] ?? '' }}
+                                </p>
+                            </div>
+
+                            @if(isset($analisis['visualizacion']['porcentaje_rendimiento']))
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span style="color: var(--ui-text)">Nota Normalizada</span>
+                                        <span class="font-bold">{{ $analisis['visualizacion']['porcentaje_rendimiento'] }} / 100</span>
+                                    </div>
+                                    <div class="h-2 rounded-full w-full bg-slate-900/40 overflow-hidden">
+                                        <div class="h-full rounded-full transition-all" style="width: {{ $analisis['visualizacion']['porcentaje_rendimiento'] }}%; background-color: {{ $analisis['visualizacion']['color_estado'] ?? 'var(--ui-primary)' }}"></div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            <button wire:click="aplicarObservacion" class="ui-btn-secondary w-full">Usar observación sugerida</button>
+                        </div>
+
+                        @if(!empty($analisis['visualizacion']['area_academica']))
+                            <div class="ui-card-soft p-5 space-y-4 text-xs">
+                                <div>
+                                    <p class="ui-kicker">Orientación Académico-Vocacional</p>
+                                    <p class="mt-2 font-bold" style="color: var(--ui-text)">Área: {{ $analisis['visualizacion']['area_academica'] }}</p>
+                                    <p class="mt-1" style="color: var(--ui-muted)">Tipo: {{ $analisis['visualizacion']['tipo_asignatura'] }} | Nivel: {{ $analisis['visualizacion']['nivel_asignatura'] }}</p>
+                                    <p class="mt-1" style="color: var(--ui-muted)">Aptitud RIASEC: {{ $analisis['visualizacion']['perfil_riasec_asociado'] }}</p>
+                                </div>
+
+                                @if(!empty($analisis['visualizacion']['carreras_relacionadas']))
+                                    <div>
+                                        <span class="font-bold uppercase tracking-wider block mb-1.5" style="color: var(--ui-muted)">Carreras Vinculadas</span>
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($analisis['visualizacion']['carreras_relacionadas'] as $carrera)
+                                                <span class="px-2 py-0.5 text-[10px] font-bold rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/10">{{ $carrera }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <div class="pt-2 border-t" style="border-color: var(--ui-border)">
+                                    <span class="font-bold uppercase tracking-wider block mb-1" style="color: var(--ui-muted)">Impacto en Orientación</span>
+                                    <p class="leading-relaxed font-semibold text-indigo-300">{{ $analisis['visualizacion']['impacto_vocacional'] }}</p>
+                                    <p class="mt-1 leading-relaxed" style="color: var(--ui-text)">{{ $analisis['visualizacion']['mensaje_orientacion'] }}</p>
+                                </div>
+
+                                <div class="space-y-2 pt-2 border-t" style="border-color: var(--ui-border)">
+                                    <div>
+                                        <span class="font-bold uppercase tracking-wider block" style="color: var(--ui-muted)">Recomendación Docente</span>
+                                        <p class="leading-relaxed" style="color: var(--ui-text)">{{ $analisis['visualizacion']['recomendacion_docente'] }}</p>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold uppercase tracking-wider block" style="color: var(--ui-muted)">Recomendación Estudiante</span>
+                                        <p class="leading-relaxed" style="color: var(--ui-text)">{{ $analisis['visualizacion']['recomendacion_estudiante'] }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(!empty($analisis['bloqueos']))
+                            <div class="ui-alert-danger p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm space-y-1">
+                                <p class="font-black flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    Bloqueo preventivo:
+                                </p>
+                                @foreach ($analisis['bloqueos'] as $bloqueo)
+                                    <p class="text-xs">• {{ $bloqueo }}</p>
+                                @endforeach
+                            </div>
+                        @endif
                     </aside>
                 </div>
                 <div class="mt-6 flex justify-end gap-3"><button wire:click="cerrarFormulario" class="ui-btn-secondary">Cancelar</button><button wire:click="guardar" class="ui-btn-primary" @disabled(!($analisis['puede_guardar'] ?? false))>Guardar calificación</button></div>

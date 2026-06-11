@@ -151,7 +151,26 @@
 
                     <aside class="space-y-4">
                         <div class="ui-card-soft p-5">
-                            <p class="ui-kicker">Completitud</p>
+                            <p class="ui-kicker">Estado Inteligente</p>
+                            @if (!empty($analisis['estado_inteligente']))
+                                <div class="mt-2 flex items-center justify-between">
+                                    <span class="px-3 py-1 text-xs font-black uppercase tracking-wider rounded-full
+                                        {{ in_array($analisis['estado_inteligente'], ['RECONOCIDA', 'COHERENTE', 'FORTALEZA_ACADEMICA'], true) ? 'bg-emerald-500/10 text-emerald-500' : '' }}
+                                        {{ in_array($analisis['estado_inteligente'], ['REDACTABLE'], true) ? 'bg-amber-500/10 text-amber-500' : '' }}
+                                        {{ in_array($analisis['estado_inteligente'], ['REQUIERE_REVISION'], true) ? 'bg-blue-500/10 text-blue-500' : '' }}
+                                        {{ in_array($analisis['estado_inteligente'], ['BLOQUEADA', 'DUPLICADA', 'INCOMPLETA', 'RIESGO_ACADEMICO'], true) ? 'bg-rose-500/10 text-rose-500' : '' }}
+                                    ">
+                                        {{ str_replace('_', ' ', $analisis['estado_inteligente']) }}
+                                    </span>
+                                    <span class="text-xs font-bold" style="color: var(--ui-muted)">Confianza: {{ $analisis['confianza'] ?? 0 }}%</span>
+                                </div>
+                            @else
+                                <p class="mt-2 text-sm" style="color: var(--ui-muted)">Esperando entrada...</p>
+                            @endif
+                        </div>
+
+                        <div class="ui-card-soft p-5">
+                            <p class="ui-kicker">Completitud del Registro</p>
                             <p class="mt-2 text-3xl font-black" style="color: var(--ui-primary)">{{ $analisis['completitud'] ?? 0 }}%</p>
                             <div class="mt-3 h-2 overflow-hidden rounded-full" style="background: var(--ui-border)">
                                 <div class="h-full rounded-full transition-all" style="width: {{ $analisis['completitud'] ?? 0 }}%; background: var(--ui-primary)"></div>
@@ -159,34 +178,94 @@
                         </div>
 
                         @if (!empty($analisis['bloqueos']))
-                            <div class="ui-alert-warning">
-                                @foreach ($analisis['bloqueos'] as $bloqueo)<p>{{ $bloqueo }}</p>@endforeach
+                            <div class="ui-alert-danger p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-sm space-y-1">
+                                <p class="font-black flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    Bloqueo preventivo:
+                                </p>
+                                @foreach ($analisis['bloqueos'] as $bloqueo)
+                                    <p class="text-xs">• {{ $bloqueo }}</p>
+                                @endforeach
                             </div>
                         @endif
 
-                        @if (!empty($analisis['sugerencias']['area']))
-                            <div class="ui-card-soft p-5">
-                                <p class="ui-kicker">Orientación visual</p>
-                                <p class="mt-3 text-sm font-bold" style="color: var(--ui-text)">{{ $analisis['sugerencias']['area'] }}</p>
-                                <p class="mt-2 text-sm" style="color: var(--ui-muted)">RIASEC: {{ $analisis['sugerencias']['riasec'] }}</p>
-                                <div class="mt-3 flex flex-wrap gap-2">
-                                    @foreach ($analisis['sugerencias']['carreras'] as $carrera)<span class="ui-badge-info">{{ $carrera }}</span>@endforeach
-                                </div>
+                        @if (!empty($analisis['advertencias']))
+                            <div class="ui-alert-warning p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm space-y-1">
+                                <p class="font-black flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Sugerencia / Advertencia:
+                                </p>
+                                @foreach ($analisis['advertencias'] as $advertencia)
+                                    <p class="text-xs">• {{ $advertencia }}</p>
+                                @endforeach
                             </div>
                         @endif
 
-                        @if (!empty($analisis['sugerencias']) && array_is_list($analisis['sugerencias']))
-                            <div class="ui-card-soft p-5">
-                                <p class="ui-kicker">Sugerencias institucionales</p>
-                                <div class="mt-3 flex flex-wrap gap-2">
-                                    @foreach($analisis['sugerencias'] as $sugerencia)<span class="ui-badge-info">{{ $sugerencia }}</span>@endforeach
+                        @if (!empty($analisis['visualizacion']))
+                            <div class="ui-card-soft p-5 space-y-4">
+                                <div>
+                                    <p class="ui-kicker">Mapa Académico-Vocacional</p>
+                                    <h3 class="mt-2 text-md font-black" style="color: {{ $analisis['visualizacion']['color_hex'] ?? 'var(--ui-primary)' }}">
+                                        {{ $analisis['visualizacion']['area_bth'] ?? 'BTH' }}
+                                    </h3>
+                                    <p class="text-xs" style="color: var(--ui-muted)">{{ $analisis['visualizacion']['familia_profesional'] ?? '' }}</p>
                                 </div>
+
+                                <div class="grid grid-cols-2 gap-2 text-xs">
+                                    <div class="p-2 rounded-xl bg-slate-900/40">
+                                        <span class="block text-[10px] uppercase font-bold" style="color: var(--ui-muted)">Perfil RIASEC</span>
+                                        <span class="font-bold" style="color: var(--ui-text)">{{ $analisis['visualizacion']['perfil_riasec'] ?? '' }}</span>
+                                    </div>
+                                    <div class="p-2 rounded-xl bg-slate-900/40">
+                                        <span class="block text-[10px] uppercase font-bold" style="color: var(--ui-muted)">Zona Inferida</span>
+                                        <span class="font-bold" style="color: var(--ui-text)">{{ $analisis['visualizacion']['zona_inferida'] ?? ($analisis['visualizacion']['tipo_relacion'] ?? 'Institucional') }}</span>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <span class="text-xs font-bold uppercase tracking-wider block mb-2" style="color: var(--ui-muted)">Nivel de Competencias</span>
+                                    <div class="space-y-2">
+                                        @foreach($analisis['visualizacion']['niveles'] ?? [] as $label => $lvl)
+                                            <div class="text-xs">
+                                                <div class="flex justify-between text-[11px] mb-1">
+                                                    <span style="color: var(--ui-text)">{{ $label }}</span>
+                                                    <span class="font-bold">{{ $lvl }}%</span>
+                                                </div>
+                                                <div class="h-1.5 rounded-full w-full bg-slate-900/40 overflow-hidden">
+                                                    <div class="h-full rounded-full transition-all" style="width: {{ $lvl }}%; background-color: {{ $analisis['visualizacion']['color_hex'] ?? 'var(--ui-primary)' }}"></div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                @if(!empty($analisis['visualizacion']['carreras_relacionadas']))
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-wider block mb-2" style="color: var(--ui-muted)">Carreras Recomendadas</span>
+                                        <div class="flex flex-wrap gap-1">
+                                            @foreach($analisis['visualizacion']['carreras_relacionadas'] as $carrera)
+                                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/10">{{ $carrera }}</span>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if(!empty($analisis['acciones_recomendadas']))
+                                    <div>
+                                        <span class="text-xs font-bold uppercase tracking-wider block mb-2" style="color: var(--ui-muted)">Acciones Recomendadas</span>
+                                        <div class="text-xs space-y-1.5" style="color: var(--ui-muted)">
+                                            @foreach($analisis['acciones_recomendadas'] as $accion)
+                                                <p class="leading-relaxed">• {{ $accion }}</p>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         @endif
 
                         @if (!empty($analisis['duplicidad']['registro']))
-                            <div class="ui-alert-warning">
-                                Registro relacionado: {{ $analisis['duplicidad']['registro']['nombre'] }}
+                            <div class="ui-alert-warning p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm">
+                                Registro relacionado: <span class="font-bold">{{ $analisis['duplicidad']['registro']['nombre'] }}</span>
                                 ({{ $analisis['duplicidad']['similitud'] }}% de similitud).
                             </div>
                         @endif

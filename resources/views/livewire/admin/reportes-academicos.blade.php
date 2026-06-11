@@ -127,6 +127,16 @@
                     <div class="mt-4 flex flex-wrap gap-2">
                         @foreach($item['carreras'] as $carrera)<span class="ui-badge-info">{{ $carrera }}</span>@endforeach
                     </div>
+                    @if(!empty($item['acciones']))
+                        <div class="mt-4 pt-3 border-t border-[var(--ui-border)]">
+                            <p class="text-[10px] font-bold uppercase tracking-wider mb-1.5" style="color: var(--ui-muted)">Acciones Recomendadas</p>
+                            <div class="flex flex-wrap gap-1.5">
+                                @foreach($item['acciones'] as $acc)
+                                    <span class="text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">{{ $acc }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                     <p class="mt-4 text-xs font-bold uppercase tracking-[0.12em]" style="color: var(--ui-muted)">{{ $item['estudiantes'] }} estudiantes asociados</p>
                 </article>
             @empty
@@ -135,6 +145,138 @@
                     <p class="mt-2 text-sm" style="color: var(--ui-muted)">Registra calificaciones de estudiantes vinculados a especialidades técnicas.</p>
                 </div>
             @endforelse
+        </div>
+    </section>
+
+    <!-- 📊 SECCIÓN DE INTELIGENCIA ACADÉMICA-VOCACIONAL REAL -->
+    <section class="grid gap-5 lg:grid-cols-2">
+        <!-- 💡 Lectura Interpretativa y Alertas -->
+        <article class="ui-card rounded-[2rem] p-6 space-y-4">
+            <div>
+                <p class="ui-kicker">Interpretación Diagnóstica</p>
+                <h2 class="ui-title mt-2 text-xl font-black">Lectura Interpretativa Institucional</h2>
+            </div>
+            <div class="p-5 rounded-2xl bg-indigo-500/5 border border-indigo-500/10 text-sm leading-relaxed" style="color: var(--ui-text)">
+                {{ $reporteCompleto['lectura_interpretativa'] }}
+            </div>
+            <div class="space-y-2">
+                <span class="text-xs font-bold uppercase tracking-wider block" style="color: var(--ui-muted)">Alertas de Atención</span>
+                @foreach($reporteCompleto['alertas_institucionales'] as $alerta)
+                    <div class="flex items-center gap-2 p-3 text-xs rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                        <span>{{ $alerta }}</span>
+                    </div>
+                @endforeach
+            </div>
+        </article>
+
+        <!-- 🚀 Recomendaciones Operativas -->
+        <article class="ui-card rounded-[2rem] p-6 space-y-4">
+            <div>
+                <p class="ui-kicker">Estrategia Curricular</p>
+                <h2 class="ui-title mt-2 text-xl font-black">Acciones Pedagógicas Recomendadas</h2>
+            </div>
+            <div class="space-y-3">
+                @foreach($reporteCompleto['recomendaciones_institucionales'] as $rec)
+                    <div class="flex items-start gap-3 p-4 rounded-2xl bg-slate-900/40 border border-[var(--ui-border)] text-xs">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0 font-bold">✓</span>
+                        <div class="space-y-1">
+                            <p class="font-bold" style="color: var(--ui-text)">Estrategia sugerida</p>
+                            <p style="color: var(--ui-muted)">{{ $rec }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </article>
+    </section>
+
+    <section class="grid gap-5 xl:grid-cols-[1.1fr_.9fr]">
+        <!-- 🎨 Rendimiento por Áreas Formativas (Tailwind CSS Bars) -->
+        <article class="ui-card rounded-[2rem] p-6 space-y-4">
+            <div>
+                <p class="ui-kicker">Campos Curriculares</p>
+                <h2 class="ui-title mt-2 text-xl font-black">Promedio por Áreas de Formación</h2>
+            </div>
+            <div class="space-y-4 pt-2">
+                @foreach($reporteCompleto['visualizaciones']['barras_areas'] as $area => $avg)
+                    <div>
+                        <div class="flex justify-between text-xs mb-1.5 font-bold">
+                            <span style="color: var(--ui-text)">{{ $area }}</span>
+                            <span style="color: var(--ui-primary)">{{ $avg }} pts</span>
+                        </div>
+                        <div class="h-3 rounded-full w-full bg-slate-900/40 overflow-hidden">
+                            <div class="h-full rounded-full transition-all" style="width: {{ $avg }}%; background-color: {{ $avg >= 70 ? 'var(--ui-success)' : ($avg >= 51 ? 'var(--ui-info)' : 'var(--ui-danger)') }}"></div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </article>
+
+        <!-- ⚓️ Perfil RIASEC & Tendencia Vocacional -->
+        <article class="ui-card rounded-[2rem] p-6 space-y-4">
+            <div>
+                <p class="ui-kicker">Modelo Holland</p>
+                <h2 class="ui-title mt-2 text-xl font-black">Distribución de Intereses RIASEC</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                @foreach($reporteCompleto['perfil_institucional_riasec'] as $tipo => $cant)
+                    <div class="p-3 rounded-2xl bg-slate-900/40 border border-[var(--ui-border)] flex items-center justify-between">
+                        <div>
+                            <span class="block text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted)">{{ $tipo }}</span>
+                            <span class="text-xs" style="color: var(--ui-text)">Frecuencia de alumnos</span>
+                        </div>
+                        <span class="text-xl font-black text-indigo-400">{{ $cant }}</span>
+                    </div>
+                @endforeach
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/50 text-xs">
+                <span class="font-bold uppercase tracking-wider block mb-1 text-indigo-300">Tendencia Vocacional Global</span>
+                <p style="color: var(--ui-muted)">{{ $reporteCompleto['tendencia_vocacional'] }} | Tendencia académica: {{ $reporteCompleto['tendencia_academica'] }}</p>
+            </div>
+        </article>
+    </section>
+
+    <!-- 🗓 MATRIZ ESPECIALIDAD VS ÁREA ACADÉMICA -->
+    <section class="ui-card rounded-[2rem] p-6 overflow-hidden">
+        <div class="mb-5">
+            <p class="ui-kicker">Cruces Curriculares</p>
+            <h2 class="ui-title mt-2 text-xl font-black">Matriz de Rendimiento: Especialidad BTH vs Área Curricular</h2>
+            <p class="ui-muted mt-2 text-xs">Cruza el promedio general de calificaciones por cada área de formación académica y especialidad técnica.</p>
+        </div>
+        <div class="overflow-x-auto rounded-xl border border-[var(--ui-border)]">
+            <table class="min-w-full divide-y divide-[var(--ui-border)] text-xs text-left">
+                <thead style="background: var(--ui-surface-muted)">
+                    <tr>
+                        <th class="px-4 py-3 font-bold uppercase tracking-wider" style="color: var(--ui-muted)">Especialidad BTH</th>
+                        <th class="px-4 py-3 font-bold uppercase tracking-wider text-center" style="color: var(--ui-muted)">Cosmos y Pensamiento</th>
+                        <th class="px-4 py-3 font-bold uppercase tracking-wider text-center" style="color: var(--ui-muted)">Comunidad y Sociedad</th>
+                        <th class="px-4 py-3 font-bold uppercase tracking-wider text-center" style="color: var(--ui-muted)">Vida, Tierra y Territorio</th>
+                        <th class="px-4 py-3 font-bold uppercase tracking-wider text-center" style="color: var(--ui-muted)">Ciencia, Tecnología y Prod.</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-[var(--ui-border)]">
+                    @forelse($reporteCompleto['visualizaciones']['matriz_especialidad_area'] as $fila)
+                        <tr class="hover:bg-slate-900/30">
+                            <td class="px-4 py-3 font-bold" style="color: var(--ui-text)">{{ $fila['especialidad'] }}</td>
+                            @foreach(['Cosmos y Pensamiento', 'Comunidad y Sociedad', 'Vida, Tierra y Territorio', 'Ciencia, Tecnología y Producción'] as $area)
+                                @php($celda = $fila['celdas'][$area] ?? null)
+                                <td class="px-4 py-3 text-center">
+                                    @if($celda && $celda['promedio'] !== null)
+                                        <span class="block font-black text-sm {{ $celda['promedio'] >= 70 ? 'text-emerald-400' : ($celda['promedio'] >= 51 ? 'text-indigo-400' : 'text-rose-400') }}">
+                                            {{ $celda['promedio'] }}
+                                        </span>
+                                        <span class="text-[10px]" style="color: var(--ui-muted)">{{ $celda['cantidad'] }} notas</span>
+                                    @else
+                                        <span class="text-slate-600 font-bold">-</span>
+                                    @endif
+                                </td>
+                            @endforeach
+                        </tr>
+                    @empty
+                        <tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 font-bold">No hay cruce de datos disponible.</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </section>
 
