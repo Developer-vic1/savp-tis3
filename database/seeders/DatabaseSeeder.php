@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             PersonaSeeder::class,
             PersonalInstitucionalSeeder::class,
             UsuarioAdminSeeder::class,
+            \Database\Seeders\DATOS\DatosSAVPTIS3Seeder::class,
         ]);
     }
 }

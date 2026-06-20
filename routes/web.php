@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\TipoVinculacionEstudianteController;
 use App\Http\Controllers\Admin\CalificacionController;
 use App\Http\Controllers\Admin\ReporteAcademicoController;
 use App\Http\Controllers\Admin\ReporteAdministrativoController;
+use App\Http\Controllers\Admin\ReportePdfController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -144,4 +145,30 @@ Route::middleware([
     Route::get('/reportes-administrativos', [ReporteAdministrativoController::class, 'index'])
         ->name('reportes-administrativos')
         ->middleware('can:Reportes_Administrativos');
+
+    // ──────────────────────────────────────────────────────────────────────
+    // MÓDULO DE REPORTES PDF / SQL / ZIP
+    // ──────────────────────────────────────────────────────────────────────
+    Route::prefix('reportes')->name('reportes.')->middleware('can:Gestion_Academica')->group(function () {
+
+        // Reportes académicos
+        Route::get('/academico-general/pdf',    [ReportePdfController::class, 'academicoGeneral'])->name('academico-general.pdf');
+        Route::get('/calificaciones/pdf',        [ReportePdfController::class, 'calificaciones'])->name('calificaciones.pdf');
+        Route::get('/estudiantes-riesgo/pdf',    [ReportePdfController::class, 'estudiantesRiesgo'])->name('estudiantes-riesgo.pdf');
+
+        // Reportes administrativos
+        Route::get('/administrativo/pdf',        [ReportePdfController::class, 'administrativo'])->name('administrativo.pdf');
+        Route::get('/bitacora/pdf',              [ReportePdfController::class, 'bitacora'])->name('bitacora.pdf');
+
+        // Reportes vocacionales
+        Route::get('/vocacional-riasec/pdf',     [ReportePdfController::class, 'vocacionalRiasec'])->name('vocacional-riasec.pdf');
+        Route::get('/compatibilidad-carreras/pdf', [ReportePdfController::class, 'compatibilidadCarreras'])->name('compatibilidad-carreras.pdf');
+
+        // Reporte institucional completo
+        Route::get('/institucional-completo/pdf', [ReportePdfController::class, 'institucionalCompleto'])->name('institucional-completo.pdf');
+
+        // Respaldo SQL y paquete ZIP
+        Route::get('/respaldo-academico/sql',    [ReportePdfController::class, 'respaldoSql'])->name('respaldo-academico.sql');
+        Route::get('/paquete/zip',               [ReportePdfController::class, 'paqueteZip'])->name('paquete.zip');
+    });
 });

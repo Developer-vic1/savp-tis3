@@ -8,14 +8,54 @@
                     Consolida cobertura de datos, estado operativo y actividad reciente del sistema SAVP-TIS3.
                 </p>
             </div>
-            <button disabled class="ui-btn-secondary" title="Requiere autorización para instalar spatie/laravel-pdf">
-                Exportar PDF
-            </button>
+            {{-- Botones de descarga funcionales --}}
+            <div class="flex flex-wrap items-center gap-2">
+                <a href="{{ route('admin.reportes.administrativo.pdf') }}"
+                   class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                   style="background:#0284c7;"
+                   title="Descargar Reporte Administrativo en PDF"
+                   aria-label="Descargar Reporte Administrativo en PDF">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+                    </svg>
+                    PDF Administrativo
+                </a>
+                <a href="{{ route('admin.reportes.bitacora.pdf') }}"
+                   class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                   style="background:#0369a1;"
+                   title="Descargar Reporte de Bitácora en PDF"
+                   aria-label="Descargar Reporte de Bitácora en PDF">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+                    </svg>
+                    PDF Bitácora
+                </a>
+                <a href="{{ route('admin.reportes.respaldo-academico.sql') }}"
+                   class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                   style="background:#4338ca;"
+                   title="Descargar Respaldo SQL Académico"
+                   aria-label="Descargar Respaldo SQL Académico">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                    </svg>
+                    SQL
+                </a>
+                <a href="{{ route('admin.reportes.paquete.zip') }}"
+                   class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                   style="background:#0f172a;"
+                   title="Descargar Paquete ZIP de Todos los Reportes"
+                   aria-label="Descargar paquete ZIP completo">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                    </svg>
+                    ZIP Completo
+                </a>
+            </div>
         </div>
         <div class="mt-5 flex flex-wrap items-center gap-3">
             <span class="{{ $diagnostico['estado'] === 'Operativo' ? 'ui-badge-success' : 'ui-badge-warning' }}">{{ $diagnostico['estado'] }}</span>
             <span class="ui-badge-info">{{ $diagnostico['completitud'] }}% de cobertura estructural</span>
-            <span class="text-sm" style="color: var(--ui-muted)">El PDF institucional queda preparado para integrarse cuando se autorice la librería.</span>
+            <span class="text-sm" style="color: var(--ui-muted)">Reportes institucionales generados con mPDF — disponibles para descarga inmediata.</span>
         </div>
     </section>
 

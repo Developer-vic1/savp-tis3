@@ -44,6 +44,12 @@
         --ui-primary-soft: #ecfdf5;
         --ui-primary-border: #a7f3d0;
 
+        /* --ui-success es alias de --ui-primary para compatibilidad */
+        --ui-success: #059669;
+        --ui-success-hover: #047857;
+        --ui-success-soft: #ecfdf5;
+        --ui-success-border: #a7f3d0;
+
         --ui-info: #0284c7;
         --ui-info-hover: #0369a1;
         --ui-info-soft: #f0f9ff;
@@ -107,6 +113,12 @@
         --ui-primary-hover: #6ee7b7;
         --ui-primary-soft: rgba(6, 78, 59, 0.45);
         --ui-primary-border: rgba(52, 211, 153, 0.35);
+
+        /* --ui-success es alias de --ui-primary para compatibilidad */
+        --ui-success: #34d399;
+        --ui-success-hover: #6ee7b7;
+        --ui-success-soft: rgba(6, 78, 59, 0.45);
+        --ui-success-border: rgba(52, 211, 153, 0.35);
 
         --ui-info: #38bdf8;
         --ui-info-hover: #7dd3fc;
