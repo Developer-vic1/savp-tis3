@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
-
+require __DIR__.'/aula_virtual.php';
 /*
 |--------------------------------------------------------------------------
 | Dashboard principal
