@@ -393,10 +393,27 @@
                             class="btn-primary rounded-2xl px-5 py-3 text-sm font-bold">
                             Ir al panel
                         </a>
+                        @can('Acceso_Aula_Virtual')
+                            <a href="{{ route('aula-virtual.inicio') }}"
+                                class="rounded-2xl px-5 py-3 text-sm font-bold text-white"
+                                style="background: var(--landing-primary); box-shadow: 0 18px 35px color-mix(in srgb, var(--landing-primary) 24%, transparent);">
+                                Ingresar al Aula Virtual
+                            </a>
+                        @else
+                            <a href="{{ route('aula-virtual.login') }}"
+                                class="btn-secondary rounded-2xl px-5 py-3 text-sm font-bold">
+                                Ingresar al Aula Virtual
+                            </a>
+                        @endcan
                     @else
                         <a href="{{ route('login') }}"
                             class="btn-primary rounded-2xl px-5 py-3 text-sm font-bold">
                             Ingresar
+                        </a>
+                        <a href="{{ route('aula-virtual.login') }}"
+                            class="rounded-2xl px-5 py-3 text-sm font-bold text-white"
+                            style="background: var(--landing-primary); box-shadow: 0 18px 35px color-mix(in srgb, var(--landing-primary) 24%, transparent);">
+                            Ingresar al Aula Virtual
                         </a>
                     @endauth
                 </div>
@@ -450,9 +467,23 @@
                         <a href="{{ route('dashboard') }}" class="btn-primary mt-2 rounded-2xl px-5 py-3 text-center text-sm font-bold">
                             Ir al panel
                         </a>
+                        @can('Acceso_Aula_Virtual')
+                            <a href="{{ route('aula-virtual.inicio') }}" class="mt-2 rounded-2xl px-5 py-3 text-center text-sm font-bold text-white"
+                                style="background: var(--landing-primary);">
+                                Ingresar al Aula Virtual
+                            </a>
+                        @else
+                            <a href="{{ route('aula-virtual.login') }}" class="btn-secondary mt-2 rounded-2xl px-5 py-3 text-center text-sm font-bold">
+                                Ingresar al Aula Virtual
+                            </a>
+                        @endcan
                     @else
                         <a href="{{ route('login') }}" class="btn-primary mt-2 rounded-2xl px-5 py-3 text-center text-sm font-bold">
                             Ingresar
+                        </a>
+                        <a href="{{ route('aula-virtual.login') }}" class="mt-2 rounded-2xl px-5 py-3 text-center text-sm font-bold text-white"
+                            style="background: var(--landing-primary);">
+                            Ingresar al Aula Virtual
                         </a>
                     @endauth
                 </div>

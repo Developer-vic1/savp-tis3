@@ -3,12 +3,15 @@
 namespace Database\Seeders;
 
 use App\Models\AulaVirtual\EstadoAsistencia;
+use Database\Seeders\AulaVirtual\AulaVirtualOrientacionPreguntasSeeder;
 use Illuminate\Database\Seeder;
 
 class AulaVirtualDatosSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(AulaVirtualOrientacionPreguntasSeeder::class);
+
         $estados = [
             ['cod_est_asi' => 'EASI_0001', 'nom_est_asi' => 'Presente', 'abr_est_asi' => 'P', 'valor_porcentual' => 100, 'color_est_asi' => 'verde'],
             ['cod_est_asi' => 'EASI_0002', 'nom_est_asi' => 'Tardanza', 'abr_est_asi' => 'T', 'valor_porcentual' => 75, 'color_est_asi' => 'ambar'],

@@ -24,7 +24,7 @@
                     <h3 class="ui-title text-xl font-black">Dimensiones de orientación</h3>
                     <p class="ui-subtitle mt-2 text-sm">Resultados visibles del explorador académico-vocacional.</p>
                 </div>
-                @include('aula-virtual.componentes.icon-action-button', ['href' => route('aula-virtual.estudiante.orientacion.explorador'), 'icon' => 'orientacion', 'label' => 'Explorador'])
+                <livewire:aula-virtual.orientacion.explorador-vocacional />
             </div>
             <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                 @foreach ($dimensiones as $dimension)
@@ -32,5 +32,16 @@
                 @endforeach
             </div>
         </section>
+
+        @if ($resumen['resultado'] ?? null)
+            <section class="ui-panel">
+                <h3 class="ui-title text-xl font-black">Resultados por áreas</h3>
+                <div class="mt-5 grid gap-4 lg:grid-cols-2">
+                    @foreach ($dimensiones as $codigo => $nombre)
+                        @include('aula-virtual.componentes.progress-bar', ['value' => (int) round((float) $resumen['resultado']->{$codigo}), 'label' => $nombre])
+                    @endforeach
+                </div>
+            </section>
+        @endif
     </div>
 @endsection

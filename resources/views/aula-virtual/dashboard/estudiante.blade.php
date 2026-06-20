@@ -104,11 +104,13 @@
                     <p class="ui-subtitle mt-3 text-sm leading-7">
                         Seguimiento académico y explorador académico-vocacional vinculados al rendimiento del estudiante.
                     </p>
-                    <div class="mt-5">
+                    <div class="mt-5 flex flex-wrap gap-2">
+                        <livewire:aula-virtual.orientacion.explorador-vocacional />
                         @include('aula-virtual.componentes.icon-action-button', [
                             'href' => route('aula-virtual.estudiante.orientacion'),
-                            'icon' => 'orientacion',
-                            'label' => 'Orientación',
+                            'icon' => 'entrar',
+                            'label' => 'Ver orientación',
+                            'variant' => 'secondary',
                         ])
                     </div>
                 </section>

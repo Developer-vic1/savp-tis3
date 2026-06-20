@@ -5,6 +5,7 @@ namespace App\Services\AulaVirtual;
 use App\Models\AulaVirtual\AsistenciaEstudiante;
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EntregaTarea;
+use App\Models\AulaVirtual\OrientacionActividad;
 use App\Models\AulaVirtual\Tarea;
 use App\Models\Docente;
 use App\Models\Estudiante;
@@ -104,6 +105,13 @@ class CursoVirtualService
 
         $asistencia = $this->resumenAsistenciaEstudiante($estudiante);
 
+        $orientacionEnProceso = $estudiante
+            ? OrientacionActividad::query()
+                ->where('cod_est', $estudiante->cod_est)
+                ->whereIn('estado', ['pendiente', 'en_proceso'])
+                ->count()
+            : 0;
+
         return [
             'cursos' => $cursos,
             'tareas' => $tareas,
@@ -117,7 +125,7 @@ class CursoVirtualService
                 'tareas_entregadas' => $entregas->filter(fn (EntregaTarea $entrega) => $entrega->estaEntregada() || $entrega->estaCalificada())->count(),
                 'promedio_actual' => $promedio,
                 'asistencia_general' => $asistencia['porcentaje'],
-                'orientacion_en_proceso' => 0,
+                'orientacion_en_proceso' => $orientacionEnProceso,
             ],
         ];
     }
@@ -139,6 +147,11 @@ class CursoVirtualService
             ->whereDoesntHave('calificacion')
             ->count();
 
+        $orientacionPendiente = OrientacionActividad::query()
+            ->whereIn('cod_est', $cursos->flatMap(fn (ClaseVirtual $curso) => $curso->estudiantes->pluck('cod_est'))->unique())
+            ->whereIn('estado', ['pendiente', 'en_proceso', 'requiere_seguimiento'])
+            ->count();
+
         return [
             'docente' => $docente,
             'cursos' => $cursos,
@@ -149,7 +162,7 @@ class CursoVirtualService
                 'tareas_activas' => $tareas->where('est_tar', 'PUBLICADA')->count(),
                 'entregas_por_revisar' => $entregasPorRevisar,
                 'asistencias_pendientes' => 0,
-                'seguimiento_orientacion' => 0,
+                'seguimiento_orientacion' => $orientacionPendiente,
             ],
         ];
     }
