@@ -80,6 +80,19 @@
         --ui-shadow-lg: 0 22px 50px rgba(15, 23, 42, 0.12);
 
         --ui-ring: rgba(5, 150, 105, 0.16);
+
+        --savp-bg: #f8fafc;
+        --savp-surface: #ffffff;
+        --savp-surface-soft: #f1f5f9;
+        --savp-border: #e2e8f0;
+        --savp-text: #0f172a;
+        --savp-muted: #64748b;
+        --savp-green: #059669;
+        --savp-green-soft: #ecfdf5;
+        --savp-amber: #d97706;
+        --savp-orange: #ea580c;
+        --savp-red: #dc2626;
+        --savp-blue-muted: #475569;
     }
 
     .dark {
@@ -145,6 +158,19 @@
         --ui-shadow-lg: 0 22px 50px rgba(0, 0, 0, 0.45);
 
         --ui-ring: rgba(52, 211, 153, 0.18);
+
+        --savp-bg: #020617;
+        --savp-surface: #0f172a;
+        --savp-surface-soft: #1e293b;
+        --savp-border: #334155;
+        --savp-text: #f8fafc;
+        --savp-muted: #94a3b8;
+        --savp-green: #34d399;
+        --savp-green-soft: rgba(6, 78, 59, 0.45);
+        --savp-amber: #fbbf24;
+        --savp-orange: #fb923c;
+        --savp-red: #fb7185;
+        --savp-blue-muted: #94a3b8;
     }
 
     html {
@@ -201,7 +227,7 @@
     }
 
     .ui-card {
-        @apply rounded-[2rem] border shadow-sm;
+        @apply rounded-lg border shadow-sm;
         background: var(--ui-surface);
         color: var(--ui-text);
         border-color: var(--ui-border);
@@ -231,7 +257,7 @@
     }
 
     .ui-panel {
-        @apply rounded-[1.6rem] border p-5 shadow-sm;
+        @apply rounded-lg border p-5 shadow-sm;
         background: var(--ui-surface);
         color: var(--ui-text);
         border-color: var(--ui-border);
@@ -335,7 +361,7 @@
 
     .ui-btn-primary {
         @apply ui-btn text-white shadow-sm;
-        background: linear-gradient(135deg, var(--ui-primary), var(--ui-info));
+        background: var(--ui-primary);
     }
 
     .ui-btn-primary:hover:not(:disabled) {

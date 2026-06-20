@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
+use App\Services\AulaVirtual\CursoVirtualService;
 
 class AulaVirtualController extends Controller
 {
+    public function __construct(private readonly CursoVirtualService $cursos) {}
+
     public function index()
     {
         $user = auth()->user();
@@ -15,11 +18,11 @@ class AulaVirtualController extends Controller
         }
 
         if ($user->hasRole('Docente') || $user->can('Aula_Virtual_Docente')) {
-            return view('aula-virtual.dashboard.docente');
+            return view('aula-virtual.dashboard.docente', $this->cursos->dashboardDocente($user));
         }
 
         if ($user->hasRole('Estudiante') || $user->can('Aula_Virtual_Estudiante')) {
-            return view('aula-virtual.dashboard.estudiante');
+            return view('aula-virtual.dashboard.estudiante', $this->cursos->dashboardEstudiante($user));
         }
 
         return view('aula-virtual.dashboard.index');

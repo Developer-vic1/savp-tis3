@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RolSeeder::class,
+            AulaVirtualPermissionSeeder::class,
 
             TurnoSeeder::class,
             CursoSeeder::class,

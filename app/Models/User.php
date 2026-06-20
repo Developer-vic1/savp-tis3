@@ -33,6 +33,10 @@ class User extends Authenticatable
         'email',
         'password',
         'email_verified_at',
+        'google_id',
+        'avatar',
+        'auth_provider',
+        'last_login_at',
         'remember_token',
         'current_team_id',
         'profile_photo_path',
@@ -57,6 +61,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];

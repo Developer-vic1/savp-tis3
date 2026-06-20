@@ -8,7 +8,7 @@
                         class="h-16 w-16 rounded-2xl object-contain">
 
                     <span
-                        class="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-sky-400 shadow-lg shadow-sky-400/60 animate-pulse"></span>
+                        class="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-amber-400 shadow-lg shadow-amber-400/60 animate-pulse"></span>
                     <span
                         class="absolute -bottom-1 -left-1 h-3 w-3 rounded-full bg-emerald-300 shadow-lg shadow-emerald-300/60 animate-pulse"></span>
                 </div>
@@ -18,7 +18,7 @@
                         Franz Tamayo N°3
                     </p>
                     <p class="text-xs font-black uppercase tracking-[0.18em] text-emerald-600 dark:text-emerald-300">
-                        Aula Virtual LMS
+                        SAVP-TIS3 Aula Virtual
                     </p>
                 </div>
             </div>
@@ -383,7 +383,7 @@
                     <div
                         class="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700 shadow-sm dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
                         <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Acceso LMS
+                        Acceso institucional
                     </div>
 
                     <h1 class="text-center text-4xl font-black tracking-tight text-slate-950 dark:text-white">
@@ -481,7 +481,7 @@
                         style="border-color: var(--ui-border);">
                         <div class="flex items-center gap-3">
                             <div
-                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-700 dark:bg-sky-400/10 dark:text-sky-300">
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700 dark:bg-amber-400/10 dark:text-amber-300">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                         d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.25a8.25 8.25 0 1 1 15 0M16.5 7.5h3.75M16.5 10.5h3.75M16.5 13.5h2.25" />

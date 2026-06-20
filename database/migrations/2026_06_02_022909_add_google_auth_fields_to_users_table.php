@@ -21,7 +21,7 @@ return new class extends Migration
             }
 
             if (!Schema::hasColumn('users', 'auth_provider')) {
-                $table->string('auth_provider')->nullable()->default('google')->after('avatar');
+                $table->string('auth_provider')->default('local')->after('avatar');
             }
 
             if (!Schema::hasColumn('users', 'last_login_at')) {

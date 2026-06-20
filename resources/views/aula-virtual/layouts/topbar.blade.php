@@ -19,7 +19,7 @@
                 </button>
 
                 <div>
-                    <p class="ui-kicker">Aula Virtual LMS</p>
+                    <p class="ui-kicker">SAVP-TIS3 Aula Virtual</p>
                     <h1 class="ui-title mt-1 text-xl font-black tracking-tight sm:text-2xl">@yield('page-title', 'Inicio')</h1>
                 </div>
             </div>

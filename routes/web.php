@@ -22,12 +22,22 @@ use App\Http\Controllers\Admin\CalificacionController;
 use App\Http\Controllers\Admin\ReporteAcademicoController;
 use App\Http\Controllers\Admin\ReporteAdministrativoController;
 use App\Http\Controllers\Admin\ReportePdfController;
+use App\Http\Controllers\Auth\GoogleAuthController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
+        ->name('google.redirect');
+
+    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+        ->name('google.callback');
+});
+
 require __DIR__.'/aula_virtual.php';
 /*
 |--------------------------------------------------------------------------

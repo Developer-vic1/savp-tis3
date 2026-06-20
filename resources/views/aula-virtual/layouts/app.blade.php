@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Aula Virtual | SAVP - TIS 3')</title>
+    <title>@yield('title', 'SAVP-TIS3 | Aula Virtual')</title>
 
     <script>
         (function () {
@@ -35,7 +35,7 @@
             min-height: 100vh;
             background:
                 radial-gradient(circle at top left, rgba(16, 185, 129, 0.10), transparent 24%),
-                radial-gradient(circle at top right, rgba(14, 165, 233, 0.10), transparent 24%),
+                radial-gradient(circle at top right, rgba(217, 119, 6, 0.10), transparent 24%),
                 linear-gradient(to bottom, var(--ui-bg), var(--ui-bg-soft));
             color: var(--ui-text);
         }

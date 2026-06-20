@@ -5,30 +5,23 @@
         : ($user?->can('Aula_Virtual_Estudiante') || $user?->hasRole('Estudiante') ? 'Estudiante' : 'Aula Virtual');
 
     $linksEstudiante = [
-        ['perm' => 'Mis_Asignaturas', 'label' => 'Mis asignaturas'],
-        ['perm' => 'Actividades_Aula', 'label' => 'Actividades'],
-        ['perm' => 'Cuestionarios_Aula', 'label' => 'Cuestionarios'],
-        ['perm' => 'Mis_Archivos', 'label' => 'Mis archivos'],
-        ['perm' => 'Calificaciones_Aula', 'label' => 'Calificaciones'],
-        ['perm' => 'Calendario_Aula', 'label' => 'Calendario'],
-        ['perm' => 'Notificaciones_Aula', 'label' => 'Notificaciones'],
-        ['perm' => 'Perfil_Academico', 'label' => 'Perfil academico'],
-        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Orientacion academica-profesional'],
-        ['perm' => 'Seguridad_Cuenta', 'label' => 'Seguridad de la cuenta'],
+        ['perm' => 'Mis_Asignaturas', 'label' => 'Mis asignaturas', 'route' => 'aula-virtual.estudiante.asignaturas'],
+        ['perm' => 'Tareas_Aula', 'label' => 'Actividades pendientes', 'route' => 'aula-virtual.inicio'],
+        ['perm' => 'Materiales_Aula', 'label' => 'Materiales', 'route' => 'aula-virtual.estudiante.asignaturas'],
+        ['perm' => 'Calificaciones_Aula', 'label' => 'Calificaciones', 'route' => 'aula-virtual.estudiante.asignaturas'],
+        ['perm' => 'Asistencia_Aula', 'label' => 'Mi asistencia', 'route' => 'aula-virtual.estudiante.asistencia'],
+        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Orientacion academica-profesional', 'route' => 'aula-virtual.estudiante.orientacion'],
     ];
 
     $linksDocente = [
-        ['perm' => 'Mis_Cursos', 'label' => 'Mis cursos'],
-        ['perm' => 'Estudiantes_Curso', 'label' => 'Estudiantes'],
-        ['perm' => 'Materiales_Aula', 'label' => 'Materiales'],
-        ['perm' => 'Actividades_Aula', 'label' => 'Actividades'],
-        ['perm' => 'Cuestionarios_Aula', 'label' => 'Cuestionarios'],
-        ['perm' => 'Asistencia_Aula', 'label' => 'Asistencia'],
-        ['perm' => 'Calificaciones_Aula', 'label' => 'Calificaciones'],
-        ['perm' => 'Calendario_Aula', 'label' => 'Calendario'],
-        ['perm' => 'Notificaciones_Aula', 'label' => 'Notificaciones'],
-        ['perm' => 'Reportes_Aula', 'label' => 'Reportes'],
-        ['perm' => 'Seguridad_Cuenta', 'label' => 'Seguridad de la cuenta'],
+        ['perm' => 'Mis_Cursos', 'label' => 'Mis cursos', 'route' => 'aula-virtual.docente.cursos'],
+        ['perm' => 'Materiales_Aula', 'label' => 'Materiales', 'route' => 'aula-virtual.docente.cursos'],
+        ['perm' => 'Tareas_Aula', 'label' => 'Tareas', 'route' => 'aula-virtual.docente.cursos'],
+        ['perm' => 'Entregas_Aula', 'label' => 'Entregas', 'route' => 'aula-virtual.docente.cursos'],
+        ['perm' => 'Asistencia_Aula', 'label' => 'Asistencia', 'route' => 'aula-virtual.docente.cursos'],
+        ['perm' => 'Calificaciones_Aula', 'label' => 'Calificaciones', 'route' => 'aula-virtual.docente.cursos'],
+        ['perm' => 'Reportes_Aula', 'label' => 'Reportes', 'route' => 'aula-virtual.docente.reportes'],
+        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Seguimiento orientacion', 'route' => 'aula-virtual.docente.orientacion.seguimiento'],
     ];
 @endphp
 
@@ -49,9 +42,9 @@
             </div>
 
             <div x-show="sidebarOpen || mobileSidebar" x-cloak class="min-w-0">
-                <p class="truncate text-sm font-black">Aula Virtual</p>
+                <p class="truncate text-sm font-black">SAVP-TIS3</p>
                 <p class="text-[11px] font-semibold uppercase tracking-[0.16em]" style="color: var(--ui-primary);">
-                    SAVP - TIS 3
+                    Aula Virtual
                 </p>
             </div>
         </a>
@@ -72,9 +65,9 @@
     </div>
 
     <div class="px-4 pt-4">
-        <div class="overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-600 to-sky-600 p-4 text-white shadow-sm">
+        <div class="overflow-hidden rounded-lg p-4 text-white shadow-sm" style="background: var(--savp-green);">
             <div x-show="sidebarOpen || mobileSidebar" x-cloak>
-                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">Perfil LMS</p>
+                <p class="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-100">Perfil académico</p>
                 <p class="mt-2 text-lg font-black">{{ $rolAula }}</p>
                 <p class="mt-1 text-sm leading-5 text-white/90">Acceso exclusivo mediante cuenta Google registrada.</p>
             </div>
@@ -109,7 +102,7 @@
                 <div class="space-y-1">
                     @foreach ($linksEstudiante as $link)
                         @can($link['perm'])
-                            <a href="#"
+                            <a href="{{ Route::has($link['route']) ? route($link['route']) : route('aula-virtual.inicio') }}"
                                 class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
                                 style="color: var(--ui-muted);"
                                 onmouseover="this.style.color='var(--ui-primary)'"
@@ -134,10 +127,10 @@
                 <div class="space-y-1">
                     @foreach ($linksDocente as $link)
                         @can($link['perm'])
-                            <a href="#"
-                                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:bg-[var(--ui-info-soft)]"
+                            <a href="{{ Route::has($link['route']) ? route($link['route']) : route('aula-virtual.inicio') }}"
+                                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
                                 style="color: var(--ui-muted);"
-                                onmouseover="this.style.color='var(--ui-info)'"
+                                onmouseover="this.style.color='var(--ui-primary)'"
                                 onmouseout="this.style.color='var(--ui-muted)'">
                                 <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
