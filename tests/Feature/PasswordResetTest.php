@@ -3,15 +3,16 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Notifications\CustomResetPasswordNotification;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_reset_password_link_screen_can_be_rendered(): void
     {
@@ -38,7 +39,7 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
         ]);
 
-        Notification::assertSentTo($user, ResetPassword::class);
+        Notification::assertSentTo($user, CustomResetPasswordNotification::class);
     }
 
     public function test_reset_password_screen_can_be_rendered(): void
@@ -55,7 +56,7 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
         ]);
 
-        Notification::assertSentTo($user, ResetPassword::class, function (object $notification) {
+        Notification::assertSentTo($user, CustomResetPasswordNotification::class, function (object $notification) {
             $response = $this->get('/reset-password/'.$notification->token);
 
             $response->assertStatus(200);
@@ -78,17 +79,19 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
         ]);
 
-        Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user) {
+        Notification::assertSentTo($user, CustomResetPasswordNotification::class, function (object $notification) use ($user) {
             $response = $this->post('/reset-password', [
                 'token' => $notification->token,
                 'email' => $user->email,
-                'password' => 'password',
-                'password_confirmation' => 'password',
+                'password' => 'NewPassword@123',
+                'password_confirmation' => 'NewPassword@123',
             ]);
 
             $response->assertSessionHasNoErrors();
 
             return true;
         });
+
+        $this->assertTrue(Hash::check('NewPassword@123', $user->fresh()->password));
     }
 }
