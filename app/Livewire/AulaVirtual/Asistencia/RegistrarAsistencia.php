@@ -2,24 +2,24 @@
 
 namespace App\Livewire\AulaVirtual\Asistencia;
 
-use App\Models\AulaVirtual\AsistenciaClase;
-use App\Models\AulaVirtual\AsistenciaEstudiante;
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EstadoAsistencia;
-use App\Models\Docente;
-use App\Models\User;
-use App\Services\BitacoraService;
+use App\Services\AulaVirtual\AsistenciaService;
+use App\Services\AulaVirtual\CursoVirtualService;
 use App\Support\AulaVirtual\AsistenciaInteligente;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class RegistrarAsistencia extends Component
 {
+    use AuthorizesRequests;
+
+    #[Locked]
     public string $codCla = '';
+
     public ?ClaseVirtual $clase = null;
     public string $fecha = '';
     public string $tipoAsistencia = 'CLASE';
@@ -30,6 +30,8 @@ class RegistrarAsistencia extends Component
     public array $asistencias = [];
     // Mapeo de observaciones: [cod_est => obs]
     public array $observaciones = [];
+    // Mapeo de minutos de retraso: [cod_est => int]
+    public array $minutosRetraso = [];
 
     // Análisis inteligente
     public array $analisis = [
@@ -42,31 +44,42 @@ class RegistrarAsistencia extends Component
         'datos_calculados' => [],
     ];
 
-    public function mount(string $codCla = ''): void
+    public function mount(string $codCla): void
     {
         $this->codCla = $codCla;
         $this->fecha = Carbon::today()->format('Y-m-d');
 
-        if ($this->codCla !== '') {
-            $this->cargarClase();
-        }
+        $this->cargarClase();
     }
 
     public function cargarClase(): void
     {
-        $this->clase = ClaseVirtual::with(['planAsignatura.asignatura', 'planAsignatura.curso', 'planAsignatura.paralelo', 'estudiantes.estudiante.persona'])
-            ->find($this->codCla);
+        $cursoService = app(CursoVirtualService::class);
+        $user = Auth::user();
 
-        if ($this->clase) {
-            // Inicializar estudiantes vacíos si no están marcados
-            $estudiantes = $this->obtenerEstudiantesClase();
-            foreach ($estudiantes as $est) {
-                if (! isset($this->asistencias[$est->cod_est])) {
-                    $this->asistencias[$est->cod_est] = '';
-                }
+        $this->clase = ClaseVirtual::with([
+            'planAsignatura.asignatura',
+            'planAsignatura.curso',
+            'planAsignatura.paralelo',
+            'planAsignatura.turno',
+            'estudiantes.estudiante.persona',
+        ])->find($this->codCla);
+
+        abort_if(! $this->clase, 404, 'Clase virtual no encontrada.');
+        $this->authorize('registrarAsistencia', $this->clase);
+
+        // Inicializar estudiantes
+        $estudiantes = $this->obtenerEstudiantesClase();
+        foreach ($estudiantes as $est) {
+            if (! isset($this->asistencias[$est->cod_est])) {
+                $this->asistencias[$est->cod_est] = '';
             }
-            $this->ejecutarAnalisisInteligente();
+            if (! isset($this->minutosRetraso[$est->cod_est])) {
+                $this->minutosRetraso[$est->cod_est] = 0;
+            }
         }
+
+        $this->ejecutarAnalisisInteligente();
     }
 
     public function updatedFecha(): void
@@ -75,7 +88,6 @@ class RegistrarAsistencia extends Component
             'fecha' => ['required', 'date', 'before_or_equal:today'],
         ], [
             'fecha.required' => 'La fecha de la sesión es obligatoria.',
-            'fecha.date' => 'Ingresa una fecha válida.',
             'fecha.before_or_equal' => 'La fecha de asistencia no puede ser posterior a hoy.',
         ]);
 
@@ -87,17 +99,34 @@ class RegistrarAsistencia extends Component
         $this->ejecutarAnalisisInteligente();
     }
 
+    public function updatedObservaciones(): void
+    {
+        $this->ejecutarAnalisisInteligente();
+    }
+
+    /**
+     * Marca únicamente a los estudiantes que aún no tienen estado asignado.
+     */
+    public function marcarPendientesComoPresentes(): void
+    {
+        $codPresente = $this->obtenerCodigoEstadoPresente();
+        if ($codPresente) {
+            $estudiantes = $this->obtenerEstudiantesClase();
+            foreach ($estudiantes as $est) {
+                if (empty($this->asistencias[$est->cod_est])) {
+                    $this->asistencias[$est->cod_est] = $codPresente;
+                }
+            }
+            $this->ejecutarAnalisisInteligente();
+        }
+    }
+
+    /**
+     * Marca a todos los estudiantes de la clase como presentes.
+     */
     public function marcarTodosPresentes(): void
     {
-        $estadoPresente = EstadoAsistencia::where('est_est_asi', 'ACTIVO')
-            ->where(function ($q) {
-                $q->where('nom_est_asi', 'like', '%PRES%')
-                    ->orWhere('abr_est_asi', 'P');
-            })
-            ->first();
-
-        $codPresente = $estadoPresente ? $estadoPresente->cod_est_asi : (EstadoAsistencia::where('est_est_asi', 'ACTIVO')->value('cod_est_asi') ?? '');
-
+        $codPresente = $this->obtenerCodigoEstadoPresente();
         if ($codPresente) {
             $estudiantes = $this->obtenerEstudiantesClase();
             foreach ($estudiantes as $est) {
@@ -105,6 +134,19 @@ class RegistrarAsistencia extends Component
             }
             $this->ejecutarAnalisisInteligente();
         }
+    }
+
+    protected function obtenerCodigoEstadoPresente(): string
+    {
+        $estadoPresente = EstadoAsistencia::where('est_est_asi', 'ACTIVO')
+            ->where(function ($q) {
+                $q->where('nom_est_asi', 'like', '%PRES%')
+                    ->orWhere('abr_est_asi', 'P')
+                    ->orWhere('valor_porcentual', '>=', 100);
+            })
+            ->first();
+
+        return $estadoPresente ? $estadoPresente->cod_est_asi : (EstadoAsistencia::where('est_est_asi', 'ACTIVO')->value('cod_est_asi') ?? '');
     }
 
     public function ejecutarAnalisisInteligente(): void
@@ -124,114 +166,57 @@ class RegistrarAsistencia extends Component
 
     public function guardarAsistencia(): void
     {
-        // 1. FRONTEND + BACKEND VALIDATION
+        if (! $this->clase) {
+            $this->cargarClase();
+        }
+
+        $this->authorize('registrarAsistencia', $this->clase);
+
         $this->validate([
-            'codCla' => ['required', 'string', 'exists:clase_virtual,cod_cla'],
             'fecha' => ['required', 'date', 'before_or_equal:today'],
             'tipoAsistencia' => ['required', 'in:CLASE,LABORATORIO,PRACTICA,EVALUACION,ACTIVIDAD'],
         ], [
             'fecha.before_or_equal' => 'La fecha de asistencia no puede ser posterior al día de hoy.',
-            'tipoAsistencia.required' => 'Debe seleccionar un tipo de sesión válido.',
         ]);
 
-        // 2. BACKEND DEFENSIVO: Autorización y Pertenencia
         $user = Auth::user();
-        if (! $user) {
-            $this->dispatch('error-general', mensaje: 'Debe iniciar sesión para registrar asistencia.');
+        $cursoService = app(CursoVirtualService::class);
+        $docente = $cursoService->docenteDeUsuario($user);
+
+        if (! $docente) {
+            $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente activo correspondiente.');
             return;
         }
 
-        $docente = Docente::join('personal_institucional', 'docente.cod_pin', '=', 'personal_institucional.cod_pin')
-            ->where('personal_institucional.cod_per', $user->cod_per)
-            ->select('docente.*')
-            ->first();
-        $codDoc = $docente ? $docente->cod_doc : ($this->clase->planAsignatura->cod_doc ?? null);
-
-        if (! $codDoc) {
-            $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente correspondiente.');
-            return;
-        }
-
-        // Revalidar soporte inteligente en backend
-        $soporte = app(AsistenciaInteligente::class);
-        $analisisServidor = $soporte->analizarSesion(
-            codCla: $this->codCla,
-            estudiantesMarcados: $this->asistencias,
-            fecha: $this->fecha,
-            modoCierre: true
-        );
-
-        if (! ($analisisServidor['puede_guardar'] ?? false)) {
-            $primerBloqueo = $analisisServidor['bloqueos'][0] ?? 'Existen observaciones críticas que impiden guardar la sesión.';
-            $this->dispatch('error-general', mensaje: $primerBloqueo);
-            return;
-        }
-
-        // 3. PERSISTENCIA TRANSACCIONAL CON BASE DE DATOS
-        DB::beginTransaction();
         try {
-            // Generar código único para la cabecera de asistencia
-            $ultimo = AsistenciaClase::where('cod_asi_cla', 'like', 'ASC_%')
-                ->orderByDesc('cod_asi_cla')
-                ->value('cod_asi_cla');
-            $num = $ultimo ? ((int) str_replace('ASC_', '', $ultimo)) + 1 : 1;
-            $codAsiCla = 'ASC_' . str_pad($num, 5, '0', STR_PAD_LEFT);
-
-            $asistenciaCabecera = AsistenciaClase::create([
-                'cod_asi_cla' => $codAsiCla,
+            $datosFormulario = [
                 'cod_cla' => $this->codCla,
-                'cod_doc' => $codDoc,
-                'cod_usu_reg' => $user->cod_usu,
                 'fec_asi_cla' => $this->fecha,
                 'tip_asi_cla' => $this->tipoAsistencia,
-                'tit_asi_cla' => $this->titulo ?: 'Sesión de ' . Carbon::parse($this->fecha)->format('d/m/Y'),
+                'tit_asi_cla' => $this->titulo ?: ('Sesión de ' . Carbon::parse($this->fecha)->format('d/m/Y')),
                 'obs_asi_cla' => $this->observacionGeneral,
-                'ori_asi_cla' => 'MANUAL',
-                'est_asi_cla' => 'CERRADA',
-            ]);
+                'asistencias' => [],
+            ];
 
-            // Insertar detalles individuales
-            $estudiantes = $this->obtenerEstudiantesClase();
-            $numDet = 1;
-            foreach ($estudiantes as $est) {
-                $codEstAsi = $this->asistencias[$est->cod_est] ?? null;
-                if (! $codEstAsi) {
-                    continue;
-                }
-
-                $codAsiEst = 'ASE_' . str_pad($num, 4, '0', STR_PAD_LEFT) . '_' . str_pad($numDet++, 3, '0', STR_PAD_LEFT);
-
-                AsistenciaEstudiante::create([
-                    'cod_asi_est' => $codAsiEst,
-                    'cod_asi_cla' => $asistenciaCabecera->cod_asi_cla,
-                    'cod_est' => $est->cod_est,
+            foreach ($this->asistencias as $codEst => $codEstAsi) {
+                $datosFormulario['asistencias'][$codEst] = [
                     'cod_est_asi' => $codEstAsi,
-                    'cod_usu_reg' => $user->cod_usu,
-                    'obs_asi_est' => $this->observaciones[$est->cod_est] ?? null,
-                    'fec_reg_asi_est' => now(),
-                    'est_asi_est' => 'REGISTRADO',
-                ]);
+                    'min_retraso' => (int) ($this->minutosRetraso[$codEst] ?? 0),
+                    'obs_asi_est' => $this->observaciones[$codEst] ?? null,
+                ];
             }
 
-            // Registrar Bitácora
-            if (class_exists(BitacoraService::class)) {
-                app(BitacoraService::class)->registrar(
-                    accion: 'REGISTRAR_ASISTENCIA',
-                    tabla: 'asistencia_clase',
-                    registro: $asistenciaCabecera->cod_asi_cla,
-                    descripcion: "Se registró la asistencia de la clase {$this->codCla} para la fecha {$this->fecha}.",
-                    nivel: 'SUCCESS'
-                );
-            }
-
-            DB::commit();
+            $asistenciaService = app(AsistenciaService::class);
+            $asistenciaService->guardar($datosFormulario, $docente, $user);
 
             $this->dispatch('success-general', mensaje: 'Asistencia registrada y consolidada correctamente.');
             $this->dispatch('asistencia-guardada');
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            $primerError = collect($ve->errors())->flatten()->first() ?? 'Observaciones en el registro de asistencia.';
+            $this->dispatch('error-general', mensaje: $primerError);
         } catch (\Throwable $e) {
-            DB::rollBack();
             report($e);
-            $this->dispatch('error-general', mensaje: 'Ocurrió un error al guardar la asistencia: ' . $e->getMessage());
+            $this->dispatch('error-general', mensaje: 'No fue posible guardar la asistencia. Inténtalo nuevamente.');
         }
     }
 
@@ -241,16 +226,19 @@ class RegistrarAsistencia extends Component
             return collect();
         }
 
-        return DB::table('clase_estudiante')
-            ->join('estudiante', 'clase_estudiante.cod_est', '=', 'estudiante.cod_est')
-            ->join('persona', 'estudiante.cod_per', '=', 'persona.cod_per')
-            ->where('clase_estudiante.cod_cla', $this->codCla)
-            ->where('clase_estudiante.est_cla_est', 'ACTIVO')
-            ->select('estudiante.cod_est', 'estudiante.rud_est', 'persona.nom_per', 'persona.ape_pat_per', 'persona.ape_mat_per')
-            ->orderBy('persona.ape_pat_per')
-            ->orderBy('persona.ape_mat_per')
-            ->orderBy('persona.nom_per')
-            ->get();
+        return $this->clase->estudiantes()
+            ->where('est_cla_est', 'ACTIVO')
+            ->with(['estudiante.persona'])
+            ->get()
+            ->map(fn ($ce) => (object) [
+                'cod_est' => $ce->cod_est,
+                'rud_est' => $ce->estudiante->rud_est ?? '',
+                'nom_per' => $ce->estudiante->persona->nom_per ?? '',
+                'ape_pat_per' => $ce->estudiante->persona->ape_pat_per ?? '',
+                'ape_mat_per' => $ce->estudiante->persona->ape_mat_per ?? '',
+            ])
+            ->sortBy('ape_pat_per')
+            ->values();
     }
 
     public function render()
