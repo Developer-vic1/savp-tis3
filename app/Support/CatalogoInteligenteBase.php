@@ -2,10 +2,11 @@
 
 namespace App\Support;
 
+use App\Support\Core\SoporteInteligenteBase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-abstract class CatalogoInteligenteBase
+abstract class CatalogoInteligenteBase extends SoporteInteligenteBase
 {
     public function normalizarTexto(?string $texto): string
     {
