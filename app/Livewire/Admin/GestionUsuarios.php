@@ -12,8 +12,10 @@ use App\Models\Regente;
 use App\Models\SecretariaGeneral;
 use App\Models\User;
 use App\Services\BitacoraService;
+use App\Support\Usuarios\UsuarioInteligente;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
@@ -24,6 +26,26 @@ use Spatie\Permission\Models\Role;
 class GestionUsuarios extends Component
 {
     use WithPagination;
+
+    public array $analisisCreacion = [
+        'puede_guardar' => false,
+        'puede_continuar' => false,
+        'estado' => 'OK',
+        'bloqueos' => [],
+        'advertencias' => [],
+        'sugerencias' => [],
+        'datos_calculados' => [],
+    ];
+
+    public array $analisisEdicion = [
+        'puede_guardar' => true,
+        'puede_continuar' => true,
+        'estado' => 'OK',
+        'bloqueos' => [],
+        'advertencias' => [],
+        'sugerencias' => [],
+        'datos_calculados' => [],
+    ];
 
     private const ROLES_ADMINISTRATIVOS = [
         'Administrador',
@@ -202,6 +224,18 @@ class GestionUsuarios extends Component
         $this->accionLote = '';
     }
 
+    public function updatedForm(): void
+    {
+        $this->analisisCreacion = app(UsuarioInteligente::class)->analizarCreacion($this->form);
+    }
+
+    public function updatedFormEditar(): void
+    {
+        if ($this->usuarioDetalle) {
+            $this->analisisEdicion = app(UsuarioInteligente::class)->analizarEdicion($this->usuarioDetalle, $this->formEditar);
+        }
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Modal crear
@@ -211,6 +245,7 @@ class GestionUsuarios extends Component
     {
         $this->resetValidation();
         $this->resetFormulario();
+        $this->analisisCreacion = app(UsuarioInteligente::class)->analizarCreacion($this->form);
         $this->modalCrear = true;
     }
 
@@ -231,6 +266,15 @@ class GestionUsuarios extends Component
             'role' => '',
             'est_usu' => 'ACTIVO',
         ];
+        $this->analisisCreacion = [
+            'puede_guardar' => false,
+            'puede_continuar' => false,
+            'estado' => 'OK',
+            'bloqueos' => [],
+            'advertencias' => [],
+            'sugerencias' => [],
+            'datos_calculados' => [],
+        ];
     }
 
     /*
@@ -240,7 +284,15 @@ class GestionUsuarios extends Component
     */
     public function guardarUsuario(): void
     {
+        Gate::authorize('Gestion_Usuarios');
         $this->validate();
+
+        $this->analisisCreacion = app(UsuarioInteligente::class)->analizarCreacion($this->form);
+        if (! ($this->analisisCreacion['puede_guardar'] ?? false)) {
+            $primerBloqueo = $this->analisisCreacion['bloqueos'][0] ?? 'La cuenta no cumple con los requisitos de integridad.';
+            $this->dispatch('error-general', mensaje: $primerBloqueo);
+            return;
+        }
 
         DB::beginTransaction();
 
@@ -391,6 +443,7 @@ class GestionUsuarios extends Component
             'password_confirmation' => '',
         ];
 
+        $this->analisisEdicion = app(UsuarioInteligente::class)->analizarEdicion($usuario, $this->formEditar);
         $this->modalEditar = true;
     }
 
@@ -407,6 +460,15 @@ class GestionUsuarios extends Component
             'est_usu' => 'ACTIVO',
             'password' => '',
             'password_confirmation' => '',
+        ];
+        $this->analisisEdicion = [
+            'puede_guardar' => true,
+            'puede_continuar' => true,
+            'estado' => 'OK',
+            'bloqueos' => [],
+            'advertencias' => [],
+            'sugerencias' => [],
+            'datos_calculados' => [],
         ];
     }
 
@@ -436,6 +498,7 @@ class GestionUsuarios extends Component
 
     public function guardarEdicionUsuario(): void
     {
+        Gate::authorize('Gestion_Usuarios');
         $this->validate($this->rulesEditarUsuario(), $this->messages);
 
         DB::beginTransaction();
@@ -448,6 +511,14 @@ class GestionUsuarios extends Component
             if (! $usuario) {
                 DB::rollBack();
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+                return;
+            }
+
+            $this->analisisEdicion = app(UsuarioInteligente::class)->analizarEdicion($usuario, $this->formEditar);
+            if (! ($this->analisisEdicion['puede_guardar'] ?? false)) {
+                DB::rollBack();
+                $primerBloqueo = $this->analisisEdicion['bloqueos'][0] ?? 'La modificación no cumple con los criterios de seguridad.';
+                $this->dispatch('error-general', mensaje: $primerBloqueo);
                 return;
             }
 
@@ -591,6 +662,8 @@ class GestionUsuarios extends Component
     */
     public function aplicarAccionLote(): void
     {
+        Gate::authorize('Gestion_Usuarios');
+
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;

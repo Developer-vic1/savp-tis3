@@ -261,11 +261,11 @@ class UsuarioInteligente extends SoporteInteligenteBase
         if ($usuario) {
             // Verificar si es Docente con materias activas
             if (Schema::hasTable('docente') && Schema::hasTable('plan_asignatura')) {
-                $docente = Docente::where('cod_per', $usuario->cod_per)->first();
+                $docente = Docente::whereHas('personalInstitucional', fn($q) => $q->where('cod_per', $usuario->cod_per))->first();
                 if ($docente) {
                     $clasesAsignadas = DB::table('plan_asignatura')
                         ->where('cod_doc', $docente->cod_doc)
-                        ->where('est_pla_asig', 'ACTIVO')
+                        ->where('est_pas', 'ACTIVO')
                         ->count();
 
                     if ($clasesAsignadas > 0) {
@@ -310,7 +310,7 @@ class UsuarioInteligente extends SoporteInteligenteBase
         $hallazgos = [];
 
         if ($rol === 'Docente' && Schema::hasTable('docente')) {
-            $esDocente = Docente::where('cod_per', $codPer)->exists();
+            $esDocente = Docente::whereHas('personalInstitucional', fn($q) => $q->where('cod_per', $codPer))->exists();
             if (! $esDocente) {
                 $adv = "La persona no está registrada en el plantel docente (tabla 'docente'). Se creará el usuario, pero requerirá registro docente para impartir clases.";
                 $advertencias[] = $adv;

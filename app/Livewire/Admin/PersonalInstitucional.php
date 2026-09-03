@@ -13,6 +13,7 @@ use App\Models\PlanEspecialidad;
 use App\Models\Turno;
 use App\Services\BitacoraService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -473,6 +474,7 @@ class PersonalInstitucional extends Component
 
     public function guardarAsignacion(): void
     {
+        Gate::authorize('Personal_Institucional');
         $this->validate();
 
         $tipoCarga = $this->formAsignacion['tipo_carga'];
@@ -670,6 +672,7 @@ class PersonalInstitucional extends Component
 
     public function actualizarDocente(): void
     {
+        Gate::authorize('Personal_Institucional');
         $this->validate([
             'formEditar.cod_doc' => [
                 'required',
