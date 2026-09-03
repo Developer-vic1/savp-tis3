@@ -20,8 +20,6 @@ class CrearTarea extends Component
     #[Locked]
     public string $codCla = '';
 
-    public ?ClaseVirtual $clase = null;
-
     public string $titulo = '';
     public string $descripcion = '';
     public string $tipo = 'TAREA';
@@ -48,12 +46,17 @@ class CrearTarea extends Component
         $this->fechaLimite = now()->addDays(7)->format('Y-m-d\TH:i');
 
         if ($this->codCla !== '') {
-            $this->clase = ClaseVirtual::with(['planAsignatura.asignatura', 'planAsignatura.curso', 'planAsignatura.paralelo'])->find($this->codCla);
-            if ($this->clase) {
-                $this->authorize('crearTarea', $this->clase);
+            $clase = $this->obtenerClase();
+            if ($clase) {
+                $this->authorize('crearTarea', $clase);
             }
             $this->analizarEnTiempoReal();
         }
+    }
+
+    public function obtenerClase(): ?ClaseVirtual
+    {
+        return ClaseVirtual::with(['planAsignatura.asignatura', 'planAsignatura.curso', 'planAsignatura.paralelo'])->find($this->codCla);
     }
 
     public function updated($propertyName): void
@@ -77,11 +80,9 @@ class CrearTarea extends Component
 
     public function guardarTarea(): void
     {
-        if (! $this->clase) {
-            $this->clase = ClaseVirtual::find($this->codCla);
-        }
-        abort_if(! $this->clase, 404);
-        $this->authorize('crearTarea', $this->clase);
+        $clase = $this->obtenerClase();
+        abort_if(! $clase, 404);
+        $this->authorize('crearTarea', $clase);
 
         $this->validate([
             'codCla' => ['required', 'string', 'exists:clase_virtual,cod_cla'],
@@ -138,6 +139,8 @@ class CrearTarea extends Component
 
     public function render()
     {
-        return view('livewire.aula-virtual.tareas.crear-tarea');
+        return view('livewire.aula-virtual.tareas.crear-tarea', [
+            'clase' => $this->obtenerClase(),
+        ]);
     }
 }

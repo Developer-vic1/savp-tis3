@@ -20,9 +20,6 @@ class EditarTarea extends Component
     #[Locked]
     public string $codTar = '';
 
-    public ?Tarea $tarea = null;
-    public ?ClaseVirtual $clase = null;
-
     public string $titulo = '';
     public string $descripcion = '';
     public string $tipo = 'TAREA';
@@ -45,22 +42,26 @@ class EditarTarea extends Component
     public function mount(string $codTar): void
     {
         $this->codTar = $codTar;
-        $this->tarea = Tarea::with(['claseVirtual.planAsignatura.asignatura', 'claseVirtual.planAsignatura.curso', 'claseVirtual.planAsignatura.paralelo'])->find($this->codTar);
+        $tarea = $this->obtenerTarea();
 
-        abort_if(! $this->tarea, 404, 'Tarea no encontrada.');
-        $this->authorize('update', $this->tarea);
+        abort_if(! $tarea, 404, 'Tarea no encontrada.');
+        $this->authorize('update', $tarea);
 
-        $this->clase = $this->tarea->claseVirtual;
-        $this->titulo = $this->tarea->tit_tar;
-        $this->descripcion = (string) $this->tarea->des_tar;
-        $this->tipo = $this->tarea->tip_tar;
-        $this->fechaPublicacion = $this->tarea->fec_pub_tar ? Carbon::parse($this->tarea->fec_pub_tar)->format('Y-m-d\TH:i') : null;
-        $this->fechaLimite = $this->tarea->fec_lim_tar ? Carbon::parse($this->tarea->fec_lim_tar)->format('Y-m-d\TH:i') : null;
-        $this->puntajeMaximo = (float) $this->tarea->pun_max_tar;
-        $this->permiteEntregaTardia = (bool) $this->tarea->perm_ent_tardia;
-        $this->estado = $this->tarea->est_tar;
+        $this->titulo = $tarea->tit_tar;
+        $this->descripcion = (string) $tarea->des_tar;
+        $this->tipo = $tarea->tip_tar;
+        $this->fechaPublicacion = $tarea->fec_pub_tar ? Carbon::parse($tarea->fec_pub_tar)->format('Y-m-d\TH:i') : null;
+        $this->fechaLimite = $tarea->fec_lim_tar ? Carbon::parse($tarea->fec_lim_tar)->format('Y-m-d\TH:i') : null;
+        $this->puntajeMaximo = (float) $tarea->pun_max_tar;
+        $this->permiteEntregaTardia = (bool) $tarea->perm_ent_tardia;
+        $this->estado = $tarea->est_tar;
 
         $this->analizarEnTiempoReal();
+    }
+
+    public function obtenerTarea(): ?Tarea
+    {
+        return Tarea::with(['claseVirtual.planAsignatura.asignatura', 'claseVirtual.planAsignatura.curso', 'claseVirtual.planAsignatura.paralelo'])->find($this->codTar);
     }
 
     public function updated($propertyName): void
@@ -70,13 +71,14 @@ class EditarTarea extends Component
 
     public function analizarEnTiempoReal(): void
     {
-        if (! $this->tarea) {
+        $tarea = $this->obtenerTarea();
+        if (! $tarea) {
             return;
         }
 
         $soporte = app(TareaInteligente::class);
         $this->analisis = $soporte->analizar([
-            'cod_cla' => $this->tarea->cod_cla,
+            'cod_cla' => $tarea->cod_cla,
             'tit_tar' => $this->titulo,
             'des_tar' => $this->descripcion,
             'tip_tar' => $this->tipo,
@@ -88,11 +90,9 @@ class EditarTarea extends Component
 
     public function guardarCambios(): void
     {
-        if (! $this->tarea) {
-            $this->tarea = Tarea::find($this->codTar);
-        }
-        abort_if(! $this->tarea, 404);
-        $this->authorize('update', $this->tarea);
+        $tarea = $this->obtenerTarea();
+        abort_if(! $tarea, 404);
+        $this->authorize('update', $tarea);
 
         $this->validate([
             'titulo' => ['required', 'string', 'min:3', 'max:180'],
@@ -119,7 +119,7 @@ class EditarTarea extends Component
 
         try {
             $tareaService = app(TareaService::class);
-            $tareaService->actualizar($this->tarea, [
+            $tareaService->actualizar($tarea, [
                 'tit_tar' => $this->titulo,
                 'des_tar' => $this->descripcion,
                 'tip_tar' => $this->tipo,
@@ -143,6 +143,10 @@ class EditarTarea extends Component
 
     public function render()
     {
-        return view('livewire.aula-virtual.tareas.editar-tarea');
+        $tarea = $this->obtenerTarea();
+        return view('livewire.aula-virtual.tareas.editar-tarea', [
+            'tarea' => $tarea,
+            'clase' => $tarea?->claseVirtual,
+        ]);
     }
 }

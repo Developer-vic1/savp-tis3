@@ -42,6 +42,10 @@ class RegistrarAsistenciaFlujoTest extends TestCase
             ]
         );
 
+        // 0. Spatie Permissions
+        \Spatie\Permission\Models\Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
+        \Spatie\Permission\Models\Permission::findOrCreate('Aula_Virtual_Docente', 'web');
+
         // 2. Crear Persona y Usuario Docente
         $personaDoc = Persona::create([
             'nom_per' => 'Profesor',
@@ -70,9 +74,11 @@ class RegistrarAsistenciaFlujoTest extends TestCase
             'cod_usu' => 'USU_DOC_01',
             'cod_per' => $personaDoc->cod_per,
             'email' => 'profesor.mamani@savp.edu.bo',
+            'email_verified_at' => now(),
             'password' => bcrypt('password'),
             'est_usu' => 'ACTIVO',
         ]);
+        $this->docenteUser->givePermissionTo('Acceso_Aula_Virtual', 'Aula_Virtual_Docente');
 
         // 3. Crear Gestión, Curso, Paralelo, Turno, Asignatura, Plan y Clase Virtual
         DB::table('gestion_academica')->updateOrInsert(

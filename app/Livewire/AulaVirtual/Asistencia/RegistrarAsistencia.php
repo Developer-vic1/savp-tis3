@@ -20,7 +20,6 @@ class RegistrarAsistencia extends Component
     #[Locked]
     public string $codCla = '';
 
-    public ?ClaseVirtual $clase = null;
     public string $fecha = '';
     public string $tipoAsistencia = 'CLASE';
     public string $titulo = '';
@@ -49,26 +48,10 @@ class RegistrarAsistencia extends Component
         $this->codCla = $codCla;
         $this->fecha = Carbon::today()->format('Y-m-d');
 
-        $this->cargarClase();
-    }
+        $clase = $this->obtenerClase();
+        abort_if(! $clase, 404, 'Clase virtual no encontrada.');
+        $this->authorize('registrarAsistencia', $clase);
 
-    public function cargarClase(): void
-    {
-        $cursoService = app(CursoVirtualService::class);
-        $user = Auth::user();
-
-        $this->clase = ClaseVirtual::with([
-            'planAsignatura.asignatura',
-            'planAsignatura.curso',
-            'planAsignatura.paralelo',
-            'planAsignatura.turno',
-            'estudiantes.estudiante.persona',
-        ])->find($this->codCla);
-
-        abort_if(! $this->clase, 404, 'Clase virtual no encontrada.');
-        $this->authorize('registrarAsistencia', $this->clase);
-
-        // Inicializar estudiantes
         $estudiantes = $this->obtenerEstudiantesClase();
         foreach ($estudiantes as $est) {
             if (! isset($this->asistencias[$est->cod_est])) {
@@ -80,6 +63,16 @@ class RegistrarAsistencia extends Component
         }
 
         $this->ejecutarAnalisisInteligente();
+    }
+
+    public function obtenerClase(): ?ClaseVirtual
+    {
+        return ClaseVirtual::with([
+            'planAsignatura.asignatura',
+            'planAsignatura.curso',
+            'planAsignatura.paralelo',
+            'planAsignatura.turno',
+        ])->find($this->codCla);
     }
 
     public function updatedFecha(): void
@@ -104,9 +97,6 @@ class RegistrarAsistencia extends Component
         $this->ejecutarAnalisisInteligente();
     }
 
-    /**
-     * Marca únicamente a los estudiantes que aún no tienen estado asignado.
-     */
     public function marcarPendientesComoPresentes(): void
     {
         $codPresente = $this->obtenerCodigoEstadoPresente();
@@ -121,9 +111,6 @@ class RegistrarAsistencia extends Component
         }
     }
 
-    /**
-     * Marca a todos los estudiantes de la clase como presentes.
-     */
     public function marcarTodosPresentes(): void
     {
         $codPresente = $this->obtenerCodigoEstadoPresente();
@@ -151,7 +138,7 @@ class RegistrarAsistencia extends Component
 
     public function ejecutarAnalisisInteligente(): void
     {
-        if (! $this->clase) {
+        if (empty($this->codCla)) {
             return;
         }
 
@@ -166,11 +153,9 @@ class RegistrarAsistencia extends Component
 
     public function guardarAsistencia(): void
     {
-        if (! $this->clase) {
-            $this->cargarClase();
-        }
-
-        $this->authorize('registrarAsistencia', $this->clase);
+        $clase = $this->obtenerClase();
+        abort_if(! $clase, 404);
+        $this->authorize('registrarAsistencia', $clase);
 
         $this->validate([
             'fecha' => ['required', 'date', 'before_or_equal:today'],
@@ -222,11 +207,12 @@ class RegistrarAsistencia extends Component
 
     public function obtenerEstudiantesClase()
     {
-        if (! $this->clase) {
+        $clase = $this->obtenerClase();
+        if (! $clase) {
             return collect();
         }
 
-        return $this->clase->estudiantes()
+        return $clase->estudiantes()
             ->where('est_cla_est', 'ACTIVO')
             ->with(['estudiante.persona'])
             ->get()
@@ -243,6 +229,7 @@ class RegistrarAsistencia extends Component
 
     public function render()
     {
+        $clase = $this->obtenerClase();
         $estudiantes = $this->obtenerEstudiantesClase();
         $estadosAsistencia = EstadoAsistencia::where('est_est_asi', 'ACTIVO')->get();
 
@@ -250,6 +237,7 @@ class RegistrarAsistencia extends Component
         $marcados = collect($this->asistencias)->filter(fn ($v) => ! empty($v))->count();
 
         return view('livewire.aula-virtual.asistencia.registrar-asistencia', [
+            'clase' => $clase,
             'estudiantes' => $estudiantes,
             'estadosAsistencia' => $estadosAsistencia,
             'totalEstudiantes' => $totalEstudiantes,
