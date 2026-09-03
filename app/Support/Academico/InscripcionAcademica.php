@@ -2,12 +2,13 @@
 
 namespace App\Support\Academico;
 
+use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
-class InscripcionAcademica
+class InscripcionAcademica extends SoporteInteligenteBase
 {
     public const CAPACIDAD_REFERENCIAL_PARALELO = 35;
 

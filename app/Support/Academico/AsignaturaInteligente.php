@@ -2,7 +2,9 @@
 
 namespace App\Support\Academico;
 
-class AsignaturaInteligente
+use App\Support\Core\SoporteInteligenteBase;
+
+class AsignaturaInteligente extends SoporteInteligenteBase
 {
     public const TELEFONO_SOPORTE = '75836807';
 

@@ -3,8 +3,9 @@
 namespace App\Support\Academico;
 
 use App\Models\PlanAsignatura;
+use App\Support\Core\SoporteInteligenteBase;
 
-class PlanAsignaturaInteligente
+class PlanAsignaturaInteligente extends SoporteInteligenteBase
 {
     public function analizar(array $datos, ?string $ignorarCodigo = null): array
     {

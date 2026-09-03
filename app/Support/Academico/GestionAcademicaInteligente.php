@@ -2,13 +2,14 @@
 
 namespace App\Support\Academico;
 
+use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Throwable;
 
-class GestionAcademicaInteligente
+class GestionAcademicaInteligente extends SoporteInteligenteBase
 {
     // ============================================================
     // ESTADOS Y PARÁMETROS NORMATIVOS

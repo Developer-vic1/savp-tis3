@@ -2,7 +2,9 @@
 
 namespace App\Support\Academico;
 
-class CursoInteligente
+use App\Support\Core\SoporteInteligenteBase;
+
+class CursoInteligente extends SoporteInteligenteBase
 {
     public static function catalogo(): array
     {

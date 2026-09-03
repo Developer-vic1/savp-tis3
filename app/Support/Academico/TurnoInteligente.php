@@ -2,6 +2,7 @@
 
 namespace App\Support\Academico;
 
+use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -9,7 +10,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Throwable;
 
-class TurnoInteligente
+class TurnoInteligente extends SoporteInteligenteBase
 {
     public const ESTADO_VALIDO = 'VALIDO';
     public const ESTADO_ADVERTENCIA = 'ADVERTENCIA';

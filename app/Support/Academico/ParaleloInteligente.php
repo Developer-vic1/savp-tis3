@@ -2,7 +2,9 @@
 
 namespace App\Support\Academico;
 
-class ParaleloInteligente
+use App\Support\Core\SoporteInteligenteBase;
+
+class ParaleloInteligente extends SoporteInteligenteBase
 {
     public const ESTADO_VALIDO = 'VALIDO';
     public const ESTADO_REDACTABLE = 'REDACTABLE';
