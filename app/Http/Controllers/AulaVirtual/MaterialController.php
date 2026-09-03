@@ -50,7 +50,7 @@ class MaterialController extends Controller
     {
         abort_if(! $this->puedeVerCurso($request, $material->cod_cla), 403);
 
-        return $this->materiales->descargar($material);
+        return $this->materiales->descargar($material, $request->user());
     }
 
     public function publicar(Request $request, MaterialClase $material)
