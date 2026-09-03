@@ -97,7 +97,23 @@ class CursoVirtualService
                 ->get()
             : new Collection();
 
-        $pendientes = $tareas->filter(fn (Tarea $tarea) => ! $entregas->firstWhere('cod_tar', $tarea->cod_tar)?->estaEntregada());
+        $pendientes = $tareas->filter(function (Tarea $tarea) use ($entregas) {
+            $entregasTarea = $entregas->where('cod_tar', $tarea->cod_tar);
+            if ($entregasTarea->isEmpty()) {
+                return true;
+            }
+            $mejorEntrega = $entregasTarea->sortByDesc(fn ($e) => match($e->est_ent) {
+                'CALIFICADO' => 6,
+                'ENTREGADO' => 5,
+                'ENTREGADO_TARDE' => 4,
+                'DEVUELTO' => 3,
+                'PENDIENTE' => 2,
+                'ANULADO' => 1,
+                default => 0,
+            })->first();
+            
+            return !in_array($mejorEntrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO']);
+        });
         $calificaciones = $entregas->pluck('calificacion')->filter();
         $promedio = $calificaciones->isNotEmpty()
             ? round($calificaciones->avg(fn ($calificacion) => (float) $calificacion->pun_obt), 2)
@@ -122,7 +138,7 @@ class CursoVirtualService
             'metricas' => [
                 'asignaturas' => $cursos->count(),
                 'actividades_pendientes' => $pendientes->count(),
-                'tareas_entregadas' => $entregas->filter(fn (EntregaTarea $entrega) => $entrega->estaEntregada() || $entrega->estaCalificada())->count(),
+                'tareas_entregadas' => $entregas->unique('cod_tar')->filter(fn (EntregaTarea $entrega) => in_array($entrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO']))->count(),
                 'promedio_actual' => $promedio,
                 'asistencia_general' => $asistencia['porcentaje'],
                 'orientacion_en_proceso' => $orientacionEnProceso,
@@ -206,12 +222,23 @@ class CursoVirtualService
 
         return [
             'tareas_pendientes' => $estudiante
-                ? $tareas->where('est_tar', 'PUBLICADA')->filter(fn ($tarea) => ! $entregas->firstWhere('cod_tar', $tarea->cod_tar)?->estaEntregada())->count()
+                ? $tareas->where('est_tar', 'PUBLICADA')->filter(function ($tarea) use ($entregas) {
+                    $mejorEntrega = $entregas->where('cod_tar', $tarea->cod_tar)->sortByDesc(fn ($e) => match($e->est_ent) {
+                        'CALIFICADO' => 6,
+                        'ENTREGADO' => 5,
+                        'ENTREGADO_TARDE' => 4,
+                        'DEVUELTO' => 3,
+                        'PENDIENTE' => 2,
+                        'ANULADO' => 1,
+                        default => 0,
+                    })->first();
+                    return !$mejorEntrega || !in_array($mejorEntrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO']);
+                })->count()
                 : $tareas->where('est_tar', 'PUBLICADA')->count(),
             'materiales' => $materiales->count(),
             'entregas_pendientes' => $tareas->sum(fn ($tarea) => $tarea->entregas->whereIn('est_ent', ['ENTREGADO', 'ENTREGADO_TARDE'])->count()),
             'progreso' => $tareas->where('est_tar', 'PUBLICADA')->count() > 0
-                ? round(($entregas->whereIn('est_ent', ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO'])->count() / max(1, $tareas->where('est_tar', 'PUBLICADA')->count())) * 100)
+                ? round(($entregas->unique('cod_tar')->whereIn('est_ent', ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO'])->count() / max(1, $tareas->where('est_tar', 'PUBLICADA')->count())) * 100)
                 : 0,
         ];
     }

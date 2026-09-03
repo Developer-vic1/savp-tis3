@@ -19,9 +19,14 @@ class EntregaService
             'cod_est' => $estudiante->cod_est,
         ]);
 
-        abort_if($entrega->exists && $entrega->estaCalificada(), 422, 'La entrega ya fue revisada.');
+        abort_if(
+            $entrega->exists && in_array($entrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO', 'ANULADO'], true),
+            422,
+            'La tarea ya fue enviada y no puede modificarse.'
+        );
 
-        $tardia = $tarea->vencida();
+        $esPrimerEnvio = ! $entrega->exists || $entrega->est_ent === 'PENDIENTE';
+        $tardia = $esPrimerEnvio && $tarea->vencida();
         $entrega->fill([
             'tex_ent' => $datos['tex_ent'] ?? null,
             'est_ent' => ($datos['accion'] ?? 'guardar') === 'enviar'
@@ -31,7 +36,7 @@ class EntregaService
         ])->save();
 
         if ($archivo) {
-            $ruta = $archivo->store('aula-virtual/entregas');
+            $ruta = $archivo->store('aula-virtual/entregas', 'local');
 
             EntregaArchivo::create([
                 'cod_ent' => $entrega->cod_ent,

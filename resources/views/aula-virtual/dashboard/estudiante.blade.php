@@ -105,7 +105,7 @@
                         Seguimiento académico y explorador académico-vocacional vinculados al rendimiento del estudiante.
                     </p>
                     <div class="mt-5 flex flex-wrap gap-2">
-                        <livewire:aula-virtual.orientacion.explorador-vocacional />
+                        <livewire:aula-virtual.orientacion.explorador-vocacional :auto-open="true" />
                         @include('aula-virtual.componentes.icon-action-button', [
                             'href' => route('aula-virtual.estudiante.orientacion'),
                             'icon' => 'entrar',
