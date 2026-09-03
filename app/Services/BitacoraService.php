@@ -46,11 +46,42 @@ class BitacoraService
             'rut_bit' => request()?->path(),
             'met_bit' => request()?->method(),
 
-            'val_ant_bit' => $valoresAnteriores,
-            'val_nue_bit' => $valoresNuevos,
+            'val_ant_bit' => self::enmascararSensibles($valoresAnteriores),
+            'val_nue_bit' => self::enmascararSensibles($valoresNuevos),
 
             'err_bit' => $error,
             'fec_bit' => now(),
         ]);
+    }
+
+    private static function enmascararSensibles(?array $datos): ?array
+    {
+        if ($datos === null) {
+            return null;
+        }
+
+        $sensibles = [
+            'password',
+            'password_confirmation',
+            'token',
+            'remember_token',
+            'secret',
+            'api_key',
+            'contrasena',
+            'contraseña',
+        ];
+
+        $resultado = [];
+        foreach ($datos as $clave => $valor) {
+            if (is_array($valor)) {
+                $resultado[$clave] = self::enmascararSensibles($valor);
+            } elseif (is_string($clave) && in_array(mb_strtolower($clave), $sensibles, true)) {
+                $resultado[$clave] = '********';
+            } else {
+                $resultado[$clave] = $valor;
+            }
+        }
+
+        return $resultado;
     }
 }
