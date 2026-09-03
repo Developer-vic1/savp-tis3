@@ -26,9 +26,30 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $persona = \App\Models\Persona::create([
+            'nom_per' => fake()->firstName(),
+            'ape_pat_per' => fake()->lastName(),
+            'ape_mat_per' => fake()->lastName(),
+            'ci_per' => (string) fake()->unique()->numerify('########'),
+            'exp_per' => 'LP',
+            'fec_nac_per' => '2000-01-01',
+            'gen_per' => 'MASCULINO',
+            'tel_per' => fake()->numerify('7#######'),
+            'ema_per' => fake()->unique()->safeEmail(),
+            'dir_per' => 'Av. Principal 123',
+            'est_per' => 'ACTIVO',
+        ]);
+
+        $ultimo = \App\Models\User::where('cod_usu', 'like', 'USU_%')
+            ->orderByDesc('cod_usu')
+            ->value('cod_usu');
+        $numero = $ultimo ? ((int) str_replace('USU_', '', $ultimo)) + 1 : 1;
+        $codUsu = 'USU_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'cod_usu' => $codUsu,
+            'cod_per' => $persona->cod_per,
+            'email' => $persona->ema_per,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'two_factor_secret' => null,
@@ -36,6 +57,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+            'est_usu' => 'ACTIVO',
         ];
     }
 

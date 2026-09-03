@@ -2,13 +2,14 @@
 
 namespace App\Support\Personas;
 
+use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Throwable;
 
-class PersonaInteligente
+class PersonaInteligente extends SoporteInteligenteBase
 {
     // ============================================================
     // PARÁMETROS BASE
@@ -1211,16 +1212,38 @@ class PersonaInteligente
         array $coincidencias = [],
         array $resumen = []
     ): array {
+        $bloqueosUnicos = array_values(array_unique(array_filter($bloqueos)));
+        $puedeGuardar = count($bloqueosUnicos) === 0 && $puedeContinuar;
+
+        $hallazgos = [];
+        foreach ($bloqueosUnicos as $msg) {
+            $this->registrarHallazgo($hallazgos, 'PER_BLOQUEO', self::TIPO_INTEGRIDAD, self::COMP_BLOQUEO, $msg, self::RIESGO_ALTO);
+        }
+        foreach (array_values(array_unique(array_filter($advertencias))) as $msg) {
+            $this->registrarHallazgo($hallazgos, 'PER_ADVERTENCIA', self::TIPO_PEDAGOGICA, self::COMP_ADVERTENCIA, $msg, self::RIESGO_MEDIO);
+        }
+        foreach (array_values(array_unique(array_filter($sugerencias))) as $msg) {
+            $this->registrarHallazgo($hallazgos, 'PER_SUGERENCIA', self::TIPO_RECOMENDACION, self::COMP_SUGERENCIA, $msg, self::RIESGO_BAJO);
+        }
+
         return [
+            // Retrocompatibilidad con vistas existentes
             'puede_continuar' => $puedeContinuar,
+            'puede_guardar' => $puedeGuardar,
+            'estado' => $estadoInteligente,
             'estado_inteligente' => $estadoInteligente,
             'nivel_riesgo' => $nivelRiesgo,
             'mensaje' => $mensaje,
-            'bloqueos' => array_values(array_unique($bloqueos)),
-            'advertencias' => array_values(array_unique($advertencias)),
-            'sugerencias' => array_values(array_unique($sugerencias)),
+            'bloqueos' => $bloqueosUnicos,
+            'advertencias' => array_values(array_unique(array_filter($advertencias))),
+            'sugerencias' => array_values(array_unique(array_filter($sugerencias))),
             'coincidencias' => $coincidencias,
             'resumen' => $resumen,
+            // Nuevas claves estándar
+            'hallazgos' => $hallazgos,
+            'datos_calculados' => $coincidencias,
+            'impacto' => [],
+            'fuentes_regla' => ['RM 0001/2026', 'SEGIP / Ley 070'],
         ];
     }
 }

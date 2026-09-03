@@ -29,6 +29,23 @@ class Persona extends Model
         'est_per',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'est_per' => 'boolean',
+            'fec_nac_per' => 'date',
+        ];
+    }
+
+    public function setEstPerAttribute($value): void
+    {
+        if (is_string($value)) {
+            $this->attributes['est_per'] = strtoupper($value) === 'ACTIVO' || $value === '1' || $value === 'true';
+        } else {
+            $this->attributes['est_per'] = (bool) $value;
+        }
+    }
+
     protected static function booted(): void
     {
         static::creating(function ($persona) {
