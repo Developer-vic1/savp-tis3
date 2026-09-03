@@ -42,9 +42,17 @@ class TareaController extends Controller
     {
         abort_if(! $this->cursos->cursoParaEstudiante($request->user(), $tarea->cod_cla), 403);
 
+        $estudiante = $this->cursos->estudianteDeUsuario($request->user());
+        $entrega = \App\Models\AulaVirtual\EntregaTarea::query()
+            ->with('archivos')
+            ->where('cod_tar', $tarea->cod_tar)
+            ->where('cod_est', $estudiante->cod_est)
+            ->first();
+
         return view('aula-virtual.tareas.entregar', [
             'tarea' => $tarea->load('claseVirtual.planAsignatura.asignatura', 'materiales'),
-            'estudiante' => $this->cursos->estudianteDeUsuario($request->user()),
+            'estudiante' => $estudiante,
+            'entrega' => $entrega,
         ]);
     }
 

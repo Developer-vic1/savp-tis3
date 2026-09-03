@@ -9,6 +9,7 @@ use Livewire\Component;
 class ExploradorVocacional extends Component
 {
     public bool $abierto = false;
+    public bool $autoOpen = false;
     public bool $sinGuardar = false;
     public int $paso = 0;
     public array $preguntas = [];
@@ -17,9 +18,17 @@ class ExploradorVocacional extends Component
     public ?int $resultadoId = null;
     public ?string $mensaje = null;
 
-    public function mount(OrientacionService $orientacion, CursoVirtualService $cursos): void
+    public function mount(OrientacionService $orientacion, CursoVirtualService $cursos, bool $autoOpen = false): void
     {
+        $this->autoOpen = $autoOpen;
         $this->cargarEstado($orientacion, $cursos);
+        
+        if ($this->autoOpen && $this->actividadId && !$this->resultadoId && count($this->preguntas) > 0) {
+            $actividad = \App\Models\AulaVirtual\OrientacionActividad::find($this->actividadId);
+            if ($actividad && in_array($actividad->estado, ['pendiente', 'en_proceso'], true)) {
+                $this->abierto = true;
+            }
+        }
     }
 
     public function abrir(): void

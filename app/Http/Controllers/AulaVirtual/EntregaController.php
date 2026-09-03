@@ -29,6 +29,10 @@ class EntregaController extends Controller
             'archivo' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,txt,zip'],
         ]);
 
+        if ($datos['accion'] === 'enviar' && empty($datos['tex_ent']) && ! $request->hasFile('archivo')) {
+            return back()->withErrors(['tex_ent' => 'Debes escribir una respuesta o adjuntar un archivo antes de enviar.'])->withInput();
+        }
+
         $estudiante = $this->cursos->estudianteDeUsuario($request->user());
         abort_if(! $estudiante, 403);
 
