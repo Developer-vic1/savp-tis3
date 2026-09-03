@@ -9,6 +9,7 @@ use App\Support\Academico\InscripcionAcademica;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -1297,6 +1298,7 @@ class GestionInscripciones extends Component
 
     private function guardarInscripcion(bool $forzarPendiente = false, bool $imprimir = false): void
     {
+        Gate::authorize('Inscripciones');
         $this->resetValidation();
 
         $this->aplicarTurnoMananaPorDefecto();

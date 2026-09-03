@@ -9,6 +9,7 @@ use App\Models\PeriodoEvaluacion;
 use App\Services\BitacoraService;
 use App\Support\Evaluacion\CalificacionInteligente;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -73,6 +74,7 @@ class Calificaciones extends Component
 
     public function guardar(): void
     {
+        Gate::authorize('Calificaciones');
         $this->analizar();
         if (! ($this->analisis['puede_guardar'] ?? false)) {
             $this->dispatch('swal:warning', title: 'Calificación bloqueada', text: implode(' ', $this->analisis['bloqueos'] ?? []));
@@ -115,6 +117,7 @@ class Calificaciones extends Component
 
     public function cambiarEstado(string $codigo): void
     {
+        Gate::authorize('Calificaciones');
         $calificacion = Calificacion::findOrFail($codigo);
         $calificacion->update(['est_cal' => $calificacion->est_cal === 'ACTIVO' ? 'ANULADO' : 'ACTIVO']);
         $this->dispatch('swal:success', title: 'Estado actualizado', text: 'El estado de la calificación fue actualizado.');
