@@ -2,7 +2,9 @@
 
 namespace App\Support\Reportes;
 
-class ReporteAdministrativoInteligente
+use App\Support\Core\SoporteInteligenteBase;
+
+class ReporteAdministrativoInteligente extends SoporteInteligenteBase
 {
     public function diagnostico(array $metricas): array
     {

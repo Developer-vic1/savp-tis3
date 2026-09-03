@@ -2,9 +2,10 @@
 
 namespace App\Support\Reportes;
 
+use App\Support\Core\SoporteInteligenteBase;
 use App\Support\Evaluacion\CalificacionInteligente;
 
-class ReporteAcademicoInteligente
+class ReporteAcademicoInteligente extends SoporteInteligenteBase
 {
     public function clasificar(float $nota): string
     {
