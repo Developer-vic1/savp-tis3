@@ -4,18 +4,22 @@ namespace App\Livewire\AulaVirtual\Tareas;
 
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\Tarea;
-use App\Models\Docente;
-use App\Models\User;
-use App\Services\BitacoraService;
+use App\Services\AulaVirtual\CursoVirtualService;
+use App\Services\AulaVirtual\TareaService;
 use App\Support\AulaVirtual\TareaInteligente;
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class CrearTarea extends Component
 {
+    use AuthorizesRequests;
+
+    #[Locked]
     public string $codCla = '';
+
     public ?ClaseVirtual $clase = null;
 
     public string $titulo = '';
@@ -45,6 +49,9 @@ class CrearTarea extends Component
 
         if ($this->codCla !== '') {
             $this->clase = ClaseVirtual::with(['planAsignatura.asignatura', 'planAsignatura.curso', 'planAsignatura.paralelo'])->find($this->codCla);
+            if ($this->clase) {
+                $this->authorize('crearTarea', $this->clase);
+            }
             $this->analizarEnTiempoReal();
         }
     }
@@ -70,7 +77,12 @@ class CrearTarea extends Component
 
     public function guardarTarea(): void
     {
-        // 1. FRONTEND + BACKEND VALIDATION
+        if (! $this->clase) {
+            $this->clase = ClaseVirtual::find($this->codCla);
+        }
+        abort_if(! $this->clase, 404);
+        $this->authorize('crearTarea', $this->clase);
+
         $this->validate([
             'codCla' => ['required', 'string', 'exists:clase_virtual,cod_cla'],
             'titulo' => ['required', 'string', 'min:3', 'max:180'],
@@ -80,92 +92,47 @@ class CrearTarea extends Component
             'fechaLimite' => ['required', 'date', 'after:fechaPublicacion'],
             'puntajeMaximo' => ['required', 'numeric', 'min:1', 'max:100'],
             'permiteEntregaTardia' => ['boolean'],
-            'estado' => ['required', 'in:BORRADOR,PUBLICADA,CERRADA,ANULADA'],
+            'estado' => ['required', 'in:BORRADOR,PUBLICADA'],
         ], [
             'titulo.required' => 'El título de la actividad es obligatorio.',
-            'titulo.min' => 'El título debe tener al menos 3 caracteres.',
             'fechaLimite.after' => 'La fecha límite debe ser posterior a la fecha de publicación.',
             'puntajeMaximo.min' => 'El puntaje mínimo es de 1 punto.',
             'puntajeMaximo.max' => 'El puntaje máximo es de 100 puntos.',
         ]);
 
-        // 2. BACKEND DEFENSIVO: Autorización y soporte
         $user = Auth::user();
-        if (! $user) {
-            $this->dispatch('error-general', mensaje: 'Debe iniciar sesión para crear tareas.');
+        $cursoService = app(CursoVirtualService::class);
+        $docente = $cursoService->docenteDeUsuario($user);
+
+        if (! $docente) {
+            $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente activo correspondiente.');
             return;
         }
 
-        $docente = Docente::join('personal_institucional', 'docente.cod_pin', '=', 'personal_institucional.cod_pin')
-            ->where('personal_institucional.cod_per', $user->cod_per)
-            ->select('docente.*')
-            ->first();
-
-        $codDoc = $docente ? $docente->cod_doc : ($this->clase->planAsignatura->cod_doc ?? null);
-
-        if (! $codDoc) {
-            $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente correspondiente.');
-            return;
-        }
-
-        $soporte = app(TareaInteligente::class);
-        $analisisServidor = $soporte->analizar([
-            'cod_cla' => $this->codCla,
-            'tit_tar' => $this->titulo,
-            'des_tar' => $this->descripcion,
-            'tip_tar' => $this->tipo,
-            'fec_pub_tar' => $this->fechaPublicacion,
-            'fec_lim_tar' => $this->fechaLimite,
-            'pun_max_tar' => $this->puntajeMaximo,
-        ]);
-
-        if (! ($analisisServidor['puede_guardar'] ?? false)) {
-            $primerBloqueo = $analisisServidor['bloqueos'][0] ?? 'Existen observaciones que impiden crear la tarea.';
-            $this->dispatch('error-general', mensaje: $primerBloqueo);
-            return;
-        }
-
-        // 3. PERSISTENCIA TRANSACCIONAL
-        DB::beginTransaction();
         try {
-            $ultimo = Tarea::where('cod_tar', 'like', 'TAR_%')
-                ->orderByDesc('cod_tar')
-                ->value('cod_tar');
-            $num = $ultimo ? ((int) str_replace('TAR_', '', $ultimo)) + 1 : 1;
-            $codTar = 'TAR_' . str_pad($num, 5, '0', STR_PAD_LEFT);
-
-            $tarea = Tarea::create([
-                'cod_tar' => $codTar,
+            $tareaService = app(TareaService::class);
+            $tarea = $tareaService->crear([
                 'cod_cla' => $this->codCla,
-                'cod_doc' => $codDoc,
-                'tit_tar' => trim($this->titulo),
-                'des_tar' => trim($this->descripcion),
+                'tit_tar' => $this->titulo,
+                'des_tar' => $this->descripcion,
                 'tip_tar' => $this->tipo,
                 'fec_pub_tar' => $this->fechaPublicacion,
                 'fec_lim_tar' => $this->fechaLimite,
                 'pun_max_tar' => $this->puntajeMaximo,
                 'perm_ent_tardia' => $this->permiteEntregaTardia,
                 'est_tar' => $this->estado,
-            ]);
-
-            if (class_exists(BitacoraService::class)) {
-                app(BitacoraService::class)->registrar(
-                    accion: 'CREAR_TAREA',
-                    tabla: 'tarea',
-                    registro: $tarea->cod_tar,
-                    descripcion: "Se creó la actividad '{$tarea->tit_tar}' para la clase {$this->codCla}.",
-                    nivel: 'SUCCESS'
-                );
-            }
-
-            DB::commit();
+            ], $docente, $user);
 
             $this->dispatch('success-general', mensaje: 'Actividad académica creada correctamente.');
-            $this->dispatch('tarea-creada');
+            $this->dispatch('tarea-creada', codTar: $tarea->cod_tar);
+            $this->reset(['titulo', 'descripcion']);
+            $this->analizarEnTiempoReal();
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            $primerError = collect($ve->errors())->flatten()->first() ?? 'Observaciones al crear la tarea.';
+            $this->dispatch('error-general', mensaje: $primerError);
         } catch (\Throwable $e) {
-            DB::rollBack();
             report($e);
-            $this->dispatch('error-general', mensaje: 'Ocurrió un error al crear la tarea: ' . $e->getMessage());
+            $this->dispatch('error-general', mensaje: 'No fue posible guardar la tarea. Inténtalo nuevamente.');
         }
     }
 
