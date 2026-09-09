@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Activitylog\Facades\Activity;
 use Throwable;
 
 class GestionTurnos extends Component
@@ -24,24 +25,39 @@ class GestionTurnos extends Component
     public string $vista = 'jornada';
 
     public string $search = '';
+
     public string $estado = '';
+
     public string $tipoPlantilla = '';
+
     public string $aplicacion = '';
+
     public string $usoAcademico = '';
+
     public int $perPage = 10;
 
     public ?string $turnoSeleccionado = null;
+
     public ?string $plantillaSeleccionada = null;
+
     public ?string $bloqueSeleccionado = null;
 
     public bool $modalTurno = false;
+
     public bool $modalPlantilla = false;
+
     public bool $modalBloque = false;
+
     public bool $modalDetalleTurno = false;
+
     public bool $modalAuditoria = false;
+
     public bool $modalAplicarPlantilla = false;
+
     public bool $modalDesactivar = false;
+
     public bool $modalVistaPrevia = false;
+
     public bool $modalAutogenerar = false;
 
     public array $formAutogenerar = [
@@ -59,7 +75,9 @@ class GestionTurnos extends Component
     public array $analisisAutogenerar = [];
 
     public string $modoTurno = 'crear';
+
     public string $modoPlantilla = 'crear';
+
     public string $modoBloque = 'crear';
 
     public array $formTurno = [
@@ -98,13 +116,19 @@ class GestionTurnos extends Component
     ];
 
     public array $analisisTurno = [];
+
     public array $analisisPlantilla = [];
+
     public array $analisisBloque = [];
+
     public array $auditoriaEstructura = [];
+
     public array $vistaPreviaAplicacion = [];
 
     public ?array $detalleTurno = null;
+
     public ?array $plantillaParaAplicar = null;
+
     public ?array $registroParaDesactivar = null;
 
     public bool $normalizarAlGuardar = true;
@@ -285,6 +309,7 @@ class GestionTurnos extends Component
 
         if (! $turno) {
             $this->dispatch('error-general', mensaje: 'No se encontró el turno seleccionado.');
+
             return;
         }
 
@@ -296,7 +321,7 @@ class GestionTurnos extends Component
                     accion: $resultado['creada'] ? 'CREAR' : 'VALIDAR',
                     tabla: 'plantilla_horaria',
                     registro: $resultado['cod_pho'],
-                    descripcion: 'Aseguramiento de plantilla regular para el turno ' . ($turno['nombre'] ?? 'seleccionado') . '.'
+                    descripcion: 'Aseguramiento de plantilla regular para el turno '.($turno['nombre'] ?? 'seleccionado').'.'
                 );
 
                 $this->plantillaSeleccionada = $resultado['cod_pho'];
@@ -318,6 +343,7 @@ class GestionTurnos extends Component
 
         if (! $turno) {
             $this->dispatch('error-general', mensaje: 'No se encontró el turno seleccionado.');
+
             return;
         }
 
@@ -330,7 +356,7 @@ class GestionTurnos extends Component
                     accion: 'ASOCIAR',
                     tabla: 'horario_bloque',
                     registro: $resultado['cod_pho'],
-                    descripcion: "Asociación de {$cantidad} bloque(s) sin plantilla al turno " . ($turno['nombre'] ?? 'seleccionado') . '.'
+                    descripcion: "Asociación de {$cantidad} bloque(s) sin plantilla al turno ".($turno['nombre'] ?? 'seleccionado').'.'
                 );
 
                 $this->plantillaSeleccionada = $resultado['cod_pho'];
@@ -366,6 +392,7 @@ class GestionTurnos extends Component
 
         if (! $turno) {
             $this->dispatch('error-general', mensaje: 'No se encontró el turno seleccionado.');
+
             return;
         }
 
@@ -412,6 +439,7 @@ class GestionTurnos extends Component
 
         if (! ($this->analisisTurno['puede_continuar'] ?? false)) {
             $this->dispatch('error-general', mensaje: $this->analisisTurno['mensaje'] ?? 'Corrige los datos del turno.');
+
             return;
         }
 
@@ -500,7 +528,7 @@ class GestionTurnos extends Component
 
             if ($turno) {
                 $this->formPlantilla['cod_tur'] = $codTur;
-                $this->formPlantilla['nom_pho'] = 'Plantilla ' . ucfirst(strtolower($tipo)) . ' - ' . $turno['nombre'];
+                $this->formPlantilla['nom_pho'] = 'Plantilla '.ucfirst(strtolower($tipo)).' - '.$turno['nombre'];
             }
         }
 
@@ -522,6 +550,7 @@ class GestionTurnos extends Component
 
         if (! $plantilla) {
             $this->dispatch('error-general', mensaje: 'No se encontró la plantilla seleccionada.');
+
             return;
         }
 
@@ -572,6 +601,7 @@ class GestionTurnos extends Component
 
         if (! ($sugerencia['disponible'] ?? false)) {
             $this->dispatch('error-general', mensaje: $sugerencia['mensaje'] ?? 'No se pudo calcular una sugerencia de invierno.');
+
             return;
         }
 
@@ -584,7 +614,7 @@ class GestionTurnos extends Component
             $turno = $this->buscarTurno($this->formPlantilla['cod_tur']);
 
             if ($turno && trim((string) $this->formPlantilla['nom_pho']) === '') {
-                $this->formPlantilla['nom_pho'] = 'Plantilla Invierno - ' . $turno['nombre'];
+                $this->formPlantilla['nom_pho'] = 'Plantilla Invierno - '.$turno['nombre'];
             }
         }
 
@@ -603,6 +633,7 @@ class GestionTurnos extends Component
 
         if (! ($this->analisisPlantilla['puede_continuar'] ?? false)) {
             $this->dispatch('error-general', mensaje: $this->analisisPlantilla['mensaje'] ?? 'Corrige los datos de la plantilla.');
+
             return;
         }
 
@@ -618,7 +649,7 @@ class GestionTurnos extends Component
                         ->where('tip_pho', $datos['tip_pho'])
                         ->when(
                             $this->modoPlantilla === 'editar' && ! empty($this->formPlantilla['cod_pho']),
-                            fn(Builder $query) => $query->where('cod_pho', '!=', $this->formPlantilla['cod_pho'])
+                            fn (Builder $query) => $query->where('cod_pho', '!=', $this->formPlantilla['cod_pho'])
                         )
                         ->update($this->filtrarColumnas('plantilla_horaria', [
                             'act_pho' => false,
@@ -649,7 +680,7 @@ class GestionTurnos extends Component
                         accion: 'CREAR',
                         tabla: 'plantilla_horaria',
                         registro: $codPho,
-                        descripcion: 'Registro de plantilla horaria ' . $datos['tip_pho'] . '.'
+                        descripcion: 'Registro de plantilla horaria '.$datos['tip_pho'].'.'
                     );
 
                     $this->plantillaSeleccionada = $codPho;
@@ -682,7 +713,7 @@ class GestionTurnos extends Component
                         accion: 'ACTUALIZAR',
                         tabla: 'plantilla_horaria',
                         registro: $codPho,
-                        descripcion: 'Actualización de plantilla horaria ' . $datos['tip_pho'] . '.'
+                        descripcion: 'Actualización de plantilla horaria '.$datos['tip_pho'].'.'
                     );
 
                     $this->plantillaSeleccionada = $codPho;
@@ -706,6 +737,7 @@ class GestionTurnos extends Component
 
         if (! $plantilla) {
             $this->dispatch('error-general', mensaje: 'No se encontró la plantilla seleccionada.');
+
             return;
         }
 
@@ -724,6 +756,7 @@ class GestionTurnos extends Component
     {
         if (! $this->plantillaParaAplicar) {
             $this->dispatch('error-general', mensaje: 'No hay plantilla seleccionada.');
+
             return;
         }
 
@@ -753,7 +786,7 @@ class GestionTurnos extends Component
                     accion: 'APLICAR',
                     tabla: 'plantilla_horaria',
                     registro: $codPho,
-                    descripcion: 'Aplicación de plantilla horaria ' . $tipo . '.'
+                    descripcion: 'Aplicación de plantilla horaria '.$tipo.'.'
                 );
 
                 $this->plantillaSeleccionada = $codPho;
@@ -776,6 +809,7 @@ class GestionTurnos extends Component
 
         if (! $plantilla) {
             $this->dispatch('error-general', mensaje: 'No se encontró la plantilla base.');
+
             return;
         }
 
@@ -789,7 +823,7 @@ class GestionTurnos extends Component
                 DB::table('plantilla_horaria')->insert($this->filtrarColumnas('plantilla_horaria', [
                     'cod_pho' => $nuevoCodPho,
                     'cod_tur' => $plantilla['cod_tur'],
-                    'nom_pho' => 'Plantilla Invierno - ' . ($turno['nombre'] ?? 'Turno'),
+                    'nom_pho' => 'Plantilla Invierno - '.($turno['nombre'] ?? 'Turno'),
                     'tip_pho' => 'INVIERNO',
                     'des_pho' => 'Plantilla generada desde la plantilla regular para aplicar horario de invierno.',
                     'fec_ini_pho' => $sugerencia['fecha_inicio'] ?? null,
@@ -854,6 +888,7 @@ class GestionTurnos extends Component
     {
         if (! $this->buscarPlantilla($codPho)) {
             $this->dispatch('error-general', mensaje: 'No se encontró la plantilla seleccionada.');
+
             return;
         }
 
@@ -890,6 +925,7 @@ class GestionTurnos extends Component
 
         if (! $bloque) {
             $this->dispatch('error-general', mensaje: 'No se encontró el bloque seleccionado.');
+
             return;
         }
 
@@ -948,6 +984,7 @@ class GestionTurnos extends Component
 
         if (! ($this->analisisBloque['puede_continuar'] ?? false)) {
             $this->dispatch('error-general', mensaje: $this->analisisBloque['mensaje'] ?? 'Corrige los datos del bloque.');
+
             return;
         }
 
@@ -1028,6 +1065,7 @@ class GestionTurnos extends Component
         $plantilla = DB::table('plantilla_horaria')->where('cod_pho', $codPho)->first();
         if (! $plantilla) {
             $this->dispatch('error-general', mensaje: 'No se encontró la plantilla seleccionada.');
+
             return;
         }
 
@@ -1080,10 +1118,11 @@ class GestionTurnos extends Component
         $resultado = $this->soporte->guardarBloquesAutomaticos($this->formAutogenerar);
 
         if (! ($resultado['success'] ?? false)) {
-            if (isset($resultado['bloqueos']) && !empty($resultado['bloqueos'])) {
+            if (isset($resultado['bloqueos']) && ! empty($resultado['bloqueos'])) {
                 $this->analisisAutogenerar['bloqueos'] = $resultado['bloqueos'];
             }
             $this->dispatch('error-general', mensaje: $resultado['mensaje'] ?? 'No se pudo generar la estructura de bloques.');
+
             return;
         }
 
@@ -1109,6 +1148,7 @@ class GestionTurnos extends Component
 
         if (! $codPho) {
             $this->dispatch('error-general', mensaje: 'Selecciona una plantilla para validar sus bloques.');
+
             return;
         }
 
@@ -1200,6 +1240,7 @@ class GestionTurnos extends Component
 
         if (! $turno) {
             $this->dispatch('error-general', mensaje: 'No se encontró el turno seleccionado.');
+
             return;
         }
 
@@ -1386,7 +1427,7 @@ class GestionTurnos extends Component
         $query = DB::table('turno');
 
         if ($this->search !== '') {
-            $buscar = '%' . mb_strtolower(trim($this->search)) . '%';
+            $buscar = '%'.mb_strtolower(trim($this->search)).'%';
 
             $query->where(function (Builder $subquery) use ($buscar) {
                 $subquery->whereRaw('LOWER(nom_tur) LIKE ?', [$buscar]);
@@ -1445,7 +1486,7 @@ class GestionTurnos extends Component
             ->orderBy('hor_ini_tur')
             ->orderBy('nom_tur')
             ->paginate($this->perPage)
-            ->through(fn($turno) => $this->mapearTurno($turno));
+            ->through(fn ($turno) => $this->mapearTurno($turno));
     }
 
     private function turnosCatalogo(): Collection
@@ -1459,7 +1500,7 @@ class GestionTurnos extends Component
             ->orderBy('hor_ini_tur')
             ->orderBy('nom_tur')
             ->get()
-            ->map(fn($turno) => $this->mapearTurno($turno));
+            ->map(fn ($turno) => $this->mapearTurno($turno));
     }
 
     private function plantillasCatalogo(): Collection
@@ -1475,7 +1516,7 @@ class GestionTurnos extends Component
             ->orderBy('ord_pho')
             ->orderBy('nom_pho')
             ->get()
-            ->map(fn($plantilla) => $this->mapearPlantilla($plantilla));
+            ->map(fn ($plantilla) => $this->mapearPlantilla($plantilla));
     }
 
     private function plantillasAgrupadas(): Collection
@@ -1495,7 +1536,7 @@ class GestionTurnos extends Component
             ->orderBy('num_hbl')
             ->orderBy('hor_ini_hbl')
             ->get()
-            ->map(fn($bloque) => $this->mapearBloque($bloque));
+            ->map(fn ($bloque) => $this->mapearBloque($bloque));
     }
 
     private function resumenGeneral(): array
@@ -1593,7 +1634,7 @@ class GestionTurnos extends Component
             'inicio' => $gestion->fii_gea ?? null,
             'fin' => $gestion->ffi_gea ?? null,
             'estado' => $gestion->est_gea ?? null,
-            'rango' => $this->formatearFecha($gestion->fii_gea ?? null) . ' - ' . $this->formatearFecha($gestion->ffi_gea ?? null),
+            'rango' => $this->formatearFecha($gestion->fii_gea ?? null).' - '.$this->formatearFecha($gestion->ffi_gea ?? null),
         ];
     }
 
@@ -1661,7 +1702,7 @@ class GestionTurnos extends Component
             'bloques_total' => $this->contarBloquesPlantilla($codPho),
             'detalles_total' => $this->contarDetallesPlantilla($codPho),
             'uso_academico' => $this->contarDetallesPlantilla($codPho) > 0
-                ? $this->contarDetallesPlantilla($codPho) . ' registros en horario'
+                ? $this->contarDetallesPlantilla($codPho).' registros en horario'
                 : 'Sin uso académico',
         ];
     }
@@ -1766,7 +1807,7 @@ class GestionTurnos extends Component
             ->orderByDesc('act_pho')
             ->orderBy('ord_pho')
             ->get()
-            ->map(fn($plantilla) => $this->mapearPlantilla($plantilla));
+            ->map(fn ($plantilla) => $this->mapearPlantilla($plantilla));
     }
 
     private function bloquesPorTurno(string $codTur): Collection
@@ -1783,7 +1824,7 @@ class GestionTurnos extends Component
             ->orderBy('horario_bloque.num_hbl')
             ->orderBy('horario_bloque.hor_ini_hbl')
             ->get()
-            ->map(fn($bloque) => $this->mapearBloque($bloque));
+            ->map(fn ($bloque) => $this->mapearBloque($bloque));
     }
 
     // ============================================================
@@ -2098,7 +2139,7 @@ class GestionTurnos extends Component
 
         do {
             $numero++;
-            $codigo = $prefijo . '_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+            $codigo = $prefijo.'_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
         } while (DB::table($tabla)->where($columna, $codigo)->exists());
 
         return $codigo;
@@ -2111,7 +2152,7 @@ class GestionTurnos extends Component
         }
 
         return collect($datos)
-            ->filter(fn($value, $key) => Schema::hasColumn($tabla, $key))
+            ->filter(fn ($value, $key) => Schema::hasColumn($tabla, $key))
             ->all();
     }
 
@@ -2146,7 +2187,7 @@ class GestionTurnos extends Component
             $hora = trim((string) $hora);
 
             if (preg_match('/^([01]?\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/', $hora, $m)) {
-                return str_pad((string) $m[1], 2, '0', STR_PAD_LEFT) . ':' . $m[2];
+                return str_pad((string) $m[1], 2, '0', STR_PAD_LEFT).':'.$m[2];
             }
 
             return null;
@@ -2184,7 +2225,7 @@ class GestionTurnos extends Component
             return 'Base anual';
         }
 
-        return $this->formatearFecha($inicio) . ' - ' . $this->formatearFecha($fin);
+        return $this->formatearFecha($inicio).' - '.$this->formatearFecha($fin);
     }
 
     private function duracionMinutos(mixed $inicio, mixed $fin): ?int
@@ -2233,9 +2274,9 @@ class GestionTurnos extends Component
         ?array $valoresNuevos = null
     ): void {
         try {
-            if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
+            if (class_exists(Activity::class)) {
                 activity()
-                    ->performedOn($this->tablaExiste($tabla) ? DB::table($tabla)->where('cod_' . substr($tabla, 0, 3), $registro)->first() : null)
+                    ->performedOn($this->tablaExiste($tabla) ? DB::table($tabla)->where('cod_'.substr($tabla, 0, 3), $registro)->first() : null)
                     ->causedBy(auth()->user())
                     ->withProperties([
                         'modulo' => 'Gestión de Turnos',
@@ -2243,7 +2284,7 @@ class GestionTurnos extends Component
                         'registro' => $registro,
                         'descripcion' => $descripcion,
                     ])
-                    ->log($accion . ' - ' . $descripcion);
+                    ->log($accion.' - '.$descripcion);
             }
         } catch (Throwable) {
             //

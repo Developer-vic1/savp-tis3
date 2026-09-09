@@ -3,11 +3,12 @@
 namespace Tests\Feature\AulaVirtual;
 
 use App\Livewire\AulaVirtual\Asistencia\RegistrarAsistencia;
-use App\Models\AulaVirtual\AsistenciaClase;
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EstadoAsistencia;
 use App\Models\Docente;
 use App\Models\Estudiante;
+use App\Models\InscripcionEstudiante;
+use App\Models\InscripcionVigencia;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\User;
@@ -15,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class RegistrarAsistenciaFlujoTest extends TestCase
@@ -22,8 +24,11 @@ class RegistrarAsistenciaFlujoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUser;
+
     protected string $codCla;
+
     protected string $codEst;
+
     protected string $codEstAsi;
 
     protected function setUp(): void
@@ -43,8 +48,8 @@ class RegistrarAsistenciaFlujoTest extends TestCase
         );
 
         // 0. Spatie Permissions
-        \Spatie\Permission\Models\Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
-        \Spatie\Permission\Models\Permission::findOrCreate('Aula_Virtual_Docente', 'web');
+        Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
+        Permission::findOrCreate('Aula_Virtual_Docente', 'web');
 
         // 2. Crear Persona y Usuario Docente
         $personaDoc = Persona::create([
@@ -156,6 +161,14 @@ class RegistrarAsistenciaFlujoTest extends TestCase
             ['cod_cla_est' => 'CLE_TEST_01'],
             ['cod_cla' => $this->codCla, 'cod_est' => $this->codEst, 'est_cla_est' => 'ACTIVO']
         );
+        $inscripcion = InscripcionEstudiante::create([
+            'cod_ins' => 'INS_ASI_TEST', 'cod_est' => $this->codEst, 'cod_gea' => 'GEA_2026',
+            'cod_cur' => 'CUR_1SEC', 'cod_par' => 'PAR_A', 'cod_tur' => 'TUR_MAN',
+            'fei_ins' => '2026-02-01', 'est_ins' => 'ACTIVA',
+        ]);
+        InscripcionVigencia::create($inscripcion->only(['cod_ins', 'cod_cur', 'cod_par', 'cod_tur']) + [
+            'cod_ivg' => 'IVG_ASI_TEST', 'fii_ivg' => '2026-02-01', 'tip_ivg' => 'INICIAL', 'est_ivg' => 'ACTIVA',
+        ]);
     }
 
     public function test_fecha_futura_es_rechazada_por_validacion(): void

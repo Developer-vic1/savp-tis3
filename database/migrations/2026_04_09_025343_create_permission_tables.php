@@ -73,13 +73,13 @@ return new class extends Migration
                     $columnNames['team_foreign_key'],
                     $pivotPermission,
                     $columnNames['model_morph_key'],
-                    'model_type'
+                    'model_type',
                 ]);
             } else {
                 $table->primary([
                     $pivotPermission,
                     $columnNames['model_morph_key'],
-                    'model_type'
+                    'model_type',
                 ]);
             }
         });

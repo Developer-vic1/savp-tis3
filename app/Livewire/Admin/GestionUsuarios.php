@@ -72,12 +72,17 @@ class GestionUsuarios extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $rol = '';
+
     public string $estado = '';
+
     public int $perPage = 10;
 
     public array $selected = [];
+
     public bool $selectAll = false;
+
     public string $accionLote = '';
 
     /*
@@ -102,6 +107,7 @@ class GestionUsuarios extends Component
     |--------------------------------------------------------------------------
     */
     public bool $modalEditar = false;
+
     public ?User $usuarioDetalle = null;
 
     public array $formEditar = [
@@ -291,6 +297,7 @@ class GestionUsuarios extends Component
         if (! ($this->analisisCreacion['puede_guardar'] ?? false)) {
             $primerBloqueo = $this->analisisCreacion['bloqueos'][0] ?? 'La cuenta no cumple con los requisitos de integridad.';
             $this->dispatch('error-general', mensaje: $primerBloqueo);
+
             return;
         }
 
@@ -302,6 +309,7 @@ class GestionUsuarios extends Component
             if (! $persona) {
                 DB::rollBack();
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
@@ -383,6 +391,7 @@ class GestionUsuarios extends Component
 
         if (! $this->usuarioDetalle) {
             $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
             return;
         }
 
@@ -422,11 +431,13 @@ class GestionUsuarios extends Component
 
         if (! $usuario) {
             $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
             return;
         }
 
         if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
             $this->dispatch('error-general', mensaje: 'No puedes editar un usuario inactivo. Primero debes reactivarlo.');
+
             return;
         }
 
@@ -511,6 +522,7 @@ class GestionUsuarios extends Component
             if (! $usuario) {
                 DB::rollBack();
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
                 return;
             }
 
@@ -519,6 +531,7 @@ class GestionUsuarios extends Component
                 DB::rollBack();
                 $primerBloqueo = $this->analisisEdicion['bloqueos'][0] ?? 'La modificación no cumple con los criterios de seguridad.';
                 $this->dispatch('error-general', mensaje: $primerBloqueo);
+
                 return;
             }
 
@@ -641,7 +654,7 @@ class GestionUsuarios extends Component
             $this->selected = $this->usuariosQuery()
                 ->where('cod_usu', '!=', $usuarioActual)
                 ->pluck('cod_usu')
-                ->map(fn($id) => (string) $id)
+                ->map(fn ($id) => (string) $id)
                 ->toArray();
         } else {
             $this->selected = [];
@@ -666,16 +679,19 @@ class GestionUsuarios extends Component
 
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
+
             return;
         }
 
         if (empty($this->selected) || empty($this->accionLote)) {
             $this->dispatch('error-general', mensaje: 'Selecciona usuarios y una acción para continuar.');
+
             return;
         }
 
         if (! in_array($this->accionLote, ['activar', 'inactivar'], true)) {
             $this->dispatch('error-general', mensaje: 'Acción de lote no permitida.');
+
             return;
         }
 
@@ -693,6 +709,7 @@ class GestionUsuarios extends Component
             foreach ($usuarios as $usuario) {
                 if ($this->accionLote === 'inactivar' && $usuario->cod_usu === $usuarioActual) {
                     $omitidos[] = $usuario->cod_usu;
+
                     continue;
                 }
 
@@ -865,7 +882,7 @@ class GestionUsuarios extends Component
         $numero = (int) str_replace('USU_', '', $ultimo);
         $nuevo = $numero + 1;
 
-        return 'USU_' . str_pad((string) $nuevo, 4, '0', STR_PAD_LEFT);
+        return 'USU_'.str_pad((string) $nuevo, 4, '0', STR_PAD_LEFT);
     }
 
     /*
@@ -877,12 +894,14 @@ class GestionUsuarios extends Component
     {
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
+
             return;
         }
 
         if (Auth::user()?->cod_usu === $codUsu) {
             $this->dispatch('no-puedes-desactivarte');
             $this->dispatch('error-general', mensaje: 'No puedes desactivar tu propia cuenta.');
+
             return;
         }
 
@@ -893,11 +912,13 @@ class GestionUsuarios extends Component
 
             if (! $usuario) {
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
                 return;
             }
 
             if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra inactivo.');
+
                 return;
             }
 
@@ -930,6 +951,7 @@ class GestionUsuarios extends Component
     {
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
+
             return;
         }
 
@@ -940,11 +962,13 @@ class GestionUsuarios extends Component
 
             if (! $usuario) {
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
                 return;
             }
 
             if (($usuario->est_usu ?? 'ACTIVO') === 'ACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra activo.');
+
                 return;
             }
 
@@ -1067,7 +1091,7 @@ class GestionUsuarios extends Component
                     ? 'Sincronización de perfiles completada'
                     : 'Sincronización revisada sin cambios',
                 descripcion: $sincronizados > 0
-                    ? 'Se sincronizaron ' . $sincronizados . ' perfiles institucionales pendientes. El sistema actualizó la relación entre usuarios, personas y roles académicos.'
+                    ? 'Se sincronizaron '.$sincronizados.' perfiles institucionales pendientes. El sistema actualizó la relación entre usuarios, personas y roles académicos.'
                     : 'Se ejecutó la revisión de sincronización de usuarios. No se encontraron perfiles institucionales pendientes de actualización.',
                 nivel: $sincronizados > 0 ? 'SUCCESS' : 'INFO',
                 resultado: 'EXITOSO',
@@ -1080,7 +1104,7 @@ class GestionUsuarios extends Component
             DB::commit();
 
             $this->dispatch('usuarios-sincronizados', cantidad: $sincronizados);
-            $this->dispatch('success-general', mensaje: 'Sincronización completada. Registros sincronizados: ' . $sincronizados);
+            $this->dispatch('success-general', mensaje: 'Sincronización completada. Registros sincronizados: '.$sincronizados);
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
@@ -1113,7 +1137,7 @@ class GestionUsuarios extends Component
             Estudiante::updateOrCreate(
                 ['cod_per' => $usuario->cod_per],
                 [
-                    'rud_est' => 'AUTO-' . $usuario->cod_per,
+                    'rud_est' => 'AUTO-'.$usuario->cod_per,
                     'cod_tve' => 'TVE_0002',
                     'cod_ipe' => 'IPE_0001',
                     'cod_esp' => 'ESP_0001',
@@ -1235,7 +1259,7 @@ class GestionUsuarios extends Component
             ])->filter()->implode(' '));
 
             if ($nombre !== '') {
-                return $nombre . ' · ' . $usuario->email;
+                return $nombre.' · '.$usuario->email;
             }
         }
 

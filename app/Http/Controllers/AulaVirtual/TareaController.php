@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
+use App\Models\AulaVirtual\EntregaTarea;
 use App\Models\AulaVirtual\Tarea;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\TareaService;
@@ -43,7 +44,7 @@ class TareaController extends Controller
         abort_if(! $this->cursos->cursoParaEstudiante($request->user(), $tarea->cod_cla), 403);
 
         $estudiante = $this->cursos->estudianteDeUsuario($request->user());
-        $entrega = \App\Models\AulaVirtual\EntregaTarea::query()
+        $entrega = EntregaTarea::query()
             ->with('archivos')
             ->where('cod_tar', $tarea->cod_tar)
             ->where('cod_est', $estudiante->cod_est)

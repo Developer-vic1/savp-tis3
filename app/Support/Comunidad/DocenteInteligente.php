@@ -3,7 +3,6 @@
 namespace App\Support\Comunidad;
 
 use App\Models\Docente;
-use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Support\Core\SoporteInteligenteBase;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +12,7 @@ use Illuminate\Support\Str;
 class DocenteInteligente extends SoporteInteligenteBase
 {
     public const LIMITE_HORAS_SEMANALES_RECOMENDADO = 36;
+
     public const LIMITE_HORAS_SEMANALES_MAXIMO = 48;
 
     /**
@@ -159,7 +159,7 @@ class DocenteInteligente extends SoporteInteligenteBase
             $sugerencias[] = $sug;
             $this->registrarHallazgo($hallazgos, 'DOC_SIN_ASIGNATURAS', self::TIPO_PEDAGOGICA, self::COMP_SUGERENCIA, $sug, self::RIESGO_BAJO);
         } elseif ($totalHorasSemanales > self::LIMITE_HORAS_SEMANALES_MAXIMO) {
-            $adv = "El docente acumula {$totalHorasSemanales} horas pedagógicas semanales, superando el límite máximo sugerido de " . self::LIMITE_HORAS_SEMANALES_MAXIMO . ' horas.';
+            $adv = "El docente acumula {$totalHorasSemanales} horas pedagógicas semanales, superando el límite máximo sugerido de ".self::LIMITE_HORAS_SEMANALES_MAXIMO.' horas.';
             $advertencias[] = $adv;
             $this->registrarHallazgo($hallazgos, 'DOC_SOBRECARGA_HORARIA', self::TIPO_NORMATIVA, self::COMP_ADVERTENCIA, $adv, self::RIESGO_MEDIO, ['horas' => $totalHorasSemanales]);
         }

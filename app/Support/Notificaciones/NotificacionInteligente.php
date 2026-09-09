@@ -3,7 +3,6 @@
 namespace App\Support\Notificaciones;
 
 use App\Support\Core\SoporteInteligenteBase;
-use Illuminate\Support\Collection;
 
 class NotificacionInteligente extends SoporteInteligenteBase
 {
@@ -35,7 +34,7 @@ class NotificacionInteligente extends SoporteInteligenteBase
                     'tipo' => $tipo,
                     'es_agrupada' => true,
                     'cantidad' => count($items),
-                    'titulo' => "Tienes " . count($items) . " novedades sobre {$tipo}",
+                    'titulo' => 'Tienes '.count($items)." novedades sobre {$tipo}",
                     'items' => $items,
                 ];
             } else {

@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Admin;
 
+use App\Services\AulaVirtual\AulaVirtualProvisioningService;
 use App\Support\Academico\CursoInteligente;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -24,12 +27,19 @@ class GestionCurso extends Component
     */
 
     public string $search = '';
+
     public string $estado = '';
+
     public string $nivel = '';
+
     public string $gestionFiltro = '';
+
     public string $filtroPlanAsignatura = '';
+
     public string $filtroPlanEspecialidad = '';
+
     public string $filtroHorario = '';
+
     public int $perPage = 10;
 
     /*
@@ -39,10 +49,22 @@ class GestionCurso extends Component
     */
 
     public bool $modalCrear = false;
+
     public bool $modalEditar = false;
+
     public bool $modalDetalle = false;
+
     public bool $modalPlanificar = false;
+
     public bool $modalClaseHorario = false;
+
+    public bool $modalProvisionamiento = false;
+
+    public array $previewProvisionamiento = [];
+
+    public bool $procesandoProvisionamiento = false;
+
+    public array $resultadoProvisionamiento = [];
 
     /*
     |--------------------------------------------------------------------------
@@ -51,6 +73,7 @@ class GestionCurso extends Component
     */
 
     public ?string $cursoSeleccionado = null;
+
     public ?array $cursoDetalle = null;
 
     /*
@@ -60,8 +83,11 @@ class GestionCurso extends Component
     */
 
     public string $horarioGestion = '';
+
     public string $horarioParalelo = '';
+
     public string $horarioTurno = '';
+
     public string $horarioVista = 'MANANA';
 
     /*
@@ -552,6 +578,7 @@ class GestionCurso extends Component
 
         if (str_contains($nombreTurno, 'tarde') || str_contains($nombreTurno, 'vespertino')) {
             $this->horarioVista = 'TARDE';
+
             return;
         }
 
@@ -672,7 +699,7 @@ class GestionCurso extends Component
     */
 
         $this->cursoInteligente['sugerencias'] = array_values(array_map(
-            fn(array $curso) => [
+            fn (array $curso) => [
                 'orden' => $curso['orden'],
                 'nombre' => $curso['nombre'],
                 'nivel' => $curso['nivel'],
@@ -694,6 +721,7 @@ class GestionCurso extends Component
     {
         if (! $this->tablaExiste('curso')) {
             $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
+
             return;
         }
 
@@ -703,6 +731,7 @@ class GestionCurso extends Component
 
         if (! $curso) {
             $this->dispatch('error-general', mensaje: 'No se encontró el curso seleccionado.');
+
             return;
         }
 
@@ -733,6 +762,7 @@ class GestionCurso extends Component
 
         if (! $curso) {
             $this->dispatch('error-general', mensaje: 'No se encontró el curso seleccionado.');
+
             return;
         }
 
@@ -786,26 +816,31 @@ class GestionCurso extends Component
     {
         if (! $this->cursoSeleccionado) {
             $this->dispatch('error-general', mensaje: 'Primero debes seleccionar un curso.');
+
             return;
         }
 
         if (! $this->estructuraHorarioDisponible()) {
             $this->dispatch('error-general', mensaje: 'La estructura de horarios no está completa. Verifica horario, horario_bloque y horario_detalle.');
+
             return;
         }
 
         if (! $this->horarioGestion) {
             $this->dispatch('error-general', mensaje: 'Selecciona una gestión académica para crear la clase.');
+
             return;
         }
 
         if (! $this->horarioParalelo) {
             $this->dispatch('error-general', mensaje: 'Selecciona un paralelo para crear la clase.');
+
             return;
         }
 
         if (! $this->horarioTurno) {
             $this->dispatch('error-general', mensaje: 'Selecciona un turno para crear la clase.');
+
             return;
         }
 
@@ -813,6 +848,7 @@ class GestionCurso extends Component
 
         if (! in_array($dia, $this->diasInstitucionales(), true)) {
             $this->dispatch('error-general', mensaje: 'El día seleccionado no es válido.');
+
             return;
         }
 
@@ -820,11 +856,13 @@ class GestionCurso extends Component
 
         if (! $bloqueRegistro) {
             $this->dispatch('error-general', mensaje: 'No se encontró el bloque horario seleccionado para este turno.');
+
             return;
         }
 
         if ($this->buscarRegistroHorario($this->cursoSeleccionado, $dia, $bloque)) {
             $this->dispatch('error-general', mensaje: 'Este bloque ya tiene una clase asignada.');
+
             return;
         }
 
@@ -886,11 +924,13 @@ class GestionCurso extends Component
     {
         if (! $this->cursoSeleccionado) {
             $this->dispatch('error-general', mensaje: 'No se pudo identificar el curso seleccionado.');
+
             return;
         }
 
         if (! $this->estructuraHorarioDisponible()) {
             $this->dispatch('error-general', mensaje: 'La estructura de horarios no está completa. Verifica horario, horario_bloque y horario_detalle.');
+
             return;
         }
 
@@ -902,21 +942,25 @@ class GestionCurso extends Component
 
         if (! in_array($dia, $this->diasInstitucionales(), true)) {
             $this->dispatch('error-general', mensaje: 'El día seleccionado no es válido.');
+
             return;
         }
 
         if ($numeroBloque <= 0) {
             $this->dispatch('error-general', mensaje: 'El bloque seleccionado no es válido.');
+
             return;
         }
 
         if ($tipoPlan === 'MATERIA' && empty($this->formClaseHorario['cod_mat'])) {
             $this->addError('formClaseHorario.cod_mat', 'Debes seleccionar una materia.');
+
             return;
         }
 
         if ($tipoPlan === 'ESPECIALIDAD' && empty($this->formClaseHorario['cod_esp'])) {
             $this->addError('formClaseHorario.cod_esp', 'Debes seleccionar una especialidad técnica.');
+
             return;
         }
 
@@ -924,11 +968,13 @@ class GestionCurso extends Component
 
         if (! $bloque) {
             $this->dispatch('error-general', mensaje: 'No existe el bloque horario seleccionado para el turno actual.');
+
             return;
         }
 
         if ($this->buscarRegistroHorario($this->cursoSeleccionado, $dia, $numeroBloque)) {
             $this->dispatch('error-general', mensaje: 'Este bloque ya fue ocupado por otra clase.');
+
             return;
         }
 
@@ -938,6 +984,7 @@ class GestionCurso extends Component
             bloque: $numeroBloque
         )) {
             $this->dispatch('error-general', mensaje: 'El docente ya tiene una clase asignada en este mismo día, turno y bloque.');
+
             return;
         }
 
@@ -1030,7 +1077,7 @@ class GestionCurso extends Component
             );
 
             $mensaje = app()->environment('local')
-                ? 'Error técnico: ' . $e->getMessage()
+                ? 'Error técnico: '.$e->getMessage()
                 : 'No se pudo crear la clase. Verifica los datos e intenta nuevamente.';
 
             $this->dispatch('error-general', mensaje: $mensaje);
@@ -1041,6 +1088,7 @@ class GestionCurso extends Component
     {
         if (! $this->tablaExiste('horario_detalle') || ! $this->columnaExiste('horario_detalle', 'cod_hde')) {
             $this->dispatch('error-general', mensaje: 'La tabla de detalle de horarios no está disponible.');
+
             return;
         }
 
@@ -1058,6 +1106,7 @@ class GestionCurso extends Component
 
                 if (! $registro) {
                     $this->dispatch('error-general', mensaje: 'No se encontró la clase seleccionada.');
+
                     return;
                 }
 
@@ -1338,6 +1387,7 @@ class GestionCurso extends Component
     {
         if (! $this->tablaExiste('curso')) {
             $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
+
             return;
         }
 
@@ -1405,7 +1455,7 @@ class GestionCurso extends Component
             );
 
             $mensaje = app()->environment('local')
-                ? 'Error técnico: ' . $e->getMessage()
+                ? 'Error técnico: '.$e->getMessage()
                 : 'No se pudo registrar el curso. Revisa los datos e intenta nuevamente.';
 
             $this->dispatch('error-general', mensaje: $mensaje);
@@ -1416,6 +1466,7 @@ class GestionCurso extends Component
     {
         if (! $this->tablaExiste('curso')) {
             $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
+
             return;
         }
 
@@ -1429,6 +1480,7 @@ class GestionCurso extends Component
 
                 if (! $curso) {
                     $this->dispatch('error-general', mensaje: 'No se encontró el curso seleccionado.');
+
                     return;
                 }
 
@@ -1506,6 +1558,7 @@ class GestionCurso extends Component
     {
         if (! $this->tablaExiste('curso')) {
             $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
+
             return;
         }
 
@@ -1517,6 +1570,7 @@ class GestionCurso extends Component
 
                 if (! $curso) {
                     $this->dispatch('error-general', mensaje: 'No se encontró el curso seleccionado.');
+
                     return;
                 }
 
@@ -1646,6 +1700,58 @@ class GestionCurso extends Component
     public function irAPlanEspecialidad(?string $codCur = null): void
     {
         $this->dispatch('abrir-modulo-plan-especialidad', cod_cur: $codCur ?: $this->cursoSeleccionado);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROVISIONAMIENTO DE AULAS VIRTUALES DESDE HORARIOS
+    |--------------------------------------------------------------------------
+    */
+
+    public function abrirModalProvisionamiento(?string $codGea = null): void
+    {
+        Gate::authorize('Gestion_Academica');
+
+        $gestionId = $codGea ?: ($this->gestionFiltro ?: null);
+        $this->previewProvisionamiento = app(AulaVirtualProvisioningService::class)->previewForGestion($gestionId);
+        $this->resultadoProvisionamiento = [];
+        $this->modalProvisionamiento = true;
+    }
+
+    public function cerrarModalProvisionamiento(): void
+    {
+        $this->modalProvisionamiento = false;
+        $this->resultadoProvisionamiento = [];
+    }
+
+    public function ejecutarProvisionamiento(?string $codGea = null): void
+    {
+        Gate::authorize('Gestion_Academica');
+
+        $this->procesandoProvisionamiento = true;
+
+        try {
+            $gestionId = $codGea ?: ($this->previewProvisionamiento['gestion']['cod_gea'] ?? ($this->gestionFiltro ?: null));
+            $resultado = app(AulaVirtualProvisioningService::class)->provisionForGestion($gestionId, auth()->user());
+            $this->resultadoProvisionamiento = $resultado;
+
+            if ($resultado['exito'] ?? false) {
+                $this->dispatch('swal:alert', [
+                    'icon' => 'success',
+                    'title' => 'Aulas virtuales preparadas',
+                    'text' => $resultado['mensaje'] ?? 'Aulas preparadas exitosamente.',
+                ]);
+                $this->dispatch('success-general', mensaje: $resultado['mensaje'] ?? 'Aulas virtuales preparadas exitosamente.');
+                $this->previewProvisionamiento = app(AulaVirtualProvisioningService::class)->previewForGestion($gestionId);
+            } else {
+                $this->dispatch('error-general', mensaje: $resultado['mensaje'] ?? 'No fue posible crear las aulas virtuales.');
+            }
+        } catch (\Throwable $e) {
+            Log::error('Error en ejecución de provisionamiento: '.$e->getMessage());
+            $this->dispatch('error-general', mensaje: 'No fue posible crear las aulas virtuales.');
+        } finally {
+            $this->procesandoProvisionamiento = false;
+        }
     }
 
     /*
@@ -1859,7 +1965,7 @@ class GestionCurso extends Component
 
         return $query
             ->paginate($this->perPage)
-            ->through(fn($curso) => $this->mapearCurso($curso));
+            ->through(fn ($curso) => $this->mapearCurso($curso));
     }
 
     public function getGestionesProperty(): Collection
@@ -1882,7 +1988,7 @@ class GestionCurso extends Component
 
         return DB::table('gestion_academica')
             ->select($select)
-            ->when($this->columnaExiste('gestion_academica', 'ani_gea'), fn($q) => $q->orderByDesc('ani_gea'))
+            ->when($this->columnaExiste('gestion_academica', 'ani_gea'), fn ($q) => $q->orderByDesc('ani_gea'))
             ->get();
     }
 
@@ -2007,7 +2113,7 @@ class GestionCurso extends Component
             ])
             ->orderBy('docente.cod_doc')
             ->get()
-            ->map(fn($docente) => (object) [
+            ->map(fn ($docente) => (object) [
                 'cod_doc' => $docente->cod_doc,
                 'nombre' => trim($docente->docente ?? '') ?: 'Docente institucional',
             ]);
@@ -2016,7 +2122,7 @@ class GestionCurso extends Component
     public function getPlanesAsignaturaHorarioProperty(): Collection
     {
         return $this->materiasHorario
-            ->map(fn($materia) => (object) [
+            ->map(fn ($materia) => (object) [
                 'codigo' => $materia->codigo ?? '',
                 'cod_pas' => null,
                 'cod_mat' => $materia->codigo ?? '',
@@ -2031,7 +2137,7 @@ class GestionCurso extends Component
     public function getPlanesEspecialidadHorarioProperty(): Collection
     {
         return $this->especialidadesHorario
-            ->map(fn($especialidad) => (object) [
+            ->map(fn ($especialidad) => (object) [
                 'codigo' => $especialidad->codigo ?? '',
                 'cod_pes' => null,
                 'cod_esp' => $especialidad->codigo ?? '',
@@ -2142,14 +2248,14 @@ class GestionCurso extends Component
         }
 
         $cursos = DB::table('curso')
-            ->when($this->columnaExiste('curso', 'ord_cur'), fn($q) => $q->orderBy('ord_cur'))
-            ->when(! $this->columnaExiste('curso', 'ord_cur') && $this->columnaExiste('curso', 'nom_cur'), fn($q) => $q->orderBy('nom_cur'))
+            ->when($this->columnaExiste('curso', 'ord_cur'), fn ($q) => $q->orderBy('ord_cur'))
+            ->when(! $this->columnaExiste('curso', 'ord_cur') && $this->columnaExiste('curso', 'nom_cur'), fn ($q) => $q->orderBy('nom_cur'))
             ->limit(10)
             ->get();
 
         return [
-            'labels' => $cursos->map(fn($curso) => $curso->nom_cur ?? 'Curso')->toArray(),
-            'data' => $cursos->map(fn($curso) => $this->contarInscritosCurso($curso->cod_cur ?? null))->toArray(),
+            'labels' => $cursos->map(fn ($curso) => $curso->nom_cur ?? 'Curso')->toArray(),
+            'data' => $cursos->map(fn ($curso) => $this->contarInscritosCurso($curso->cod_cur ?? null))->toArray(),
         ];
     }
 
@@ -2317,7 +2423,7 @@ class GestionCurso extends Component
 
         return DB::table('plan_asignatura')
             ->where('cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('plan_asignatura', 'cod_gea'), fn($q) => $q->where('cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('plan_asignatura', 'cod_gea'), fn ($q) => $q->where('cod_gea', $codGestion))
             ->count();
     }
 
@@ -2329,7 +2435,7 @@ class GestionCurso extends Component
 
         return DB::table('plan_especialidad')
             ->where('cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('plan_especialidad', 'cod_gea'), fn($q) => $q->where('cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('plan_especialidad', 'cod_gea'), fn ($q) => $q->where('cod_gea', $codGestion))
             ->count();
     }
 
@@ -2341,7 +2447,7 @@ class GestionCurso extends Component
 
         return DB::table('horario')
             ->where('cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn($q) => $q->where('cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn ($q) => $q->where('cod_gea', $codGestion))
             ->count();
     }
 
@@ -2353,7 +2459,7 @@ class GestionCurso extends Component
 
         return DB::table('inscripcion_estudiante')
             ->where('cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('inscripcion_estudiante', 'cod_gea'), fn($q) => $q->where('cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('inscripcion_estudiante', 'cod_gea'), fn ($q) => $q->where('cod_gea', $codGestion))
             ->count();
     }
 
@@ -2378,7 +2484,7 @@ class GestionCurso extends Component
         return DB::table('horario_detalle')
             ->join('horario', 'horario.cod_hor', '=', 'horario_detalle.cod_hor')
             ->where('horario.cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn($q) => $q->where('horario.cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn ($q) => $q->where('horario.cod_gea', $codGestion))
             ->when($this->columnaExiste('horario_detalle', 'est_hde'), function ($q) {
                 $this->aplicarFiltroEstado($q, 'horario_detalle', 'est_hde', 'ACTIVO');
             })
@@ -2412,7 +2518,7 @@ class GestionCurso extends Component
 
         $planes = DB::table('plan_asignatura')
             ->where('cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('plan_asignatura', 'cod_gea'), fn($q) => $q->where('cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('plan_asignatura', 'cod_gea'), fn ($q) => $q->where('cod_gea', $codGestion))
             ->pluck('cod_pas');
 
         if ($planes->isEmpty()) {
@@ -2423,7 +2529,7 @@ class GestionCurso extends Component
             ->join('horario', 'horario.cod_hor', '=', 'horario_detalle.cod_hor')
             ->where('horario.cod_cur', $codCur)
             ->whereIn('horario_detalle.cod_pas', $planes)
-            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn($q) => $q->where('horario.cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn ($q) => $q->where('horario.cod_gea', $codGestion))
             ->whereNotNull('horario_detalle.cod_pas')
             ->distinct()
             ->pluck('horario_detalle.cod_pas');
@@ -2447,7 +2553,7 @@ class GestionCurso extends Component
             ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
             ->join('horario_bloque', 'horario_bloque.cod_hbl', '=', 'horario_detalle.cod_hbl')
             ->where('horario.cod_cur', $codCur)
-            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn($q) => $q->where('horario.cod_gea', $codGestion))
+            ->when($codGestion && $this->columnaExiste('horario', 'cod_gea'), fn ($q) => $q->where('horario.cod_gea', $codGestion))
             ->select([
                 'horario_detalle.*',
                 'horario.cod_gea',
@@ -2476,6 +2582,7 @@ class GestionCurso extends Component
 
             if (isset($vistos[$clave])) {
                 $cruces++;
+
                 continue;
             }
 
@@ -2685,7 +2792,7 @@ class GestionCurso extends Component
                 'num_blo_hor' => $bloque['num_blo_hor'],
                 'hor_ini_hor' => $bloque['hor_ini_hor'],
                 'hor_fin_hor' => $bloque['hor_fin_hor'],
-                'nom_hbl' => $bloque['nom_hbl'] ?? ('Bloque ' . $bloque['num_blo_hor']),
+                'nom_hbl' => $bloque['nom_hbl'] ?? ('Bloque '.$bloque['num_blo_hor']),
                 'dias' => [],
             ];
 
@@ -2701,8 +2808,8 @@ class GestionCurso extends Component
         }
 
         $asignados = collect($matriz)
-            ->flatMap(fn($fila) => collect($fila['dias']))
-            ->filter(fn($celda) => in_array($celda['estado_visual'], ['ASIGNADO', 'ESPECIALIDAD'], true))
+            ->flatMap(fn ($fila) => collect($fila['dias']))
+            ->filter(fn ($celda) => in_array($celda['estado_visual'], ['ASIGNADO', 'ESPECIALIDAD'], true))
             ->count();
 
         $total = count($dias) * count($bloques);
@@ -2809,11 +2916,11 @@ class GestionCurso extends Component
             ->where('horario.cod_cur', $codCur)
             ->where('horario_bloque.num_hbl', $numBloque)
             ->where('horario_detalle.dia_hde', strtoupper($dia))
-            ->when($this->horarioGestion, fn($q) => $q->where('horario.cod_gea', $this->horarioGestion))
-            ->when($this->horarioParalelo, fn($q) => $q->where('horario.cod_par', $this->horarioParalelo))
+            ->when($this->horarioGestion, fn ($q) => $q->where('horario.cod_gea', $this->horarioGestion))
+            ->when($this->horarioParalelo, fn ($q) => $q->where('horario.cod_par', $this->horarioParalelo))
             ->when(
                 $this->horarioTurno,
-                fn($q) => $q->where('plantilla_horaria.cod_tur', $this->horarioTurno)
+                fn ($q) => $q->where('plantilla_horaria.cod_tur', $this->horarioTurno)
             )
             ->when($this->columnaExiste('horario_detalle', 'est_hde'), function ($q) {
                 $this->aplicarFiltroEstado($q, 'horario_detalle', 'est_hde', 'ACTIVO');
@@ -2851,12 +2958,12 @@ class GestionCurso extends Component
 
                 if ($bloques->isNotEmpty()) {
                     return $bloques
-                        ->map(fn($bloque) => [
+                        ->map(fn ($bloque) => [
                             'cod_hbl' => $bloque->cod_hbl,
                             'num_blo_hor' => (int) $bloque->num_hbl,
                             'hor_ini_hor' => substr((string) $bloque->hor_ini_hbl, 0, 5),
                             'hor_fin_hor' => substr((string) $bloque->hor_fin_hbl, 0, 5),
-                            'nom_hbl' => $bloque->nom_hbl ?? ('Bloque ' . $bloque->num_hbl),
+                            'nom_hbl' => $bloque->nom_hbl ?? ('Bloque '.$bloque->num_hbl),
                         ])
                         ->toArray();
                 }
@@ -2903,7 +3010,7 @@ class GestionCurso extends Component
             ->orderByDesc('act_pho')
             ->first();
 
-        if (!$plantilla) {
+        if (! $plantilla) {
             return null;
         }
 
@@ -2953,8 +3060,9 @@ class GestionCurso extends Component
             ->orderByDesc('act_pho')
             ->first();
 
-        if (!$plantilla) {
+        if (! $plantilla) {
             $this->dispatch('error-general', mensaje: 'No hay una plantilla horaria activa para este turno.');
+
             return null;
         }
 
@@ -2970,11 +3078,11 @@ class GestionCurso extends Component
 
         if ($this->columnaExiste('horario', 'nom_hor')) {
             $data['nom_hor'] = 'Horario '
-                . $this->nombreCurso($this->cursoSeleccionado)
-                . ' - '
-                . $this->nombreParalelo($this->horarioParalelo)
-                . ' - '
-                . $this->nombreTurno($this->horarioTurno);
+                .$this->nombreCurso($this->cursoSeleccionado)
+                .' - '
+                .$this->nombreParalelo($this->horarioParalelo)
+                .' - '
+                .$this->nombreTurno($this->horarioTurno);
         }
 
         if ($this->columnaExiste('horario', 'obs_hor')) {
@@ -3044,8 +3152,8 @@ class GestionCurso extends Component
             ->join('horario_bloque', 'horario_bloque.cod_hbl', '=', 'horario_detalle.cod_hbl')
             ->where('horario_detalle.dia_hde', strtoupper($dia))
             ->where('horario_bloque.num_hbl', $bloque)
-            ->when($this->horarioGestion, fn($q) => $q->where('horario.cod_gea', $this->horarioGestion))
-            ->when($this->horarioTurno, fn($q) => $q->where('plantilla_horaria.cod_tur', $this->horarioTurno))
+            ->when($this->horarioGestion, fn ($q) => $q->where('horario.cod_gea', $this->horarioGestion))
+            ->when($this->horarioTurno, fn ($q) => $q->where('plantilla_horaria.cod_tur', $this->horarioTurno))
             ->select('horario_detalle.*')
             ->get();
 
@@ -3394,7 +3502,7 @@ class GestionCurso extends Component
 
         foreach ($palabras as $palabra) {
             $turno = DB::table('turno')
-                ->whereRaw("LOWER({$nombre}) LIKE ?", ['%' . mb_strtolower($palabra) . '%'])
+                ->whereRaw("LOWER({$nombre}) LIKE ?", ['%'.mb_strtolower($palabra).'%'])
                 ->first();
 
             if ($turno) {
@@ -3424,7 +3532,7 @@ class GestionCurso extends Component
         }
 
         return $query
-            ->when($this->columnaExiste('gestion_academica', 'ani_gea'), fn($q) => $q->orderByDesc('ani_gea'))
+            ->when($this->columnaExiste('gestion_academica', 'ani_gea'), fn ($q) => $q->orderByDesc('ani_gea'))
             ->first();
     }
 
@@ -3442,7 +3550,7 @@ class GestionCurso extends Component
             return 'Gestión no definida';
         }
 
-        return 'Gestión ' . ($gestion->ani_gea ?? $gestion->cod_gea);
+        return 'Gestión '.($gestion->ani_gea ?? $gestion->cod_gea);
     }
 
     private function nombreCurso(?string $codCur): string
@@ -3691,21 +3799,21 @@ class GestionCurso extends Component
     private function generarCodigo(string $tabla, string $columna, string $prefijo): string
     {
         if (! $this->tablaExiste($tabla) || ! $this->columnaExiste($tabla, $columna)) {
-            return $prefijo . '_0001';
+            return $prefijo.'_0001';
         }
 
         $ultimo = DB::table($tabla)
-            ->where($columna, 'like', $prefijo . '_%')
+            ->where($columna, 'like', $prefijo.'_%')
             ->orderByDesc($columna)
             ->value($columna);
 
         if (! $ultimo) {
-            return $prefijo . '_0001';
+            return $prefijo.'_0001';
         }
 
-        $numero = (int) str_replace($prefijo . '_', '', $ultimo);
+        $numero = (int) str_replace($prefijo.'_', '', $ultimo);
 
-        return $prefijo . '_' . str_pad((string) ($numero + 1), 4, '0', STR_PAD_LEFT);
+        return $prefijo.'_'.str_pad((string) ($numero + 1), 4, '0', STR_PAD_LEFT);
     }
 
     private function aplicarFiltroEstado($query, string $tabla, string $columna, string $estado): void
@@ -3714,11 +3822,13 @@ class GestionCurso extends Component
 
         if ($tipo === 'boolean') {
             $query->where($columna, $estado === 'ACTIVO');
+
             return;
         }
 
         if ($estado === 'ACTIVO') {
             $query->whereIn($columna, ['ACTIVO', 'ACTIVA', '1', 1, true]);
+
             return;
         }
 
@@ -3818,7 +3928,7 @@ class GestionCurso extends Component
 
     private function codigoVisualMateria(string $materia, string $docente): string
     {
-        return $this->abreviarTexto($materia) . '-' . $this->inicialesTexto($docente);
+        return $this->abreviarTexto($materia).'-'.$this->inicialesTexto($docente);
     }
 
     private function codigoVisualEspecialidad(string $especialidad): string
@@ -3862,7 +3972,7 @@ class GestionCurso extends Component
             collect($palabras)
                 ->filter()
                 ->take(3)
-                ->map(fn($palabra) => mb_substr($palabra, 0, 1))
+                ->map(fn ($palabra) => mb_substr($palabra, 0, 1))
                 ->implode('')
         );
     }
@@ -3880,7 +3990,7 @@ class GestionCurso extends Component
         $inicialNombre = mb_substr($partes[0] ?? '', 0, 1);
         $inicialApellido = mb_substr($partes[1] ?? '', 0, 1);
 
-        return strtoupper($inicialNombre . '.' . $inicialApellido . '.');
+        return strtoupper($inicialNombre.'.'.$inicialApellido.'.');
     }
 
     /*

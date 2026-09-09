@@ -2,8 +2,6 @@
 
 namespace Tests\Feature\Support;
 
-use App\Models\Calificacion;
-use App\Models\Persona;
 use App\Support\Evaluacion\CalificacionInteligente;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;

@@ -21,7 +21,12 @@ use App\Http\Controllers\Admin\ReporteAcademicoController;
 use App\Http\Controllers\Admin\ReporteAdministrativoController;
 use App\Http\Controllers\Admin\ReportePdfController;
 use App\Http\Controllers\Admin\TipoVinculacionEstudianteController;
+use App\Livewire\Admin\CalendarioAcademico;
+use App\Models\NovedadEstudiante;
+use App\Models\SeguimientoAcademico;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +62,17 @@ Route::middleware([
     Route::get('/gestion-academica', [GestionAcademicaController::class, 'index'])
         ->name('gestion-academica')
         ->middleware('can:Gestion_Academica');
+
+    Route::get('/calendario-academico', CalendarioAcademico::class)
+        ->name('calendario-academico')->middleware('can:Gestion_Academica');
+
+    Route::get('/novedades/{codigo}/respaldo', function (string $codigo) {
+        Gate::authorize('create', SeguimientoAcademico::class);
+        $novedad = NovedadEstudiante::findOrFail($codigo);
+        abort_unless($novedad->rut_res_nes && str_starts_with($novedad->rut_res_nes, 'novedades/'), 404);
+
+        return Storage::disk('local')->download($novedad->rut_res_nes);
+    })->name('novedades.respaldo');
 
     Route::get('/gestion-cursos', [GestionCursosController::class, 'index'])
         ->name('gestion-cursos')
@@ -120,23 +136,23 @@ Route::middleware([
     Route::prefix('reportes')->name('reportes.')->middleware('can:Gestion_Academica')->group(function () {
 
         // Reportes académicos
-        Route::get('/academico-general/pdf',      [ReportePdfController::class, 'academicoGeneral'])->name('academico-general.pdf');
-        Route::get('/calificaciones/pdf',          [ReportePdfController::class, 'calificaciones'])->name('calificaciones.pdf');
-        Route::get('/estudiantes-riesgo/pdf',      [ReportePdfController::class, 'estudiantesRiesgo'])->name('estudiantes-riesgo.pdf');
+        Route::get('/academico-general/pdf', [ReportePdfController::class, 'academicoGeneral'])->name('academico-general.pdf');
+        Route::get('/calificaciones/pdf', [ReportePdfController::class, 'calificaciones'])->name('calificaciones.pdf');
+        Route::get('/estudiantes-riesgo/pdf', [ReportePdfController::class, 'estudiantesRiesgo'])->name('estudiantes-riesgo.pdf');
 
         // Reportes administrativos
-        Route::get('/administrativo/pdf',          [ReportePdfController::class, 'administrativo'])->name('administrativo.pdf');
-        Route::get('/bitacora/pdf',                [ReportePdfController::class, 'bitacora'])->name('bitacora.pdf');
+        Route::get('/administrativo/pdf', [ReportePdfController::class, 'administrativo'])->name('administrativo.pdf');
+        Route::get('/bitacora/pdf', [ReportePdfController::class, 'bitacora'])->name('bitacora.pdf');
 
         // Reportes vocacionales
-        Route::get('/vocacional-riasec/pdf',       [ReportePdfController::class, 'vocacionalRiasec'])->name('vocacional-riasec.pdf');
+        Route::get('/vocacional-riasec/pdf', [ReportePdfController::class, 'vocacionalRiasec'])->name('vocacional-riasec.pdf');
         Route::get('/compatibilidad-carreras/pdf', [ReportePdfController::class, 'compatibilidadCarreras'])->name('compatibilidad-carreras.pdf');
 
         // Reporte institucional completo
-        Route::get('/institucional-completo/pdf',   [ReportePdfController::class, 'institucionalCompleto'])->name('institucional-completo.pdf');
+        Route::get('/institucional-completo/pdf', [ReportePdfController::class, 'institucionalCompleto'])->name('institucional-completo.pdf');
 
         // Respaldo SQL y paquete ZIP
-        Route::get('/respaldo-academico/sql',      [ReportePdfController::class, 'respaldoSql'])->name('respaldo-academico.sql');
-        Route::get('/paquete/zip',                 [ReportePdfController::class, 'paqueteZip'])->name('paquete.zip');
+        Route::get('/respaldo-academico/sql', [ReportePdfController::class, 'respaldoSql'])->name('respaldo-academico.sql');
+        Route::get('/paquete/zip', [ReportePdfController::class, 'paqueteZip'])->name('paquete.zip');
     });
 });

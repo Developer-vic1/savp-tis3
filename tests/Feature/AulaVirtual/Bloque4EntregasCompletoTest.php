@@ -4,7 +4,6 @@ namespace Tests\Feature\AulaVirtual;
 
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EntregaArchivo;
-use App\Models\AulaVirtual\EntregaTarea;
 use App\Models\AulaVirtual\Tarea;
 use App\Models\Docente;
 use App\Models\Estudiante;
@@ -24,13 +23,19 @@ class Bloque4EntregasCompletoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUserA;
+
     protected User $docenteUserB;
+
     protected User $estudianteUserA;
+
     protected User $estudianteUserB;
 
     protected ClaseVirtual $claseA;
+
     protected Tarea $tareaA;
+
     protected Estudiante $estA;
+
     protected Estudiante $estB;
 
     protected function setUp(): void
@@ -256,6 +261,7 @@ class Bloque4EntregasCompletoTest extends TestCase
             $file,
             $this->estudianteUserA
         );
+
         return EntregaArchivo::where('cod_ent', $entrega->cod_ent)->first();
     }
 

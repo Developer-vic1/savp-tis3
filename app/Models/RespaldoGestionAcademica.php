@@ -8,22 +8,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class RespaldoGestionAcademica extends Model
 {
     protected $table = 'respaldo_gestion_academica';
+
     protected $primaryKey = 'cod_rga';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
-        'cod_rga', //Codigo unico del respaldo academico
-        'cod_gea', //Codigo de la gestion academica
-        'tip_rga', //Tipo archivo de respaldo academico
-        'for_rga', //Formato archivo de respaldo academico
-        'rut_rga', //Ruta del respaldo academico
-        'tam_rga', //Tamaño del respaldo academico
-        'has_rga', //Hash del respaldo academico
-        'obs_rga', //Observacion del respaldo academico
-        'fec_rga', //Fecha del respaldo academico
-        'est_rga', //Estado del respaldo academico
+        'cod_rga', // Codigo unico del respaldo academico
+        'cod_gea', // Codigo de la gestion academica
+        'tip_rga', // Tipo archivo de respaldo academico
+        'for_rga', // Formato archivo de respaldo academico
+        'rut_rga', // Ruta del respaldo academico
+        'tam_rga', // Tamaño del respaldo academico
+        'has_rga', // Hash del respaldo academico
+        'obs_rga', // Observacion del respaldo academico
+        'fec_rga', // Fecha del respaldo academico
+        'est_rga', // Estado del respaldo academico
     ];
 
     protected $casts = [
@@ -49,7 +51,7 @@ class RespaldoGestionAcademica extends Model
                 ? ((int) str_replace('RGA_', '', $ultimo)) + 1
                 : 1;
 
-            $respaldo->cod_rga = 'RGA_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+            $respaldo->cod_rga = 'RGA_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
         });
     }
 
@@ -87,7 +89,7 @@ class RespaldoGestionAcademica extends Model
             $indice++;
         }
 
-        return round($bytes, 2) . ' ' . $unidades[$indice];
+        return round($bytes, 2).' '.$unidades[$indice];
     }
 
     public function scopeDeGestion($query, string $codGestion)

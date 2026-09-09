@@ -8,7 +8,6 @@ use App\Models\Docente;
 use App\Models\User;
 use App\Services\BitacoraService;
 use App\Support\AulaVirtual\TareaInteligente;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -48,7 +47,7 @@ class TareaService
                 ->orderByDesc('cod_tar')
                 ->value('cod_tar');
             $num = $ultimo ? ((int) str_replace('TAR_', '', $ultimo)) + 1 : 1;
-            $codTar = 'TAR_' . str_pad($num, 5, '0', STR_PAD_LEFT);
+            $codTar = 'TAR_'.str_pad($num, 5, '0', STR_PAD_LEFT);
 
             $tarea = Tarea::create([
                 'cod_tar' => $codTar,

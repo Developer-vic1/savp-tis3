@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -267,11 +267,11 @@ return new class extends Migration
             CHECK (est_hor IN ('ACTIVO', 'INACTIVO', 'PLANIFICADO', 'ARCHIVADO'))
         ");
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE horario_bloque
             ADD CONSTRAINT horario_bloque_horas_check
             CHECK (hor_fin_hbl > hor_ini_hbl)
-        ");
+        ');
 
         DB::statement("
             ALTER TABLE horario_bloque
@@ -297,7 +297,7 @@ return new class extends Migration
             CHECK (est_hde IN ('ACTIVO', 'INACTIVO', 'SUSPENDIDO'))
         ");
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE horario_detalle
             ADD CONSTRAINT horario_detalle_plan_check
             CHECK (
@@ -305,7 +305,7 @@ return new class extends Migration
                 OR
                 (cod_pas IS NULL AND cod_pes IS NOT NULL)
             )
-        ");
+        ');
     }
 
     public function down(): void

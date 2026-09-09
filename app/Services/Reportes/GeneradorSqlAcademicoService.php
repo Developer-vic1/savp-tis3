@@ -2,10 +2,10 @@
 
 namespace App\Services\Reportes;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Auth;
 
 class GeneradorSqlAcademicoService
 {
@@ -40,14 +40,14 @@ class GeneradorSqlAcademicoService
     public function generar(): string
     {
         $usuario = Auth::user();
-        $fecha   = now()->format('Y-m-d H:i:s');
-        $nombre  = now()->format('Ymd-His');
+        $fecha = now()->format('Y-m-d H:i:s');
+        $nombre = now()->format('Ymd-His');
 
-        $sql  = "-- ============================================================\n";
+        $sql = "-- ============================================================\n";
         $sql .= "-- Exportación SQL de Gestión Académica\n";
         $sql .= "-- Sistema SAVP-TIS3 — Unidad Educativa Franz Tamayo N° 3\n";
         $sql .= "-- Fecha de generación: {$fecha}\n";
-        $sql .= "-- Responsable: " . ($usuario?->email ?? 'Sistema') . "\n";
+        $sql .= '-- Responsable: '.($usuario?->email ?? 'Sistema')."\n";
         $sql .= "-- ============================================================\n\n";
 
         $sql .= "SET client_encoding = 'UTF8';\n";
@@ -59,6 +59,7 @@ class GeneradorSqlAcademicoService
             try {
                 if (! Schema::hasTable($tabla)) {
                     $observaciones[] = "-- AVISO: tabla '{$tabla}' no existe en la base de datos.\n";
+
                     continue;
                 }
 
@@ -66,6 +67,7 @@ class GeneradorSqlAcademicoService
 
                 if ($registros->isEmpty()) {
                     $sql .= "-- TABLA: {$tabla} (sin registros)\n\n";
+
                     continue;
                 }
 
@@ -75,20 +77,20 @@ class GeneradorSqlAcademicoService
 
                 foreach ($registros as $registro) {
                     $arrReg = (array) $registro;
-                    $cols   = implode(', ', array_map(fn ($c) => '"' . $c . '"', array_keys($arrReg)));
-                    $vals   = implode(', ', array_map(fn ($v) => $this->escapar($v), array_values($arrReg)));
+                    $cols = implode(', ', array_map(fn ($c) => '"'.$c.'"', array_keys($arrReg)));
+                    $vals = implode(', ', array_map(fn ($v) => $this->escapar($v), array_values($arrReg)));
 
                     $sql .= "INSERT INTO \"{$tabla}\" ({$cols}) VALUES ({$vals});\n";
                 }
 
                 $sql .= "\n";
             } catch (\Throwable $e) {
-                $observaciones[] = "-- ERROR en tabla '{$tabla}': " . $e->getMessage() . "\n";
+                $observaciones[] = "-- ERROR en tabla '{$tabla}': ".$e->getMessage()."\n";
             }
         }
 
         // Agregar observaciones al final
-        if (!empty($observaciones)) {
+        if (! empty($observaciones)) {
             $sql .= "\n-- ── OBSERVACIONES ───────────────────────────────────\n";
             foreach ($observaciones as $obs) {
                 $sql .= $obs;
@@ -98,7 +100,7 @@ class GeneradorSqlAcademicoService
         $sql .= "\n-- Fin de exportación\n";
 
         $archivo = "respaldo-academico-{$nombre}.sql";
-        $ruta    = "reportes/sql/{$archivo}";
+        $ruta = "reportes/sql/{$archivo}";
 
         Storage::disk('local')->put($ruta, $sql);
 
@@ -116,7 +118,7 @@ class GeneradorSqlAcademicoService
         if (is_bool($valor)) {
             return $valor ? 'TRUE' : 'FALSE';
         }
-        if (is_numeric($valor) && !is_string($valor)) {
+        if (is_numeric($valor) && ! is_string($valor)) {
             return (string) $valor;
         }
         // Escapar strings: comillas simples duplicadas
@@ -124,6 +126,7 @@ class GeneradorSqlAcademicoService
         $v = str_replace("'", "''", $v);
         // Escapar caracteres problemáticos
         $v = str_replace(['\\'], ['\\\\'], $v);
+
         return "'{$v}'";
     }
 }

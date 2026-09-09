@@ -5,7 +5,6 @@ namespace App\Livewire\AulaVirtual\Tareas;
 use App\Models\AulaVirtual\CalificacionTarea;
 use App\Models\AulaVirtual\EntregaTarea;
 use App\Models\Docente;
-use App\Models\User;
 use App\Services\BitacoraService;
 use App\Support\AulaVirtual\CalificacionTareaInteligente;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +14,11 @@ use Livewire\Component;
 class CalificarEntrega extends Component
 {
     public string $codEnt = '';
+
     public ?EntregaTarea $entrega = null;
 
     public float $puntaje = 0.0;
+
     public string $retroalimentacion = '';
 
     public array $analisis = [
@@ -73,6 +74,7 @@ class CalificarEntrega extends Component
 
         if (! $this->entrega) {
             $this->dispatch('error-general', mensaje: 'No se encontró la entrega.');
+
             return;
         }
 
@@ -91,6 +93,7 @@ class CalificarEntrega extends Component
         $user = Auth::user();
         if (! $user) {
             $this->dispatch('error-general', mensaje: 'Debe iniciar sesión para calificar.');
+
             return;
         }
 
@@ -104,6 +107,7 @@ class CalificarEntrega extends Component
         if (! ($analisisServidor['puede_guardar'] ?? false)) {
             $primerBloqueo = $analisisServidor['bloqueos'][0] ?? 'La calificación no cumple con los rangos permitidos.';
             $this->dispatch('error-general', mensaje: $primerBloqueo);
+
             return;
         }
 
@@ -161,7 +165,7 @@ class CalificarEntrega extends Component
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
-            $this->dispatch('error-general', mensaje: 'Ocurrió un error al registrar la calificación: ' . $e->getMessage());
+            $this->dispatch('error-general', mensaje: 'Ocurrió un error al registrar la calificación: '.$e->getMessage());
         }
     }
 

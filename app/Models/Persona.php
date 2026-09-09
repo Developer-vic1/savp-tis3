@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Persona extends Model
 {
     protected $table = 'persona';
+
     protected $primaryKey = 'cod_per';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -49,7 +51,7 @@ class Persona extends Model
     protected static function booted(): void
     {
         static::creating(function ($persona) {
-            if (!$persona->cod_per) {
+            if (! $persona->cod_per) {
                 $ultimo = self::where('cod_per', 'like', 'PER_%')
                     ->orderByDesc('cod_per')
                     ->value('cod_per');
@@ -58,7 +60,7 @@ class Persona extends Model
                     ? ((int) str_replace('PER_', '', $ultimo)) + 1
                     : 1;
 
-                $persona->cod_per = 'PER_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $persona->cod_per = 'PER_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

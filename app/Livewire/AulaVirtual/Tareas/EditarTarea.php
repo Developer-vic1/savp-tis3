@@ -2,7 +2,6 @@
 
 namespace App\Livewire\AulaVirtual\Tareas;
 
-use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\Tarea;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\TareaService;
@@ -10,6 +9,7 @@ use App\Support\AulaVirtual\TareaInteligente;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -21,12 +21,19 @@ class EditarTarea extends Component
     public string $codTar = '';
 
     public string $titulo = '';
+
     public string $descripcion = '';
+
     public string $tipo = 'TAREA';
+
     public ?string $fechaPublicacion = null;
+
     public ?string $fechaLimite = null;
+
     public float $puntajeMaximo = 100.0;
+
     public bool $permiteEntregaTardia = false;
+
     public string $estado = 'PUBLICADA';
 
     public array $analisis = [
@@ -114,6 +121,7 @@ class EditarTarea extends Component
 
         if (! $docente) {
             $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente activo correspondiente.');
+
             return;
         }
 
@@ -132,7 +140,7 @@ class EditarTarea extends Component
 
             $this->dispatch('success-general', mensaje: 'Actividad académica actualizada correctamente.');
             $this->dispatch('tarea-actualizada');
-        } catch (\Illuminate\Validation\ValidationException $ve) {
+        } catch (ValidationException $ve) {
             $primerError = collect($ve->errors())->flatten()->first() ?? 'Observaciones al actualizar la tarea.';
             $this->dispatch('error-general', mensaje: $primerError);
         } catch (\Throwable $e) {
@@ -144,6 +152,7 @@ class EditarTarea extends Component
     public function render()
     {
         $tarea = $this->obtenerTarea();
+
         return view('livewire.aula-virtual.tareas.editar-tarea', [
             'tarea' => $tarea,
             'clase' => $tarea?->claseVirtual,

@@ -9,23 +9,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class MaterialClase extends Model
 {
     protected $table = 'material_clase';
+
     protected $primaryKey = 'cod_mat';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
-        'cod_mat',          //Codigo Material
-        'cod_cla',          //Codigo Clase
-        'cod_pub',          //Codigo Publicacion
-        'cod_usu',          //Codigo Usuario
-        'nom_mat',          //Nombre Material
-        'tip_mat',          //Tipo Material
-        'rut_mat',          //Ruta Material
-        'url_mat',          //URL Material
-        'mime_mat',         //MIME Material (Identifica técnicamente el tipo de archivo para validación, vista previa y descarga segura)
-        'tam_mat',          //Tamaño Material
-        'est_mat',          //Estado Material
+        'cod_mat',          // Codigo Material
+        'cod_cla',          // Codigo Clase
+        'cod_pub',          // Codigo Publicacion
+        'cod_usu',          // Codigo Usuario
+        'nom_mat',          // Nombre Material
+        'tip_mat',          // Tipo Material
+        'rut_mat',          // Ruta Material
+        'url_mat',          // URL Material
+        'mime_mat',         // MIME Material (Identifica técnicamente el tipo de archivo para validación, vista previa y descarga segura)
+        'tam_mat',          // Tamaño Material
+        'est_mat',          // Estado Material
     ];
 
     protected $casts = [
@@ -44,7 +46,7 @@ class MaterialClase extends Model
                     ? ((int) str_replace('MATC_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $materialClase->cod_mat = 'MATC_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $materialClase->cod_mat = 'MATC_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

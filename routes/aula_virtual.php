@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\AulaVirtual\AuthAulaVirtualController;
 use App\Http\Controllers\AulaVirtual\AsistenciaController;
 use App\Http\Controllers\AulaVirtual\AulaVirtualController;
+use App\Http\Controllers\AulaVirtual\AuthAulaVirtualController;
 use App\Http\Controllers\AulaVirtual\CursoVirtualController;
 use App\Http\Controllers\AulaVirtual\EntregaController;
 use App\Http\Controllers\AulaVirtual\MaterialController;

@@ -6,10 +6,12 @@ use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EstadoAsistencia;
 use App\Services\AulaVirtual\AsistenciaService;
 use App\Services\AulaVirtual\CursoVirtualService;
+use App\Support\Academico\CalendarioAcademicoInteligente;
 use App\Support\AulaVirtual\AsistenciaInteligente;
 use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -21,14 +23,23 @@ class RegistrarAsistencia extends Component
     public string $codCla = '';
 
     public string $fecha = '';
+
+    public string $codHbl = '';
+
     public string $tipoAsistencia = 'CLASE';
+
     public string $titulo = '';
+
     public string $observacionGeneral = '';
 
     // Mapeo de estados: [cod_est => cod_est_asi]
     public array $asistencias = [];
+
     // Mapeo de observaciones: [cod_est => obs]
     public array $observaciones = [];
+
+    public string $motivoRectificacion = '';
+
     // Mapeo de minutos de retraso: [cod_est => int]
     public array $minutosRetraso = [];
 
@@ -92,6 +103,11 @@ class RegistrarAsistencia extends Component
         $this->ejecutarAnalisisInteligente();
     }
 
+    public function updatedCodHbl(): void
+    {
+        $this->ejecutarAnalisisInteligente();
+    }
+
     public function updatedObservaciones(): void
     {
         $this->ejecutarAnalisisInteligente();
@@ -147,7 +163,8 @@ class RegistrarAsistencia extends Component
             codCla: $this->codCla,
             estudiantesMarcados: $this->asistencias,
             fecha: $this->fecha,
-            modoCierre: true
+            modoCierre: true,
+            codHbl: $this->codHbl ?: null,
         );
     }
 
@@ -170,16 +187,19 @@ class RegistrarAsistencia extends Component
 
         if (! $docente) {
             $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente activo correspondiente.');
+
             return;
         }
 
         try {
             $datosFormulario = [
                 'cod_cla' => $this->codCla,
+                'cod_hbl' => $this->codHbl ?: null,
                 'fec_asi_cla' => $this->fecha,
                 'tip_asi_cla' => $this->tipoAsistencia,
-                'tit_asi_cla' => $this->titulo ?: ('Sesión de ' . Carbon::parse($this->fecha)->format('d/m/Y')),
+                'tit_asi_cla' => $this->titulo ?: ('Sesión de '.Carbon::parse($this->fecha)->format('d/m/Y')),
                 'obs_asi_cla' => $this->observacionGeneral,
+                'motivo_rectificacion' => $this->motivoRectificacion,
                 'asistencias' => [],
             ];
 
@@ -196,7 +216,7 @@ class RegistrarAsistencia extends Component
 
             $this->dispatch('success-general', mensaje: 'Asistencia registrada y consolidada correctamente.');
             $this->dispatch('asistencia-guardada');
-        } catch (\Illuminate\Validation\ValidationException $ve) {
+        } catch (ValidationException $ve) {
             $primerError = collect($ve->errors())->flatten()->first() ?? 'Observaciones en el registro de asistencia.';
             $this->dispatch('error-general', mensaje: $primerError);
         } catch (\Throwable $e) {
@@ -212,8 +232,10 @@ class RegistrarAsistencia extends Component
             return collect();
         }
 
+        $oficiales = app(AsistenciaInteligente::class)->analizarSesion($this->codCla, [], $this->fecha, codHbl: $this->codHbl ?: null)['datos_calculados']['estudiantes_oficiales'] ?? [];
+
         return $clase->estudiantes()
-            ->where('est_cla_est', 'ACTIVO')
+            ->whereIn('cod_est', $oficiales)
             ->with(['estudiante.persona'])
             ->get()
             ->map(fn ($ce) => (object) [
@@ -235,6 +257,15 @@ class RegistrarAsistencia extends Component
 
         $totalEstudiantes = $estudiantes->count();
         $marcados = collect($this->asistencias)->filter(fn ($v) => ! empty($v))->count();
+        $plan = $clase?->planAsignatura ?? $clase?->planEspecialidad;
+        $bloques = collect();
+        if ($plan && $this->fecha) {
+            $dia = [1 => 'LUNES', 2 => 'MARTES', 3 => 'MIERCOLES', 4 => 'JUEVES', 5 => 'VIERNES', 6 => 'SABADO', 7 => 'DOMINGO'][Carbon::parse($this->fecha)->isoWeekday()];
+            $bloques = app(CalendarioAcademicoInteligente::class)->horariosAfectados([
+                'cod_gea' => $plan->cod_gea, 'cod_cur' => $plan->cod_cur, 'cod_par' => $plan->cod_par,
+                'cod_tur' => $plan->cod_tur, 'fii_cae' => $this->fecha, 'ffi_cae' => $this->fecha,
+            ])->filter(fn ($d) => $d->dia_hde === $dia && ($clase->cod_pas ? $d->cod_pas === $clase->cod_pas : $d->cod_pes === $clase->cod_pes))->unique('cod_hbl');
+        }
 
         return view('livewire.aula-virtual.asistencia.registrar-asistencia', [
             'clase' => $clase,
@@ -242,6 +273,7 @@ class RegistrarAsistencia extends Component
             'estadosAsistencia' => $estadosAsistencia,
             'totalEstudiantes' => $totalEstudiantes,
             'marcados' => $marcados,
+            'bloques' => $bloques,
         ]);
     }
 }

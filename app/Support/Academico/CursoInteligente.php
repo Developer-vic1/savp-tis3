@@ -188,7 +188,7 @@ class CursoInteligente extends SoporteInteligenteBase
             $confianza += 15;
         }
 
-        if (preg_match('/\b' . $orden . '\b/u', $texto)) {
+        if (preg_match('/\b'.$orden.'\b/u', $texto)) {
             $confianza += 10;
         }
 
@@ -281,7 +281,7 @@ class CursoInteligente extends SoporteInteligenteBase
             'relaciones_esperadas' => [],
             'advertencias' => [],
             'sugerencias' => array_values(array_map(
-                fn(array $curso) => [
+                fn (array $curso) => [
                     'orden' => $curso['orden'],
                     'nombre' => $curso['nombre'],
                     'nivel' => $curso['nivel'],

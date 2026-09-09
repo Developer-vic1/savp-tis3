@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class EntregaArchivo extends Model
 {
     protected $table = 'entrega_archivo';
+
     protected $primaryKey = 'cod_ent_arc';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -41,7 +43,7 @@ class EntregaArchivo extends Model
                     ? ((int) str_replace('ENTA_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $entregaArchivo->cod_ent_arc = 'ENTA_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $entregaArchivo->cod_ent_arc = 'ENTA_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

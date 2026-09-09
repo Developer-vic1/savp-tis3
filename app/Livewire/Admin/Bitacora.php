@@ -23,16 +23,27 @@ class Bitacora extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $fechaDesde = '';
+
     public string $fechaHasta = '';
+
     public string $filtroUsuario = '';
+
     public string $filtroRol = '';
+
     public string $filtroModulo = '';
+
     public string $filtroTabla = '';
+
     public string $filtroNivel = '';
+
     public string $filtroResultado = '';
+
     public string $filtroAccion = '';
+
     public string $filtroMetodo = '';
+
     public int $perPage = 10;
 
     /*
@@ -48,6 +59,7 @@ class Bitacora extends Component
     |--------------------------------------------------------------------------
     */
     public bool $drawerDetalle = false;
+
     public ?BitacoraModel $eventoDetalle = null;
 
     /*
@@ -368,6 +380,7 @@ class Bitacora extends Component
 
         if (! $this->eventoDetalle) {
             $this->dispatch('error-general', mensaje: 'No se encontró el evento seleccionado.');
+
             return;
         }
 
@@ -498,7 +511,7 @@ class Bitacora extends Component
             ->whereIn(
                 'cod_usu',
                 $grupos->pluck('usuario_key')
-                    ->filter(fn($id) => $id !== 'SISTEMA')
+                    ->filter(fn ($id) => $id !== 'SISTEMA')
                     ->values()
                     ->toArray()
             )
@@ -523,18 +536,18 @@ class Bitacora extends Component
     public function gruposAccion(): Collection
     {
         $acciones = $this->queryBase(false)
-            ->selectRaw("
+            ->selectRaw('
                 acc_bit,
                 COUNT(*) as total,
                 MAX(fec_bit) as ultima_actividad
-            ")
+            ')
             ->whereNotNull('acc_bit')
             ->groupBy('acc_bit')
             ->orderByDesc('total')
             ->get();
 
         $resultadosPorAccion = BitacoraModel::query()
-            ->selectRaw("acc_bit, res_bit, COUNT(*) as total")
+            ->selectRaw('acc_bit, res_bit, COUNT(*) as total')
             ->whereNotNull('acc_bit')
             ->whereNotNull('res_bit')
             ->groupBy('acc_bit', 'res_bit')
@@ -618,7 +631,7 @@ class Bitacora extends Component
 
         return [
             'labels' => $datos->pluck('modulo')->toArray(),
-            'data' => $datos->pluck('total')->map(fn($valor) => (int) $valor)->toArray(),
+            'data' => $datos->pluck('total')->map(fn ($valor) => (int) $valor)->toArray(),
         ];
     }
 
@@ -634,13 +647,13 @@ class Bitacora extends Component
 
         return [
             'labels' => $orden
-                ->filter(fn($nivel) => isset($datos[$nivel]))
+                ->filter(fn ($nivel) => isset($datos[$nivel]))
                 ->values()
                 ->toArray(),
 
             'data' => $orden
-                ->filter(fn($nivel) => isset($datos[$nivel]))
-                ->map(fn($nivel) => (int) $datos[$nivel]->total)
+                ->filter(fn ($nivel) => isset($datos[$nivel]))
+                ->map(fn ($nivel) => (int) $datos[$nivel]->total)
                 ->values()
                 ->toArray(),
         ];
@@ -652,12 +665,12 @@ class Bitacora extends Component
         $fin = now()->endOfDay();
 
         $datos = $this->queryBase(false)
-            ->selectRaw("DATE(fec_bit) as fecha, COUNT(*) as total")
+            ->selectRaw('DATE(fec_bit) as fecha, COUNT(*) as total')
             ->whereBetween('fec_bit', [$inicio, $fin])
-            ->groupByRaw("DATE(fec_bit)")
+            ->groupByRaw('DATE(fec_bit)')
             ->orderBy('fecha')
             ->get()
-            ->keyBy(fn($item) => Carbon::parse($item->fecha)->format('Y-m-d'));
+            ->keyBy(fn ($item) => Carbon::parse($item->fecha)->format('Y-m-d'));
 
         $labels = [];
         $data = [];
@@ -690,7 +703,7 @@ class Bitacora extends Component
             ->whereIn(
                 'cod_usu',
                 $datos->pluck('usuario_key')
-                    ->filter(fn($id) => $id !== 'SISTEMA')
+                    ->filter(fn ($id) => $id !== 'SISTEMA')
                     ->values()
                     ->toArray()
             )
@@ -710,7 +723,7 @@ class Bitacora extends Component
                     : $item->usuario_key;
             })->toArray(),
 
-            'data' => $datos->pluck('total')->map(fn($valor) => (int) $valor)->toArray(),
+            'data' => $datos->pluck('total')->map(fn ($valor) => (int) $valor)->toArray(),
         ];
     }
 
@@ -735,7 +748,7 @@ class Bitacora extends Component
             ],
             'porcentajeExito' => [
                 'titulo' => 'Porcentaje de éxito',
-                'valor' => $this->porcentajeExito() . '%',
+                'valor' => $this->porcentajeExito().'%',
             ],
             'eventosSensibles' => [
                 'titulo' => 'Eventos sensibles',
@@ -743,7 +756,7 @@ class Bitacora extends Component
             ],
             'promedioDiario' => [
                 'titulo' => 'Promedio diario',
-                'valor' => $this->promedioDiarioEventos() . ' eventos',
+                'valor' => $this->promedioDiarioEventos().' eventos',
             ],
         ];
     }
@@ -1053,7 +1066,7 @@ class Bitacora extends Component
         $primera = mb_substr($partes->get(0, 'U'), 0, 1);
         $segunda = mb_substr($partes->get(1, 'S'), 0, 1);
 
-        return mb_strtoupper($primera . $segunda);
+        return mb_strtoupper($primera.$segunda);
     }
 
     /*
@@ -1205,7 +1218,7 @@ class Bitacora extends Component
         $campos = collect(array_keys($anteriores))
             ->merge(array_keys($nuevos))
             ->unique()
-            ->reject(fn($campo) => $this->campoSensible((string) $campo))
+            ->reject(fn ($campo) => $this->campoSensible((string) $campo))
             ->values();
 
         return $campos->map(function ($campo) use ($anteriores, $nuevos) {
@@ -1236,8 +1249,8 @@ class Bitacora extends Component
         $nuevos = $this->normalizarJson($evento->val_nue_bit);
 
         return collect($nuevos)
-            ->reject(fn($valor, $campo) => $this->campoSensible((string) $campo))
-            ->map(fn($valor, $campo) => [
+            ->reject(fn ($valor, $campo) => $this->campoSensible((string) $campo))
+            ->map(fn ($valor, $campo) => [
                 'campo' => $this->campoInstitucional((string) $campo),
                 'campo_original' => $campo,
                 'valor' => $this->formatearValorJson($valor),

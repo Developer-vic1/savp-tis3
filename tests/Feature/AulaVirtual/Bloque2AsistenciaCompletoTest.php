@@ -3,15 +3,15 @@
 namespace Tests\Feature\AulaVirtual;
 
 use App\Livewire\AulaVirtual\Asistencia\RegistrarAsistencia;
-use App\Models\AulaVirtual\AsistenciaClase;
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EstadoAsistencia;
 use App\Models\Docente;
 use App\Models\Estudiante;
+use App\Models\InscripcionEstudiante;
+use App\Models\InscripcionVigencia;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\User;
-use App\Services\AulaVirtual\AsistenciaService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
@@ -24,11 +24,17 @@ class Bloque2AsistenciaCompletoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUserA;
+
     protected User $docenteUserB;
+
     protected User $estudianteUser;
+
     protected ClaseVirtual $claseA;
+
     protected string $codEst;
+
     protected string $codEstAsiPresente;
+
     protected string $codEstAsiJustificado;
 
     protected function setUp(): void
@@ -187,6 +193,14 @@ class Bloque2AsistenciaCompletoTest extends TestCase
             ['cod_cla_est' => 'CLE_ASI_01'],
             ['cod_cla' => $this->claseA->cod_cla, 'cod_est' => $this->codEst, 'est_cla_est' => 'ACTIVO']
         );
+        $inscripcion = InscripcionEstudiante::create([
+            'cod_ins' => 'INS_B2_TEST', 'cod_est' => $this->codEst, 'cod_gea' => 'GEA_2026',
+            'cod_cur' => 'CUR_5SEC', 'cod_par' => 'PAR_A', 'cod_tur' => 'TUR_MAN',
+            'fei_ins' => '2026-02-01', 'est_ins' => 'ACTIVA',
+        ]);
+        InscripcionVigencia::create($inscripcion->only(['cod_ins', 'cod_cur', 'cod_par', 'cod_tur']) + [
+            'cod_ivg' => 'IVG_B2_TEST', 'fii_ivg' => '2026-02-01', 'tip_ivg' => 'INICIAL', 'est_ivg' => 'ACTIVA',
+        ]);
     }
 
     public function test_ruta_real_registrar_asistencia_permite_docente_titular(): void

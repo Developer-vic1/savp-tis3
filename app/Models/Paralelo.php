@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Paralelo extends Model
 {
     protected $table = 'paralelo';
+
     protected $primaryKey = 'cod_par';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -29,7 +32,7 @@ class Paralelo extends Model
                     ? ((int) str_replace('PAR_', '', $ultimo)) + 1
                     : 1;
 
-                $paralelo->cod_par = 'PAR_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $paralelo->cod_par = 'PAR_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

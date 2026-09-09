@@ -345,6 +345,19 @@
                         </svg>
                         Vista de horarios
                     </button>
+
+                    @can('Gestion_Academica')
+                        <button type="button" wire:click="abrirModalProvisionamiento" wire:loading.attr="disabled"
+                            wire:target="abrirModalProvisionamiento" class="ui-btn-secondary disabled:cursor-wait disabled:opacity-60"
+                            title="Preparar o sincronizar aulas virtuales a partir de los horarios de la gestión">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.8" style="color: var(--savp-green);">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+                            </svg>
+                            Crear aulas virtuales
+                        </button>
+                    @endcan
                 </div>
             </div>
 
@@ -2730,6 +2743,20 @@
                                                 Restablecer
                                             </button>
 
+                                            @can('Gestion_Academica')
+                                                <button type="button" wire:click="abrirModalProvisionamiento"
+                                                    class="ui-btn-secondary"
+                                                    title="Crear o sincronizar aulas virtuales a partir de los horarios de la gestión">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"
+                                                        style="color: var(--savp-green);">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+                                                    </svg>
+                                                    Crear aulas virtuales
+                                                </button>
+                                            @endcan
+
                                             <button type="button"
                                                 wire:click="irAHorarios(@js($cursoDetalle['cod_cur'] ?? null))"
                                                 class="ui-btn-primary">
@@ -3804,6 +3831,340 @@
                             Guardando...
                         </span>
                     </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- MODAL PROVISIONAMIENTO DE AULAS VIRTUALES --}}
+    @if ($modalProvisionamiento)
+        <div wire:key="modal-provisionamiento-aulas-virtuales"
+            class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-6"
+            x-data="{ tabFiltro: 'todos' }"
+            x-on:keydown.escape.window="$wire.cerrarModalProvisionamiento()">
+            {{-- BACKDROP --}}
+            <div class="absolute inset-0 curso-backdrop-diffuse" wire:click="cerrarModalProvisionamiento"></div>
+
+            {{-- MODAL CONTAINER --}}
+            <div class="ui-modal curso-fade-in relative z-10 w-full max-w-5xl overflow-hidden" role="dialog"
+                aria-modal="true" aria-label="Preparar aulas virtuales">
+
+                {{-- HEADER --}}
+                <div class="curso-hero-bg border-b px-5 py-5 sm:px-6" style="border-color: var(--ui-border);">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="min-w-0">
+                            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 ring-1"
+                                style="background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);">
+                                <span class="h-2 w-2 rounded-full" style="background: var(--savp-green);"></span>
+                                <span class="text-xs font-black uppercase tracking-[0.18em]">
+                                    Aulas Virtuales · Gestión {{ $previewProvisionamiento['gestion']['ani_gea'] ?? '2026' }}
+                                </span>
+                            </div>
+
+                            <h3 class="mt-3 text-2xl font-black tracking-tight md:text-3xl" style="color: var(--ui-text);">
+                                Preparar aulas virtuales desde horarios
+                            </h3>
+
+                            <p class="mt-2 max-w-4xl text-sm leading-6" style="color: var(--ui-muted);">
+                                El sistema analiza los planes curriculares y de especialidad que cuentan con bloques activos en
+                                la matriz de horarios de la gestión. Las aulas nuevas quedarán preparadas e inicialmente ocultas
+                                para los estudiantes.
+                            </p>
+                        </div>
+
+                        <button type="button" wire:click="cerrarModalProvisionamiento" class="ui-icon-btn shrink-0"
+                            title="Cerrar modal">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- BODY --}}
+                <div class="max-h-[72vh] overflow-y-auto px-5 py-6 sm:px-6 curso-mini-scroll space-y-6">
+
+                    {{-- MENSAJE DE RESULTADO TRAS EJECUCIÓN --}}
+                    @if (!empty($resultadoProvisionamiento))
+                        <div class="rounded-2xl border p-5 transition-all"
+                            style="border-color: color-mix(in srgb, var(--savp-green) 30%, var(--ui-border)); background: color-mix(in srgb, var(--savp-green) 12%, var(--ui-surface));">
+                            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-start gap-3">
+                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm"
+                                        style="background: var(--savp-green);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-base font-black" style="color: var(--ui-text);">
+                                            {{ $resultadoProvisionamiento['mensaje'] ?? 'Proceso completado.' }}
+                                        </p>
+                                        <div class="mt-2 flex flex-wrap gap-2 text-xs font-bold">
+                                            <span class="ui-badge-success">
+                                                Nuevas preparadas: {{ $resultadoProvisionamiento['creadas'] ?? 0 }}
+                                            </span>
+                                            <span class="ui-badge-info">
+                                                Sincronizadas: {{ $resultadoProvisionamiento['sincronizadas'] ?? 0 }}
+                                            </span>
+                                            <span class="ui-badge-warning">
+                                                Bloqueadas: {{ $resultadoProvisionamiento['bloqueadas'] ?? 0 }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a href="{{ route('aula-virtual.inicio') }}"
+                                    class="ui-btn-primary shrink-0 self-start sm:self-auto"
+                                    title="Ir al Aula Virtual">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>
+                                    Ver aulas virtuales
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
+                    {{-- TARJETAS DE RESUMEN DE PREVISUALIZACIÓN --}}
+                    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                        <div class="rounded-2xl border p-4"
+                            style="background: var(--ui-surface-soft); border-color: var(--ui-border);">
+                            <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted);">
+                                Programados
+                            </p>
+                            <p class="mt-2 text-2xl font-black" style="color: var(--ui-text);">
+                                {{ $previewProvisionamiento['metricas']['planes_programados'] ?? 0 }}
+                            </p>
+                            <p class="mt-1 text-[11px]" style="color: var(--ui-muted);">Con horario activo</p>
+                        </div>
+
+                        <div class="rounded-2xl border p-4"
+                            style="background: var(--ui-surface-soft); border-color: var(--ui-border);">
+                            <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted);">
+                                Aulas nuevas
+                            </p>
+                            <p class="mt-2 text-2xl font-black" style="color: var(--ui-primary);">
+                                {{ $previewProvisionamiento['metricas']['aulas_nuevas'] ?? 0 }}
+                            </p>
+                            <p class="mt-1 text-[11px]" style="color: var(--ui-muted);">Por preparar</p>
+                        </div>
+
+                        <div class="rounded-2xl border p-4"
+                            style="background: var(--ui-surface-soft); border-color: var(--ui-border);">
+                            <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted);">
+                                Existentes
+                            </p>
+                            <p class="mt-2 text-2xl font-black" style="color: var(--ui-text);">
+                                {{ $previewProvisionamiento['metricas']['aulas_existentes'] ?? 0 }}
+                            </p>
+                            <p class="mt-1 text-[11px]" style="color: var(--ui-muted);">Ya registradas</p>
+                        </div>
+
+                        <div class="rounded-2xl border p-4"
+                            style="background: var(--ui-surface-soft); border-color: var(--ui-border);">
+                            <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted);">
+                                Asignaturas
+                            </p>
+                            <p class="mt-2 text-2xl font-black" style="color: var(--ui-text);">
+                                {{ $previewProvisionamiento['metricas']['asignaturas'] ?? 0 }}
+                            </p>
+                            <p class="mt-1 text-[11px]" style="color: var(--ui-muted);">Curriculares</p>
+                        </div>
+
+                        <div class="rounded-2xl border p-4"
+                            style="background: var(--ui-surface-soft); border-color: var(--ui-border);">
+                            <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted);">
+                                Especialidades
+                            </p>
+                            <p class="mt-2 text-2xl font-black" style="color: var(--ui-text);">
+                                {{ $previewProvisionamiento['metricas']['especialidades'] ?? 0 }}
+                            </p>
+                            <p class="mt-1 text-[11px]" style="color: var(--ui-muted);">Técnicas</p>
+                        </div>
+
+                        <div class="rounded-2xl border p-4"
+                            style="background: var(--ui-surface-soft); border-color: var(--ui-border);">
+                            <p class="text-[11px] font-bold uppercase tracking-wider" style="color: var(--ui-muted);">
+                                Bloqueados
+                            </p>
+                            <p class="mt-2 text-2xl font-black"
+                                style="color: {{ ($previewProvisionamiento['metricas']['bloqueadas'] ?? 0) > 0 ? 'var(--ui-danger)' : 'var(--ui-text)' }};">
+                                {{ $previewProvisionamiento['metricas']['bloqueadas'] ?? 0 }}
+                            </p>
+                            <p class="mt-1 text-[11px]" style="color: var(--ui-muted);">Sin horario o incompletos</p>
+                        </div>
+                    </div>
+
+                    {{-- TABLA DETALLADA DE PREVISUALIZACIÓN --}}
+                    <div class="rounded-2xl border overflow-hidden" style="border-color: var(--ui-border);">
+                        <div class="border-b p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+                            style="border-color: var(--ui-border); background: var(--ui-surface-soft);">
+                            <div>
+                                <h4 class="text-sm font-black" style="color: var(--ui-text);">
+                                    Detalle de planes académicos a procesar
+                                </h4>
+                                <p class="text-xs" style="color: var(--ui-muted);">
+                                    Mostrando {{ count($previewProvisionamiento['items'] ?? []) }} planes evaluados
+                                </p>
+                            </div>
+
+                            {{-- FILTROS DE PESTAÑA --}}
+                            <div class="flex items-center gap-1.5 text-xs">
+                                <button type="button" @click="tabFiltro = 'todos'"
+                                    :class="tabFiltro === 'todos' ? 'ui-btn-primary py-1 px-3 text-xs' : 'ui-btn-secondary py-1 px-3 text-xs'">
+                                    Todos ({{ count($previewProvisionamiento['items'] ?? []) }})
+                                </button>
+                                <button type="button" @click="tabFiltro = 'nuevas'"
+                                    :class="tabFiltro === 'nuevas' ? 'ui-btn-primary py-1 px-3 text-xs' : 'ui-btn-secondary py-1 px-3 text-xs'">
+                                    Nuevas ({{ $previewProvisionamiento['metricas']['aulas_nuevas'] ?? 0 }})
+                                </button>
+                                <button type="button" @click="tabFiltro = 'bloqueadas'"
+                                    :class="tabFiltro === 'bloqueadas' ? 'ui-btn-primary py-1 px-3 text-xs' : 'ui-btn-secondary py-1 px-3 text-xs'">
+                                    Bloqueadas ({{ $previewProvisionamiento['metricas']['bloqueadas'] ?? 0 }})
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="max-h-80 overflow-y-auto curso-mini-scroll">
+                            <table class="w-full text-left text-xs">
+                                <thead class="sticky top-0 z-10 text-[11px] font-bold uppercase tracking-wider"
+                                    style="background: var(--ui-surface-muted); color: var(--ui-muted);">
+                                    <tr>
+                                        <th class="px-4 py-3">Materia / Especialidad</th>
+                                        <th class="px-4 py-3">Curso y Paralelo</th>
+                                        <th class="px-4 py-3">Docente</th>
+                                        <th class="px-4 py-3 text-center">Horario</th>
+                                        <th class="px-4 py-3 text-center">Estado</th>
+                                        <th class="px-4 py-3">Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y" style="border-color: var(--ui-border); divide-color: var(--ui-border);">
+                                    @forelse ($previewProvisionamiento['items'] ?? [] as $item)
+                                        <tr x-show="tabFiltro === 'todos' || (tabFiltro === 'nuevas' && '{{ $item['estado_provision'] }}' === 'NUEVA') || (tabFiltro === 'bloqueadas' && '{{ $item['estado_provision'] }}' === 'BLOQUEADO')"
+                                            class="transition hover:bg-[var(--ui-surface-soft)]">
+                                            <td class="px-4 py-3">
+                                                <p class="font-black" style="color: var(--ui-text);">
+                                                    {{ $item['materia'] }}
+                                                </p>
+                                                <p class="text-[10px] font-semibold uppercase tracking-wider"
+                                                    style="color: var(--ui-muted);">
+                                                    {{ $item['tipo_origen'] === 'ASIGNATURA' ? 'Asignatura Curricular' : 'Especialidad Técnica' }}
+                                                </p>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="font-bold" style="color: var(--ui-text);">
+                                                    {{ $item['curso'] }} {{ $item['paralelo'] }}
+                                                </span>
+                                                <span class="block text-[10px]" style="color: var(--ui-muted);">
+                                                    {{ $item['turno'] }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3" style="color: var(--ui-text);">
+                                                {{ $item['docente'] }}
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                @if (($item['bloques_horario'] ?? 0) > 0)
+                                                    <span class="ui-badge-success">
+                                                        {{ $item['bloques_horario'] }} bloques
+                                                    </span>
+                                                @else
+                                                    <span class="ui-badge-danger">Sin horario</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                @if ($item['estado_provision'] === 'NUEVA')
+                                                    <span class="ui-badge-success">NUEVA</span>
+                                                @elseif ($item['estado_provision'] === 'EXISTENTE')
+                                                    <span class="ui-badge-info">EXISTENTE</span>
+                                                @elseif ($item['estado_provision'] === 'SINCRONIZABLE')
+                                                    <span class="ui-badge-violet">SINCRONIZAR</span>
+                                                @else
+                                                    <span class="ui-badge-danger">BLOQUEADO</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 text-[11px]">
+                                                @if (!empty($item['bloqueos']))
+                                                    <ul class="list-disc pl-4 text-rose-600 dark:text-rose-400 space-y-0.5">
+                                                        @foreach ($item['bloqueos'] as $bloqueo)
+                                                            <li>{{ $bloqueo }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                @elseif (!empty($item['advertencias']))
+                                                    <ul class="list-disc pl-4 text-amber-600 dark:text-amber-400 space-y-0.5">
+                                                        @foreach ($item['advertencias'] as $adv)
+                                                            <li>{{ $adv }}</li>
+                                                        @endforeach
+                                                    </ul>
+                                                @else
+                                                    <span class="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                                        ✓ Todo correcto
+                                                    </span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="px-4 py-8 text-center" style="color: var(--ui-muted);">
+                                                No se encontraron planes académicos para la gestión seleccionada.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- FOOTER ACCIONES --}}
+                <div class="border-t px-5 py-4 sm:px-6 flex flex-wrap items-center justify-between gap-3"
+                    style="border-color: var(--ui-border); background: var(--ui-surface-soft);">
+                    <p class="text-xs" style="color: var(--ui-muted);">
+                        @if (($previewProvisionamiento['metricas']['aulas_nuevas'] ?? 0) > 0)
+                            Se crearán <strong>{{ $previewProvisionamiento['metricas']['aulas_nuevas'] }}</strong> aulas virtuales nuevas.
+                        @else
+                            Todas las aulas de los planes programados ya se encuentran creadas.
+                        @endif
+                    </p>
+
+                    <div class="flex items-center gap-3">
+                        <button type="button" wire:click="cerrarModalProvisionamiento" class="ui-btn-secondary"
+                            wire:loading.attr="disabled" wire:target="ejecutarProvisionamiento">
+                            Cancelar
+                        </button>
+
+                        <button type="button" wire:click="ejecutarProvisionamiento"
+                            wire:loading.attr="disabled" wire:target="ejecutarProvisionamiento"
+                            :disabled="@js(($previewProvisionamiento['metricas']['aulas_nuevas'] ?? 0) + ($previewProvisionamiento['metricas']['aulas_sincronizables'] ?? 0) === 0)"
+                            class="ui-btn-primary disabled:cursor-not-allowed disabled:opacity-50">
+                            <span wire:loading.remove wire:target="ejecutarProvisionamiento" class="inline-flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
+                                </svg>
+                                @if (($previewProvisionamiento['metricas']['aulas_nuevas'] ?? 0) > 0)
+                                    Crear {{ $previewProvisionamiento['metricas']['aulas_nuevas'] }} aulas virtuales
+                                @else
+                                    Sincronizar aulas existentes
+                                @endif
+                            </span>
+
+                            <span wire:loading wire:target="ejecutarProvisionamiento" class="inline-flex items-center gap-2">
+                                <svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                    </circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4a4 4 0 0 0-4 4H4Z">
+                                    </path>
+                                </svg>
+                                Preparando aulas virtuales...
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

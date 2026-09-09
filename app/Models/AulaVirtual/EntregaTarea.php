@@ -11,9 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class EntregaTarea extends Model
 {
     protected $table = 'entrega_tarea';
+
     protected $primaryKey = 'cod_ent';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -44,7 +46,7 @@ class EntregaTarea extends Model
                     ? ((int) str_replace('ENT_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $entregaTarea->cod_ent = 'ENT_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $entregaTarea->cod_ent = 'ENT_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
 
             if (! $entregaTarea->fec_ent && in_array($entregaTarea->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE'], true)) {

@@ -27,8 +27,8 @@ class AdminDashboardController extends Controller
         $persona = $user->persona;
 
         $nombreCompleto = trim(
-            ($persona->nom_per ?? '') . ' ' .
-                ($persona->ape_pat_per ?? '') . ' ' .
+            ($persona->nom_per ?? '').' '.
+                ($persona->ape_pat_per ?? '').' '.
                 ($persona->ape_mat_per ?? '')
         );
 
@@ -119,7 +119,7 @@ class AdminDashboardController extends Controller
 
                 $usuarioNombre = $persona
                     ? trim(
-                        ($persona->nom_per ?? '') . ' ' .
+                        ($persona->nom_per ?? '').' '.
                             ($persona->ape_pat_per ?? '')
                     )
                     : 'Sistema';
@@ -175,7 +175,7 @@ class AdminDashboardController extends Controller
 
                 $detalle = "{$usuarioNombre} realizó una acción sobre {$tablaFormateada}";
 
-                if (!empty($item->reg_bit)) {
+                if (! empty($item->reg_bit)) {
                     $detalle .= " ({$item->reg_bit})";
                 }
 
@@ -296,7 +296,6 @@ class AdminDashboardController extends Controller
             ->orderBy('c.nom_cur')
             ->pluck('total', 'nombre')
             ->toArray();
-
 
         return view('admin.dashboard-administrador', compact(
             'nombreCompleto',

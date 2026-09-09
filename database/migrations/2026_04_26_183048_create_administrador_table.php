@@ -16,9 +16,9 @@ return new class extends Migration
 
             $table->string('cod_pin', 20); // Código personal institucional
             $table->foreign('cod_pin')
-                  ->references('cod_pin')
-                  ->on('personal_institucional')
-                  ->cascadeOnDelete();
+                ->references('cod_pin')
+                ->on('personal_institucional')
+                ->cascadeOnDelete();
 
             $table->string('est_adm', 20)->default('ACTIVO'); // Estado administrador
 

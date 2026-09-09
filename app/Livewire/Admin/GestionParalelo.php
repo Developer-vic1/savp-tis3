@@ -29,12 +29,17 @@ class GestionParalelo extends Component
     */
 
     public string $search = '';
+
     public string $estado = '';
+
     public string $usoAcademico = '';
+
     public string $impacto = '';
+
     public int $perPage = 10;
 
     public string $sortField = 'nom_par';
+
     public string $sortDirection = 'asc';
 
     /*
@@ -44,9 +49,13 @@ class GestionParalelo extends Component
     */
 
     public bool $modalCrear = false;
+
     public bool $modalEditar = false;
+
     public bool $modalDetalle = false;
+
     public bool $modalCatalogo = false;
+
     public bool $modalHistoricos = false;
 
     /*
@@ -73,8 +82,11 @@ class GestionParalelo extends Component
     */
 
     public array $analisisCrear = [];
+
     public array $analisisEditar = [];
+
     public bool $puedeGuardarCrear = false;
+
     public ?string $bloqueoCrearMensaje = null;
 
     /*
@@ -84,6 +96,7 @@ class GestionParalelo extends Component
     */
 
     public ?string $paraleloSeleccionado = null;
+
     public array $detalleParalelo = [];
 
     /*
@@ -225,7 +238,7 @@ class GestionParalelo extends Component
 
         if ($this->impacto !== '') {
             $filtrados = $paginados->getCollection()
-                ->filter(fn(Paralelo $paralelo) => ($paralelo->impacto_academico['nivel'] ?? '') === $this->impacto)
+                ->filter(fn (Paralelo $paralelo) => ($paralelo->impacto_academico['nivel'] ?? '') === $this->impacto)
                 ->values();
 
             $paginados->setCollection($filtrados);
@@ -242,7 +255,7 @@ class GestionParalelo extends Component
             $busqueda = trim($this->search);
 
             $query->where(function (Builder $subQuery) use ($busqueda) {
-                $subQuery->where('nom_par', 'like', '%' . $busqueda . '%');
+                $subQuery->where('nom_par', 'like', '%'.$busqueda.'%');
             });
         }
 
@@ -263,16 +276,19 @@ class GestionParalelo extends Component
 
         if ($this->usoAcademico === 'CON_ESTUDIANTES') {
             $this->whereExisteEnTablas($query, $this->tablasInscripcionDisponibles());
+
             return;
         }
 
         if ($this->usoAcademico === 'SIN_ESTUDIANTES') {
             $this->whereNoExisteEnTablas($query, $this->tablasInscripcionDisponibles());
+
             return;
         }
 
         if ($this->usoAcademico === 'CON_PLANIFICACION') {
             $this->whereExisteEnTablas($query, ['plan_asignatura', 'plan_especialidad']);
+
             return;
         }
 
@@ -281,6 +297,7 @@ class GestionParalelo extends Component
                 $this->tablasInscripcionDisponibles(),
                 ['plan_asignatura', 'plan_especialidad', 'horario_detalle']
             ));
+
             return;
         }
 
@@ -298,7 +315,7 @@ class GestionParalelo extends Component
                         $exists
                             ->selectRaw('1')
                             ->from($tabla)
-                            ->whereColumn($tabla . '.cod_par', 'paralelo.cod_par');
+                            ->whereColumn($tabla.'.cod_par', 'paralelo.cod_par');
                     });
                 }
             }
@@ -313,7 +330,7 @@ class GestionParalelo extends Component
                     $subQuery
                         ->selectRaw('1')
                         ->from($tabla)
-                        ->whereColumn($tabla . '.cod_par', 'paralelo.cod_par');
+                        ->whereColumn($tabla.'.cod_par', 'paralelo.cod_par');
                 });
             }
         }
@@ -493,19 +510,19 @@ class GestionParalelo extends Component
         $partes = [];
 
         if ($estudiantes > 0) {
-            $partes[] = $estudiantes . ' estudiante' . ($estudiantes === 1 ? '' : 's');
+            $partes[] = $estudiantes.' estudiante'.($estudiantes === 1 ? '' : 's');
         }
 
         if ($planesAsignatura > 0) {
-            $partes[] = $planesAsignatura . ' plan' . ($planesAsignatura === 1 ? '' : 'es') . ' de asignatura';
+            $partes[] = $planesAsignatura.' plan'.($planesAsignatura === 1 ? '' : 'es').' de asignatura';
         }
 
         if ($planesEspecialidad > 0) {
-            $partes[] = $planesEspecialidad . ' plan' . ($planesEspecialidad === 1 ? '' : 'es') . ' de especialidad';
+            $partes[] = $planesEspecialidad.' plan'.($planesEspecialidad === 1 ? '' : 'es').' de especialidad';
         }
 
         if ($horarios > 0) {
-            $partes[] = $horarios . ' horario' . ($horarios === 1 ? '' : 's');
+            $partes[] = $horarios.' horario'.($horarios === 1 ? '' : 's');
         }
 
         return count($partes) > 0 ? implode(' / ', $partes) : 'Sin uso académico';
@@ -635,9 +652,9 @@ class GestionParalelo extends Component
                 $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
 
                 return [
-                    'nombre' => 'Paralelo ' . $paralelo->nom_par,
+                    'nombre' => 'Paralelo '.$paralelo->nom_par,
                     'valor' => (int) $uso['estudiantes'],
-                    'texto' => (int) $uso['estudiantes'] . ' estudiante' . ((int) $uso['estudiantes'] === 1 ? '' : 's'),
+                    'texto' => (int) $uso['estudiantes'].' estudiante'.((int) $uso['estudiantes'] === 1 ? '' : 's'),
                 ];
             })
             ->values()
@@ -655,7 +672,7 @@ class GestionParalelo extends Component
                 $recomendaciones[] = [
                     'tipo' => 'warning',
                     'titulo' => 'Paralelo sin uso actual',
-                    'mensaje' => 'El Paralelo ' . $paralelo->nom_par . ' no tiene estudiantes ni planificación vinculada. Puede revisarse para desactivación.',
+                    'mensaje' => 'El Paralelo '.$paralelo->nom_par.' no tiene estudiantes ni planificación vinculada. Puede revisarse para desactivación.',
                 ];
             }
 
@@ -663,7 +680,7 @@ class GestionParalelo extends Component
                 $recomendaciones[] = [
                     'tipo' => 'info',
                     'titulo' => 'Histórico recuperable',
-                    'mensaje' => 'El Paralelo ' . $paralelo->nom_par . ' está inactivo y puede reactivarse si la institución vuelve a necesitarlo.',
+                    'mensaje' => 'El Paralelo '.$paralelo->nom_par.' está inactivo y puede reactivarse si la institución vuelve a necesitarlo.',
                 ];
             }
 
@@ -671,7 +688,7 @@ class GestionParalelo extends Component
                 $recomendaciones[] = [
                     'tipo' => 'danger',
                     'titulo' => 'Inactivo con estudiantes',
-                    'mensaje' => 'El Paralelo ' . $paralelo->nom_par . ' figura como inactivo, pero mantiene estudiantes vinculados. Revisa su historial académico.',
+                    'mensaje' => 'El Paralelo '.$paralelo->nom_par.' figura como inactivo, pero mantiene estudiantes vinculados. Revisa su historial académico.',
                 ];
             }
         });
@@ -776,10 +793,10 @@ class GestionParalelo extends Component
         if ($letraSugerida !== $siguientePermitida) {
             $this->bloquearAnalisisCrearPorSecuencia(
                 'El registro de paralelos debe seguir un orden institucional. Actualmente corresponde crear el Paralelo '
-                    . $siguientePermitida
-                    . ', no el Paralelo '
-                    . $letraSugerida
-                    . '.'
+                    .$siguientePermitida
+                    .', no el Paralelo '
+                    .$letraSugerida
+                    .'.'
             );
         }
     }
@@ -806,8 +823,8 @@ class GestionParalelo extends Component
     {
         $letrasExistentes = Paralelo::query()
             ->pluck('nom_par')
-            ->map(fn($nombre) => mb_strtoupper(trim((string) $nombre)))
-            ->filter(fn($nombre) => $this->esParaleloLetra($nombre))
+            ->map(fn ($nombre) => mb_strtoupper(trim((string) $nombre)))
+            ->filter(fn ($nombre) => $this->esParaleloLetra($nombre))
             ->unique()
             ->sort()
             ->values()
@@ -833,6 +850,7 @@ class GestionParalelo extends Component
     {
         if (! ($this->analisisCrear['nombre_sugerido'] ?? null)) {
             $this->dispatch('advertencia-general', mensaje: 'No existe una sugerencia válida para aplicar.');
+
             return;
         }
 
@@ -905,8 +923,8 @@ class GestionParalelo extends Component
                     accion: 'CREAR_PARALELO',
                     tabla: 'paralelo',
                     registro: $paralelo->cod_par,
-                    nombreRegistro: 'Paralelo ' . $paralelo->nom_par,
-                    descripcion: 'Se registró el Paralelo ' . $paralelo->nom_par . ' con validación inteligente.',
+                    nombreRegistro: 'Paralelo '.$paralelo->nom_par,
+                    descripcion: 'Se registró el Paralelo '.$paralelo->nom_par.' con validación inteligente.',
                     nivel: ($this->analisisCrear['estado_inteligente'] ?? '') === ParaleloInteligente::ESTADO_REQUIERE_REVISION ? 'WARNING' : 'SUCCESS',
                     resultado: 'EXITOSO',
                     valoresNuevos: [
@@ -944,6 +962,7 @@ class GestionParalelo extends Component
 
         if (! $codigo) {
             $this->dispatch('advertencia-general', mensaje: 'No se encontró un paralelo inactivo para reactivar.');
+
             return;
         }
 
@@ -999,7 +1018,7 @@ class GestionParalelo extends Component
     public function interpretarParaleloEditar(): void
     {
         $existentes = collect($this->obtenerParalelosExistentesParaAnalisis())
-            ->reject(fn(array $item) => ($item['cod_par'] ?? null) === ($this->formEditar['cod_par'] ?? null))
+            ->reject(fn (array $item) => ($item['cod_par'] ?? null) === ($this->formEditar['cod_par'] ?? null))
             ->values()
             ->toArray();
 
@@ -1013,6 +1032,7 @@ class GestionParalelo extends Component
     {
         if (! ($this->analisisEditar['nombre_sugerido'] ?? null)) {
             $this->dispatch('advertencia-general', mensaje: 'No existe una sugerencia válida para aplicar.');
+
             return;
         }
 
@@ -1064,8 +1084,8 @@ class GestionParalelo extends Component
                     accion: 'EDITAR_PARALELO',
                     tabla: 'paralelo',
                     registro: $paralelo->cod_par,
-                    nombreRegistro: 'Paralelo ' . $paralelo->nom_par,
-                    descripcion: 'Se actualizó el Paralelo ' . $paralelo->nom_par . '.',
+                    nombreRegistro: 'Paralelo '.$paralelo->nom_par,
+                    descripcion: 'Se actualizó el Paralelo '.$paralelo->nom_par.'.',
                     nivel: ($uso['tiene_uso'] ?? false) ? 'WARNING' : 'SUCCESS',
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -1226,10 +1246,10 @@ class GestionParalelo extends Component
         $titulo = '¿Desactivar paralelo?';
 
         if (($uso['estudiantes'] ?? 0) > 0) {
-            $mensaje = 'El Paralelo ' . $paralelo->nom_par . ' tiene estudiantes asignados. No se recomienda desactivarlo hasta reasignar o cerrar su uso académico.';
+            $mensaje = 'El Paralelo '.$paralelo->nom_par.' tiene estudiantes asignados. No se recomienda desactivarlo hasta reasignar o cerrar su uso académico.';
             $riesgo = 'ALTO';
         } elseif (($uso['tiene_planificacion'] ?? false)) {
-            $mensaje = 'El Paralelo ' . $paralelo->nom_par . ' tiene planificación vinculada. Se desactivará de forma lógica y conservará su historial.';
+            $mensaje = 'El Paralelo '.$paralelo->nom_par.' tiene planificación vinculada. Se desactivará de forma lógica y conservará su historial.';
             $riesgo = 'MEDIO';
         } else {
             $mensaje = 'Este paralelo no será eliminado físicamente. Se ocultará de selectores operativos y conservará su historial académico.';
@@ -1251,6 +1271,7 @@ class GestionParalelo extends Component
 
         if ($paralelo->est_par === 'INACTIVO') {
             $this->dispatch('advertencia-general', mensaje: 'El paralelo ya se encuentra inactivo.');
+
             return;
         }
 
@@ -1267,8 +1288,8 @@ class GestionParalelo extends Component
                     accion: 'DESACTIVAR_PARALELO',
                     tabla: 'paralelo',
                     registro: $paralelo->cod_par,
-                    nombreRegistro: 'Paralelo ' . $paralelo->nom_par,
-                    descripcion: 'Se desactivó lógicamente el Paralelo ' . $paralelo->nom_par . '. No fue eliminado físicamente.',
+                    nombreRegistro: 'Paralelo '.$paralelo->nom_par,
+                    descripcion: 'Se desactivó lógicamente el Paralelo '.$paralelo->nom_par.'. No fue eliminado físicamente.',
                     nivel: ($uso['estudiantes'] ?? 0) > 0 ? 'WARNING' : 'INFO',
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -1297,7 +1318,7 @@ class GestionParalelo extends Component
             'confirmar-reactivar-paralelo',
             codigo: $paralelo->cod_par,
             titulo: '¿Reactivar paralelo?',
-            mensaje: 'El Paralelo ' . $paralelo->nom_par . ' volverá a estar disponible para planificación, inscripciones y horarios.'
+            mensaje: 'El Paralelo '.$paralelo->nom_par.' volverá a estar disponible para planificación, inscripciones y horarios.'
         );
     }
 
@@ -1307,6 +1328,7 @@ class GestionParalelo extends Component
 
         if ($paralelo->est_par === 'ACTIVO') {
             $this->dispatch('advertencia-general', mensaje: 'El paralelo ya se encuentra activo.');
+
             return;
         }
 
@@ -1322,8 +1344,8 @@ class GestionParalelo extends Component
                     accion: 'REACTIVAR_PARALELO',
                     tabla: 'paralelo',
                     registro: $paralelo->cod_par,
-                    nombreRegistro: 'Paralelo ' . $paralelo->nom_par,
-                    descripcion: 'Se reactivó el Paralelo ' . $paralelo->nom_par . ' para uso académico institucional.',
+                    nombreRegistro: 'Paralelo '.$paralelo->nom_par,
+                    descripcion: 'Se reactivó el Paralelo '.$paralelo->nom_par.' para uso académico institucional.',
                     nivel: 'SUCCESS',
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -1558,7 +1580,7 @@ class GestionParalelo extends Component
             $registros = DB::table($tabla)
                 ->where('cod_par', $codPar)
                 ->select('cod_cur')
-                ->selectRaw($columnaEstudiante ? 'COUNT(DISTINCT ' . $columnaEstudiante . ') as total' : 'COUNT(*) as total')
+                ->selectRaw($columnaEstudiante ? 'COUNT(DISTINCT '.$columnaEstudiante.') as total' : 'COUNT(*) as total')
                 ->groupBy('cod_cur')
                 ->get();
 
@@ -1625,7 +1647,7 @@ class GestionParalelo extends Component
             'estudiante_inscripcion',
             'estudiantes_inscripciones',
         ])
-            ->filter(fn(string $tabla) => Schema::hasTable($tabla))
+            ->filter(fn (string $tabla) => Schema::hasTable($tabla))
             ->values()
             ->toArray();
     }

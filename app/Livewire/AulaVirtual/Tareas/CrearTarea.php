@@ -3,13 +3,12 @@
 namespace App\Livewire\AulaVirtual\Tareas;
 
 use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\Tarea;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\TareaService;
 use App\Support\AulaVirtual\TareaInteligente;
-use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
@@ -21,12 +20,19 @@ class CrearTarea extends Component
     public string $codCla = '';
 
     public string $titulo = '';
+
     public string $descripcion = '';
+
     public string $tipo = 'TAREA';
+
     public ?string $fechaPublicacion = null;
+
     public ?string $fechaLimite = null;
+
     public float $puntajeMaximo = 100.0;
+
     public bool $permiteEntregaTardia = false;
+
     public string $estado = 'PUBLICADA';
 
     public array $analisis = [
@@ -107,6 +113,7 @@ class CrearTarea extends Component
 
         if (! $docente) {
             $this->dispatch('error-general', mensaje: 'No se identificó el registro de docente activo correspondiente.');
+
             return;
         }
 
@@ -128,7 +135,7 @@ class CrearTarea extends Component
             $this->dispatch('tarea-creada', codTar: $tarea->cod_tar);
             $this->reset(['titulo', 'descripcion']);
             $this->analizarEnTiempoReal();
-        } catch (\Illuminate\Validation\ValidationException $ve) {
+        } catch (ValidationException $ve) {
             $primerError = collect($ve->errors())->flatten()->first() ?? 'Observaciones al crear la tarea.';
             $this->dispatch('error-general', mensaje: $primerError);
         } catch (\Throwable $e) {

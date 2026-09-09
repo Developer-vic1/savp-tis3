@@ -4,7 +4,6 @@ namespace Tests\Feature\Support;
 
 use App\Support\AulaVirtual\AsistenciaInteligente;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class AsistenciaInteligenteTest extends TestCase

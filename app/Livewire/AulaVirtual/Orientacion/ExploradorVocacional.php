@@ -2,6 +2,8 @@
 
 namespace App\Livewire\AulaVirtual\Orientacion;
 
+use App\Models\AulaVirtual\OrientacionActividad;
+use App\Models\AulaVirtual\OrientacionResultado;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\OrientacionService;
 use Livewire\Component;
@@ -9,22 +11,30 @@ use Livewire\Component;
 class ExploradorVocacional extends Component
 {
     public bool $abierto = false;
+
     public bool $autoOpen = false;
+
     public bool $sinGuardar = false;
+
     public int $paso = 0;
+
     public array $preguntas = [];
+
     public array $respuestas = [];
+
     public ?int $actividadId = null;
+
     public ?int $resultadoId = null;
+
     public ?string $mensaje = null;
 
     public function mount(OrientacionService $orientacion, CursoVirtualService $cursos, bool $autoOpen = false): void
     {
         $this->autoOpen = $autoOpen;
         $this->cargarEstado($orientacion, $cursos);
-        
-        if ($this->autoOpen && $this->actividadId && !$this->resultadoId && count($this->preguntas) > 0) {
-            $actividad = \App\Models\AulaVirtual\OrientacionActividad::find($this->actividadId);
+
+        if ($this->autoOpen && $this->actividadId && ! $this->resultadoId && count($this->preguntas) > 0) {
+            $actividad = OrientacionActividad::find($this->actividadId);
             if ($actividad && in_array($actividad->estado, ['pendiente', 'en_proceso'], true)) {
                 $this->abierto = true;
             }
@@ -51,6 +61,7 @@ class ExploradorVocacional extends Component
     {
         if (! $this->respuestaActualValida()) {
             $this->addError('respuestaActual', 'Selecciona una opción para continuar.');
+
             return;
         }
 
@@ -77,6 +88,7 @@ class ExploradorVocacional extends Component
     {
         if (count(array_filter($this->respuestas, fn ($valor) => in_array((int) $valor, [1, 2, 3, 4, 5], true))) < count($this->preguntas)) {
             $this->addError('respuestaActual', 'Responde las 30 preguntas antes de finalizar.');
+
             return;
         }
 
@@ -92,9 +104,9 @@ class ExploradorVocacional extends Component
         $resultado = null;
 
         if ($this->resultadoId) {
-            $resultado = \App\Models\AulaVirtual\OrientacionResultado::with('carreras')->find($this->resultadoId);
+            $resultado = OrientacionResultado::with('carreras')->find($this->resultadoId);
         } elseif ($this->actividadId) {
-            $resultado = \App\Models\AulaVirtual\OrientacionActividad::with('resultado.carreras')->find($this->actividadId)?->resultado;
+            $resultado = OrientacionActividad::with('resultado.carreras')->find($this->actividadId)?->resultado;
         }
 
         return view('livewire.aula-virtual.orientacion.explorador-vocacional', [
@@ -134,7 +146,7 @@ class ExploradorVocacional extends Component
     private function actividad(OrientacionService $orientacion)
     {
         if ($this->actividadId) {
-            return \App\Models\AulaVirtual\OrientacionActividad::findOrFail($this->actividadId);
+            return OrientacionActividad::findOrFail($this->actividadId);
         }
 
         $estudiante = app(CursoVirtualService::class)->estudianteDeUsuario(auth()->user());

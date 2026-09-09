@@ -3,7 +3,6 @@
 namespace App\Support\Comunidad;
 
 use App\Models\Estudiante;
-use App\Models\InscripcionEstudiante;
 use App\Models\Persona;
 use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
@@ -14,6 +13,7 @@ use Illuminate\Support\Str;
 class EstudianteInteligente extends SoporteInteligenteBase
 {
     public const EDAD_MINIMA_SECUNDARIA = 11;
+
     public const EDAD_MAXIMA_SECUNDARIA = 19;
 
     /**

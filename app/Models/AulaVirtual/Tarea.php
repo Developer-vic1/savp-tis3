@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Tarea extends Model
 {
     protected $table = 'tarea';
+
     protected $primaryKey = 'cod_tar';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -52,7 +54,7 @@ class Tarea extends Model
                     ? ((int) str_replace('TAR_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $tarea->cod_tar = 'TAR_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $tarea->cod_tar = 'TAR_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
 
             if (! $tarea->fec_pub_tar && $tarea->est_tar === 'PUBLICADA') {

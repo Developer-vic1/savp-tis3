@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class InscripcionEstudiante extends Model
 {
     protected $table = 'inscripcion_estudiante';
+
     protected $primaryKey = 'cod_ins';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -57,6 +59,7 @@ class InscripcionEstudiante extends Model
 
     protected static function booted(): void
     {
+        static::deleting(fn () => throw new \DomainException('La inscripción conserva evidencia académica. Utilice retiro o anulación.'));
         static::creating(function (InscripcionEstudiante $inscripcion) {
             if (! empty($inscripcion->cod_ins)) {
                 return;
@@ -71,13 +74,18 @@ class InscripcionEstudiante extends Model
                 ? ((int) str_replace('INS_', '', $ultimo)) + 1
                 : 1;
 
-            $inscripcion->cod_ins = 'INS_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+            $inscripcion->cod_ins = 'INS_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
         });
     }
 
     public function estudiante(): BelongsTo
     {
         return $this->belongsTo(Estudiante::class, 'cod_est', 'cod_est');
+    }
+
+    public function vigencias(): HasMany
+    {
+        return $this->hasMany(InscripcionVigencia::class, 'cod_ins', 'cod_ins')->orderBy('fii_ivg');
     }
 
     public function gestionAcademica(): BelongsTo
@@ -126,8 +134,8 @@ class InscripcionEstudiante extends Model
     {
         $estudiante = $this->estudiante?->persona
             ? trim(
-                ($this->estudiante->persona->nom_per ?? '') . ' ' .
-                ($this->estudiante->persona->ape_pat_per ?? '') . ' ' .
+                ($this->estudiante->persona->nom_per ?? '').' '.
+                ($this->estudiante->persona->ape_pat_per ?? '').' '.
                 ($this->estudiante->persona->ape_mat_per ?? '')
             )
             : 'Estudiante sin datos';

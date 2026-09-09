@@ -3,7 +3,6 @@
 namespace Tests\Feature\Support;
 
 use App\Models\Persona;
-use App\Models\User;
 use App\Support\Usuarios\UsuarioInteligente;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;

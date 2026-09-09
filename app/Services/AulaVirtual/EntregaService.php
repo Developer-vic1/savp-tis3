@@ -68,7 +68,7 @@ class EntregaService
         $disco = config('savp.aula_virtual.entregas.disco_almacenamiento', 'local');
         $rutaArchivoGuardado = null;
 
-        return DB::transaction(function () use ($tarea, $estudiante, $entrega, $datos, $archivo, $esEnvioDefinitivo, $esTardia, $disco, &$rutaArchivoGuardado, $usuario) {
+        return DB::transaction(function () use ($tarea, $estudiante, $entrega, $datos, $archivo, $esEnvioDefinitivo, $esTardia, $disco, &$rutaArchivoGuardado) {
             try {
                 if ($archivo) {
                     $rutaArchivoGuardado = $archivo->store('aula-virtual/entregas', $disco);
@@ -79,7 +79,7 @@ class EntregaService
                         ->orderByDesc('cod_ent')
                         ->value('cod_ent');
                     $num = $ultimo ? ((int) str_replace('ENT_', '', $ultimo)) + 1 : 1;
-                    $entrega->cod_ent = 'ENT_' . str_pad($num, 5, '0', STR_PAD_LEFT);
+                    $entrega->cod_ent = 'ENT_'.str_pad($num, 5, '0', STR_PAD_LEFT);
                 }
 
                 $estadoFinal = $esEnvioDefinitivo
@@ -97,7 +97,7 @@ class EntregaService
                         ->orderByDesc('cod_ent_arc')
                         ->value('cod_ent_arc');
                     $numArc = $ultimoArc ? ((int) str_replace('ENTA_', '', $ultimoArc)) + 1 : 1;
-                    $codEntArc = 'ENTA_' . str_pad($numArc, 4, '0', STR_PAD_LEFT);
+                    $codEntArc = 'ENTA_'.str_pad($numArc, 4, '0', STR_PAD_LEFT);
 
                     EntregaArchivo::create([
                         'cod_ent_arc' => $codEntArc,
@@ -163,7 +163,7 @@ class EntregaService
             throw ValidationException::withMessages(['calificacion' => $primerBloqueo]);
         }
 
-        return DB::transaction(function () use ($entrega, $tarea, $docente, $puntaje, $retroalimentacion, $max, $usuario) {
+        return DB::transaction(function () use ($entrega, $docente, $puntaje, $retroalimentacion, $max) {
             $calificacion = CalificacionTarea::where('cod_ent', $entrega->cod_ent)->first();
             $esRectificacion = (bool) $calificacion;
 

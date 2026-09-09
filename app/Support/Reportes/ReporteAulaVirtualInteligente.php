@@ -3,7 +3,6 @@
 namespace App\Support\Reportes;
 
 use App\Support\Core\SoporteInteligenteBase;
-use Illuminate\Support\Collection;
 
 class ReporteAulaVirtualInteligente extends SoporteInteligenteBase
 {

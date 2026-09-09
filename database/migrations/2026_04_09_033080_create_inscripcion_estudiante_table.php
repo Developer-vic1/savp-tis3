@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -156,7 +156,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        DB::statement('
             ALTER TABLE inscripcion_estudiante
             ADD CONSTRAINT inscripcion_fechas_estado_check
             CHECK (
@@ -166,7 +166,7 @@ return new class extends Migration
                 AND
                 (fec_con_ins IS NULL OR fec_con_ins >= fei_ins)
             )
-        ");
+        ');
     }
 
     public function down(): void

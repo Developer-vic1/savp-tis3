@@ -22,6 +22,7 @@ use Livewire\Component;
 class ReportesAdministrativos extends Component
 {
     public string $search = '';
+
     public string $moduloFiltro = '';
 
     public function limpiarFiltros(): void

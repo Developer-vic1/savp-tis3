@@ -696,6 +696,10 @@
 
                                 <td>
                                     <div class="flex justify-end gap-2">
+                                        @can('create', \App\Models\SeguimientoAcademico::class)
+                                            <button type="button" wire:click="abrirPrevencion('{{ $estudiante->cod_est }}')" class="ui-btn-secondary">Registrar novedad</button>
+                                            <button type="button" wire:click="abrirPrevencion('{{ $estudiante->cod_est }}', 'SEGUIMIENTO')" class="ui-btn-secondary">Iniciar seguimiento</button>
+                                        @endcan
                                         <button type="button" wire:click="abrirPanelDetalle('{{ $estudiante->cod_est }}')" class="ui-icon-btn" title="Ver detalle">
                                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -1382,4 +1386,39 @@
             });
         </script>
     @endonce
+    @if($modalPrevencion)
+        <div class="ui-modal-backdrop"></div>
+        <div class="ui-modal fixed inset-4 z-50 mx-auto max-w-3xl overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="prevencion-titulo">
+            <div class="ui-modal-header"><h2 id="prevencion-titulo" class="ui-title">{{ $tipoPrevencion === 'NOVEDAD' ? 'Novedades del estudiante' : 'Seguimiento académico' }}</h2></div>
+            <div class="space-y-4 p-5">
+                @foreach($errors->all() as $error)<div class="ui-alert-danger">{{ $error }}</div>@endforeach
+                <p class="ui-help">Registre únicamente información necesaria para la atención académica.</p>
+                @foreach($senalesPrevencion['bloqueos'] ?? [] as $senal)<div class="ui-alert-danger">{{ $senal }}</div>@endforeach
+                @foreach($senalesPrevencion['advertencias'] ?? [] as $senal)<div class="ui-alert-warning">{{ $senal }}</div>@endforeach
+                @if($tipoPrevencion === 'NOVEDAD')
+                    <label class="ui-label">Tipo<select wire:model="formPrevencion.tip_nes" class="ui-select">@foreach(\App\Support\Academico\SeguimientoAcademicoInteligente::TIPOS_NOVEDAD as $tipo)<option>{{ $tipo }}</option>@endforeach</select></label>
+                    <label class="ui-label">Inicio<input type="date" wire:model="formPrevencion.fii_nes" class="ui-input"></label>
+                    <label class="ui-label">Fin<input type="date" wire:model="formPrevencion.ffi_nes" class="ui-input"></label>
+                    <label class="ui-label">Estado<select wire:model="formPrevencion.est_nes" class="ui-select"><option>ACTIVA</option><option>FINALIZADA</option><option>CANCELADA</option></select></label>
+                    <label class="ui-label">Motivo<textarea wire:model="formPrevencion.mot_nes" class="ui-textarea"></textarea></label>
+                    <label class="ui-label">Observación<textarea wire:model="formPrevencion.obs_nes" class="ui-textarea"></textarea></label>
+                    <label class="ui-label">Respaldo opcional (PDF o imagen, hasta 5 MB)<input type="file" wire:model="respaldoPrevencion" accept="application/pdf,image/jpeg,image/png" class="ui-input"></label>
+                    @if($codigoPrevencion && !empty($formPrevencion['rut_res_nes']))<a href="{{ route('admin.novedades.respaldo',$codigoPrevencion) }}" class="ui-btn-secondary">Consultar respaldo</a>@endif
+                @else
+                    <label class="ui-label">Tipo<select wire:model="formPrevencion.tip_seg" class="ui-select">@foreach(['ASISTENCIA','RENDIMIENTO','ADMINISTRATIVO','INTEGRAL','OTRO'] as $tipo)<option>{{ $tipo }}</option>@endforeach</select></label>
+                    <label class="ui-label">Motivo<textarea wire:model="formPrevencion.mot_seg" class="ui-textarea"></textarea></label>
+                    <label class="ui-label">Responsable<select wire:model="formPrevencion.cod_usu_res" class="ui-select"><option value="">Seleccionar</option>@foreach($responsablesPrevencion as $responsable)<option value="{{ $responsable['codigo'] }}">{{ $responsable['nombre'] }}</option>@endforeach</select></label>
+                    <label class="ui-label">Próxima revisión<input type="date" wire:model="formPrevencion.fec_pro_seg" class="ui-input"></label>
+                    <label class="ui-label">Estado<select wire:model="formPrevencion.est_seg" class="ui-select">@foreach(['ABIERTO','EN_SEGUIMIENTO','RESUELTO','CANCELADO'] as $estado)<option>{{ $estado }}</option>@endforeach</select></label>
+                    <label class="ui-label">Visibilidad<select wire:model="formPrevencion.vis_seg" class="ui-select"><option>NORMAL</option><option>RESTRINGIDO</option></select></label>
+                    <label class="ui-label">Resultado<textarea wire:model="formPrevencion.res_seg" class="ui-textarea"></textarea></label>
+                    <label class="ui-label">Próxima acción<textarea wire:model="formPrevencion.pro_acc_seg" class="ui-textarea"></textarea></label>
+                @endif
+                <div class="ui-table-wrap"><table class="ui-table"><thead><tr><th>Tipo</th><th>Estado</th><th>Acción</th></tr></thead><tbody>
+                    @foreach($historialPrevencion as $item)<tr><td>{{ $item['tip_nes'] ?? $item['tip_seg'] }}</td><td>{{ $item['est_nes'] ?? $item['est_seg'] }}</td><td><button type="button" wire:click="abrirPrevencion('{{ $item['cod_est'] }}', '{{ $tipoPrevencion }}', '{{ $item['cod_nes'] ?? $item['cod_seg'] }}')" class="ui-btn-secondary">Revisar</button></td></tr>@endforeach
+                </tbody></table></div>
+            </div>
+            <div class="ui-modal-footer flex justify-end gap-2"><button type="button" wire:click="$set('modalPrevencion', false)" class="ui-btn-secondary">Cancelar</button><button type="button" wire:click="guardarPrevencion" wire:loading.attr="disabled" class="ui-btn-primary">{{ $tipoPrevencion === 'NOVEDAD' ? 'Registrar novedad' : 'Guardar seguimiento' }}</button></div>
+        </div>
+    @endif
 </div>

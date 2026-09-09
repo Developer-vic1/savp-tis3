@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Regente extends Model
 {
     protected $table = 'regente';
+
     protected $primaryKey = 'cod_reg';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -21,7 +24,7 @@ class Regente extends Model
     {
         static::creating(function ($regente) {
 
-            if (!$regente->cod_reg) {
+            if (! $regente->cod_reg) {
 
                 $ultimo = self::where('cod_reg', 'like', 'REG_%')
                     ->orderByDesc('cod_reg')
@@ -31,7 +34,7 @@ class Regente extends Model
                     ? ((int) str_replace('REG_', '', $ultimo)) + 1
                     : 1;
 
-                $regente->cod_reg = 'REG_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $regente->cod_reg = 'REG_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

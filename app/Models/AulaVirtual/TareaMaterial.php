@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class TareaMaterial extends Model
 {
     protected $table = 'tarea_material';
+
     protected $primaryKey = 'cod_tar_mat';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -43,7 +45,7 @@ class TareaMaterial extends Model
                     ? ((int) str_replace('TARM_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $tareaMaterial->cod_tar_mat = 'TARM_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $tareaMaterial->cod_tar_mat = 'TARM_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

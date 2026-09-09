@@ -4,14 +4,14 @@ namespace App\Services\Reportes;
 
 use Illuminate\Support\Facades\Storage;
 use Mpdf\Mpdf;
-use Mpdf\Config\ConfigVariables;
-use Mpdf\Config\FontVariables;
 
 class GeneradorMpdfService
 {
     protected string $logoPath;
+
     protected string $institución = 'Unidad Educativa Técnico Humanístico "Franz Tamayo" N° 3';
-    protected string $sistema     = 'Sistema Web de Orientación Académico-Vocacional (SAVP-TIS3)';
+
+    protected string $sistema = 'Sistema Web de Orientación Académico-Vocacional (SAVP-TIS3)';
 
     public function __construct()
     {
@@ -42,7 +42,7 @@ class GeneradorMpdfService
         $html = view($vista, $datos)->render();
 
         $mpdf = $this->crearInstancia();
-        $mpdf->WriteHTML($this->estilosGlobales() . $html);
+        $mpdf->WriteHTML($this->estilosGlobales().$html);
 
         $ruta = "reportes/{$subcarpeta}/{$nombreArchivo}";
         $path = Storage::disk('local')->path($ruta);
@@ -58,16 +58,16 @@ class GeneradorMpdfService
 
     public function generarAcademicoGeneral(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-ACA-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-ACA-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.academico-general',
             $datos,
-            'reporte-academico-general-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-academico-general-'.now()->format('Ymd-His').'.pdf',
             'academicos'
         );
     }
@@ -78,16 +78,16 @@ class GeneradorMpdfService
 
     public function generarCalificaciones(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-CAL-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-CAL-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.calificaciones',
             $datos,
-            'reporte-calificaciones-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-calificaciones-'.now()->format('Ymd-His').'.pdf',
             'academicos'
         );
     }
@@ -98,16 +98,16 @@ class GeneradorMpdfService
 
     public function generarEstudiantesRiesgo(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-RIESGO-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-RIESGO-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.estudiantes-riesgo',
             $datos,
-            'reporte-estudiantes-riesgo-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-estudiantes-riesgo-'.now()->format('Ymd-His').'.pdf',
             'academicos'
         );
     }
@@ -118,16 +118,16 @@ class GeneradorMpdfService
 
     public function generarAdministrativo(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-ADM-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-ADM-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.administrativo',
             $datos,
-            'reporte-administrativo-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-administrativo-'.now()->format('Ymd-His').'.pdf',
             'administrativos'
         );
     }
@@ -138,16 +138,16 @@ class GeneradorMpdfService
 
     public function generarBitacora(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-BIT-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-BIT-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.bitacora',
             $datos,
-            'reporte-bitacora-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-bitacora-'.now()->format('Ymd-His').'.pdf',
             'administrativos'
         );
     }
@@ -158,16 +158,16 @@ class GeneradorMpdfService
 
     public function generarVocacionalRiasec(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-RIASEC-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-RIASEC-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.vocacional-riasec',
             $datos,
-            'reporte-vocacional-riasec-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-vocacional-riasec-'.now()->format('Ymd-His').'.pdf',
             'vocacionales'
         );
     }
@@ -178,16 +178,16 @@ class GeneradorMpdfService
 
     public function generarCompatibilidadCarreras(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-COMP-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-COMP-'.now()->format('Ymd').'-001';
 
         return $this->generar(
             'pdf.reportes.compatibilidad-carreras',
             $datos,
-            'reporte-compatibilidad-carreras-' . now()->format('Ymd-His') . '.pdf',
+            'reporte-compatibilidad-carreras-'.now()->format('Ymd-His').'.pdf',
             'vocacionales'
         );
     }
@@ -198,21 +198,21 @@ class GeneradorMpdfService
 
     public function generarInstitucionalCompleto(array $datos): string
     {
-        $datos['logoPath']      = $this->logoPath;
-        $datos['institucion']   = $this->institución;
-        $datos['sistema']       = $this->sistema;
-        $datos['fecha']         = now()->format('d/m/Y H:i');
-        $datos['codigoReporte'] = 'REP-INST-' . now()->format('Ymd') . '-001';
+        $datos['logoPath'] = $this->logoPath;
+        $datos['institucion'] = $this->institución;
+        $datos['sistema'] = $this->sistema;
+        $datos['fecha'] = now()->format('d/m/Y H:i');
+        $datos['codigoReporte'] = 'REP-INST-'.now()->format('Ymd').'-001';
 
         $mpdf = $this->crearInstancia(['mode' => 'utf-8', 'format' => 'A4']);
         $mpdf->SetTitle('Reporte Institucional Completo - SAVP-TIS3');
 
         $html = view('pdf.reportes.institucional-completo', $datos)->render();
-        $mpdf->WriteHTML($this->estilosGlobales() . $html);
+        $mpdf->WriteHTML($this->estilosGlobales().$html);
 
-        $nombre = 'reporte-institucional-completo-' . now()->format('Ymd-His') . '.pdf';
-        $ruta   = "reportes/completos/{$nombre}";
-        $path   = Storage::disk('local')->path($ruta);
+        $nombre = 'reporte-institucional-completo-'.now()->format('Ymd-His').'.pdf';
+        $ruta = "reportes/completos/{$nombre}";
+        $path = Storage::disk('local')->path($ruta);
 
         $mpdf->Output($path, 'F');
 
@@ -226,17 +226,17 @@ class GeneradorMpdfService
     protected function crearInstancia(array $extra = []): Mpdf
     {
         return new Mpdf(array_merge([
-            'mode'              => 'utf-8',
-            'format'            => 'A4',
-            'margin_left'       => 15,
-            'margin_right'      => 15,
-            'margin_top'        => 18,
-            'margin_bottom'     => 18,
-            'margin_header'     => 6,
-            'margin_footer'     => 6,
+            'mode' => 'utf-8',
+            'format' => 'A4',
+            'margin_left' => 15,
+            'margin_right' => 15,
+            'margin_top' => 18,
+            'margin_bottom' => 18,
+            'margin_header' => 6,
+            'margin_footer' => 6,
             'default_font_size' => 9,
-            'default_font'      => 'dejavusans',
-            'tempDir'           => Storage::disk('local')->path('reportes/temp'),
+            'default_font' => 'dejavusans',
+            'tempDir' => Storage::disk('local')->path('reportes/temp'),
         ], $extra));
     }
 
@@ -334,11 +334,11 @@ class GeneradorMpdfService
     public function htmlHeader(array $datos): string
     {
         $logoHtml = $datos['logoPath'] && file_exists($datos['logoPath'])
-            ? '<img src="' . $datos['logoPath'] . '" class="pdf-logo" alt="Logo FT3">'
+            ? '<img src="'.$datos['logoPath'].'" class="pdf-logo" alt="Logo FT3">'
             : '<div class="pdf-logo-fallback">FT3</div>';
 
         $codigo = $datos['codigoReporte'] ?? '';
-        $fecha  = $datos['fecha'] ?? now()->format('d/m/Y H:i');
+        $fecha = $datos['fecha'] ?? now()->format('d/m/Y H:i');
 
         return <<<HTML
         <div class="pdf-header">

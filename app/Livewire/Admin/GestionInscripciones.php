@@ -5,66 +5,96 @@ namespace App\Livewire\Admin;
 use App\Models\Bitacora;
 use App\Models\DocumentoInscripcionEstudiante;
 use App\Models\InscripcionEstudiante;
+use App\Services\InscripcionService;
 use App\Support\Academico\InscripcionAcademica;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Activitylog\Facades\Activity;
 use Throwable;
 
 class GestionInscripciones extends Component
 {
-    use WithPagination;
     use WithFileUploads;
+    use WithPagination;
 
     protected string $paginationTheme = 'tailwind';
 
     public string $vista = 'proceso';
+
     public string $subvistaProceso = 'pendientes';
 
     public string $busquedaEstudiante = '';
+
     public string $busquedaPendientes = '';
+
     public string $busquedaTabla = '';
 
     public int $porPagina = 10;
+
     public int $pasoInscripcion = 1;
 
     public string $modoFormulario = 'crear';
+
     public ?string $codInscripcionEditando = null;
+
     public ?string $codInscripcionAccion = null;
 
     public array $catalogos = [];
+
     public array $resumen = [];
+
     public array $panelGestion = [];
+
     public array $panelCupo = [];
+
     public array $panelDocumental = [];
+
     public array $panelRevision = [];
+
     public array $reportesDisponibles = [];
 
     public array $estudiantesSinInscripcion = [];
+
     public array $resultadosEstudiantes = [];
+
     public ?array $estudianteSeleccionado = null;
+
     public array $historialEstudiante = [];
+
     public array $situacionEstudiante = [];
+
     public array $cursoSugerido = [];
 
     public array $analisis = [];
+
     public array $confirmacionFinal = [];
+
     public array $pasos = [];
+
     public array $documentos = [];
+
     public array $documentosDisponibles = [];
+
     public string $documentoCatalogoSeleccionado = '';
+
     public array $documentosEliminados = [];
+
     public array $previsualizacionChecklist = [];
 
     // Sugerencias aplicadas (UX): ocultan botones contextuales al aplicarse.
     public bool $cursoSugeridoAplicado = false;
+
     public bool $turnoSugeridoAplicado = false;
+
     public bool $tipoSugeridoAplicado = false;
 
     // Paso 3: carga PDF por documento (Livewire no maneja bien archivos dentro del array $documentos).
@@ -72,32 +102,48 @@ class GestionInscripciones extends Component
 
     // Paso 3: sugerencia compacta de documentos faltantes para el tipo actual.
     public bool $sugerenciaDocumentalVisible = false;
+
     public array $documentosFaltantesSugeridos = [];
+
     public bool $modalConfirmarFechaDocumento = false;
+
     public ?int $indiceDocumentoFecha = null;
+
     public string $motivoModificarFechaDocumento = '';
 
     public bool $modalInscripcion = false;
+
     public bool $modalDetalle = false;
+
     public bool $modalDocumentos = false;
+
     public bool $modalAnular = false;
+
     public bool $modalRetirar = false;
+
     public bool $modalChecklist = false;
 
     // Modal de acciones agrupadas por fila.
     public bool $modalAcciones = false;
+
     public ?array $accionesInscripcion = null;
 
     public ?array $detalleInscripcion = null;
+
     public array $documentosModal = [];
 
     public string $motivoAccion = '';
+
     public ?string $fechaRetiro = null;
 
     public bool $mostrarValidaciones = false;
+
     public bool $permitirSobrecupo = false;
+
     public bool $turnoMananaAplicado = false;
+
     public bool $mostrarPanelEspecialidad = false;
+
     public bool $condicionesAceptadas = false;
 
     // BTH: ocultar botón "Dejar pendiente" tras aplicarlo.
@@ -329,7 +375,7 @@ class GestionInscripciones extends Component
         if (! empty($this->formInscripcion['cod_esp_tec'])) {
             $this->formInscripcion['est_esp_tec_ins'] = 'ASIGNADA';
             $this->especialidadPendienteAplicada = false;
-        } else if ($this->mostrarPanelEspecialidad) {
+        } elseif ($this->mostrarPanelEspecialidad) {
             $this->formInscripcion['est_esp_tec_ins'] = 'PENDIENTE';
         }
 
@@ -357,6 +403,7 @@ class GestionInscripciones extends Component
         if ($indice !== null && isset($this->documentos[$indice])) {
             if ($campo === 'obs_die') {
                 $this->generarSugerenciaObservacion($indice);
+
                 return;
             }
 
@@ -504,6 +551,7 @@ class GestionInscripciones extends Component
         $this->modalRetirar = false;
         $this->modalChecklist = false;
         $this->modalAcciones = false;
+        $this->modalCambio = false;
         $this->accionesInscripcion = null;
     }
 
@@ -512,6 +560,7 @@ class GestionInscripciones extends Component
         $detalle = $this->soporte()->obtenerInscripcion($codIns);
         if (! $detalle) {
             $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+
             return;
         }
 
@@ -600,6 +649,7 @@ class GestionInscripciones extends Component
 
         if (mb_strlen($termino) < 2) {
             $this->resultadosEstudiantes = [];
+
             return;
         }
 
@@ -618,6 +668,7 @@ class GestionInscripciones extends Component
 
         if (! $estudiante) {
             $this->notificar('error', 'No se pudo seleccionar el estudiante.');
+
             return;
         }
 
@@ -669,6 +720,7 @@ class GestionInscripciones extends Component
 
         if (! $turnoManana || empty($turnoManana['cod_tur'])) {
             $this->turnoMananaAplicado = false;
+
             return;
         }
 
@@ -685,6 +737,7 @@ class GestionInscripciones extends Component
 
         if (! $turnoManana || empty($turnoManana['cod_tur'])) {
             $this->notificar('warning', 'No se detectó un turno Mañana activo. Revisa Gestión de Turnos.');
+
             return;
         }
 
@@ -706,6 +759,7 @@ class GestionInscripciones extends Component
 
         if (empty($codCurso)) {
             $this->notificar('warning', 'No existe un curso sugerido disponible para aplicar.');
+
             return;
         }
 
@@ -739,11 +793,13 @@ class GestionInscripciones extends Component
             $this->formInscripcion['cod_esp_tec'] = '';
             $this->formInscripcion['est_esp_tec_ins'] = 'NO_APLICA';
             $this->formInscripcion['obs_esp_tec_ins'] = '';
+
             return;
         }
 
         if (! empty($this->formInscripcion['cod_esp_tec'])) {
             $this->formInscripcion['est_esp_tec_ins'] = 'ASIGNADA';
+
             return;
         }
 
@@ -804,6 +860,7 @@ class GestionInscripciones extends Component
 
         if ($paso > 1 && ! $this->estudianteSeleccionado) {
             $this->notificar('warning', 'Seleccione un estudiante antes de continuar.');
+
             return;
         }
 
@@ -844,6 +901,7 @@ class GestionInscripciones extends Component
         if (empty($this->documentos)) {
             $this->generarDocumentosRequeridos();
             $this->ocultarSugerenciaDocumental();
+
             return;
         }
 
@@ -869,13 +927,13 @@ class GestionInscripciones extends Component
     {
         $catalogo = $this->soporte()->catalogoDocumentosRequeridos();
         $usados = collect($this->documentos)
-            ->map(fn(array $doc) => $this->normalizarMayuscula($doc['clave_doc'] ?? ''))
+            ->map(fn (array $doc) => $this->normalizarMayuscula($doc['clave_doc'] ?? ''))
             ->filter()
             ->values()
             ->all();
 
         $this->documentosDisponibles = collect($catalogo)
-            ->filter(fn(array $doc) => ! in_array($this->normalizarMayuscula($doc['clave_doc'] ?? ''), $usados, true))
+            ->filter(fn (array $doc) => ! in_array($this->normalizarMayuscula($doc['clave_doc'] ?? ''), $usados, true))
             ->values()
             ->all();
 
@@ -900,6 +958,7 @@ class GestionInscripciones extends Component
         foreach ($this->documentos as $doc) {
             if (($this->normalizarMayuscula($doc['clave_doc'] ?? '')) === $claveDoc) {
                 $this->notificar('warning', 'El documento ya existe en la lista.');
+
                 return;
             }
         }
@@ -937,6 +996,7 @@ class GestionInscripciones extends Component
         if (count($faltantes) > 0) {
             $this->documentosFaltantesSugeridos = $faltantes;
             $this->sugerenciaDocumentalVisible = true;
+
             return;
         }
 
@@ -1003,11 +1063,13 @@ class GestionInscripciones extends Component
     {
         if ($this->indiceDocumentoFecha === null || ! isset($this->documentos[$this->indiceDocumentoFecha])) {
             $this->cancelarModificarFechaDocumento();
+
             return;
         }
         $motivo = trim($this->motivoModificarFechaDocumento);
         if (mb_strlen($motivo) < 5) {
             $this->notificar('warning', 'Registra un motivo de al menos 5 caracteres para modificar la fecha límite.');
+
             return;
         }
         $this->documentos[$this->indiceDocumentoFecha]['fecha_limite_editable'] = true;
@@ -1055,6 +1117,7 @@ class GestionInscripciones extends Component
     {
         if ($paso === 1 && ! $this->estudianteSeleccionado) {
             $this->notificar('warning', 'Seleccione un estudiante antes de continuar.');
+
             return false;
         }
 
@@ -1072,6 +1135,7 @@ class GestionInscripciones extends Component
         if (! ($resultado['puede'] ?? false)) {
             $this->mostrarValidaciones = true;
             $this->notificar('warning', $resultado['mensaje'] ?? 'Completa el paso actual antes de continuar.');
+
             return false;
         }
 
@@ -1086,6 +1150,7 @@ class GestionInscripciones extends Component
                 $this->mostrarValidaciones = true;
                 $primerBloqueo = ($doc['bloqueos_criticos'][0] ?? $doc['bloqueos'][0] ?? 'Existen bloqueos documentales que deben corregirse.');
                 $this->notificar('warning', $primerBloqueo);
+
                 return false;
             }
         }
@@ -1109,6 +1174,7 @@ class GestionInscripciones extends Component
 
         if (empty($this->documentos)) {
             $this->aplicarChecklistReemplazar();
+
             return;
         }
 
@@ -1249,6 +1315,7 @@ class GestionInscripciones extends Component
                 $this->documentos[$indice]['fec_pre_die'] = null;
                 $this->documentos[$indice]['fec_lim_die'] = null;
                 $this->recalcularTodo();
+
                 return;
             }
 
@@ -1282,6 +1349,7 @@ class GestionInscripciones extends Component
     {
         if (! $this->condicionesAceptadas) {
             $this->notificar('warning', 'Debe aceptar los términos y condiciones de inscripción para confirmar.');
+
             return;
         }
         $this->guardarInscripcion();
@@ -1291,6 +1359,7 @@ class GestionInscripciones extends Component
     {
         if (! $this->condicionesAceptadas) {
             $this->notificar('warning', 'Debe aceptar los términos y condiciones de inscripción para confirmar.');
+
             return;
         }
         $this->guardarInscripcion(imprimir: true);
@@ -1310,6 +1379,7 @@ class GestionInscripciones extends Component
         if (! ($this->analisis['puede_continuar'] ?? false) && ! $forzarPendiente) {
             $this->pasoInscripcion = 4;
             $this->notificarBloqueosActuales();
+
             return;
         }
 
@@ -1336,26 +1406,18 @@ class GestionInscripciones extends Component
         // Capa de seguridad definitiva: solo guardar campos del $fillable del modelo.
         // Esto garantiza que ninguna columna fantasma llegue al INSERT, independientemente
         // del comportamiento del Schema::hasColumn con el driver de PgSQL en Livewire.
-        $fillablePermitidos = (new InscripcionEstudiante())->getFillable();
+        $fillablePermitidos = (new InscripcionEstudiante)->getFillable();
         $datos = array_intersect_key($datos, array_flip($fillablePermitidos));
 
         try {
             DB::transaction(function () use ($datos, $forzarPendiente) {
                 if ($this->modoFormulario === 'editar' && $this->codInscripcionEditando) {
-                    $modeloEditar = InscripcionEstudiante::query()->where('cod_ins', $this->codInscripcionEditando)->firstOrFail();
-                    $modeloEditar->fill($datos);
-                    $modeloEditar->save();
+                    app(InscripcionService::class)->guardar($datos, $this->codInscripcionEditando);
 
                     $codIns = $this->codInscripcionEditando;
                     $accion = 'ACTUALIZAR_INSCRIPCION';
                 } else {
-                    $inscripcion = new InscripcionEstudiante();
-
-                    foreach ($datos as $campo => $valor) {
-                        $inscripcion->{$campo} = $valor;
-                    }
-
-                    $inscripcion->save();
+                    $inscripcion = app(InscripcionService::class)->guardar($datos);
 
                     $codIns = $inscripcion->cod_ins;
                     $this->codInscripcionEditando = $codIns;
@@ -1432,8 +1494,9 @@ class GestionInscripciones extends Component
         }
         $base = 'No se pudo guardar la inscripción. Revisa los datos del formulario y la documentación.';
         if (app()->environment('local')) {
-            return $base . ' Detalle técnico: ' . mb_substr($e->getMessage(), 0, 160);
+            return $base.' Detalle técnico: '.mb_substr($e->getMessage(), 0, 160);
         }
+
         return $base;
     }
 
@@ -1448,7 +1511,7 @@ class GestionInscripciones extends Component
 
         // Persistimos en pro_ins una representación legible sin requerir nueva columna.
         if ($detalle !== '' && in_array($tipo, ['OTRA_UNIDAD', 'TRASLADO_DEPARTAMENTAL', 'TRASLADO_INTERDEPARTAMENTAL', 'EXTERIOR', 'OTRO'], true)) {
-            return $tipo . ' - ' . $detalle;
+            return $tipo.' - '.$detalle;
         }
 
         return $tipo;
@@ -1464,6 +1527,7 @@ class GestionInscripciones extends Component
 
         if (! ($evaluacion['puede_continuar'] ?? false)) {
             $this->notificar('warning', $evaluacion['mensaje'] ?? 'No se puede editar esta inscripción.');
+
             return;
         }
 
@@ -1482,6 +1546,7 @@ class GestionInscripciones extends Component
 
         if (! $registro) {
             $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+
             return;
         }
 
@@ -1536,6 +1601,7 @@ class GestionInscripciones extends Component
 
         if (! $this->detalleInscripcion) {
             $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+
             return;
         }
 
@@ -1580,6 +1646,7 @@ class GestionInscripciones extends Component
 
         if (! $inscripcion) {
             $this->notificar('error', 'No se encontró la inscripción.');
+
             return;
         }
 
@@ -1656,6 +1723,7 @@ class GestionInscripciones extends Component
                 $this->documentosModal[$indice]['est_die'] = 'PRESENTADO';
                 $this->documentosModal[$indice]['fec_pre_die'] = null;
                 $this->documentosModal[$indice]['fec_lim_die'] = null;
+
                 return;
             }
 
@@ -1688,6 +1756,7 @@ class GestionInscripciones extends Component
     {
         if (! $this->codInscripcionAccion) {
             $this->notificar('error', 'No existe inscripción seleccionada.');
+
             return;
         }
 
@@ -1705,7 +1774,7 @@ class GestionInscripciones extends Component
                     $claves[$clave] = true;
                 }
 
-                $fillable = (new DocumentoInscripcionEstudiante())->getFillable();
+                $fillable = (new DocumentoInscripcionEstudiante)->getFillable();
                 foreach ($normalizados as $documento) {
                     $payload = collect($documento)
                         ->only($fillable)
@@ -1719,6 +1788,7 @@ class GestionInscripciones extends Component
                     if ($modelo) {
                         $modelo->fill($payload);
                         $modelo->save();
+
                         continue;
                     }
 
@@ -1757,189 +1827,85 @@ class GestionInscripciones extends Component
      | Anulación, retiro y reactivación
      * ------------------------------------------------------------------------- */
 
-    public function confirmarAnular(string $codIns): void
+    public bool $modalCambio = false;
+
+    public string $accionCambio = 'RETIRO';
+
+    #[Locked]
+    public ?string $versionCambio = null;
+
+    public array $destinoCambio = [];
+
+    public array $actividadCambio = [];
+
+    public array $historialVigencias = [];
+
+    public array $opcionesCambio = [];
+
+    public function abrirCambio(string $codIns, ?string $accion = null): void
     {
+        $registro = InscripcionEstudiante::findOrFail($codIns);
+        Gate::authorize('gestionar', $registro);
         $this->cerrarTodosLosModales();
+        $this->resetValidation();
         $this->codInscripcionAccion = $codIns;
+        $this->versionCambio = $registro->getRawOriginal('updated_at');
+        $this->detalleInscripcion = $this->soporte()->obtenerInscripcion($codIns);
+        $this->actividadCambio = $this->soporte()->actividadAcademica($registro->cod_est, $registro->cod_gea);
+        $this->historialVigencias = $registro->vigencias->toArray();
+        $this->opcionesCambio = $this->soporte()->opcionesCambio($registro->est_ins, array_sum($this->actividadCambio) > 0);
+        $this->accionCambio = in_array($accion, $this->opcionesCambio, true) ? $accion : ($this->opcionesCambio[0] ?? '');
+        $this->destinoCambio = $registro->only(['cod_cur', 'cod_par', 'cod_tur', 'cod_esp_tec']);
         $this->motivoAccion = '';
-
-        $evaluacion = $this->soporte()->evaluarAnulacion($codIns);
-        $this->detalleInscripcion = $evaluacion['inscripcion'] ?? null;
-        $this->analisis = $evaluacion;
-
-        $this->modalAnular = true;
+        $this->fechaRetiro = today()->toDateString();
+        $this->modalCambio = true;
     }
 
-    public function cerrarAnular(): void
+    public function cerrarCambio(): void
     {
-        $this->modalAnular = false;
+        $this->modalCambio = false;
         $this->codInscripcionAccion = null;
-        $this->motivoAccion = '';
-        $this->detalleInscripcion = null;
-        $this->recalcularTodo();
+        $this->versionCambio = null;
+        $this->resetValidation();
     }
 
-    public function anularInscripcion(): void
+    public function aplicarCambio(): void
     {
-        $this->validate([
-            'motivoAccion' => ['required', 'string', 'min:5', 'max:500'],
-        ]);
-
-        $evaluacion = $this->soporte()->evaluarAnulacion($this->codInscripcionAccion, $this->motivoAccion);
-
-        if (! ($evaluacion['puede_continuar'] ?? false)) {
-            $this->analisis = $evaluacion;
-            $this->notificar('warning', 'La anulación presenta bloqueos.');
-            return;
-        }
-
+        $this->validate(['codInscripcionAccion' => 'required', 'fechaRetiro' => 'required|date_format:Y-m-d']);
         try {
-            DB::transaction(function () use ($evaluacion) {
-                // DB::table directo: prepararDatosAnulacion incluye 'anulado_por' que
-                // no está en InscripcionEstudiante::$fillable, por lo que no se puede
-                // usar fill/save sin agregar la columna al modelo.
-                DB::table('inscripcion_estudiante')
-                    ->where('cod_ins', $this->codInscripcionAccion)
-                    ->update($this->soporte()->prepararDatosAnulacion($this->motivoAccion));
-
-                $this->registrarBitacora('ANULAR_INSCRIPCION', 'inscripcion_estudiante', $this->codInscripcionAccion, [
-                    'estudiante' => $evaluacion['inscripcion']['estudiante'] ?? null,
-                    'motivo' => $this->motivoAccion,
-                ]);
-            });
-
+            app(InscripcionService::class)->gestionar(
+                $this->codInscripcionAccion, $this->accionCambio, $this->motivoAccion,
+                $this->fechaRetiro, $this->destinoCambio, $this->versionCambio,
+            );
+            $this->cerrarCambio();
             $this->cargarContextoInicial();
             $this->cargarEstudiantesSinInscripcion();
-            $this->cerrarAnular();
             $this->resetPage();
-
-            $this->notificar('success', 'Inscripción anulada correctamente. Se conservó la trazabilidad.');
+            $this->notificar('success', 'Cambio aplicado. El historial académico se conserva.');
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (AuthorizationException $e) {
+            throw $e;
         } catch (Throwable $e) {
             report($e);
-            $this->notificar('error', 'No se pudo anular la inscripción.');
+            $this->addError('cambioInscripcion', 'No se pudo aplicar el cambio. No se guardó ninguna modificación.');
         }
+    }
+
+    public function confirmarAnular(string $codIns): void
+    {
+        $this->abrirCambio($codIns, 'ANULACION');
     }
 
     public function confirmarRetiro(string $codIns): void
     {
-        $this->cerrarTodosLosModales();
-        $this->codInscripcionAccion = $codIns;
-        $this->motivoAccion = '';
-        $this->fechaRetiro = now()->toDateString();
-
-        $evaluacion = $this->soporte()->evaluarRetiro($codIns);
-        $this->detalleInscripcion = $evaluacion['inscripcion'] ?? null;
-        $this->analisis = $evaluacion;
-
-        $this->modalRetirar = true;
-    }
-
-    public function cerrarRetiro(): void
-    {
-        $this->modalRetirar = false;
-        $this->codInscripcionAccion = null;
-        $this->motivoAccion = '';
-        $this->fechaRetiro = null;
-        $this->detalleInscripcion = null;
-        $this->recalcularTodo();
-    }
-
-    public function registrarRetiro(): void
-    {
-        $this->validate([
-            'motivoAccion' => ['required', 'string', 'min:5', 'max:500'],
-            'fechaRetiro' => ['required', 'date'],
-        ]);
-
-        $evaluacion = $this->soporte()->evaluarRetiro($this->codInscripcionAccion, $this->motivoAccion);
-
-        if (! ($evaluacion['puede_continuar'] ?? false)) {
-            $this->analisis = $evaluacion;
-            $this->notificar('warning', 'El retiro presenta bloqueos.');
-            return;
-        }
-
-        try {
-            DB::transaction(function () use ($evaluacion) {
-                $datos = $this->soporte()->prepararDatosRetiro($this->motivoAccion);
-                $datos['fec_anu_ins'] = $this->fechaRetiro;
-
-                // DB::table directo: prepararDatosRetiro incluye 'anulado_por' que
-                // no está en InscripcionEstudiante::$fillable, igual que en anulación.
-                DB::table('inscripcion_estudiante')
-                    ->where('cod_ins', $this->codInscripcionAccion)
-                    ->update($datos);
-
-                $this->registrarBitacora('REGISTRAR_RETIRO_INSCRIPCION', 'inscripcion_estudiante', $this->codInscripcionAccion, [
-                    'estudiante' => $evaluacion['inscripcion']['estudiante'] ?? null,
-                    'motivo' => $this->motivoAccion,
-                ]);
-            });
-
-            $this->cargarContextoInicial();
-            $this->cargarEstudiantesSinInscripcion();
-            $this->cerrarRetiro();
-            $this->resetPage();
-
-            $this->notificar('success', 'Retiro registrado correctamente. Se conservó el historial.');
-        } catch (Throwable $e) {
-            report($e);
-            $this->notificar('error', 'No se pudo registrar el retiro.');
-        }
+        $this->abrirCambio($codIns, 'RETIRO');
     }
 
     public function reactivarInscripcion(string $codIns): void
     {
-        $registro = DB::table('inscripcion_estudiante')->where('cod_ins', $codIns)->first();
-
-        if (! $registro) {
-            $this->notificar('error', 'No se encontró la inscripción.');
-            return;
-        }
-
-        $duplicidad = $this->soporte()->verificarInscripcionExistente(
-            $registro->cod_est ?? null,
-            $registro->cod_gea ?? null,
-            $codIns
-        );
-
-        if ($duplicidad['existe'] ?? false) {
-            $this->notificar('warning', 'No se puede reactivar porque el estudiante ya tiene una inscripción activa en esa gestión.');
-            return;
-        }
-
-        try {
-            DB::table('inscripcion_estudiante')
-                ->where('cod_ins', $codIns)
-                ->update([
-                    'est_ins' => 'PENDIENTE',
-                    'con_ins' => 'OBSERVADA',
-                    'fec_anu_ins' => null,
-                    'anulado_por' => null,
-                    'mot_anu_ins' => null,
-                    'updated_at' => now(),
-                ]);
-
-            $detalle = $this->soporte()->obtenerInscripcion($codIns);
-
-            $this->registrarBitacora('REACTIVAR_INSCRIPCION', 'inscripcion_estudiante', $codIns, [
-                'estudiante' => $detalle['estudiante'] ?? null,
-            ]);
-
-            $this->cargarContextoInicial();
-            $this->cargarEstudiantesSinInscripcion();
-            $this->resetPage();
-
-            $this->notificar('success', 'Inscripción reactivada como pendiente para revisión.');
-        } catch (Throwable $e) {
-            report($e);
-            $this->notificar('error', 'No se pudo reactivar la inscripción.');
-        }
+        $this->abrirCambio($codIns, 'REINGRESO');
     }
-
-    /* -------------------------------------------------------------------------
-     | Revisión
-     * ------------------------------------------------------------------------- */
 
     public function recalcularTodo(bool $modoLive = true): void
     {
@@ -2109,6 +2075,7 @@ class GestionInscripciones extends Component
 
         if (! $codIns) {
             $this->notificar('warning', 'Selecciona una inscripción para generar la constancia.');
+
             return;
         }
 
@@ -2116,6 +2083,7 @@ class GestionInscripciones extends Component
 
         if (! ($constancia['disponible'] ?? false)) {
             $this->notificar('warning', $constancia['mensaje'] ?? 'No se pudo preparar la constancia.');
+
             return;
         }
 
@@ -2288,7 +2256,7 @@ class GestionInscripciones extends Component
         }
 
         if ($this->busquedaTabla !== '') {
-            $buscar = '%' . mb_strtolower(trim($this->busquedaTabla)) . '%';
+            $buscar = '%'.mb_strtolower(trim($this->busquedaTabla)).'%';
 
             $query->where(function ($q) use ($buscar) {
                 $q->whereRaw('LOWER(persona.nom_per) LIKE ?', [$buscar])
@@ -2359,7 +2327,7 @@ class GestionInscripciones extends Component
             ->where('cod_ins', $codIns)
             ->orderBy('created_at')
             ->get()
-            ->map(fn($documento) => [
+            ->map(fn ($documento) => [
                 'cod_die' => $documento->cod_die ?? null,
                 'clave_doc' => null,
                 'nom_die' => $documento->nom_die ?? 'Documento',
@@ -2413,7 +2381,7 @@ class GestionInscripciones extends Component
                 );
                 if (! ($revisionFecha['valida'] ?? false)) {
                     throw ValidationException::withMessages([
-                        'documentos' => "{$nombre}: " . (($revisionFecha['bloqueos'][0] ?? 'fecha límite inválida.')),
+                        'documentos' => "{$nombre}: ".(($revisionFecha['bloqueos'][0] ?? 'fecha límite inválida.')),
                     ]);
                 }
 
@@ -2426,7 +2394,7 @@ class GestionInscripciones extends Component
             }
         }
 
-        $fillable = (new DocumentoInscripcionEstudiante())->getFillable();
+        $fillable = (new DocumentoInscripcionEstudiante)->getFillable();
         foreach ($normalizados as $documento) {
             $payload = collect($documento)
                 ->only($fillable)
@@ -2439,6 +2407,7 @@ class GestionInscripciones extends Component
             if ($modelo) {
                 $modelo->fill($payload);
                 $modelo->save();
+
                 continue;
             }
 
@@ -2608,16 +2577,16 @@ class GestionInscripciones extends Component
     ): void {
         // Spatie: solo log con propiedades, sin performedOn() sobre stdClass.
         try {
-            if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
+            if (class_exists(Activity::class)) {
                 activity()
                     ->causedBy(auth()->user())
                     ->withProperties([
                         'modulo' => 'Gestión de Inscripciones',
-                        'tabla'  => $tabla,
+                        'tabla' => $tabla,
                         'registro' => $registro,
                         'descripcion' => $descripcion,
                     ])
-                    ->log($accion . ' - ' . $descripcion);
+                    ->log($accion.' - '.$descripcion);
             }
         } catch (Throwable) {
             //
@@ -2630,9 +2599,9 @@ class GestionInscripciones extends Component
         // cod_bit lo genera Bitacora::booted() automáticamente; no se genera aquí.
         try {
             $columnas = Schema::getColumnListing('bitacora');
-            $request  = request();
-            $usuario  = auth()->user();
-            $payload  = [];
+            $request = request();
+            $usuario = auth()->user();
+            $payload = [];
 
             if (in_array('acc_bit', $columnas, true)) {
                 $payload['acc_bit'] = mb_substr($descripcion, 0, 500);

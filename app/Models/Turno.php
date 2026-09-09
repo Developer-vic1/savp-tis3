@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Turno extends Model
 {
     protected $table = 'turno';
+
     protected $primaryKey = 'cod_tur';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -23,7 +26,7 @@ class Turno extends Model
     {
         static::creating(function ($turno) {
 
-            if (!$turno->cod_tur) {
+            if (! $turno->cod_tur) {
 
                 $ultimo = self::where('cod_tur', 'like', 'TUR_%')
                     ->orderByDesc('cod_tur')
@@ -33,7 +36,7 @@ class Turno extends Model
                     ? ((int) str_replace('TUR_', '', $ultimo)) + 1
                     : 1;
 
-                $turno->cod_tur = 'TUR_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $turno->cod_tur = 'TUR_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

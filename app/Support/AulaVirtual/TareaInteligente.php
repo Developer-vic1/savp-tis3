@@ -2,11 +2,11 @@
 
 namespace App\Support\AulaVirtual;
 
+use App\Support\Academico\CalendarioAcademicoInteligente;
 use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 class TareaInteligente extends SoporteInteligenteBase
 {
@@ -86,6 +86,16 @@ class TareaInteligente extends SoporteInteligenteBase
         if ($fecPub && $fecLim) {
             $dtPub = Carbon::parse($fecPub);
             $dtLim = Carbon::parse($fecLim);
+            if ($codCla !== '' && Schema::hasTable('calendario_evento')) {
+                $plan = DB::table('clase_virtual as c')->join('plan_asignatura as p', 'p.cod_pas', '=', 'c.cod_pas')->where('c.cod_cla', $codCla)->select('p.*')->first();
+                if ($plan) {
+                    $calendario = app(CalendarioAcademicoInteligente::class)->analizarFecha($plan->cod_gea, $dtLim->toDateString(), (array) $plan);
+                    if (! $calendario['puede_continuar']) {
+                        $advertencias[] = 'La fecha límite coincide con un evento del calendario: '.implode(' ', $calendario['bloqueos']).' El docente debe decidir si corresponde reprogramar.';
+                    }
+                    $advertencias = array_merge($advertencias, $calendario['advertencias']);
+                }
+            }
 
             if ($dtLim->lessThanOrEqualTo($dtPub)) {
                 $msg = 'La fecha límite de entrega debe ser posterior a la fecha de publicación.';

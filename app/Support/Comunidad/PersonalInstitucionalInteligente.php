@@ -5,7 +5,6 @@ namespace App\Support\Comunidad;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Support\Core\SoporteInteligenteBase;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class PersonalInstitucionalInteligente extends SoporteInteligenteBase

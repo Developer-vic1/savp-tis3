@@ -38,11 +38,11 @@ return new class extends Migration
             $entregas = $entregas->sort(function ($a, $b) use ($prioridadEstado) {
                 $prioA = $prioridadEstado[$a->est_ent] ?? 0;
                 $prioB = $prioridadEstado[$b->est_ent] ?? 0;
-                
+
                 if ($prioA !== $prioB) {
                     return $prioB <=> $prioA;
                 }
-                
+
                 return $b->fec_ent <=> $a->fec_ent;
             });
 

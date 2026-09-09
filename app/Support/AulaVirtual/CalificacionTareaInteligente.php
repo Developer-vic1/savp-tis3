@@ -56,7 +56,7 @@ class CalificacionTareaInteligente extends SoporteInteligenteBase
 
         // 2. Advertencia si la entrega fue tardía
         if ($entrega->est_ent === 'ENTREGADO_TARDE') {
-            $adv = "La entrega fue recibida fuera de plazo. Verifique si aplica penalización institucional según su rúbrica.";
+            $adv = 'La entrega fue recibida fuera de plazo. Verifique si aplica penalización institucional según su rúbrica.';
             $advertencias[] = $adv;
             $this->registrarHallazgo($hallazgos, 'AV_CALIF_ENTREGA_TARDIA', self::TIPO_INSTITUCIONAL, self::COMP_ADVERTENCIA, $adv, self::RIESGO_BAJO);
         }

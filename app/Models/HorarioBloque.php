@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class HorarioBloque extends Model
 {
     protected $table = 'horario_bloque';
+
     protected $primaryKey = 'cod_hbl';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -49,7 +52,7 @@ class HorarioBloque extends Model
                     ? (int) str_replace('HBL_', '', $ultimoCodigo)
                     : 0;
 
-                $bloque->cod_hbl = 'HBL_' . str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
+                $bloque->cod_hbl = 'HBL_'.str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
             }
 
             if (empty($bloque->est_hbl)) {
@@ -108,8 +111,8 @@ class HorarioBloque extends Model
         }
 
         try {
-            $inicio = \Carbon\Carbon::createFromFormat('H:i:s', $this->normalizarHora($this->hor_ini_hbl));
-            $fin = \Carbon\Carbon::createFromFormat('H:i:s', $this->normalizarHora($this->hor_fin_hbl));
+            $inicio = Carbon::createFromFormat('H:i:s', $this->normalizarHora($this->hor_ini_hbl));
+            $fin = Carbon::createFromFormat('H:i:s', $this->normalizarHora($this->hor_fin_hbl));
 
             return $inicio->diffInMinutes($fin, false);
         } catch (\Throwable) {
@@ -202,7 +205,7 @@ class HorarioBloque extends Model
         $hora = (string) $hora;
 
         if (preg_match('/^\d{2}:\d{2}$/', $hora)) {
-            return $hora . ':00';
+            return $hora.':00';
         }
 
         return $hora;

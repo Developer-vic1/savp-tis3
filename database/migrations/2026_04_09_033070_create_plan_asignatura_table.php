@@ -14,33 +14,33 @@ return new class extends Migration
 
             $table->string('cod_asi', 20); // Código asignatura
             $table->foreign('cod_asi')
-                  ->references('cod_asi')
-                  ->on('asignatura');
+                ->references('cod_asi')
+                ->on('asignatura');
 
             $table->string('cod_doc', 20); // Código docente
             $table->foreign('cod_doc')
-                  ->references('cod_doc')
-                  ->on('docente');
+                ->references('cod_doc')
+                ->on('docente');
 
             $table->string('cod_cur', 20); // Código curso
             $table->foreign('cod_cur')
-                  ->references('cod_cur')
-                  ->on('curso');
+                ->references('cod_cur')
+                ->on('curso');
 
             $table->string('cod_par', 20); // Código paralelo
             $table->foreign('cod_par')
-                  ->references('cod_par')
-                  ->on('paralelo');
+                ->references('cod_par')
+                ->on('paralelo');
 
             $table->string('cod_tur', 20); // Código turno
             $table->foreign('cod_tur')
-                  ->references('cod_tur')
-                  ->on('turno');
+                ->references('cod_tur')
+                ->on('turno');
 
             $table->string('cod_gea', 20); // Código gestión académica
             $table->foreign('cod_gea')
-                  ->references('cod_gea')
-                  ->on('gestion_academica');
+                ->references('cod_gea')
+                ->on('gestion_academica');
 
             $table->integer('hor_pas')->nullable(); // Horas asignadas
 

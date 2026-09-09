@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
-use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class BloqueASincronizacionTransversalTest extends TestCase

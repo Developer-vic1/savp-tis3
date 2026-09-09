@@ -8,6 +8,6 @@ class DatosAulaVirtualSeeder extends Seeder
 {
     public function run(): void
     {
-        (new SoporteDatosBolivia())->crearAulaVirtual();
+        (new SoporteDatosBolivia)->crearAulaVirtual();
     }
 }

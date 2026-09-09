@@ -2,9 +2,9 @@
     <section class="ui-card rounded-[2rem] p-6 sm:p-8">
         <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div><p class="ui-kicker">Evaluación académica</p><h1 class="ui-title mt-2 text-3xl font-black">Calificaciones</h1><p class="ui-muted mt-2 max-w-3xl text-sm leading-6">Registra notas sobre 100, identifica riesgo académico y fortalezas para la orientación estudiantil.</p></div>
-            <div class="flex gap-3"><button disabled class="ui-btn-secondary" title="Requiere maatwebsite/excel">Importar calificaciones</button><button wire:click="abrirCrear" class="ui-btn-primary">Nueva calificación</button></div>
+            <div class="flex gap-3"><button type="button" wire:click="abrirImportacion" class="ui-btn-secondary">Importar calificaciones</button><button wire:click="abrirCrear" class="ui-btn-primary">Nueva calificación</button></div>
         </div>
-        <div class="ui-alert-info mt-5">La importación queda preparada visualmente, pero requiere autorización para instalar maatwebsite/excel.</div>
+        <div class="ui-alert-info mt-5">Las importaciones requieren previsualización, validación y confirmación. Una nota de cero es una calificación real.</div>
     </section>
 
     <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -38,7 +38,7 @@
                         <td class="px-5 py-4 text-xl font-black" style="color: var(--ui-primary)">{{ number_format($calificacion->not_cal, 2) }}</td>
                         <td class="px-5 py-4"><span class="{{ $desempeno === 'Destacado' ? 'ui-badge-success' : ($desempeno === 'En riesgo' ? 'ui-badge-danger' : 'ui-badge-info') }}">{{ $desempeno }}</span></td>
                         <td class="px-5 py-4"><span class="{{ $calificacion->est_cal === 'ACTIVO' ? 'ui-badge-success' : 'ui-badge-warning' }}">{{ $calificacion->est_cal }}</span></td>
-                        <td class="px-5 py-4"><div class="flex gap-2"><button wire:click="abrirEditar('{{ $calificacion->cod_cal }}')" class="ui-btn-secondary">Editar</button><button wire:click="cambiarEstado('{{ $calificacion->cod_cal }}')" class="ui-btn-secondary">{{ $calificacion->est_cal === 'ACTIVO' ? 'Anular' : 'Activar' }}</button></div></td>
+                        <td class="px-5 py-4"><div class="flex gap-2"><button wire:click="abrirEditar('{{ $calificacion->cod_cal }}')" class="ui-btn-secondary">Editar</button><button wire:click="cambiarEstado('{{ $calificacion->cod_cal }}', '{{ $calificacion->est_cal === 'ACTIVO' ? 'ANULADO' : 'ACTIVO' }}', '{{ $calificacion->getRawOriginal('updated_at') }}')" wire:loading.attr="disabled" class="ui-btn-secondary">{{ $calificacion->est_cal === 'ACTIVO' ? 'Anular' : 'Activar' }}</button></div></td>
                     </tr>
                 @empty
                     <tr><td colspan="7" class="px-6 py-16 text-center"><p class="text-lg font-black" style="color: var(--ui-text)">Aún no existen calificaciones registradas</p><p class="mt-2 text-sm" style="color: var(--ui-muted)">Registra notas para habilitar indicadores académicos y vocacionales.</p></td></tr>
@@ -56,8 +56,9 @@
                     <div class="space-y-4">
                         <label><span class="ui-label">Estudiante</span><select wire:model.live="form.cod_est" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($estudiantes as $item)@php($p=$item->persona)<option value="{{ $item->cod_est }}">{{ trim(($p?->ape_pat_per ?? '').' '.($p?->ape_mat_per ?? '').' '.($p?->nom_per ?? '')) }}</option>@endforeach</select></label>
                         <div class="grid gap-4 sm:grid-cols-2">
-                            <label><span class="ui-label">Asignatura</span><select wire:model.live="form.cod_asi" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($asignaturas as $item)<option value="{{ $item->cod_asi }}">{{ $item->nom_asi }}</option>@endforeach</select></label>
-                            <label><span class="ui-label">Periodo</span><select wire:model.live="form.cod_pev" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($periodos as $item)<option value="{{ $item->cod_pev }}">{{ $item->nom_pev }}</option>@endforeach</select></label>
+                            <label><span class="ui-label">Plan de asignatura</span><select wire:model.live="form.cod_pas" class="ui-select mt-2"><option value="">Seleccionar</option>@foreach($planes as $item)<option value="{{ $item->cod_pas }}">{{ $item->asignatura?->nom_asi }} · {{ $item->cod_gea }} · {{ $item->cod_cur }} / {{ $item->cod_par }} / {{ $item->cod_tur }}</option>@endforeach</select></label>
+                            <label><span class="ui-label">Periodo</span><select wire:model.live="form.cod_pev" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($periodos as $item)<option value="{{ $item->cod_pev }}">{{ $item->nom_pev }} · {{ $item->est_pev }}</option>@endforeach</select></label>
+                            <label><span class="ui-label">Motivo de rectificación excepcional</span><textarea wire:model="motivoRectificacion" class="ui-textarea"></textarea>@error('motivo')<span class="ui-error">{{ $message }}</span>@enderror</label>
                             <label><span class="ui-label">Nota sobre 100</span><input type="number" min="0" max="100" step="0.01" wire:model.live="form.not_cal" class="ui-input mt-2"></label>
                             <label><span class="ui-label">Estado</span><select wire:model.live="form.est_cal" class="ui-input mt-2"><option>ACTIVO</option><option>INACTIVO</option><option>ANULADO</option></select></label>
                         </div>
@@ -72,5 +73,23 @@
                 <div class="mt-6 flex justify-end gap-3"><button wire:click="cerrarFormulario" class="ui-btn-secondary">Cancelar</button><button wire:click="guardar" class="ui-btn-primary" @disabled(!($analisis['puede_guardar'] ?? false))>Guardar calificación</button></div>
             </section>
         </div>
+    @endif
+    @if($modalImportacion)
+        <div class="ui-modal-backdrop"></div>
+        <section class="ui-modal fixed inset-4 z-50 mx-auto max-w-3xl overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="titulo-importacion">
+            <div class="ui-modal-header"><h2 id="titulo-importacion" class="ui-title">Importar calificaciones</h2></div>
+            <div class="space-y-4 p-5">
+                <p class="ui-help">Pegue hasta 500 filas, sin encabezado: código de estudiante, código de plan, código de periodo, nota. Separe los cuatro valores con comas.</p>
+                <textarea wire:model="textoImportacion" rows="8" class="ui-textarea" aria-label="Filas de calificaciones"></textarea>
+                @foreach($errors->all() as $error)<p class="ui-error">{{ $error }}</p>@endforeach
+                @if($previewImportacion)
+                    <p class="ui-alert-info">Total: {{ $previewImportacion['total'] }} · Válidas: {{ count($previewImportacion['validos']) }} · Errores: {{ count($previewImportacion['errores']) }}</p>
+                    @foreach($previewImportacion['errores'] as $error)<p class="ui-alert-danger">{{ $error }}</p>@endforeach
+                    @foreach($previewImportacion['advertencias'] as $advertencia)<p class="ui-alert-warning">{{ $advertencia }}</p>@endforeach
+                    <div class="ui-table-wrap"><table class="ui-table"><thead><tr><th>Estudiante</th><th>Plan</th><th>Periodo</th><th>Nota</th></tr></thead><tbody>@foreach($previewImportacion['validos'] as $fila)<tr><td>{{ $fila['cod_est'] }}</td><td>{{ $fila['cod_pas'] }}</td><td>{{ $fila['cod_pev'] }}</td><td>{{ $fila['not_cal'] }}</td></tr>@endforeach</tbody></table></div>
+                @endif
+            </div>
+            <div class="ui-modal-footer flex justify-end gap-2"><button type="button" wire:click="$set('modalImportacion', false)" class="ui-btn-secondary">Cancelar</button><button type="button" wire:click="previsualizarImportacion" wire:loading.attr="disabled" class="ui-btn-secondary">Previsualizar y validar</button><button type="button" wire:click="confirmarImportacion" wire:loading.attr="disabled" class="ui-btn-primary" @disabled(!$importacionValidada)>Confirmar importación</button></div>
+        </section>
     @endif
 </div>

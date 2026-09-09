@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Bitacora extends Model
 {
     protected $table = 'bitacora';
+
     protected $primaryKey = 'cod_bit';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     public $timestamps = false;
@@ -64,7 +65,7 @@ class Bitacora extends Model
                     ? ((int) str_replace('BIT_', '', $ultimo)) + 1
                     : 1;
 
-                $bitacora->cod_bit = 'BIT_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $bitacora->cod_bit = 'BIT_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
 
             if (! $bitacora->fec_bit) {

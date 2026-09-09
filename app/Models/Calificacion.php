@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Calificacion extends Model
 {
     protected $table = 'calificacion';
+
     protected $primaryKey = 'cod_cal';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
         'cod_cal', // Código calificación
+        'cod_pas',
         'cod_est', // Código estudiante
         'cod_asi', // Código asignatura
         'cod_pev', // Código periodo evaluación
@@ -23,9 +27,10 @@ class Calificacion extends Model
 
     protected static function booted(): void
     {
+        static::deleting(fn () => throw new \DomainException('La calificación no se elimina físicamente. Utilice una rectificación autorizada.'));
         static::creating(function ($calificacion) {
 
-            if (!$calificacion->cod_cal) {
+            if (! $calificacion->cod_cal) {
 
                 $ultimo = self::where('cod_cal', 'like', 'CAL_%')
                     ->orderByDesc('cod_cal')
@@ -35,7 +40,7 @@ class Calificacion extends Model
                     ? ((int) str_replace('CAL_', '', $ultimo)) + 1
                     : 1;
 
-                $calificacion->cod_cal = 'CAL_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $calificacion->cod_cal = 'CAL_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }
@@ -45,6 +50,11 @@ class Calificacion extends Model
     public function estudiante()
     {
         return $this->belongsTo(Estudiante::class, 'cod_est', 'cod_est');
+    }
+
+    public function planAsignatura()
+    {
+        return $this->belongsTo(PlanAsignatura::class, 'cod_pas', 'cod_pas');
     }
 
     public function asignatura()

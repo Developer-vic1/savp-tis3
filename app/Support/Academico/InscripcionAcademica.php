@@ -12,6 +12,46 @@ class InscripcionAcademica extends SoporteInteligenteBase
 {
     public const CAPACIDAD_REFERENCIAL_PARALELO = 35;
 
+    public function opcionesCambio(string $estado, bool $conActividad): array
+    {
+        return match ($estado) {
+            'PENDIENTE' => $conActividad ? [] : ['ANULACION'],
+            'CONFIRMADA' => $conActividad ? ['CAMBIO'] : ['CAMBIO', 'ANULACION'],
+            'ACTIVA', 'OBSERVADA' => ['CAMBIO', 'RETIRO'],
+            'RETIRADA' => ['REINGRESO', 'RESTITUCION'],
+            'ANULADA' => ['RESTITUCION'],
+            default => [],
+        };
+    }
+
+    public function transicionPermitida(string $origen, string $destino): bool
+    {
+        return in_array($destino, [
+            'PENDIENTE' => ['CONFIRMADA', 'ANULADA'],
+            'CONFIRMADA' => ['ACTIVA', 'ANULADA'],
+            'ACTIVA' => ['OBSERVADA', 'RETIRADA'],
+            'OBSERVADA' => ['ACTIVA', 'RETIRADA'],
+        ][$origen] ?? [], true);
+    }
+
+    public function actividadAcademica(string $codEst, string $codGea): array
+    {
+        $clases = DB::table('clase_virtual')->where(function ($query) use ($codGea) {
+            $query->whereIn('cod_pas', DB::table('plan_asignatura')->where('cod_gea', $codGea)->select('cod_pas'))
+                ->orWhereIn('cod_pes', DB::table('plan_especialidad')->where('cod_gea', $codGea)->select('cod_pes'));
+        })->select('cod_cla');
+
+        return [
+            // Las notas antiguas no identifican gestión: su presencia exige revisión conservadora.
+            'calificaciones' => DB::table('calificacion')->where('cod_est', $codEst)->count(),
+            'asistencias' => DB::table('asistencia_estudiante')->where('cod_est', $codEst)
+                ->whereIn('cod_asi_cla', DB::table('asistencia_clase')->whereIn('cod_cla', clone $clases)->select('cod_asi_cla'))->count(),
+            'entregas' => DB::table('entrega_tarea')->where('cod_est', $codEst)
+                ->whereIn('cod_tar', DB::table('tarea')->whereIn('cod_cla', clone $clases)->select('cod_tar'))->count(),
+            'actividad_lms' => DB::table('actividad_clase')->where('cod_est', $codEst)->whereIn('cod_cla', $clases)->count(),
+        ];
+    }
+
     public const TIPOS_INSCRIPCION = [
         'NUEVO',
         'REGULAR',
@@ -191,7 +231,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             'inicio' => $gestion->fii_gea ?? null,
             'fin' => $gestion->ffi_gea ?? null,
             'estado' => $gestion->est_gea ?? null,
-            'rango' => $this->fechaTexto($gestion->fii_gea ?? null) . ' - ' . $this->fechaTexto($gestion->ffi_gea ?? null),
+            'rango' => $this->fechaTexto($gestion->fii_gea ?? null).' - '.$this->fechaTexto($gestion->ffi_gea ?? null),
             'permite_inscripcion' => in_array($gestion->est_gea ?? '', ['ACTIVA', 'ACTIVO', 'PLANIFICADA', 'PLANIFICADO'], true),
         ];
     }
@@ -269,7 +309,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             return [];
         }
 
-        $buscar = '%' . mb_strtolower($termino) . '%';
+        $buscar = '%'.mb_strtolower($termino).'%';
 
         return $this->queryEstudiantesConPersona()
             ->where(function ($query) use ($buscar) {
@@ -286,7 +326,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->orderBy('persona.nom_per')
             ->limit($limite)
             ->get()
-            ->map(fn($row) => $this->mapearEstudiante($row))
+            ->map(fn ($row) => $this->mapearEstudiante($row))
             ->values()
             ->all();
     }
@@ -325,7 +365,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
         $busqueda = trim($busqueda);
 
         if ($busqueda !== '') {
-            $buscar = '%' . mb_strtolower($busqueda) . '%';
+            $buscar = '%'.mb_strtolower($busqueda).'%';
 
             $query->where(function ($q) use ($buscar) {
                 $q->whereRaw('LOWER(persona.nom_per) LIKE ?', [$buscar])
@@ -345,6 +385,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->map(function ($row) {
                 $estudiante = $this->mapearEstudiante($row);
                 $estudiante['curso_sugerido'] = $this->sugerirCursoPorEdad($estudiante['edad']);
+
                 return $estudiante;
             })
             ->values()
@@ -398,7 +439,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->orderByDesc('gestion_academica.ani_gea')
             ->orderByDesc('inscripcion_estudiante.fei_ins')
             ->get()
-            ->map(fn($row) => [
+            ->map(fn ($row) => [
                 'cod_ins' => $row->cod_ins,
                 'gestion' => $row->ani_gea,
                 'curso' => $row->nom_cur,
@@ -532,9 +573,9 @@ class InscripcionAcademica extends SoporteInteligenteBase
                     'disponible' => true,
                     'curso_sugerido' => $curso['nombre'],
                     'orden' => $curso['orden'],
-                    'rango_edad' => $curso['edad_min'] . ' a ' . $curso['edad_max'] . ' años',
+                    'rango_edad' => $curso['edad_min'].' a '.$curso['edad_max'].' años',
                     'coincidencia' => 'REFERENCIAL',
-                    'mensaje' => 'La edad coincide referencialmente con ' . $curso['nombre'] . '.',
+                    'mensaje' => 'La edad coincide referencialmente con '.$curso['nombre'].'.',
                     'bloquea' => false,
                 ];
             }
@@ -679,7 +720,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             'nombre' => $turno->nom_tur,
             'inicio' => $this->horaTexto($turno->hor_ini_tur ?? null),
             'fin' => $this->horaTexto($turno->hor_fin_tur ?? null),
-            'rango' => $this->horaTexto($turno->hor_ini_tur ?? null) . ' - ' . $this->horaTexto($turno->hor_fin_tur ?? null),
+            'rango' => $this->horaTexto($turno->hor_ini_tur ?? null).' - '.$this->horaTexto($turno->hor_fin_tur ?? null),
             'estado' => $turno->est_tur,
         ];
     }
@@ -782,12 +823,12 @@ class InscripcionAcademica extends SoporteInteligenteBase
         return $query
             ->orderBy($nomCol)
             ->get()
-            ->map(fn($row) => [
+            ->map(fn ($row) => [
                 'cod_esp_tec' => (string) ($row->{$codCol} ?? ''),
                 'nombre' => (string) ($row->{$nomCol} ?? ''),
                 'estado' => $estCol ? ($row->{$estCol} ?? 'ACTIVO') : 'ACTIVO',
             ])
-            ->filter(fn($item) => $item['cod_esp_tec'] !== '' && $item['nombre'] !== '')
+            ->filter(fn ($item) => $item['cod_esp_tec'] !== '' && $item['nombre'] !== '')
             ->values()
             ->all();
     }
@@ -936,7 +977,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
         $tipoSugerido = $this->sugerirTipoInscripcion($codEst, $codEst ? $this->historialEstudiante($codEst) : []);
 
         if (($tipoSugerido['tipo'] ?? null) && $tipo !== ($tipoSugerido['tipo'] ?? null) && ! in_array($tipo, ['EXCEPCIONAL', 'VULNERABLE', 'EXTERIOR'], true)) {
-            $sugerencias[] = 'Tipo sugerido por historial: ' . $tipoSugerido['tipo'] . '. ' . $tipoSugerido['mensaje'];
+            $sugerencias[] = 'Tipo sugerido por historial: '.$tipoSugerido['tipo'].'. '.$tipoSugerido['mensaje'];
         }
 
         $edadCurso = $estudiante
@@ -1327,7 +1368,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
     public function catalogoDocumentosRequeridos(): array
     {
         return collect(self::DOCUMENTOS_REQUERIDOS)
-            ->map(fn(array $doc, string $clave) => [
+            ->map(fn (array $doc, string $clave) => [
                 'clave_doc' => $clave,
                 'nom_die' => $doc['nombre'],
                 'tip_die' => $doc['tip_die'],
@@ -1340,6 +1381,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
     public function nombreDocumentoDesdeCatalogo(?string $claveDoc): string
     {
         $claveDoc = $this->normalizarMayuscula($claveDoc ?? '');
+
         return self::DOCUMENTOS_REQUERIDOS[$claveDoc]['nombre'] ?? 'Documento';
     }
 
@@ -1366,6 +1408,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
         if ($limite->gt($finGestion)) {
             $limite = $finGestion;
         }
+
         return $limite->toDateString();
     }
 
@@ -1394,13 +1437,14 @@ class InscripcionAcademica extends SoporteInteligenteBase
                 $bloqueos[] = 'La fecha límite documental está fuera del rango de la gestión académica activa.';
             }
         }
+
         return ['valida' => empty($bloqueos), 'bloqueos' => $bloqueos];
     }
 
     public function sugerirObservacionInteligente(array $documento, string $textoActual = '', string $contexto = 'OBSERVADO'): array
     {
         $texto = $this->normalizarTextoBusqueda(
-            trim(($textoActual ?: '') . ' ' . ($documento['obs_die'] ?? '') . ' ' . ($documento['nom_die'] ?? '') . ' ' . ($documento['tip_die'] ?? '') . ' ' . ($documento['clave_doc'] ?? ''))
+            trim(($textoActual ?: '').' '.($documento['obs_die'] ?? '').' '.($documento['nom_die'] ?? '').' '.($documento['tip_die'] ?? '').' '.($documento['clave_doc'] ?? ''))
         );
         $contexto = $this->normalizarMayuscula($contexto ?: ($documento['est_die'] ?? 'OBSERVADO'));
 
@@ -1619,7 +1663,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
     {
         $resultado = $actuales;
         $nombresActuales = collect($actuales)
-            ->map(fn($doc) => $this->claveDocumento($doc['nom_die'] ?? ''))
+            ->map(fn ($doc) => $this->claveDocumento($doc['nom_die'] ?? ''))
             ->filter()
             ->values()
             ->all();
@@ -1692,7 +1736,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
                             : 'GENERAL',
                     'est_die' => $estado,
                     'obl_die' => (bool) ($documento['obl_die'] ?? $documento['obligatorio'] ?? false),
-                    'fec_lim_die' => !empty($documento['fec_lim_die']) ? trim($documento['fec_lim_die']) : null,
+                    'fec_lim_die' => ! empty($documento['fec_lim_die']) ? trim($documento['fec_lim_die']) : null,
                     'obs_die' => $observacion,
                     'fec_pre_die' => in_array($estado, ['PRESENTADO', 'VALIDADO'], true)
                         ? ($documento['fec_pre_die'] ?? now()->toDateString())
@@ -1993,7 +2037,8 @@ class InscripcionAcademica extends SoporteInteligenteBase
             'est_ins' => 'ANULADA',
             'con_ins' => 'OBSERVADA',
             'fec_anu_ins' => now(),
-            'anulado_por' => auth()->user()->cod_usu ?? auth()->id(),
+            'fec_ret_ins' => null,
+            'mot_ret_ins' => null,
             'mot_anu_ins' => $this->limpiarTexto($motivo),
             'updated_at' => now(),
         ];
@@ -2004,9 +2049,10 @@ class InscripcionAcademica extends SoporteInteligenteBase
         return [
             'est_ins' => 'RETIRADA',
             'con_ins' => 'OBSERVADA',
-            'fec_anu_ins' => now(),
-            'anulado_por' => auth()->user()->cod_usu ?? auth()->id(),
-            'mot_anu_ins' => $this->limpiarTexto($motivo),
+            'fec_ret_ins' => now(),
+            'mot_ret_ins' => $this->limpiarTexto($motivo),
+            'fec_anu_ins' => null,
+            'mot_anu_ins' => null,
             'updated_at' => now(),
         ];
     }
@@ -2083,6 +2129,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             'REINSCRIPCION', 'REPITENTE' => 'REGULAR',
             default => $tipo,
         };
+
         return in_array($tipo, self::TIPOS_INSCRIPCION, true) ? $tipo : 'REGULAR';
     }
 
@@ -2097,6 +2144,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             'CONDICIONAL', 'PROVISIONAL' => 'OBSERVADA',
             default => $estado,
         };
+
         return in_array($estado, self::ESTADOS_INSCRIPCION, true) ? $estado : 'PENDIENTE';
     }
 
@@ -2107,6 +2155,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             'TRASLADO', 'VULNERABILIDAD' => 'NORMAL',
             default => $condicion,
         };
+
         return in_array($condicion, self::CONDICIONES_INSCRIPCION, true) ? $condicion : 'NORMAL';
     }
 
@@ -2122,6 +2171,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             $datos['est_ins'] = 'OBSERVADA';
             $datos['con_ins'] = 'CONDICIONAL';
             $datos['doc_com_ins'] = false;
+
             return $datos;
         }
 
@@ -2129,6 +2179,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             $datos['est_ins'] = 'OBSERVADA';
             $datos['con_ins'] = 'PROVISIONAL';
             $datos['doc_com_ins'] = false;
+
             return $datos;
         }
 
@@ -2136,6 +2187,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             $datos['est_ins'] = 'PENDIENTE';
             $datos['con_ins'] = 'PROVISIONAL';
             $datos['doc_com_ins'] = false;
+
             return $datos;
         }
 
@@ -2143,6 +2195,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             $datos['est_ins'] = 'OBSERVADA';
             $datos['con_ins'] = 'PROVISIONAL';
             $datos['doc_com_ins'] = false;
+
             return $datos;
         }
 
@@ -2150,12 +2203,14 @@ class InscripcionAcademica extends SoporteInteligenteBase
             $datos['est_ins'] = 'OBSERVADA';
             $datos['con_ins'] = 'OBSERVADA';
             $datos['doc_com_ins'] = false;
+
             return $datos;
         }
 
         $datos['est_ins'] = 'ACTIVA';
         $datos['con_ins'] = 'NORMAL';
         $datos['doc_com_ins'] = true;
+
         return $datos;
     }
 
@@ -2188,8 +2243,8 @@ class InscripcionAcademica extends SoporteInteligenteBase
 
         return [
             'estado' => ($gestion['permite_inscripcion'] ?? false) ? 'VALIDO' : 'OBSERVADO',
-            'titulo' => 'Gestión ' . $gestion['anio'],
-            'descripcion' => 'Rango ' . $gestion['rango'] . '. Las inscripciones se validan contra esta gestión.',
+            'titulo' => 'Gestión '.$gestion['anio'],
+            'descripcion' => 'Rango '.$gestion['rango'].'. Las inscripciones se validan contra esta gestión.',
             'gestion' => $gestion,
         ];
     }
@@ -2288,54 +2343,39 @@ class InscripcionAcademica extends SoporteInteligenteBase
         $motivo = $this->textoSeguro($datos['motivo'] ?? null, '');
 
         return match ($accion) {
-            'CREAR_INSCRIPCION' =>
-            "Se registró la inscripción de {$estudiante} en {$curso}, paralelo {$paralelo}, turno {$turno}, para la gestión {$gestion}.",
+            'CREAR_INSCRIPCION' => "Se registró la inscripción de {$estudiante} en {$curso}, paralelo {$paralelo}, turno {$turno}, para la gestión {$gestion}.",
 
-            'GUARDAR_INSCRIPCION_PENDIENTE' =>
-            "Se guardó como pendiente la inscripción de {$estudiante} para completar información antes de su confirmación.",
+            'GUARDAR_INSCRIPCION_PENDIENTE' => "Se guardó como pendiente la inscripción de {$estudiante} para completar información antes de su confirmación.",
 
-            'CONFIRMAR_INSCRIPCION' =>
-            "Se confirmó la inscripción de {$estudiante} en {$curso}, paralelo {$paralelo}, turno {$turno}, para la gestión {$gestion}.",
+            'CONFIRMAR_INSCRIPCION' => "Se confirmó la inscripción de {$estudiante} en {$curso}, paralelo {$paralelo}, turno {$turno}, para la gestión {$gestion}.",
 
-            'CREAR_INSCRIPCION_OBSERVADA' =>
-            "Se registró la inscripción de {$estudiante} como observada para seguimiento administrativo.",
+            'CREAR_INSCRIPCION_OBSERVADA' => "Se registró la inscripción de {$estudiante} como observada para seguimiento administrativo.",
 
-            'CREAR_INSCRIPCION_CONDICIONAL' =>
-            "Se registró la inscripción condicional de {$estudiante} en {$curso}, paralelo {$paralelo}, turno {$turno}.",
+            'CREAR_INSCRIPCION_CONDICIONAL' => "Se registró la inscripción condicional de {$estudiante} en {$curso}, paralelo {$paralelo}, turno {$turno}.",
 
-            'CREAR_INSCRIPCION_PROVISIONAL' =>
-            "Se registró la inscripción provisional de {$estudiante}, conservando seguimiento institucional.",
+            'CREAR_INSCRIPCION_PROVISIONAL' => "Se registró la inscripción provisional de {$estudiante}, conservando seguimiento institucional.",
 
-            'ACTUALIZAR_INSCRIPCION' =>
-            "Se actualizó la inscripción de {$estudiante}. Estado actual: {$estado}; condición: {$condicion}.",
+            'ACTUALIZAR_INSCRIPCION' => "Se actualizó la inscripción de {$estudiante}. Estado actual: {$estado}; condición: {$condicion}.",
 
-            'ACTUALIZAR_DOCUMENTOS_INSCRIPCION' =>
-            "Se actualizó el control documental de {$estudiante}.",
+            'ACTUALIZAR_DOCUMENTOS_INSCRIPCION' => "Se actualizó el control documental de {$estudiante}.",
 
-            'ANULAR_INSCRIPCION' =>
-            $motivo
+            'ANULAR_INSCRIPCION' => $motivo
                 ? "Se anuló la inscripción de {$estudiante}. Motivo registrado: {$motivo}. El historial se conserva para trazabilidad institucional."
                 : "Se anuló la inscripción de {$estudiante}. El historial se conserva para trazabilidad institucional.",
 
-            'REGISTRAR_RETIRO_INSCRIPCION' =>
-            $motivo
+            'REGISTRAR_RETIRO_INSCRIPCION' => $motivo
                 ? "Se registró el retiro académico de {$estudiante}. Motivo registrado: {$motivo}. Se conserva su historial institucional."
                 : "Se registró el retiro académico de {$estudiante}, conservando su historial institucional.",
 
-            'REACTIVAR_INSCRIPCION' =>
-            "Se reactivó la inscripción de {$estudiante} como pendiente para revisión administrativa.",
+            'REACTIVAR_INSCRIPCION' => "Se reactivó la inscripción de {$estudiante} como pendiente para revisión administrativa.",
 
-            'APLICAR_CURSO_SUGERIDO' =>
-            "Se aplicó la sugerencia de curso para {$estudiante}: {$curso}.",
+            'APLICAR_CURSO_SUGERIDO' => "Se aplicó la sugerencia de curso para {$estudiante}: {$curso}.",
 
-            'GENERAR_CHECKLIST_DOCUMENTAL' =>
-            "Se generó la lista documental para la inscripción de {$estudiante}.",
+            'GENERAR_CHECKLIST_DOCUMENTAL' => "Se generó la lista documental para la inscripción de {$estudiante}.",
 
-            'AGREGAR_DOCUMENTOS_RECOMENDADOS' =>
-            "Se agregaron documentos recomendados a la lista documental de {$estudiante} sin borrar los registros existentes.",
+            'AGREGAR_DOCUMENTOS_RECOMENDADOS' => "Se agregaron documentos recomendados a la lista documental de {$estudiante} sin borrar los registros existentes.",
 
-            default =>
-            "Se registró una actualización en el módulo de inscripciones para {$estudiante}.",
+            default => "Se registró una actualización en el módulo de inscripciones para {$estudiante}.",
         };
     }
 
@@ -2381,10 +2421,10 @@ class InscripcionAcademica extends SoporteInteligenteBase
         return DB::table('gestion_academica')
             ->orderByDesc('ani_gea')
             ->get()
-            ->map(fn($gestion) => [
+            ->map(fn ($gestion) => [
                 'cod_gea' => $gestion->cod_gea,
                 'anio' => $gestion->ani_gea ?? null,
-                'rango' => $this->fechaTexto($gestion->fii_gea ?? null) . ' - ' . $this->fechaTexto($gestion->ffi_gea ?? null),
+                'rango' => $this->fechaTexto($gestion->fii_gea ?? null).' - '.$this->fechaTexto($gestion->ffi_gea ?? null),
                 'estado' => $gestion->est_gea ?? null,
             ])
             ->values()
@@ -2401,7 +2441,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->where('est_cur', 'ACTIVO')
             ->orderBy('nom_cur')
             ->get()
-            ->map(fn($curso) => [
+            ->map(fn ($curso) => [
                 'cod_cur' => $curso->cod_cur,
                 'nombre' => $curso->nom_cur,
                 'nivel' => $curso->niv_cur ?? null,
@@ -2423,7 +2463,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->where('est_par', 'ACTIVO')
             ->orderBy('nom_par')
             ->get()
-            ->map(fn($paralelo) => [
+            ->map(fn ($paralelo) => [
                 'cod_par' => $paralelo->cod_par,
                 'nombre' => $paralelo->nom_par,
                 'estado' => $paralelo->est_par,
@@ -2443,12 +2483,12 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->where('est_tur', 'ACTIVO')
             ->orderBy('hor_ini_tur')
             ->get()
-            ->map(fn($turno) => [
+            ->map(fn ($turno) => [
                 'cod_tur' => $turno->cod_tur,
                 'nombre' => $turno->nom_tur,
                 'inicio' => $this->horaTexto($turno->hor_ini_tur ?? null),
                 'fin' => $this->horaTexto($turno->hor_fin_tur ?? null),
-                'rango' => $this->horaTexto($turno->hor_ini_tur ?? null) . ' - ' . $this->horaTexto($turno->hor_fin_tur ?? null),
+                'rango' => $this->horaTexto($turno->hor_ini_tur ?? null).' - '.$this->horaTexto($turno->hor_fin_tur ?? null),
                 'estado' => $turno->est_tur,
             ])
             ->values()
@@ -2508,7 +2548,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
         return $row ? [
             'cod_tur' => $row->cod_tur,
             'nombre' => $row->nom_tur,
-            'rango' => $this->horaTexto($row->hor_ini_tur ?? null) . ' - ' . $this->horaTexto($row->hor_fin_tur ?? null),
+            'rango' => $this->horaTexto($row->hor_ini_tur ?? null).' - '.$this->horaTexto($row->hor_fin_tur ?? null),
             'estado' => $row->est_tur,
         ] : null;
     }
@@ -2689,8 +2729,16 @@ class InscripcionAcademica extends SoporteInteligenteBase
                 $bloqueos[] = 'La inscripción ya se encuentra anulada o retirada.';
             }
 
+            $destino = $accion === 'retiro' ? 'RETIRADA' : 'ANULADA';
+            if (! $this->transicionPermitida($inscripcion['estado'], $destino)) {
+                $bloqueos[] = 'La transición solicitada no es válida para el estado actual.';
+            }
+            if ($destino === 'ANULADA' && array_sum($this->actividadAcademica($inscripcion['cod_est'], $inscripcion['cod_gea'])) > 0) {
+                $bloqueos[] = 'La inscripción posee actividad académica asociada. Evalúe retiro o corrección en lugar de anulación.';
+            }
+
             if ($this->estaVacio($motivo)) {
-                $advertencias[] = "Se recomienda registrar el motivo de {$accion} para mantener trazabilidad.";
+                $bloqueos[] = "Debe registrar el motivo de {$accion} para mantener trazabilidad.";
             }
 
             if (($inscripcion['documentos_pendientes'] ?? 0) > 0 || ($inscripcion['documentos_observados'] ?? 0) > 0) {
@@ -2729,8 +2777,8 @@ class InscripcionAcademica extends SoporteInteligenteBase
 
         $ciCompleto = trim(
             ($row->ci_per ?? '')
-                . (($row->com_per ?? '') ? '-' . $row->com_per : '')
-                . (($row->exp_per ?? '') ? ' ' . $row->exp_per : '')
+                .(($row->com_per ?? '') ? '-'.$row->com_per : '')
+                .(($row->exp_per ?? '') ? ' '.$row->exp_per : '')
         );
 
         return [
@@ -2785,7 +2833,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
             ->where('cod_ins', $codIns)
             ->orderBy('created_at')
             ->get()
-            ->map(fn($doc) => [
+            ->map(fn ($doc) => [
                 'nombre' => $doc->nom_die,
                 'tipo' => $doc->tip_die,
                 'estado' => $doc->est_die,
@@ -2841,13 +2889,13 @@ class InscripcionAcademica extends SoporteInteligenteBase
     private function documentosFaltantes(array $actuales, array $recomendados): array
     {
         $actualesClaves = collect($actuales)
-            ->map(fn($doc) => $this->claveDocumento($doc['nom_die'] ?? ''))
+            ->map(fn ($doc) => $this->claveDocumento($doc['nom_die'] ?? ''))
             ->filter()
             ->values()
             ->all();
 
         return collect($recomendados)
-            ->filter(fn($doc) => ! in_array($this->claveDocumento($doc['nom_die'] ?? ''), $actualesClaves, true))
+            ->filter(fn ($doc) => ! in_array($this->claveDocumento($doc['nom_die'] ?? ''), $actualesClaves, true))
             ->values()
             ->all();
     }
@@ -2955,6 +3003,7 @@ class InscripcionAcademica extends SoporteInteligenteBase
         $valor = mb_strtolower(trim((string) $valor));
         $map = ['á' => 'a', 'é' => 'e', 'í' => 'i', 'ó' => 'o', 'ú' => 'u', 'ü' => 'u', 'ñ' => 'n'];
         $valor = strtr($valor, $map);
+
         return preg_replace('/\s+/', ' ', $valor) ?? '';
     }
 

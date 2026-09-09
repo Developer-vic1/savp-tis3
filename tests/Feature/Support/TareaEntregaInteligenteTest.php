@@ -12,6 +12,7 @@ class TareaEntregaInteligenteTest extends TestCase
     use DatabaseTransactions;
 
     protected TareaInteligente $soporteTarea;
+
     protected EntregaTareaInteligente $soporteEntrega;
 
     protected function setUp(): void

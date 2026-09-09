@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CalificacionTarea extends Model
 {
     protected $table = 'calificacion_tarea';
+
     protected $primaryKey = 'cod_cal_tar';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -48,7 +50,7 @@ class CalificacionTarea extends Model
                     ? ((int) str_replace('CALT_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $calificacionTarea->cod_cal_tar = 'CALT_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $calificacionTarea->cod_cal_tar = 'CALT_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
 
             if (! $calificacionTarea->fec_cal) {

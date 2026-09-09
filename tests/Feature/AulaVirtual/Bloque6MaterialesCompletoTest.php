@@ -22,11 +22,15 @@ class Bloque6MaterialesCompletoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUserA;
+
     protected User $docenteUserB;
+
     protected User $estudianteUserA;
+
     protected User $estudianteUserB;
 
     protected ClaseVirtual $claseA;
+
     protected Docente $docenteA;
 
     protected function setUp(): void
@@ -200,6 +204,7 @@ class Bloque6MaterialesCompletoTest extends TestCase
     {
         $file = UploadedFile::fake()->create('tabla_periodica.pdf', 800, 'application/pdf');
         $servicio = app(MaterialService::class);
+
         return $servicio->crear([
             'cod_cla' => $this->claseA->cod_cla,
             'nom_mat' => 'Tabla Periódica Actualizada',

@@ -9,14 +9,21 @@ class AsignaturaInteligente extends SoporteInteligenteBase
     public const TELEFONO_SOPORTE = '75836807';
 
     public const ESTADO_RECONOCIDA = 'RECONOCIDA';
+
     public const ESTADO_REDACTABLE = 'REDACTABLE';
+
     public const ESTADO_REVISION = 'REQUIERE_REVISION';
+
     public const ESTADO_BLOQUEADA = 'BLOQUEADA';
 
     public const MIN_SIMILITUD_CATALOGO = 68;
+
     public const MIN_SIMILITUD_REDACTABLE = 72;
+
     public const MIN_SIMILITUD_DUPLICADO = 96;
+
     public const MIN_SIMILITUD_POSIBLE_DUPLICADO = 75;
+
     public const MIN_PUNTAJE_ACADEMICO_VALIDO = 70;
 
     /*
@@ -1327,7 +1334,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
                 'descripcion' => 'Entrada no reconocida como asignatura académica válida.',
                 'advertencias' => [
                     'No se puede crear la asignatura porque el sistema no logró descifrar una materia académica válida.',
-                    'Revisa la redacción o contacta con soporte académico al ' . self::TELEFONO_SOPORTE . ' para validar la creación de una nueva materia.',
+                    'Revisa la redacción o contacta con soporte académico al '.self::TELEFONO_SOPORTE.' para validar la creación de una nueva materia.',
                 ],
             ]
         );
@@ -1567,7 +1574,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
             }
         }
 
-        usort($coincidencias, fn(array $a, array $b) => $b['similitud'] <=> $a['similitud']);
+        usort($coincidencias, fn (array $a, array $b) => $b['similitud'] <=> $a['similitud']);
 
         return $coincidencias;
     }
@@ -1618,15 +1625,15 @@ class AsignaturaInteligente extends SoporteInteligenteBase
         if (count($palabras) >= 3) {
             return mb_strtoupper(
                 mb_substr($palabras[0], 0, 1)
-                    . mb_substr($palabras[1], 0, 1)
-                    . mb_substr($palabras[2], 0, 1)
+                    .mb_substr($palabras[1], 0, 1)
+                    .mb_substr($palabras[2], 0, 1)
             );
         }
 
         if (count($palabras) === 2) {
             return mb_strtoupper(
                 mb_substr($palabras[0], 0, 1)
-                    . mb_substr($palabras[1], 0, 2)
+                    .mb_substr($palabras[1], 0, 2)
             );
         }
 
@@ -1846,7 +1853,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
     public static function catalogoSugerencias(): array
     {
         return array_values(array_map(
-            fn(array $asignatura) => [
+            fn (array $asignatura) => [
                 'nombre' => $asignatura['nombre'],
                 'sigla' => $asignatura['sigla'],
                 'horas' => $asignatura['horas'],
@@ -2254,7 +2261,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
 
         return array_values(array_filter(
             explode(' ', $normalizado),
-            fn(string $palabra) => mb_strlen($palabra) >= 3 && ! in_array($palabra, $palabrasIgnoradas, true)
+            fn (string $palabra) => mb_strlen($palabra) >= 3 && ! in_array($palabra, $palabrasIgnoradas, true)
         ));
     }
 
@@ -2273,6 +2280,6 @@ class AsignaturaInteligente extends SoporteInteligenteBase
 
     public static function mensajeSoporte(): string
     {
-        return 'No se pudo descifrar la entrada como una asignatura académica válida. Revisa la redacción o contacta con soporte académico al ' . self::TELEFONO_SOPORTE . ' para validar la creación de una nueva materia.';
+        return 'No se pudo descifrar la entrada como una asignatura académica válida. Revisa la redacción o contacta con soporte académico al '.self::TELEFONO_SOPORTE.' para validar la creación de una nueva materia.';
     }
 }

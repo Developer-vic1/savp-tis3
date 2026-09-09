@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\AulaVirtual\ClaseVirtual;
 use Illuminate\Database\Eloquent\Model;
 
 class PlanAsignatura extends Model
 {
     protected $table = 'plan_asignatura';
+
     protected $primaryKey = 'cod_pas';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -27,7 +31,7 @@ class PlanAsignatura extends Model
     {
         static::creating(function ($plan) {
 
-            if (!$plan->cod_pas) {
+            if (! $plan->cod_pas) {
 
                 $ultimo = self::where('cod_pas', 'like', 'PAS_%')
                     ->orderByDesc('cod_pas')
@@ -37,7 +41,7 @@ class PlanAsignatura extends Model
                     ? ((int) str_replace('PAS_', '', $ultimo)) + 1
                     : 1;
 
-                $plan->cod_pas = 'PAS_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $plan->cod_pas = 'PAS_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }
@@ -72,5 +76,15 @@ class PlanAsignatura extends Model
     public function gestionAcademica()
     {
         return $this->belongsTo(GestionAcademica::class, 'cod_gea', 'cod_gea');
+    }
+
+    public function horariosDetalle()
+    {
+        return $this->hasMany(HorarioDetalle::class, 'cod_pas', 'cod_pas');
+    }
+
+    public function claseVirtual()
+    {
+        return $this->hasOne(ClaseVirtual::class, 'cod_pas', 'cod_pas');
     }
 }

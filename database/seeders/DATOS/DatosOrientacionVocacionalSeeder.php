@@ -8,6 +8,6 @@ class DatosOrientacionVocacionalSeeder extends Seeder
 {
     public function run(): void
     {
-        (new SoporteDatosBolivia())->crearOrientacionVocacional();
+        (new SoporteDatosBolivia)->crearOrientacionVocacional();
     }
 }

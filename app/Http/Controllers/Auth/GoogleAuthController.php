@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\BitacoraService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class GoogleAuthController extends Controller
@@ -15,7 +17,7 @@ class GoogleAuthController extends Controller
     /**
      * Redirect the user to the Google authentication page.
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function redirect()
     {
@@ -27,7 +29,7 @@ class GoogleAuthController extends Controller
     /**
      * Obtain the user information from Google and log them in.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function callback()
     {
@@ -38,8 +40,8 @@ class GoogleAuthController extends Controller
                 : 'login';
 
             $googleUser = Socialite::driver('google')->user();
-            
-            if (!$googleUser || !$googleUser->getEmail()) {
+
+            if (! $googleUser || ! $googleUser->getEmail()) {
                 try {
                     if (class_exists(BitacoraService::class)) {
                         BitacoraService::registrar(
@@ -70,7 +72,7 @@ class GoogleAuthController extends Controller
             $user = User::where('email', $email)->first();
 
             // ⚠️ SI NO EXISTE, NO CREAR EL USUARIO
-            if (!$user) {
+            if (! $user) {
                 try {
                     if (class_exists(BitacoraService::class)) {
                         BitacoraService::registrar(
@@ -162,7 +164,7 @@ class GoogleAuthController extends Controller
                         null,
                         'Google Auth',
                         null,
-                        'Excepción al procesar el callback de Google: ' . $e->getMessage(),
+                        'Excepción al procesar el callback de Google: '.$e->getMessage(),
                         'ERROR',
                         'ERROR',
                         null,

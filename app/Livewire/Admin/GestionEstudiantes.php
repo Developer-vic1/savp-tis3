@@ -8,22 +8,92 @@ use App\Models\Estudiante;
 use App\Models\GestionAcademica;
 use App\Models\InscripcionEstudiante;
 use App\Models\InstitucionProcedencia;
+use App\Models\NovedadEstudiante;
 use App\Models\Paralelo;
 use App\Models\Persona;
+use App\Models\SeguimientoAcademico;
 use App\Models\TipoVinculacionEstudiante;
+use App\Models\User;
 use App\Services\BitacoraService;
+use App\Services\SeguimientoAcademicoService;
+use App\Support\Academico\SeguimientoAcademicoInteligente;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class GestionEstudiantes extends Component
 {
+    use WithFileUploads;
     use WithPagination;
+
+    public bool $modalPrevencion = false;
+
+    public string $tipoPrevencion = 'NOVEDAD';
+
+    #[Locked]
+    public ?string $codigoPrevencion = null;
+
+    public array $formPrevencion = [];
+
+    public array $historialPrevencion = [];
+
+    public array $senalesPrevencion = [];
+
+    public array $responsablesPrevencion = [];
+
+    public $respaldoPrevencion;
+
+    #[Locked]
+    public ?string $versionPrevencion = null;
+
+    public function abrirPrevencion(string $estudiante, string $tipo = 'NOVEDAD', ?string $codigo = null): void
+    {
+        Gate::authorize('create', SeguimientoAcademico::class);
+        Estudiante::findOrFail($estudiante);
+        abort_unless(in_array($tipo, ['NOVEDAD', 'SEGUIMIENTO'], true), 422);
+        $this->resetValidation();
+        $this->tipoPrevencion = $tipo;
+        $this->respaldoPrevencion = null;
+        $this->codigoPrevencion = $codigo;
+        $modelo = $tipo === 'NOVEDAD' ? NovedadEstudiante::class : SeguimientoAcademico::class;
+        $registro = $codigo ? $modelo::where('cod_est', $estudiante)->findOrFail($codigo) : null;
+        $this->versionPrevencion = $registro?->getRawOriginal('updated_at');
+        $this->responsablesPrevencion = User::whereHas('roles', fn ($q) => $q->whereIn('name', ['Administrador', 'Director', 'Regente', 'Secretaria']))->with('persona')->get()
+            ->map(fn ($usuario) => ['codigo' => $usuario->cod_usu, 'nombre' => trim(($usuario->persona?->nom_per ?? '').' '.($usuario->persona?->ape_pat_per ?? ''))])->all();
+        if ($registro && $tipo === 'SEGUIMIENTO') {
+            Gate::authorize('view', $registro);
+        }
+        $this->formPrevencion = $registro ? $registro->getAttributes() : ['cod_est' => $estudiante, 'cod_gea' => $this->gestionActualId] + ($tipo === 'NOVEDAD'
+            ? ['tip_nes' => 'LICENCIA', 'fii_nes' => today()->toDateString(), 'ffi_nes' => today()->toDateString(), 'est_nes' => 'ACTIVA', 'mot_nes' => '', 'obs_nes' => '']
+            : ['tip_seg' => 'INTEGRAL', 'ori_seg' => 'REVISION_INSTITUCIONAL', 'mot_seg' => '', 'niv_ape_seg' => 'BAJO', 'est_seg' => 'ABIERTO', 'vis_seg' => 'NORMAL', 'cod_usu_res' => auth()->id(), 'fec_ape_seg' => today()->toDateString(), 'fec_pro_seg' => today()->addWeek()->toDateString(), 'res_seg' => '', 'obs_seg' => '']);
+        $this->senalesPrevencion = $this->gestionActualId ? app(SeguimientoAcademicoInteligente::class)->analizar($estudiante, $this->gestionActualId) : [];
+        $this->historialPrevencion = $modelo::where('cod_est', $estudiante)->orderByDesc('created_at')->get()
+            ->filter(fn ($item) => $tipo === 'NOVEDAD' || auth()->user()->can('view', $item))->map->getAttributes()->all();
+        $this->modalPrevencion = true;
+    }
+
+    public function guardarPrevencion(): void
+    {
+        $servicio = app(SeguimientoAcademicoService::class);
+        if ($this->tipoPrevencion === 'NOVEDAD') {
+            $servicio->registrarNovedad($this->formPrevencion, $this->codigoPrevencion, $this->versionPrevencion, $this->respaldoPrevencion);
+        } else {
+            if (in_array($this->formPrevencion['est_seg'] ?? '', ['RESUELTO', 'CANCELADO'], true)) {
+                $this->formPrevencion['fec_cie_seg'] = today()->toDateString();
+            }
+            $this->codigoPrevencion ? $servicio->actualizar($this->codigoPrevencion, $this->formPrevencion, $this->versionPrevencion) : $servicio->abrir($this->formPrevencion);
+        }
+        $this->modalPrevencion = false;
+        $this->dispatch('swal:success', title: 'Registro guardado', text: 'Se conservó la trazabilidad del estudiante.');
+    }
 
     protected string $paginationTheme = 'tailwind';
 
@@ -33,13 +103,21 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $filtroCurso = '';
+
     public string $filtroParalelo = '';
+
     public string $filtroEspecialidad = '';
+
     public string $filtroEstado = '';
+
     public string $filtroInscripcion = '';
+
     public string $filtroVinculacion = '';
+
     public string $filtroProcedencia = '';
+
     public int $perPage = 10;
 
     /*
@@ -48,8 +126,11 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public string $vistaActiva = 'todos';
+
     public string $cursoCarpetaSeleccionado = '';
+
     public string $especialidadCarpetaSeleccionada = '';
+
     public string $procedenciaCarpetaSeleccionada = '';
 
     /*
@@ -58,9 +139,13 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public bool $modalRegistrar = false;
+
     public bool $modalEditar = false;
+
     public bool $modalInscripcion = false;
+
     public bool $modalHistorial = false;
+
     public bool $panelDetalle = false;
 
     /*
@@ -69,8 +154,11 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public ?Estudiante $estudianteDetalle = null;
+
     public ?string $codEstudianteSeleccionado = null;
+
     public ?string $gestionActualId = null;
+
     public string $nombreGestionActual = 'Sin gestión activa';
 
     /*
@@ -379,6 +467,7 @@ class GestionEstudiantes extends Component
         if (! $gestion) {
             $this->gestionActualId = null;
             $this->nombreGestionActual = 'Sin gestión activa';
+
             return;
         }
 
@@ -1321,7 +1410,7 @@ class GestionEstudiantes extends Component
         $primera = $nombres !== '' ? mb_substr($nombres, 0, 1) : 'E';
         $segunda = $paterno !== '' ? mb_substr($paterno, 0, 1) : 'S';
 
-        return mb_strtoupper($primera . $segunda);
+        return mb_strtoupper($primera.$segunda);
     }
 
     public function ciCompleto(?Persona $persona): string
@@ -1332,7 +1421,7 @@ class GestionEstudiantes extends Component
 
         return trim(collect([
             $persona->ci_per ?? '',
-            $persona->com_per ? '-' . $persona->com_per : '',
+            $persona->com_per ? '-'.$persona->com_per : '',
             $persona->exp_per ?? '',
         ])->filter()->implode(' '));
     }
@@ -1697,20 +1786,20 @@ class GestionEstudiantes extends Component
 
         $inscritosGestionActual = $this->gestionActualId
             ? InscripcionEstudiante::query()
-            ->where('cod_gea', $this->gestionActualId)
-            ->when($campoEstadoInscripcion, function ($query) use ($campoEstadoInscripcion) {
-                $query->where($campoEstadoInscripcion, 'ACTIVO');
-            })
-            ->distinct('cod_est')
-            ->count('cod_est')
+                ->where('cod_gea', $this->gestionActualId)
+                ->when($campoEstadoInscripcion, function ($query) use ($campoEstadoInscripcion) {
+                    $query->where($campoEstadoInscripcion, 'ACTIVO');
+                })
+                ->distinct('cod_est')
+                ->count('cod_est')
             : 0;
 
         $sinInscripcionGestionActual = $this->gestionActualId
             ? Estudiante::query()
-            ->whereDoesntHave('inscripciones', function (Builder $query) {
-                $query->where('cod_gea', $this->gestionActualId);
-            })
-            ->count()
+                ->whereDoesntHave('inscripciones', function (Builder $query) {
+                    $query->where('cod_gea', $this->gestionActualId);
+                })
+                ->count()
             : $totalEstudiantes;
 
         $totalEspecialidadesConEstudiantes = Estudiante::query()

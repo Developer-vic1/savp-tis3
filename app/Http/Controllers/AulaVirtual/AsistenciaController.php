@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
+use App\Models\AulaVirtual\AsistenciaEstudiante;
 use App\Models\AulaVirtual\EstadoAsistencia;
 use App\Services\AulaVirtual\AsistenciaService;
 use App\Services\AulaVirtual\CursoVirtualService;
@@ -56,7 +57,7 @@ class AsistenciaController extends Controller
             'estudiante' => $estudiante,
             'resumen' => $this->cursos->resumenAsistenciaEstudiante($estudiante),
             'registros' => $estudiante
-                ? $estudiante->hasMany(\App\Models\AulaVirtual\AsistenciaEstudiante::class, 'cod_est', 'cod_est')->with('asistenciaClase.claseVirtual.planAsignatura.asignatura', 'estadoAsistencia')->latest('fec_reg_asi_est')->get()
+                ? $estudiante->hasMany(AsistenciaEstudiante::class, 'cod_est', 'cod_est')->with('asistenciaClase.claseVirtual.planAsignatura.asignatura', 'estadoAsistencia')->latest('fec_reg_asi_est')->get()
                 : collect(),
         ]);
     }

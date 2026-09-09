@@ -15,6 +15,7 @@ class GestionDocente extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $search = '';
+
     public string $estado = '';
 
     public function updatedSearch(): void

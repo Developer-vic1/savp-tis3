@@ -8,12 +8,36 @@ use Illuminate\Validation\Rule;
 
 class InstitucionProcedencia extends CatalogoInstitucional
 {
-    protected function modelo(): string { return InstitucionModel::class; }
-    protected function soporte(): object { return app(InstitucionProcedenciaInteligente::class); }
-    protected function clavePrimaria(): string { return 'cod_ipe'; }
-    protected function campoNombre(): string { return 'nom_ipe'; }
-    protected function campoEstado(): string { return 'est_ipe'; }
-    protected function relacionConteo(): ?string { return 'estudiantes'; }
+    protected function modelo(): string
+    {
+        return InstitucionModel::class;
+    }
+
+    protected function soporte(): object
+    {
+        return app(InstitucionProcedenciaInteligente::class);
+    }
+
+    protected function clavePrimaria(): string
+    {
+        return 'cod_ipe';
+    }
+
+    protected function campoNombre(): string
+    {
+        return 'nom_ipe';
+    }
+
+    protected function campoEstado(): string
+    {
+        return 'est_ipe';
+    }
+
+    protected function relacionConteo(): ?string
+    {
+        return 'estudiantes';
+    }
+
     protected function filtrosAdicionales(): array
     {
         return [
@@ -21,10 +45,27 @@ class InstitucionProcedencia extends CatalogoInstitucional
             ['campo' => 'ciu_ipe', 'etiqueta' => 'Todas las ciudades', 'opciones' => InstitucionModel::query()->whereNotNull('ciu_ipe')->pluck('ciu_ipe')->unique()->sort()->values()],
         ];
     }
-    protected function camposBusqueda(): array { return ['cod_ipe', 'nom_ipe', 'tip_ipe', 'ciu_ipe']; }
-    protected function camposFormulario(): array { return ['nom_ipe' => '', 'tip_ipe' => 'Pública', 'ciu_ipe' => 'La Paz', 'est_ipe' => 'ACTIVO']; }
-    protected function reglas(): array { return ['form.nom_ipe' => ['required', 'string', 'min:5', 'max:150'], 'form.tip_ipe' => ['nullable', 'string', 'max:50'], 'form.ciu_ipe' => ['required', 'string', 'max:100'], 'form.est_ipe' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])]]; }
-    protected function vista(): string { return 'livewire.admin.institucion-procedencia'; }
+
+    protected function camposBusqueda(): array
+    {
+        return ['cod_ipe', 'nom_ipe', 'tip_ipe', 'ciu_ipe'];
+    }
+
+    protected function camposFormulario(): array
+    {
+        return ['nom_ipe' => '', 'tip_ipe' => 'Pública', 'ciu_ipe' => 'La Paz', 'est_ipe' => 'ACTIVO'];
+    }
+
+    protected function reglas(): array
+    {
+        return ['form.nom_ipe' => ['required', 'string', 'min:5', 'max:150'], 'form.tip_ipe' => ['nullable', 'string', 'max:50'], 'form.ciu_ipe' => ['required', 'string', 'max:100'], 'form.est_ipe' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])]];
+    }
+
+    protected function vista(): string
+    {
+        return 'livewire.admin.institucion-procedencia';
+    }
+
     protected function configuracion(): array
     {
         return [

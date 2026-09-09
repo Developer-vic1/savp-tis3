@@ -16,8 +16,8 @@ use Livewire\WithPagination;
 
 class GestionPersonas extends Component
 {
-    use WithPagination;
     use WithFileUploads;
+    use WithPagination;
 
     protected string $paginationTheme = 'tailwind';
 
@@ -26,10 +26,15 @@ class GestionPersonas extends Component
     // ============================================================
 
     public string $search = '';
+
     public string $genero = '';
+
     public string $estado = '';
+
     public string $cuentaUsuario = '';
+
     public string $direccion = '';
+
     public int $perPage = 10;
 
     // ============================================================
@@ -37,7 +42,9 @@ class GestionPersonas extends Component
     // ============================================================
 
     public bool $modalCrear = false;
+
     public bool $modalVer = false;
+
     public bool $modalEditar = false;
 
     public ?Persona $personaDetalle = null;
@@ -47,6 +54,7 @@ class GestionPersonas extends Component
     // ============================================================
 
     public $foto = null;
+
     public $fotoEditar = null;
 
     // ============================================================
@@ -54,12 +62,15 @@ class GestionPersonas extends Component
     // ============================================================
 
     public array $analisisPersona = [];
+
     public array $analisisPersonaEditar = [];
 
     public bool $direccionManualCrear = false;
+
     public bool $direccionManualEditar = false;
 
     public string $modoDireccionCrear = 'inteligente';
+
     public string $modoDireccionEditar = 'inteligente';
 
     // ============================================================
@@ -656,7 +667,7 @@ class GestionPersonas extends Component
                 'required',
                 'date',
                 'before_or_equal:today',
-                'after_or_equal:' . now()->subYears(120)->format('Y-m-d'),
+                'after_or_equal:'.now()->subYears(120)->format('Y-m-d'),
             ],
 
             'form.gen_per' => ['required', Rule::in($this->generosPermitidos())],
@@ -707,7 +718,7 @@ class GestionPersonas extends Component
                 'required',
                 'date',
                 'before_or_equal:today',
-                'after_or_equal:' . now()->subYears(120)->format('Y-m-d'),
+                'after_or_equal:'.now()->subYears(120)->format('Y-m-d'),
             ],
 
             'formEditar.gen_per' => ['required', Rule::in($this->generosPermitidos())],
@@ -763,6 +774,7 @@ class GestionPersonas extends Component
 
         if (! $this->personaDetalle) {
             $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
             return;
         }
 
@@ -781,6 +793,7 @@ class GestionPersonas extends Component
 
         if (! $persona) {
             $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
             return;
         }
 
@@ -1005,41 +1018,49 @@ class GestionPersonas extends Component
 
             if (preg_match('/\b(zona|barrio|urb\.?|urbanizacion|urbanización)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['zona_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(avenida|av\.?|avda\.?)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['ave_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(calle|c\/)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['cal_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/(#|nro\.?|n°|numero|número)\s*([a-zA-Z0-9\-\/]+)/iu', $segmento, $m)) {
                 $resultado['num_per'] = $this->normalizarNumeroDomicilio($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(referencia|ref\.?)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['ref_per'] = $this->limpiarTexto($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(ciudad)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['ciu_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(municipio)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['mun_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(departamento|depto\.?)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['dep_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
         }
@@ -1080,35 +1101,35 @@ class GestionPersonas extends Component
         $partes = [];
 
         if (filled($datos['cal_per'] ?? null)) {
-            $partes[] = 'Calle ' . $datos['cal_per'];
+            $partes[] = 'Calle '.$datos['cal_per'];
         }
 
         if (filled($datos['ave_per'] ?? null)) {
-            $partes[] = 'Av. ' . $datos['ave_per'];
+            $partes[] = 'Av. '.$datos['ave_per'];
         }
 
         if (filled($datos['zona_per'] ?? null)) {
-            $partes[] = 'Zona ' . $datos['zona_per'];
+            $partes[] = 'Zona '.$datos['zona_per'];
         }
 
         if (filled($datos['num_per'] ?? null)) {
-            $partes[] = '#' . $datos['num_per'];
+            $partes[] = '#'.$datos['num_per'];
         }
 
         if (filled($datos['ref_per'] ?? null)) {
-            $partes[] = 'Ref. ' . $datos['ref_per'];
+            $partes[] = 'Ref. '.$datos['ref_per'];
         }
 
         if (filled($datos['ciu_per'] ?? null)) {
-            $partes[] = 'Ciudad ' . $datos['ciu_per'];
+            $partes[] = 'Ciudad '.$datos['ciu_per'];
         }
 
         if (filled($datos['mun_per'] ?? null) && ($datos['mun_per'] ?? null) !== ($datos['ciu_per'] ?? null)) {
-            $partes[] = 'Municipio ' . $datos['mun_per'];
+            $partes[] = 'Municipio '.$datos['mun_per'];
         }
 
         if (filled($datos['dep_per'] ?? null)) {
-            $partes[] = 'Departamento ' . $datos['dep_per'];
+            $partes[] = 'Departamento '.$datos['dep_per'];
         }
 
         return ! empty($partes) ? implode(', ', $partes) : null;
@@ -1263,6 +1284,7 @@ class GestionPersonas extends Component
 
             if (! $persona) {
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
@@ -1348,11 +1370,13 @@ class GestionPersonas extends Component
 
             if (! $persona) {
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
             if (! $persona->est_per) {
                 $this->dispatch('error-general', mensaje: 'La persona ya se encuentra inactiva.');
+
                 return;
             }
 
@@ -1387,11 +1411,13 @@ class GestionPersonas extends Component
 
             if (! $persona) {
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
             if ($persona->est_per) {
                 $this->dispatch('error-general', mensaje: 'La persona ya se encuentra activa.');
+
                 return;
             }
 
@@ -1426,6 +1452,7 @@ class GestionPersonas extends Component
 
             if (! $persona || ! $persona->fot_per) {
                 $this->dispatch('error-general', mensaje: 'No existe una fotografía para eliminar.');
+
                 return;
             }
 

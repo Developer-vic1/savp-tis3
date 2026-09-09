@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class SecretariaGeneral extends Model
 {
     protected $table = 'secretaria_general';
+
     protected $primaryKey = 'cod_sge';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -21,7 +24,7 @@ class SecretariaGeneral extends Model
     {
         static::creating(function ($secretaria) {
 
-            if (!$secretaria->cod_sge) {
+            if (! $secretaria->cod_sge) {
 
                 $ultimo = self::where('cod_sge', 'like', 'SGE_%')
                     ->orderByDesc('cod_sge')
@@ -31,7 +34,7 @@ class SecretariaGeneral extends Model
                     ? ((int) str_replace('SGE_', '', $ultimo)) + 1
                     : 1;
 
-                $secretaria->cod_sge = 'SGE_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $secretaria->cod_sge = 'SGE_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

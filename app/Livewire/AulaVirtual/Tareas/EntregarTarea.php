@@ -7,13 +7,10 @@ use App\Models\AulaVirtual\EntregaArchivo;
 use App\Models\AulaVirtual\EntregaTarea;
 use App\Models\AulaVirtual\Tarea;
 use App\Models\Estudiante;
-use App\Models\User;
 use App\Services\BitacoraService;
 use App\Support\AulaVirtual\EntregaTareaInteligente;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -22,11 +19,15 @@ class EntregarTarea extends Component
     use WithFileUploads;
 
     public string $codTar = '';
+
     public ?Tarea $tarea = null;
+
     public ?Estudiante $estudiante = null;
+
     public ?EntregaTarea $entrega = null;
 
     public string $texto = '';
+
     public $archivo = null;
 
     public array $analisis = [
@@ -113,6 +114,7 @@ class EntregarTarea extends Component
         $user = Auth::user();
         if (! $user || ! $this->estudiante) {
             $this->dispatch('error-general', mensaje: 'Debe iniciar sesión como estudiante para entregar actividades.');
+
             return;
         }
 
@@ -124,6 +126,7 @@ class EntregarTarea extends Component
 
         if (! $pertenece) {
             $this->dispatch('error-general', mensaje: 'No perteneces a la clase de esta tarea.');
+
             return;
         }
 
@@ -148,6 +151,7 @@ class EntregarTarea extends Component
         if (! ($analisisServidor['puede_guardar'] ?? false)) {
             $primerBloqueo = $analisisServidor['bloqueos'][0] ?? 'No se puede enviar una entrega vacía.';
             $this->dispatch('error-general', mensaje: $primerBloqueo);
+
             return;
         }
 
@@ -162,7 +166,7 @@ class EntregarTarea extends Component
                     ->orderByDesc('cod_ent')
                     ->value('cod_ent');
                 $num = $ultimo ? ((int) str_replace('ENT_', '', $ultimo)) + 1 : 1;
-                $codEnt = 'ENT_' . str_pad($num, 5, '0', STR_PAD_LEFT);
+                $codEnt = 'ENT_'.str_pad($num, 5, '0', STR_PAD_LEFT);
 
                 $this->entrega = EntregaTarea::create([
                     'cod_ent' => $codEnt,
@@ -188,7 +192,7 @@ class EntregarTarea extends Component
                     ->orderByDesc('cod_ear')
                     ->value('cod_ear');
                 $numArc = $ultimoArc ? ((int) str_replace('EAR_', '', $ultimoArc)) + 1 : 1;
-                $codEar = 'EAR_' . str_pad($numArc, 5, '0', STR_PAD_LEFT);
+                $codEar = 'EAR_'.str_pad($numArc, 5, '0', STR_PAD_LEFT);
 
                 EntregaArchivo::create([
                     'cod_ear' => $codEar,
@@ -219,7 +223,7 @@ class EntregarTarea extends Component
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
-            $this->dispatch('error-general', mensaje: 'Ocurrió un error al enviar tu entrega: ' . $e->getMessage());
+            $this->dispatch('error-general', mensaje: 'Ocurrió un error al enviar tu entrega: '.$e->getMessage());
         }
     }
 

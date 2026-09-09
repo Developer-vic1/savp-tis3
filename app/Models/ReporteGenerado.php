@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ReporteGenerado extends Model
 {
@@ -36,24 +38,24 @@ class ReporteGenerado extends Model
         $usuario = Auth::user();
 
         return self::create([
-            'codigo'         => $codigo,
-            'tipo_reporte'   => $tipo,
-            'formato'        => $formato,
+            'codigo' => $codigo,
+            'tipo_reporte' => $tipo,
+            'formato' => $formato,
             'nombre_archivo' => $nombreArchivo,
-            'ruta_archivo'   => $ruta,
-            'tamano_bytes'   => file_exists($rutaAbsoluta) ? filesize($rutaAbsoluta) : 0,
-            'hash_archivo'   => file_exists($rutaAbsoluta) ? hash_file('sha256', $rutaAbsoluta) : null,
-            'generado_por'   => $usuario
-                ? (($usuario->persona?->nom_per ?? '') . ' ' . ($usuario->persona?->ape_pat_per ?? '') ?: $usuario->email)
+            'ruta_archivo' => $ruta,
+            'tamano_bytes' => file_exists($rutaAbsoluta) ? filesize($rutaAbsoluta) : 0,
+            'hash_archivo' => file_exists($rutaAbsoluta) ? hash_file('sha256', $rutaAbsoluta) : null,
+            'generado_por' => $usuario
+                ? (($usuario->persona?->nom_per ?? '').' '.($usuario->persona?->ape_pat_per ?? '') ?: $usuario->email)
                 : 'Sistema',
-            'estado'         => 'generado',
+            'estado' => 'generado',
         ]);
     }
 
     /**
      * Devuelve los últimos reportes generados con archivo existente.
      */
-    public static function recientes(int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    public static function recientes(int $limit = 10): Collection
     {
         return self::orderByDesc('created_at')->limit($limit)->get();
     }
@@ -63,7 +65,7 @@ class ReporteGenerado extends Model
      */
     public function rutaAbsoluta(): string
     {
-        return \Illuminate\Support\Facades\Storage::disk('local')->path($this->ruta_archivo);
+        return Storage::disk('local')->path($this->ruta_archivo);
     }
 
     /**

@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class TipoVinculacionEstudiante extends Model
 {
     protected $table = 'tipo_vinculacion_estudiante';
+
     protected $primaryKey = 'cod_tve';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -22,7 +25,7 @@ class TipoVinculacionEstudiante extends Model
     {
         static::creating(function ($tipo) {
 
-            if (!$tipo->cod_tve) {
+            if (! $tipo->cod_tve) {
 
                 $ultimo = self::where('cod_tve', 'like', 'TVE_%')
                     ->orderByDesc('cod_tve')
@@ -32,7 +35,7 @@ class TipoVinculacionEstudiante extends Model
                     ? ((int) str_replace('TVE_', '', $ultimo)) + 1
                     : 1;
 
-                $tipo->cod_tve = 'TVE_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $tipo->cod_tve = 'TVE_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

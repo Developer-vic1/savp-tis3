@@ -23,12 +23,19 @@ class PlanesAsignatura extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $search = '';
+
     public string $estado = '';
+
     public string $asignaturaFiltro = '';
+
     public bool $modalFormulario = false;
+
     public bool $editando = false;
+
     public ?string $seleccionado = null;
+
     public array $form = [];
+
     public array $analisis = [];
 
     public function mount(): void
@@ -41,9 +48,20 @@ class PlanesAsignatura extends Component
         $this->analizar();
     }
 
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedEstado(): void { $this->resetPage(); }
-    public function updatedAsignaturaFiltro(): void { $this->resetPage(); }
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedEstado(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedAsignaturaFiltro(): void
+    {
+        $this->resetPage();
+    }
 
     public function abrirCrear(): void
     {
@@ -79,6 +97,7 @@ class PlanesAsignatura extends Component
         $this->analizar();
         if (! ($this->analisis['puede_guardar'] ?? false)) {
             $this->dispatch('swal:warning', title: 'Plan bloqueado', text: implode(' ', $this->analisis['bloqueos'] ?? []));
+
             return;
         }
 

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\AulaVirtual;
 
-use App\Models\AulaVirtual\CalificacionTarea;
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EntregaTarea;
 use App\Models\AulaVirtual\Tarea;
@@ -21,9 +20,13 @@ class Bloque5CalificacionCompletoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUserA;
+
     protected User $docenteUserB;
+
     protected ClaseVirtual $claseA;
+
     protected Tarea $tareaA;
+
     protected EntregaTarea $entregaA;
 
     protected function setUp(): void

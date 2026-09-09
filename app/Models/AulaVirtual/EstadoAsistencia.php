@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class EstadoAsistencia extends Model
 {
     protected $table = 'estado_asistencia';
+
     protected $primaryKey = 'cod_est_asi';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -47,7 +49,7 @@ class EstadoAsistencia extends Model
                     ? ((int) str_replace('EASI_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $estadoAsistencia->cod_est_asi = 'EASI_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $estadoAsistencia->cod_est_asi = 'EASI_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

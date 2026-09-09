@@ -4,8 +4,6 @@ namespace App\Livewire\AulaVirtual\Materiales;
 
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\MaterialClase;
-use App\Models\Docente;
-use App\Models\User;
 use App\Services\BitacoraService;
 use App\Support\AulaVirtual\MaterialInteligente;
 use Illuminate\Support\Facades\Auth;
@@ -18,12 +16,17 @@ class CrearMaterial extends Component
     use WithFileUploads;
 
     public string $codCla = '';
+
     public ?ClaseVirtual $clase = null;
 
     public string $nombre = '';
+
     public string $tipo = 'DOCUMENTO';
+
     public string $url = '';
+
     public $archivo = null;
+
     public string $estado = 'ACTIVO';
 
     public array $analisis = [
@@ -81,6 +84,7 @@ class CrearMaterial extends Component
         $user = Auth::user();
         if (! $user) {
             $this->dispatch('error-general', mensaje: 'Debe iniciar sesión para publicar materiales.');
+
             return;
         }
 
@@ -96,6 +100,7 @@ class CrearMaterial extends Component
         if (! ($analisisServidor['puede_guardar'] ?? false)) {
             $primerBloqueo = $analisisServidor['bloqueos'][0] ?? 'El material no cumple con los requisitos de publicación.';
             $this->dispatch('error-general', mensaje: $primerBloqueo);
+
             return;
         }
 
@@ -116,7 +121,7 @@ class CrearMaterial extends Component
                 ->orderByDesc('cod_mat')
                 ->value('cod_mat');
             $num = $ultimo ? ((int) str_replace('MATC_', '', $ultimo)) + 1 : 1;
-            $codMat = 'MATC_' . str_pad($num, 4, '0', STR_PAD_LEFT);
+            $codMat = 'MATC_'.str_pad($num, 4, '0', STR_PAD_LEFT);
 
             $material = MaterialClase::create([
                 'cod_mat' => $codMat,
@@ -150,7 +155,7 @@ class CrearMaterial extends Component
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
-            $this->dispatch('error-general', mensaje: 'Ocurrió un error al publicar el material: ' . $e->getMessage());
+            $this->dispatch('error-general', mensaje: 'Ocurrió un error al publicar el material: '.$e->getMessage());
         }
     }
 

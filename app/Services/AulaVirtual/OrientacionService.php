@@ -117,7 +117,7 @@ class OrientacionService
 
         abort_if($actividad->respuestas()->count() < $preguntas->count(), 422, 'Responde las 30 preguntas antes de finalizar.');
 
-        return DB::transaction(function () use ($actividad, $preguntas) {
+        return DB::transaction(function () use ($actividad) {
             $respuestas = $actividad->respuestas()->with('pregunta')->get();
             $porcentajes = [];
 

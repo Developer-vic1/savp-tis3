@@ -10,7 +10,6 @@ use App\Models\Docente;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -22,8 +21,11 @@ class Bloque3TareasCompletoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUserA;
+
     protected User $docenteUserB;
+
     protected ClaseVirtual $claseA;
+
     protected Tarea $tareaA;
 
     protected function setUp(): void

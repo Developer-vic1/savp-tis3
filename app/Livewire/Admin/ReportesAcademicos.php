@@ -14,9 +14,13 @@ use Livewire\Component;
 class ReportesAcademicos extends Component
 {
     public string $periodoFiltro = '';
+
     public string $asignaturaFiltro = '';
+
     public string $estudianteFiltro = '';
+
     public string $especialidadFiltro = '';
+
     public string $desempenoFiltro = '';
 
     public function limpiarFiltros(): void
@@ -83,13 +87,14 @@ class ReportesAcademicos extends Component
                     'estudiantes' => $cantidad,
                     'porcentaje' => round(($cantidad / $totalEstudiantes) * 100, 1),
                     'promedio' => round((float) $items->avg('not_cal'), 2),
-                    'explicacion' => "La orientación se calcula con la especialidad BTH y el rendimiento académico disponible.",
+                    'explicacion' => 'La orientación se calcula con la especialidad BTH y el rendimiento académico disponible.',
                 ];
             })
             ->sortByDesc('estudiantes')
             ->values();
 
         return view('livewire.admin.reportes-academicos', [
+            'reportesPorRevisar' => $soporte->reportesAnterioresACambios(),
             'calificaciones' => $calificaciones,
             'rendimientoAsignatura' => $rendimientoAsignatura,
             'rendimientoPeriodo' => $rendimientoPeriodo,

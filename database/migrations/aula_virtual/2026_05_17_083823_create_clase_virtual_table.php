@@ -10,13 +10,16 @@ return new class extends Migration
     {
         Schema::create('clase_virtual', function (Blueprint $table) {
             $table->string('cod_cla', 20)->primary();
-            $table->string('cod_pas', 20);
+            $table->string('cod_pas', 20)->nullable();
+            $table->string('cod_pes', 20)->nullable();
 
             $table->string('nom_cla', 150);
             $table->text('des_cla')->nullable();
 
             $table->date('fec_ini_cla')->nullable();
             $table->date('fec_fin_cla')->nullable();
+
+            $table->boolean('vis_cla')->default(false);
 
             $table->enum('est_cla', [
                 'ACTIVA',
@@ -33,9 +36,18 @@ return new class extends Migration
                 ->restrictOnDelete()
                 ->cascadeOnUpdate();
 
+            $table->foreign('cod_pes')
+                ->references('cod_pes')
+                ->on('plan_especialidad')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
             $table->index('cod_pas');
+            $table->index('cod_pes');
+            $table->index('vis_cla');
             $table->index('est_cla');
             $table->index(['cod_pas', 'est_cla']);
+            $table->index(['cod_pes', 'est_cla']);
             $table->index(['fec_ini_cla', 'fec_fin_cla']);
         });
     }

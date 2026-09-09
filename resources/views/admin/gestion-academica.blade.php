@@ -34,5 +34,6 @@
         </section>
 
         @livewire('admin.gestion-academica')
+        <a href="{{ route('admin.calendario-academico') }}" class="ui-btn-secondary">Calendario Académico</a>
     </div>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Support\Academico;
 
+use App\Models\HorarioBloque;
 use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -13,18 +14,27 @@ use Throwable;
 class TurnoInteligente extends SoporteInteligenteBase
 {
     public const ESTADO_VALIDO = 'VALIDO';
+
     public const ESTADO_ADVERTENCIA = 'ADVERTENCIA';
+
     public const ESTADO_OBSERVADO = 'OBSERVADO';
+
     public const ESTADO_BLOQUEADO = 'BLOQUEADO';
+
     public const ESTADO_INCOMPLETO = 'INCOMPLETO';
+
     public const ESTADO_CORREGIBLE = 'CORREGIBLE';
 
     public const ACTIVO = 'ACTIVO';
+
     public const INACTIVO = 'INACTIVO';
 
     public const TIPO_REGULAR = 'REGULAR';
+
     public const TIPO_INVIERNO = 'INVIERNO';
+
     public const TIPO_AJUSTE = 'AJUSTE';
+
     public const TIPO_EMERGENCIA = 'EMERGENCIA';
 
     public const TIPOS_PLANTILLA_OPERATIVOS = [
@@ -55,17 +65,22 @@ class TurnoInteligente extends SoporteInteligenteBase
     ];
 
     public const DIAS_HABILES_CURRICULARES = 200;
+
     public const CANTIDAD_TRIMESTRES = 3;
+
     public const DESCANSO_PEDAGOGICO_DIAS_HABILES = 10;
 
     // Referencia normativa (sugerencia, no bloqueo rígido)
     public const DURACION_BLOQUE_REGULAR_REFERENCIAL = 40;
+
     public const DURACION_BLOQUE_INVIERNO_REFERENCIAL = 30;
 
     public const DURACION_MINIMA_BLOQUE = 5;
+
     public const DURACION_MAXIMA_BLOQUE = 120;
 
     public const DURACION_MINIMA_TURNO = 30;
+
     public const DURACION_MAXIMA_TURNO_RECOMENDADA = 420;
 
     // ============================================================
@@ -193,7 +208,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
         $puedeCorregir = empty($bloqueos) && (
             $bloquesSinPlantillaGlobal->isNotEmpty()
-            || collect($diagnosticoTurnos)->contains(fn($item) => ! $item['plantilla_regular_existe'])
+            || collect($diagnosticoTurnos)->contains(fn ($item) => ! $item['plantilla_regular_existe'])
         );
 
         return $this->resultado(
@@ -1002,7 +1017,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         foreach ($turnos as $turno) {
             $plantillaRegular = $this->obtenerPlantillaRegular($turno->cod_tur);
             $plantillasInvierno = $this->plantillasInviernoPorTurno($turno->cod_tur)
-                ->filter(fn($plantilla) => $this->fechaValida($plantilla->fec_ini_pho ?? null) && $this->fechaValida($plantilla->fec_fin_pho ?? null))
+                ->filter(fn ($plantilla) => $this->fechaValida($plantilla->fec_ini_pho ?? null) && $this->fechaValida($plantilla->fec_fin_pho ?? null))
                 ->sortBy('fec_ini_pho')
                 ->values();
 
@@ -1273,7 +1288,7 @@ class TurnoInteligente extends SoporteInteligenteBase
                     $turno
                 );
             })
-            ->map(fn($bloque) => $this->mapearBloque($bloque))
+            ->map(fn ($bloque) => $this->mapearBloque($bloque))
             ->values()
             ->all();
     }
@@ -1281,7 +1296,7 @@ class TurnoInteligente extends SoporteInteligenteBase
     public function detectarSolapamientosPorPlantilla(string $codPho): array
     {
         $bloques = $this->bloquesPorPlantilla($codPho)
-            ->filter(fn($bloque) => $this->horaValida($bloque->hor_ini_hbl ?? null) && $this->horaValida($bloque->hor_fin_hbl ?? null))
+            ->filter(fn ($bloque) => $this->horaValida($bloque->hor_ini_hbl ?? null) && $this->horaValida($bloque->hor_fin_hbl ?? null))
             ->sortBy('hor_ini_hbl')
             ->values();
 
@@ -1326,7 +1341,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         $fin = $this->minutosDesdeMedianoche($horaFin);
 
         $bloques = $this->bloquesPorPlantilla($codPho)
-            ->when($codHblIgnorado, fn($collection) => $collection->where('cod_hbl', '!=', $codHblIgnorado))
+            ->when($codHblIgnorado, fn ($collection) => $collection->where('cod_hbl', '!=', $codHblIgnorado))
             ->filter(function ($bloque) use ($inicio, $fin) {
                 if (! $this->horaValida($bloque->hor_ini_hbl ?? null) || ! $this->horaValida($bloque->hor_fin_hbl ?? null)) {
                     return false;
@@ -1337,7 +1352,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
                 return $inicio < $finExistente && $fin > $inicioExistente;
             })
-            ->map(fn($bloque) => $this->mapearBloque($bloque))
+            ->map(fn ($bloque) => $this->mapearBloque($bloque))
             ->values()
             ->all();
 
@@ -1360,7 +1375,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         $fin = $this->minutosDesdeMedianoche($horaFin);
 
         $turnos = DB::table('turno')
-            ->when($codTurIgnorado, fn($query) => $query->where('cod_tur', '!=', $codTurIgnorado))
+            ->when($codTurIgnorado, fn ($query) => $query->where('cod_tur', '!=', $codTurIgnorado))
             ->get()
             ->filter(function ($turno) use ($inicio, $fin) {
                 if (! $this->horaValida($turno->hor_ini_tur ?? null) || ! $this->horaValida($turno->hor_fin_tur ?? null)) {
@@ -1372,7 +1387,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
                 return $inicio < $finExistente && $fin > $inicioExistente;
             })
-            ->map(fn($turno) => [
+            ->map(fn ($turno) => [
                 'turno' => $turno->nom_tur ?? 'Turno',
                 'rango' => $this->rangoTurnoTexto($turno),
             ])
@@ -1388,7 +1403,7 @@ class TurnoInteligente extends SoporteInteligenteBase
     public function detectarPlantillasInviernoSolapadas(string $codTur): array
     {
         $plantillas = $this->plantillasInviernoPorTurno($codTur)
-            ->filter(fn($p) => $this->fechaValida($p->fec_ini_pho ?? null) && $this->fechaValida($p->fec_fin_pho ?? null))
+            ->filter(fn ($p) => $this->fechaValida($p->fec_ini_pho ?? null) && $this->fechaValida($p->fec_fin_pho ?? null))
             ->sortBy('fec_ini_pho')
             ->values();
 
@@ -1430,7 +1445,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         $fin = Carbon::parse($fechaFin)->startOfDay();
 
         return $this->plantillasInviernoPorTurno($codTur)
-            ->when($codPhoIgnorado, fn($collection) => $collection->where('cod_pho', '!=', $codPhoIgnorado))
+            ->when($codPhoIgnorado, fn ($collection) => $collection->where('cod_pho', '!=', $codPhoIgnorado))
             ->filter(function ($plantilla) use ($inicio, $fin) {
                 if (! $this->fechaValida($plantilla->fec_ini_pho ?? null) || ! $this->fechaValida($plantilla->fec_fin_pho ?? null)) {
                     return false;
@@ -1441,7 +1456,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
                 return $inicio->lessThanOrEqualTo($finExistente) && $fin->greaterThanOrEqualTo($inicioExistente);
             })
-            ->map(fn($plantilla) => $this->mapearPlantilla($plantilla))
+            ->map(fn ($plantilla) => $this->mapearPlantilla($plantilla))
             ->values()
             ->all();
     }
@@ -1460,7 +1475,7 @@ class TurnoInteligente extends SoporteInteligenteBase
             ->orderBy('cod_tur')
             ->orderBy('ord_pho')
             ->get()
-            ->map(fn($plantilla) => $this->mapearPlantilla($plantilla))
+            ->map(fn ($plantilla) => $this->mapearPlantilla($plantilla))
             ->values()
             ->all();
     }
@@ -1737,9 +1752,9 @@ class TurnoInteligente extends SoporteInteligenteBase
         $canonico = $this->normalizarCanonico($nombre);
 
         return DB::table('turno')
-            ->when($codTurIgnorado, fn($query) => $query->where('cod_tur', '!=', $codTurIgnorado))
+            ->when($codTurIgnorado, fn ($query) => $query->where('cod_tur', '!=', $codTurIgnorado))
             ->get()
-            ->contains(fn($turno) => $this->normalizarCanonico($turno->nom_tur ?? '') === $canonico);
+            ->contains(fn ($turno) => $this->normalizarCanonico($turno->nom_tur ?? '') === $canonico);
     }
 
     private function existePlantillaDuplicada(?string $codTur, string $tipo, ?string $nombre, ?string $codPhoIgnorado = null): bool
@@ -1752,7 +1767,7 @@ class TurnoInteligente extends SoporteInteligenteBase
             ->where('cod_tur', $codTur)
             ->where('tip_pho', $tipo)
             ->whereRaw('LOWER(nom_pho) = ?', [mb_strtolower((string) $nombre)])
-            ->when($codPhoIgnorado, fn($query) => $query->where('cod_pho', '!=', $codPhoIgnorado))
+            ->when($codPhoIgnorado, fn ($query) => $query->where('cod_pho', '!=', $codPhoIgnorado))
             ->exists();
     }
 
@@ -1766,7 +1781,7 @@ class TurnoInteligente extends SoporteInteligenteBase
             ->where('cod_tur', $codTur)
             ->where('tip_pho', self::TIPO_REGULAR)
             ->where('act_pho', true)
-            ->when($codPhoIgnorado, fn($query) => $query->where('cod_pho', '!=', $codPhoIgnorado))
+            ->when($codPhoIgnorado, fn ($query) => $query->where('cod_pho', '!=', $codPhoIgnorado))
             ->exists();
     }
 
@@ -1779,7 +1794,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         return DB::table('horario_bloque')
             ->where('cod_pho', $codPho)
             ->where('num_hbl', $numero)
-            ->when($codHblIgnorado, fn($query) => $query->where('cod_hbl', '!=', $codHblIgnorado))
+            ->when($codHblIgnorado, fn ($query) => $query->where('cod_hbl', '!=', $codHblIgnorado))
             ->exists();
     }
 
@@ -1932,9 +1947,9 @@ class TurnoInteligente extends SoporteInteligenteBase
         }
 
         $bloques = $this->bloquesPorPlantilla($codPho)
-            ->filter(fn($b) => $this->horaValida($b->hor_ini_hbl ?? null) && $this->horaValida($b->hor_fin_hbl ?? null));
+            ->filter(fn ($b) => $this->horaValida($b->hor_ini_hbl ?? null) && $this->horaValida($b->hor_fin_hbl ?? null));
 
-        $minutosBloques = $bloques->sum(fn($b) => max(0, $this->calcularDuracionMinutos($b->hor_ini_hbl, $b->hor_fin_hbl)));
+        $minutosBloques = $bloques->sum(fn ($b) => max(0, $this->calcularDuracionMinutos($b->hor_ini_hbl, $b->hor_fin_hbl)));
         $minutosTurno = $this->calcularDuracionMinutos($turno->hor_ini_tur ?? null, $turno->hor_fin_tur ?? null);
 
         return [
@@ -2198,7 +2213,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
         do {
             $numero++;
-            $codigo = $prefijo . '_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+            $codigo = $prefijo.'_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
         } while (DB::table($tabla)->where($columna, $codigo)->exists());
 
         return $codigo;
@@ -2211,7 +2226,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         }
 
         return collect($datos)
-            ->filter(fn($value, $key) => Schema::hasColumn($tabla, $key))
+            ->filter(fn ($value, $key) => Schema::hasColumn($tabla, $key))
             ->all();
     }
 
@@ -2227,7 +2242,7 @@ class TurnoInteligente extends SoporteInteligenteBase
                         'registro' => $registro,
                         'descripcion' => $descripcion,
                     ])
-                    ->log($accion . ' - ' . $descripcion);
+                    ->log($accion.' - '.$descripcion);
             }
         } catch (Throwable) {
             //
@@ -2256,7 +2271,7 @@ class TurnoInteligente extends SoporteInteligenteBase
     private function datosMinimosVacios(array $datos): bool
     {
         return collect($datos)
-            ->filter(fn($valor) => $this->tieneValor($valor))
+            ->filter(fn ($valor) => $this->tieneValor($valor))
             ->count() <= 1;
     }
 
@@ -2312,7 +2327,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         }
 
         if (preg_match('/^([01]?\d|2[0-3]):([0-5]\d)(:[0-5]\d)?$/', $hora, $m)) {
-            return str_pad((string) $m[1], 2, '0', STR_PAD_LEFT) . ':' . $m[2];
+            return str_pad((string) $m[1], 2, '0', STR_PAD_LEFT).':'.$m[2];
         }
 
         return $hora;
@@ -2390,6 +2405,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
         if (! $this->tieneValor($codPho)) {
             $bloqueos[] = 'Debes seleccionar una plantilla horaria.';
+
             return $this->resultadoGeneracion(
                 false,
                 self::ESTADO_BLOQUEADO,
@@ -2406,6 +2422,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         $plantilla = $this->obtenerPlantilla($codPho);
         if (! $plantilla) {
             $bloqueos[] = 'La plantilla seleccionada no existe.';
+
             return $this->resultadoGeneracion(
                 false,
                 self::ESTADO_BLOQUEADO,
@@ -2423,6 +2440,7 @@ class TurnoInteligente extends SoporteInteligenteBase
         $turno = $codTur ? $this->obtenerTurno($codTur) : null;
         if (! $turno) {
             $bloqueos[] = 'La plantilla seleccionada no está asociada a un turno válido.';
+
             return $this->resultadoGeneracion(
                 false,
                 self::ESTADO_BLOQUEADO,
@@ -2612,7 +2630,7 @@ class TurnoInteligente extends SoporteInteligenteBase
             'advertencias' => array_values(array_unique($advertencias)),
             'sugerencias' => array_values(array_unique($sugerencias)),
             'resumen' => $resumen,
-            'preview_bloques' => $preview
+            'preview_bloques' => $preview,
         ];
     }
 
@@ -2644,11 +2662,11 @@ class TurnoInteligente extends SoporteInteligenteBase
     public function guardarBloquesAutomaticos(array $datos): array
     {
         $analisis = $this->analizarGeneracionAutomaticaBloques($datos);
-        if (!$analisis['puede_continuar']) {
+        if (! $analisis['puede_continuar']) {
             return [
                 'success' => false,
                 'mensaje' => $analisis['mensaje'] ?? 'Error de validación inteligente.',
-                'bloqueos' => $analisis['bloqueos'] ?? []
+                'bloqueos' => $analisis['bloqueos'] ?? [],
             ];
         }
 
@@ -2694,7 +2712,7 @@ class TurnoInteligente extends SoporteInteligenteBase
 
             // Insertamos los nuevos bloques
             foreach ($analisis['preview_bloques'] as $bloqueData) {
-                $bloque = new \App\Models\HorarioBloque();
+                $bloque = new HorarioBloque;
                 $bloque->cod_pho = $codPho;
                 $bloque->num_hbl = $bloqueData['numero'];
                 $bloque->nom_hbl = $bloqueData['nombre'];
@@ -2744,13 +2762,14 @@ class TurnoInteligente extends SoporteInteligenteBase
             return [
                 'success' => true,
                 'mensaje' => 'Bloques autogenerados y guardados correctamente (sin eliminación física).',
-                'cantidad' => count($analisis['preview_bloques'])
+                'cantidad' => count($analisis['preview_bloques']),
             ];
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
+
             return [
                 'success' => false,
-                'mensaje' => 'Error al guardar los bloques autogenerados: ' . $e->getMessage()
+                'mensaje' => 'Error al guardar los bloques autogenerados: '.$e->getMessage(),
             ];
         }
     }

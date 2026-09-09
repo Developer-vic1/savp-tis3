@@ -6,7 +6,6 @@ use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 class EntregaTareaInteligente extends SoporteInteligenteBase
 {

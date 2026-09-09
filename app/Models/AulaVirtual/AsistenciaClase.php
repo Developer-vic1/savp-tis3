@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class AsistenciaClase extends Model
 {
     protected $table = 'asistencia_clase';
+
     protected $primaryKey = 'cod_asi_cla';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -54,7 +56,7 @@ class AsistenciaClase extends Model
                     ? ((int) str_replace('ASIC_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $asistenciaClase->cod_asi_cla = 'ASIC_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $asistenciaClase->cod_asi_cla = 'ASIC_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

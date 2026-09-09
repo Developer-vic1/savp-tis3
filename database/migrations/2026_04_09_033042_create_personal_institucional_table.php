@@ -14,9 +14,9 @@ return new class extends Migration
 
             $table->string('cod_per', 20); // Código persona
             $table->foreign('cod_per')
-                  ->references('cod_per')
-                  ->on('persona')
-                  ->cascadeOnDelete();
+                ->references('cod_per')
+                ->on('persona')
+                ->cascadeOnDelete();
 
             $table->string('car_pin', 100); // Cargo institucional
 

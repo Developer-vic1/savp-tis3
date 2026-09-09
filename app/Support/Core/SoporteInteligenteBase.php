@@ -2,34 +2,46 @@
 
 namespace App\Support\Core;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 abstract class SoporteInteligenteBase
 {
     // Estados generales
     public const ESTADO_OK = 'OK';
+
     public const ESTADO_OBSERVADO = 'OBSERVADO';
+
     public const ESTADO_ALERTA = 'ALERTA';
+
     public const ESTADO_BLOQUEADO = 'BLOQUEADO';
 
     // Niveles de riesgo
     public const RIESGO_BAJO = 'BAJO';
+
     public const RIESGO_MEDIO = 'MEDIO';
+
     public const RIESGO_ALTO = 'ALTO';
+
     public const RIESGO_CRITICO = 'CRITICO';
 
     // Tipos de regla
     public const TIPO_INTEGRIDAD = 'INTEGRIDAD';
+
     public const TIPO_NORMATIVA = 'NORMATIVA';
+
     public const TIPO_INSTITUCIONAL = 'INSTITUCIONAL';
+
     public const TIPO_PEDAGOGICA = 'PEDAGOGICA';
+
     public const TIPO_ESTADISTICA = 'ESTADISTICA';
+
     public const TIPO_RECOMENDACION = 'RECOMENDACION';
 
     // Comportamientos
     public const COMP_BLOQUEO = 'BLOQUEO';
+
     public const COMP_ADVERTENCIA = 'ADVERTENCIA';
+
     public const COMP_SUGERENCIA = 'SUGERENCIA';
 
     /**

@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Horario extends Model
 {
     protected $table = 'horario';
+
     protected $primaryKey = 'cod_hor';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -49,7 +51,7 @@ class Horario extends Model
                 ? (int) str_replace('HOR_', '', $ultimoCodigo)
                 : 0;
 
-            $horario->cod_hor = 'HOR_' . str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
+            $horario->cod_hor = 'HOR_'.str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
         });
     }
 

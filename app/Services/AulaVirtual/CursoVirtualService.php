@@ -2,7 +2,6 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\AsistenciaClase;
 use App\Models\AulaVirtual\AsistenciaEstudiante;
 use App\Models\AulaVirtual\ClaseVirtual;
 use App\Models\AulaVirtual\EntregaTarea;
@@ -100,7 +99,7 @@ class CursoVirtualService
         $estudiante = $this->estudianteDeUsuario($user);
 
         if (! $estudiante) {
-            return new Collection();
+            return new Collection;
         }
 
         return ClaseVirtual::query()
@@ -119,12 +118,15 @@ class CursoVirtualService
         $docente = $this->docenteDeUsuario($user);
 
         if (! $docente) {
-            return new Collection();
+            return new Collection;
         }
 
         return ClaseVirtual::query()
             ->with($this->relacionesCurso())
-            ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $docente->cod_doc))
+            ->where(function ($query) use ($docente) {
+                $query->whereHas('planAsignatura', fn ($q) => $q->where('cod_doc', $docente->cod_doc))
+                    ->orWhereHas('planEspecialidad', fn ($q) => $q->where('cod_doc', $docente->cod_doc));
+            })
             ->whereIn('est_cla', ['ACTIVA', 'CERRADA'])
             ->orderBy('nom_cla')
             ->get();
@@ -166,7 +168,10 @@ class CursoVirtualService
         return ClaseVirtual::query()
             ->with($this->relacionesCurso())
             ->where('cod_cla', $codClase)
-            ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $docente->cod_doc))
+            ->where(function ($query) use ($docente) {
+                $query->whereHas('planAsignatura', fn ($q) => $q->where('cod_doc', $docente->cod_doc))
+                    ->orWhereHas('planEspecialidad', fn ($q) => $q->where('cod_doc', $docente->cod_doc));
+            })
             ->whereIn('est_cla', ['ACTIVA', 'CERRADA'])
             ->first();
     }
@@ -179,9 +184,12 @@ class CursoVirtualService
         }
 
         return Tarea::query()
-            ->with('claseVirtual.planAsignatura')
+            ->with(['claseVirtual.planAsignatura', 'claseVirtual.planEspecialidad'])
             ->where('cod_tar', $codTar)
-            ->whereHas('claseVirtual.planAsignatura', fn ($q) => $q->where('cod_doc', $docente->cod_doc))
+            ->whereHas('claseVirtual', function ($q) use ($docente) {
+                $q->whereHas('planAsignatura', fn ($sq) => $sq->where('cod_doc', $docente->cod_doc))
+                    ->orWhereHas('planEspecialidad', fn ($sq) => $sq->where('cod_doc', $docente->cod_doc));
+            })
             ->first();
     }
 
@@ -210,9 +218,12 @@ class CursoVirtualService
         }
 
         return MaterialClase::query()
-            ->with('claseVirtual.planAsignatura')
+            ->with(['claseVirtual.planAsignatura', 'claseVirtual.planEspecialidad'])
             ->where('cod_mat', $codMat)
-            ->whereHas('claseVirtual.planAsignatura', fn ($q) => $q->where('cod_doc', $docente->cod_doc))
+            ->whereHas('claseVirtual', function ($q) use ($docente) {
+                $q->whereHas('planAsignatura', fn ($sq) => $sq->where('cod_doc', $docente->cod_doc))
+                    ->orWhereHas('planEspecialidad', fn ($sq) => $sq->where('cod_doc', $docente->cod_doc));
+            })
             ->first();
     }
 
@@ -231,6 +242,176 @@ class CursoVirtualService
                 $q->where('cod_est', $estudiante->cod_est)->where('est_cla_est', 'ACTIVO');
             })
             ->first();
+    }
+
+    /**
+     * Devuelve una colección ligera de cursos disponibles para el buscador
+     * global del Aula Virtual.
+     *
+     * IMPORTANTE:
+     * - Nunca devuelve cursos ajenos al usuario autenticado.
+     * - No utiliza cursosEstudiante()/cursosDocente() porque esas funciones
+     *   cargan relaciones mucho más pesadas necesarias para otras pantallas.
+     * - Esta consulta está optimizada específicamente para el topbar.
+     */
+    public function cursosParaBuscador(User $user): BaseCollection
+    {
+        $resultados = collect();
+
+        /*
+    |--------------------------------------------------------------------------
+    | Cursos como estudiante
+    |--------------------------------------------------------------------------
+    */
+        if (
+            $user->can('Aula_Virtual_Estudiante')
+            || $user->hasRole('Estudiante')
+        ) {
+            $estudiante = $this->estudianteDeUsuario($user);
+
+            if ($estudiante) {
+                $cursosEstudiante = ClaseVirtual::query()
+                    ->select([
+                        'cod_cla',
+                        'cod_pas',
+                        'nom_cla',
+                        'est_cla',
+                    ])
+                    ->with([
+                        'planAsignatura:cod_pas,cod_asi,cod_doc,cod_cur,cod_par',
+                        'planAsignatura.asignatura:cod_asi,nom_asi,sig_asi',
+                        'planAsignatura.curso:cod_cur,nom_cur,niv_cur',
+                        'planAsignatura.paralelo:cod_par,nom_par',
+                    ])
+                    ->whereHas('estudiantes', function ($query) use ($estudiante) {
+                        $query
+                            ->where('cod_est', $estudiante->cod_est)
+                            ->where('est_cla_est', 'ACTIVO');
+                    })
+                    ->where('est_cla', 'ACTIVA')
+                    ->orderBy('nom_cla')
+                    ->get();
+
+                foreach ($cursosEstudiante as $curso) {
+                    $resultados->push(
+                        $this->formatearCursoParaBuscador(
+                            $curso,
+                            'Estudiante'
+                        )
+                    );
+                }
+            }
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Cursos como docente
+    |--------------------------------------------------------------------------
+    */
+        if (
+            $user->can('Aula_Virtual_Docente')
+            || $user->hasRole('Docente')
+        ) {
+            $docente = $this->docenteDeUsuario($user);
+
+            if ($docente) {
+                $cursosDocente = ClaseVirtual::query()
+                    ->select([
+                        'cod_cla',
+                        'cod_pas',
+                        'nom_cla',
+                        'est_cla',
+                    ])
+                    ->with([
+                        'planAsignatura:cod_pas,cod_asi,cod_doc,cod_cur,cod_par',
+                        'planAsignatura.asignatura:cod_asi,nom_asi,sig_asi',
+                        'planAsignatura.curso:cod_cur,nom_cur,niv_cur',
+                        'planAsignatura.paralelo:cod_par,nom_par',
+                    ])
+                    ->whereHas(
+                        'planAsignatura',
+                        fn ($query) => $query
+                            ->where('cod_doc', $docente->cod_doc)
+                    )
+                    ->whereIn('est_cla', [
+                        'ACTIVA',
+                        'CERRADA',
+                    ])
+                    ->orderBy('nom_cla')
+                    ->get();
+
+                foreach ($cursosDocente as $curso) {
+                    $resultados->push(
+                        $this->formatearCursoParaBuscador(
+                            $curso,
+                            'Docente'
+                        )
+                    );
+                }
+            }
+        }
+
+        return $resultados
+            ->unique(
+                fn (array $item) => $item['contexto'].'|'.$item['cod_cla']
+            )
+            ->values();
+    }
+
+    /**
+     * Convierte una ClaseVirtual en información segura y ligera
+     * para mostrar en el buscador.
+     */
+    private function formatearCursoParaBuscador(
+        ClaseVirtual $curso,
+        string $contexto
+    ): array {
+        $plan = $curso->planAsignatura;
+
+        $asignatura = $plan?->asignatura?->nom_asi;
+        $sigla = $plan?->asignatura?->sig_asi;
+
+        $cursoAcademico = $plan?->curso?->nom_cur;
+        $paralelo = $plan?->paralelo?->nom_par;
+
+        $titulo = trim((string) $curso->nom_cla);
+
+        if ($titulo === '') {
+            $titulo = $asignatura
+                ?: 'Curso virtual';
+        }
+
+        $detalle = collect([
+            $asignatura,
+            $cursoAcademico,
+            $paralelo
+                ? 'Paralelo '.$paralelo
+                : null,
+        ])
+            ->filter()
+            ->unique()
+            ->implode(' · ');
+
+        $keywords = collect([
+            $titulo,
+            $asignatura,
+            $sigla,
+            $cursoAcademico,
+            $paralelo,
+            $curso->cod_cla,
+            $contexto,
+        ])
+            ->filter()
+            ->implode(' ');
+
+        return [
+            'cod_cla' => $curso->cod_cla,
+            'label' => $titulo,
+            'subtitle' => $detalle ?: 'Curso virtual',
+            'keywords' => $keywords,
+            'contexto' => $contexto,
+            'estado' => $curso->est_cla,
+        ];
     }
 
     public function dashboardEstudiante(User $user): array
@@ -252,14 +433,14 @@ class CursoVirtualService
                 ->where('cod_est', $estudiante->cod_est)
                 ->whereIn('cod_tar', $tareas->pluck('cod_tar'))
                 ->get()
-            : new Collection();
+            : new Collection;
 
         $pendientes = $tareas->filter(function (Tarea $tarea) use ($entregas) {
             $entregasTarea = $entregas->where('cod_tar', $tarea->cod_tar);
             if ($entregasTarea->isEmpty()) {
                 return true;
             }
-            $mejorEntrega = $entregasTarea->sortByDesc(fn ($e) => match($e->est_ent) {
+            $mejorEntrega = $entregasTarea->sortByDesc(fn ($e) => match ($e->est_ent) {
                 'CALIFICADO' => 6,
                 'ENTREGADO' => 5,
                 'ENTREGADO_TARDE' => 4,
@@ -376,12 +557,12 @@ class CursoVirtualService
         $materiales = $curso->materiales->where('est_mat', 'ACTIVO');
         $entregas = $estudiante
             ? EntregaTarea::query()->where('cod_est', $estudiante->cod_est)->whereIn('cod_tar', $tareas->pluck('cod_tar'))->get()
-            : new BaseCollection();
+            : new BaseCollection;
 
         return [
             'tareas_pendientes' => $estudiante
                 ? $tareas->where('est_tar', 'PUBLICADA')->filter(function ($tarea) use ($entregas) {
-                    $mejorEntrega = $entregas->where('cod_tar', $tarea->cod_tar)->sortByDesc(fn ($e) => match($e->est_ent) {
+                    $mejorEntrega = $entregas->where('cod_tar', $tarea->cod_tar)->sortByDesc(fn ($e) => match ($e->est_ent) {
                         'CALIFICADO' => 6,
                         'ENTREGADO' => 5,
                         'ENTREGADO_TARDE' => 4,
@@ -390,6 +571,7 @@ class CursoVirtualService
                         'ANULADO' => 1,
                         default => 0,
                     })->first();
+
                     return ! $mejorEntrega || ! in_array($mejorEntrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO']);
                 })->count()
                 : $tareas->where('est_tar', 'PUBLICADA')->count(),
@@ -410,6 +592,12 @@ class CursoVirtualService
             'planAsignatura.paralelo',
             'planAsignatura.turno',
             'planAsignatura.gestionAcademica',
+            'planEspecialidad.especialidad',
+            'planEspecialidad.docente.personalInstitucional.persona',
+            'planEspecialidad.curso',
+            'planEspecialidad.paralelo',
+            'planEspecialidad.turno',
+            'planEspecialidad.gestionAcademica',
             'estudiantes.estudiante.persona',
             'materiales',
             'tareas.entregas.calificacion',

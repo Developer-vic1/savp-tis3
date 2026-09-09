@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ActividadClase extends Model
 {
     protected $table = 'actividad_clase';
+
     protected $primaryKey = 'cod_act_cla';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -46,7 +48,7 @@ class ActividadClase extends Model
                     ? ((int) str_replace('ACTC_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $actividadClase->cod_act_cla = 'ACTC_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $actividadClase->cod_act_cla = 'ACTC_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
 
             if (! $actividadClase->fec_act) {

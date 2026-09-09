@@ -7,7 +7,6 @@ use App\Livewire\Admin\GestionUsuarios;
 use App\Models\Persona;
 use App\Models\User;
 use App\Support\Usuarios\UsuarioInteligente;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;

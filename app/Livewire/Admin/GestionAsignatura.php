@@ -27,10 +27,15 @@ class GestionAsignatura extends Component
     */
 
     public string $search = '';
+
     public string $estado = '';
+
     public string $usoAcademico = '';
+
     public int $perPage = 10;
+
     public string $sortField = 'nom_asi';
+
     public string $sortDirection = 'asc';
 
     /*
@@ -40,8 +45,11 @@ class GestionAsignatura extends Component
     */
 
     public bool $modalCrear = false;
+
     public bool $modalEditar = false;
+
     public bool $modalDetalle = false;
+
     public bool $modalCatalogo = false;
 
     /*
@@ -72,6 +80,7 @@ class GestionAsignatura extends Component
     */
 
     public array $analisisCrear = [];
+
     public array $analisisEditar = [];
 
     /*
@@ -81,6 +90,7 @@ class GestionAsignatura extends Component
     */
 
     public ?string $asignaturaSeleccionada = null;
+
     public array $detalleAsignatura = [];
 
     /*
@@ -228,9 +238,9 @@ class GestionAsignatura extends Component
 
             $query->where(function (Builder $subQuery) use ($busqueda) {
                 $subQuery
-                    ->where('cod_asi', 'like', '%' . $busqueda . '%')
-                    ->orWhere('nom_asi', 'like', '%' . $busqueda . '%')
-                    ->orWhere('sig_asi', 'like', '%' . $busqueda . '%');
+                    ->where('cod_asi', 'like', '%'.$busqueda.'%')
+                    ->orWhere('nom_asi', 'like', '%'.$busqueda.'%')
+                    ->orWhere('sig_asi', 'like', '%'.$busqueda.'%');
             });
         }
 
@@ -429,6 +439,7 @@ class GestionAsignatura extends Component
     {
         if (! ($this->analisisCrear['valido'] ?? false)) {
             $this->dispatch('advertencia-general', mensaje: $this->analisisCrear['mensaje'] ?? 'No existe una sugerencia válida para aplicar.');
+
             return;
         }
 
@@ -493,7 +504,7 @@ class GestionAsignatura extends Component
                     tabla: 'asignatura',
                     registro: $asignatura->cod_asi,
                     nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se registró la asignatura ' . $asignatura->nom_asi . ' con validación inteligente.',
+                    descripcion: 'Se registró la asignatura '.$asignatura->nom_asi.' con validación inteligente.',
                     nivel: ($this->analisisCrear['requiere_revision'] ?? false) ? 'WARNING' : 'SUCCESS',
                     resultado: 'EXITOSO',
                     valoresNuevos: [
@@ -578,7 +589,7 @@ class GestionAsignatura extends Component
     public function interpretarAsignaturaEditar(): void
     {
         $existentes = collect($this->obtenerAsignaturasExistentes())
-            ->reject(fn(array $item) => ($item['cod_asi'] ?? null) === ($this->formEditar['cod_asi'] ?? null))
+            ->reject(fn (array $item) => ($item['cod_asi'] ?? null) === ($this->formEditar['cod_asi'] ?? null))
             ->values()
             ->toArray();
 
@@ -592,6 +603,7 @@ class GestionAsignatura extends Component
     {
         if (! ($this->analisisEditar['valido'] ?? false)) {
             $this->dispatch('advertencia-general', mensaje: $this->analisisEditar['mensaje'] ?? 'No existe una sugerencia válida para aplicar.');
+
             return;
         }
 
@@ -624,6 +636,7 @@ class GestionAsignatura extends Component
 
         if (($this->analisisEditar['duplicado'] ?? false) === true) {
             $this->addError('formEditar.nom_asi', 'Existe otra asignatura equivalente o con la misma sigla.');
+
             return;
         }
 
@@ -664,7 +677,7 @@ class GestionAsignatura extends Component
                     tabla: 'asignatura',
                     registro: $asignatura->cod_asi,
                     nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se actualizó la asignatura ' . $asignatura->nom_asi . '.',
+                    descripcion: 'Se actualizó la asignatura '.$asignatura->nom_asi.'.',
                     nivel: $nivel,
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -758,6 +771,7 @@ class GestionAsignatura extends Component
 
         if (! ($analisis['valido'] ?? false)) {
             $this->dispatch('advertencia-general', mensaje: $analisis['mensaje'] ?? 'No se pudo usar esta asignatura del catálogo.');
+
             return;
         }
 
@@ -804,6 +818,7 @@ class GestionAsignatura extends Component
 
         if ($asignatura->est_asi === 'INACTIVO') {
             $this->dispatch('advertencia-general', mensaje: 'La asignatura ya se encuentra inactiva.');
+
             return;
         }
 
@@ -821,7 +836,7 @@ class GestionAsignatura extends Component
                     tabla: 'asignatura',
                     registro: $asignatura->cod_asi,
                     nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se desactivó la asignatura ' . $asignatura->nom_asi . '.',
+                    descripcion: 'Se desactivó la asignatura '.$asignatura->nom_asi.'.',
                     nivel: $uso['total'] > 0 ? 'WARNING' : 'INFO',
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -860,6 +875,7 @@ class GestionAsignatura extends Component
 
         if ($asignatura->est_asi === 'ACTIVO') {
             $this->dispatch('advertencia-general', mensaje: 'La asignatura ya se encuentra activa.');
+
             return;
         }
 
@@ -876,7 +892,7 @@ class GestionAsignatura extends Component
                     tabla: 'asignatura',
                     registro: $asignatura->cod_asi,
                     nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se reactivó la asignatura ' . $asignatura->nom_asi . '.',
+                    descripcion: 'Se reactivó la asignatura '.$asignatura->nom_asi.'.',
                     nivel: 'SUCCESS',
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -957,15 +973,15 @@ class GestionAsignatura extends Component
         $partes = [];
 
         if ($planes > 0) {
-            $partes[] = $planes . ' plan' . ($planes === 1 ? '' : 'es');
+            $partes[] = $planes.' plan'.($planes === 1 ? '' : 'es');
         }
 
         if ($calificaciones > 0) {
-            $partes[] = $calificaciones . ' calificación' . ($calificaciones === 1 ? '' : 'es');
+            $partes[] = $calificaciones.' calificación'.($calificaciones === 1 ? '' : 'es');
         }
 
         if ($horarios > 0) {
-            $partes[] = $horarios . ' horario' . ($horarios === 1 ? '' : 's');
+            $partes[] = $horarios.' horario'.($horarios === 1 ? '' : 's');
         }
 
         return count($partes) > 0 ? implode(' / ', $partes) : 'Sin uso académico';
@@ -1149,7 +1165,7 @@ class GestionAsignatura extends Component
         return Asignatura::query()
             ->select('cod_asi', 'nom_asi', 'sig_asi')
             ->get()
-            ->map(fn(Asignatura $asignatura) => [
+            ->map(fn (Asignatura $asignatura) => [
                 'cod_asi' => $asignatura->cod_asi,
                 'nom_asi' => $asignatura->nom_asi,
                 'sig_asi' => $asignatura->sig_asi,

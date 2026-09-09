@@ -8,7 +8,7 @@ class DatosSAVPTIS3Seeder extends Seeder
 {
     public function run(): void
     {
-        (new SoporteDatosBolivia())->asegurarGestion2026();
+        (new SoporteDatosBolivia)->asegurarGestion2026();
 
         $this->call([
             DatosPersonasSeeder::class,
@@ -21,6 +21,6 @@ class DatosSAVPTIS3Seeder extends Seeder
             DatosOrientacionVocacionalSeeder::class,
         ]);
 
-        (new SoporteDatosBolivia())->imprimirResumen();
+        (new SoporteDatosBolivia)->imprimirResumen();
     }
 }

@@ -46,7 +46,7 @@ class AulaVirtualOrientacionPreguntasSeeder extends Seeder
             $orden = $index + 1;
 
             OrientacionPregunta::updateOrCreate(
-                ['codigo' => 'ORAV-' . str_pad((string) $orden, 2, '0', STR_PAD_LEFT)],
+                ['codigo' => 'ORAV-'.str_pad((string) $orden, 2, '0', STR_PAD_LEFT)],
                 [
                     'dimension' => $dimension,
                     'texto' => $texto,

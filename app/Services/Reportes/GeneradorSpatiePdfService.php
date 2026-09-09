@@ -3,6 +3,8 @@
 namespace App\Services\Reportes;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 /**
  * Servicio Spatie Laravel PDF.
@@ -19,20 +21,20 @@ class GeneradorSpatiePdfService
     /**
      * Intenta generar con Spatie; si falla, usa mPDF como fallback.
      *
-     * @param string $vista     Nombre de la vista Blade
-     * @param array  $datos     Datos para la vista
-     * @param string $archivo   Nombre del archivo de salida
-     * @param string $subcarpeta Subcarpeta en storage
-     * @return string           Ruta relativa del archivo generado
+     * @param  string  $vista  Nombre de la vista Blade
+     * @param  array  $datos  Datos para la vista
+     * @param  string  $archivo  Nombre del archivo de salida
+     * @param  string  $subcarpeta  Subcarpeta en storage
+     * @return string Ruta relativa del archivo generado
      */
     public function generar(string $vista, array $datos, string $archivo, string $subcarpeta): string
     {
         try {
             // Intentar con Spatie PDF (requiere Chromium instalado)
             $ruta = "reportes/{$subcarpeta}/{$archivo}";
-            $path = \Illuminate\Support\Facades\Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
 
-            \Spatie\LaravelPdf\Facades\Pdf::view($vista, $datos)
+            Pdf::view($vista, $datos)
                 ->format('a4')
                 ->save($path);
 

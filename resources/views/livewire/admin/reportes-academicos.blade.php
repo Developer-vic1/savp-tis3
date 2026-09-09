@@ -1,4 +1,9 @@
 <div class="space-y-6">
+    @if($reportesPorRevisar->isNotEmpty())
+        <div class="ui-alert-warning">Existen reportes generados antes de modificaciones académicas posteriores. Revise si corresponde generar una versión actualizada; los archivos anteriores se conservan.
+            <ul>@foreach($reportesPorRevisar as $reporte)<li>{{ $reporte->codigo }} · {{ $reporte->nombre_archivo }}</li>@endforeach</ul>
+        </div>
+    @endif
     <section class="ui-card rounded-[2rem] p-6 sm:p-8">
         <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>

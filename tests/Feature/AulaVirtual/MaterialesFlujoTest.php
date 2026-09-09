@@ -18,6 +18,7 @@ class MaterialesFlujoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUser;
+
     protected string $codCla;
 
     protected function setUp(): void

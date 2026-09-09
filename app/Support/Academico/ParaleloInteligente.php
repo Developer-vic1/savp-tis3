@@ -7,16 +7,23 @@ use App\Support\Core\SoporteInteligenteBase;
 class ParaleloInteligente extends SoporteInteligenteBase
 {
     public const ESTADO_VALIDO = 'VALIDO';
+
     public const ESTADO_REDACTABLE = 'REDACTABLE';
+
     public const ESTADO_DUPLICADO_ACTIVO = 'DUPLICADO_ACTIVO';
+
     public const ESTADO_DUPLICADO_INACTIVO = 'DUPLICADO_INACTIVO';
+
     public const ESTADO_REQUIERE_REVISION = 'REQUIERE_REVISION';
+
     public const ESTADO_BLOQUEADO = 'BLOQUEADO';
 
     public const TELEFONO_SOPORTE = '75836807';
 
     public const MIN_SIMILITUD_DUPLICADO = 96;
+
     public const MIN_SIMILITUD_SIMILAR = 82;
+
     public const MAX_LONGITUD_NOMBRE = 30;
 
     /*
@@ -325,7 +332,7 @@ class ParaleloInteligente extends SoporteInteligenteBase
             }
         }
 
-        usort($coincidencias, fn(array $a, array $b) => $b['similitud'] <=> $a['similitud']);
+        usort($coincidencias, fn (array $a, array $b) => $b['similitud'] <=> $a['similitud']);
 
         return $coincidencias;
     }
@@ -640,7 +647,7 @@ class ParaleloInteligente extends SoporteInteligenteBase
         $mensaje = 'Ya existe un paralelo inactivo con este nombre. Se recomienda reactivarlo en lugar de crear un duplicado.';
 
         if (is_array($bitacora) && ! empty($bitacora['fecha'])) {
-            $mensaje .= ' Fue desactivado el ' . $bitacora['fecha'] . '.';
+            $mensaje .= ' Fue desactivado el '.$bitacora['fecha'].'.';
         }
 
         return self::respuestaBase(
@@ -686,7 +693,7 @@ class ParaleloInteligente extends SoporteInteligenteBase
             requiereSoporte: true,
             advertencias: [
                 'No se puede crear el paralelo porque la entrada no cumple las reglas académicas del catálogo.',
-                'Corrige la redacción o contacta con soporte académico al ' . self::TELEFONO_SOPORTE . '.',
+                'Corrige la redacción o contacta con soporte académico al '.self::TELEFONO_SOPORTE.'.',
             ]
         );
     }
@@ -751,10 +758,10 @@ class ParaleloInteligente extends SoporteInteligenteBase
         foreach ($coincidencias as $coincidencia) {
             if (($coincidencia['similitud'] ?? 0) >= self::MIN_SIMILITUD_SIMILAR) {
                 $advertencias[] = 'Existe un paralelo similar: '
-                    . ($coincidencia['nombre'] ?? 'sin nombre')
-                    . ' con estado '
-                    . ($coincidencia['estado'] ?? 'no definido')
-                    . '.';
+                    .($coincidencia['nombre'] ?? 'sin nombre')
+                    .' con estado '
+                    .($coincidencia['estado'] ?? 'no definido')
+                    .'.';
             }
         }
 
@@ -823,6 +830,6 @@ class ParaleloInteligente extends SoporteInteligenteBase
 
     public static function mensajeNoDescifrable(): string
     {
-        return 'No se pudo descifrar la entrada como un paralelo académico válido. Registra solo el grupo académico, por ejemplo A, B, C o Único. Si corresponde a una configuración especial, contacta con soporte académico al ' . self::TELEFONO_SOPORTE . '.';
+        return 'No se pudo descifrar la entrada como un paralelo académico válido. Registra solo el grupo académico, por ejemplo A, B, C o Único. Si corresponde a una configuración especial, contacta con soporte académico al '.self::TELEFONO_SOPORTE.'.';
     }
 }

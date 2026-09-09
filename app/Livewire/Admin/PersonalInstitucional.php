@@ -30,9 +30,13 @@ class PersonalInstitucional extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $estado = '';
+
     public string $carga = '';
+
     public string $tipoCargaFiltro = '';
+
     public int $perPage = 10;
 
     /*
@@ -41,7 +45,9 @@ class PersonalInstitucional extends Component
     |--------------------------------------------------------------------------
     */
     public bool $modalVer = false;
+
     public bool $modalAsignar = false;
+
     public bool $modalEditar = false;
 
     public ?Docente $docenteDetalle = null;
@@ -52,6 +58,7 @@ class PersonalInstitucional extends Component
     |--------------------------------------------------------------------------
     */
     public int $maxHorasDocente = 24;
+
     public int $maxModificaciones = 3;
 
     /*
@@ -63,11 +70,15 @@ class PersonalInstitucional extends Component
     |--------------------------------------------------------------------------
     */
     public ?string $codTurnoManana = null;
+
     public ?string $codTurnoTarde = null;
+
     public ?string $codGestionActual = null;
 
     public string $nombreTurnoManana = 'Mañana';
+
     public string $nombreTurnoTarde = 'Tarde';
+
     public string $nombreGestionActual = 'Gestión activa no definida';
 
     /*
@@ -128,13 +139,13 @@ class PersonalInstitucional extends Component
             ],
 
             'formAsignacion.cod_asi' => [
-                Rule::requiredIf(fn() => $this->formAsignacion['tipo_carga'] === 'MATERIA'),
+                Rule::requiredIf(fn () => $this->formAsignacion['tipo_carga'] === 'MATERIA'),
                 'nullable',
                 'exists:asignatura,cod_asi',
             ],
 
             'formAsignacion.cod_esp' => [
-                Rule::requiredIf(fn() => $this->formAsignacion['tipo_carga'] === 'ESPECIALIDAD'),
+                Rule::requiredIf(fn () => $this->formAsignacion['tipo_carga'] === 'ESPECIALIDAD'),
                 'nullable',
                 'exists:especialidad_tecnica,cod_esp',
             ],
@@ -163,7 +174,7 @@ class PersonalInstitucional extends Component
                 'required',
                 'integer',
                 'min:1',
-                'max:' . $this->maxHorasDocente,
+                'max:'.$this->maxHorasDocente,
             ],
 
             'formAsignacion.est_car' => [
@@ -274,7 +285,7 @@ class PersonalInstitucional extends Component
         $this->nombreTurnoTarde = $turnoTarde?->nom_tur ?? 'Tarde no configurada';
 
         $this->nombreGestionActual = $gestionActual?->ani_gea
-            ? 'Gestión ' . $gestionActual->ani_gea
+            ? 'Gestión '.$gestionActual->ani_gea
             : 'Gestión activa no definida';
     }
 
@@ -284,7 +295,7 @@ class PersonalInstitucional extends Component
             ->where('est_tur', 'ACTIVO')
             ->where(function ($query) use ($nombres) {
                 foreach ($nombres as $nombre) {
-                    $query->orWhere('nom_tur', 'ILIKE', '%' . $nombre . '%');
+                    $query->orWhere('nom_tur', 'ILIKE', '%'.$nombre.'%');
                 }
             })
             ->orderBy('cod_tur')
@@ -425,6 +436,7 @@ class PersonalInstitucional extends Component
         if ($docente->est_doc !== 'ACTIVO') {
             $this->docenteDetalle = null;
             $this->dispatch('error-general', mensaje: 'No puedes asignar carga académica a un docente inactivo.');
+
             return;
         }
 
@@ -433,6 +445,7 @@ class PersonalInstitucional extends Component
         if ($horasActuales >= $this->maxHorasDocente) {
             $this->docenteDetalle = null;
             $this->dispatch('error-general', mensaje: 'El docente ya alcanzó la carga máxima permitida.');
+
             return;
         }
 
@@ -445,18 +458,21 @@ class PersonalInstitucional extends Component
         if (! $this->codTurnoManana) {
             $this->docenteDetalle = null;
             $this->dispatch('error-general', mensaje: 'No existe un turno activo de mañana. Configura el catálogo de turnos.');
+
             return;
         }
 
         if (! $this->codTurnoTarde) {
             $this->docenteDetalle = null;
             $this->dispatch('error-general', mensaje: 'No existe un turno activo de tarde. Configura el catálogo de turnos.');
+
             return;
         }
 
         if (! $this->codGestionActual) {
             $this->docenteDetalle = null;
             $this->dispatch('error-general', mensaje: 'No existe una gestión académica activa. Configura la gestión actual.');
+
             return;
         }
 
@@ -486,6 +502,7 @@ class PersonalInstitucional extends Component
 
             if ($docente->est_doc !== 'ACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El docente está inactivo. No se puede registrar la carga académica.');
+
                 return;
             }
 
@@ -493,6 +510,7 @@ class PersonalInstitucional extends Component
 
             if (! $this->formAsignacion['cod_tur'] || ! $this->formAsignacion['cod_gea']) {
                 $this->dispatch('error-general', mensaje: 'No se pudo definir turno o gestión académica automáticamente.');
+
                 return;
             }
 
@@ -502,7 +520,7 @@ class PersonalInstitucional extends Component
             if (($horasActuales + $nuevasHoras) > $this->maxHorasDocente) {
                 $this->dispatch(
                     'error-general',
-                    mensaje: 'La asignación supera la carga máxima permitida de ' . $this->maxHorasDocente . ' horas. Actualmente tiene ' . $horasActuales . ' horas.'
+                    mensaje: 'La asignación supera la carga máxima permitida de '.$this->maxHorasDocente.' horas. Actualmente tiene '.$horasActuales.' horas.'
                 );
 
                 return;
@@ -510,11 +528,13 @@ class PersonalInstitucional extends Component
 
             if ($tipoCarga === 'MATERIA') {
                 $this->guardarAsignacionMateria($docente);
+
                 return;
             }
 
             if ($tipoCarga === 'ESPECIALIDAD') {
                 $this->guardarAsignacionEspecialidad($docente);
+
                 return;
             }
 
@@ -535,6 +555,7 @@ class PersonalInstitucional extends Component
         if ($existe) {
             $this->addError('formAsignacion.cod_asi', 'Esta materia ya fue asignada al docente en el mismo curso, paralelo, turno y gestión.');
             $this->dispatch('error-general', mensaje: 'La materia seleccionada ya fue asignada a este docente en el mismo curso, paralelo, turno y gestión.');
+
             return;
         }
 
@@ -591,6 +612,7 @@ class PersonalInstitucional extends Component
         if ($existe) {
             $this->addError('formAsignacion.cod_esp', 'Esta especialidad ya fue asignada al docente en el mismo curso, paralelo, turno y gestión.');
             $this->dispatch('error-general', mensaje: 'La especialidad seleccionada ya fue asignada a este docente en el mismo curso, paralelo, turno y gestión.');
+
             return;
         }
 
@@ -649,6 +671,7 @@ class PersonalInstitucional extends Component
         if ((int) $docente->num_mod_doc >= $this->maxModificaciones) {
             $this->docenteDetalle = null;
             $this->dispatch('error-general', mensaje: 'Este docente alcanzó el límite de modificaciones permitidas.');
+
             return;
         }
 
@@ -697,6 +720,7 @@ class PersonalInstitucional extends Component
 
             if ((int) $docente->num_mod_doc >= $this->maxModificaciones) {
                 $this->dispatch('error-general', mensaje: 'Este docente ya no puede ser modificado porque alcanzó el límite permitido.');
+
                 return;
             }
 
@@ -756,6 +780,7 @@ class PersonalInstitucional extends Component
     {
         if (! in_array($estado, ['ACTIVO', 'INACTIVO'], true)) {
             $this->dispatch('error-general', mensaje: 'Estado no permitido.');
+
             return;
         }
 
@@ -766,11 +791,13 @@ class PersonalInstitucional extends Component
 
             if ((int) $docente->num_mod_doc >= $this->maxModificaciones) {
                 $this->dispatch('error-general', mensaje: 'No se puede cambiar el estado porque el docente alcanzó el límite de modificaciones.');
+
                 return;
             }
 
             if ($docente->est_doc === $estado) {
                 $this->dispatch('error-general', mensaje: 'El docente ya tiene el estado seleccionado.');
+
                 return;
             }
 
@@ -887,8 +914,8 @@ class PersonalInstitucional extends Component
         return $horasMaterias
             ->concat($horasEspecialidades)
             ->groupBy('cod_doc')
-            ->map(fn($items) => (int) $items->sum('total_horas'))
-            ->filter(fn($total) => $total >= $min && $total <= $max)
+            ->map(fn ($items) => (int) $items->sum('total_horas'))
+            ->filter(fn ($total) => $total >= $min && $total <= $max)
             ->keys()
             ->values()
             ->toArray();
@@ -1084,9 +1111,9 @@ class PersonalInstitucional extends Component
                         });
                 });
             })
-            ->when($this->estado !== '', fn($query) => $query->where('est_doc', $this->estado))
-            ->when($this->carga !== '', fn($query) => $this->aplicarFiltroCarga($query))
-            ->when($this->tipoCargaFiltro !== '', fn($query) => $this->aplicarFiltroTipoCarga($query))
+            ->when($this->estado !== '', fn ($query) => $query->where('est_doc', $this->estado))
+            ->when($this->carga !== '', fn ($query) => $this->aplicarFiltroCarga($query))
+            ->when($this->tipoCargaFiltro !== '', fn ($query) => $this->aplicarFiltroTipoCarga($query))
             ->orderByDesc('cod_doc')
             ->paginate($this->perPage);
 

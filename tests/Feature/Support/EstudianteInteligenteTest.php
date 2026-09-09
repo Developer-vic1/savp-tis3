@@ -6,6 +6,7 @@ use App\Models\Estudiante;
 use App\Models\Persona;
 use App\Support\Comunidad\EstudianteInteligente;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class EstudianteInteligenteTest extends TestCase
@@ -19,7 +20,7 @@ class EstudianteInteligenteTest extends TestCase
         parent::setUp();
         $this->soporte = app(EstudianteInteligente::class);
 
-        \Illuminate\Support\Facades\DB::table('tipo_vinculacion_estudiante')->updateOrInsert(
+        DB::table('tipo_vinculacion_estudiante')->updateOrInsert(
             ['cod_tve' => 'TVE_REGULAR'],
             ['nom_tve' => 'Estudiante Regular', 'est_tve' => 'ACTIVO']
         );

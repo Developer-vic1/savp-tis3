@@ -16,17 +16,25 @@ class PersonaInteligente extends SoporteInteligenteBase
     // ============================================================
 
     public const ESTADO_ACTIVO = 'ACTIVO';
+
     public const ESTADO_INACTIVO = 'INACTIVO';
 
     public const ESTADO_VALIDO = 'VALIDO';
+
     public const ESTADO_OBSERVADO = 'OBSERVADO';
+
     public const ESTADO_BLOQUEADO = 'BLOQUEADO';
+
     public const ESTADO_RECUPERABLE = 'RECUPERABLE';
+
     public const ESTADO_INCOMPLETO = 'INCOMPLETO';
 
     public const EDAD_MINIMA_ESTUDIANTE = 4;
+
     public const EDAD_MAXIMA_ESTUDIANTE = 25;
+
     public const EDAD_MINIMA_PERSONAL = 18;
+
     public const EDAD_MAXIMA_PERSONA = 120;
 
     public const TIPOS_VINCULACION = [
@@ -447,8 +455,8 @@ class PersonaInteligente extends SoporteInteligenteBase
                 && Schema::hasColumn('persona', 'ape_pat_per')
             ) {
                 $personasPorNombre = DB::table('persona')
-                    ->whereRaw('LOWER(nom_per) LIKE ?', ['%' . mb_strtolower($datos['nom_per']) . '%'])
-                    ->whereRaw('LOWER(ape_pat_per) LIKE ?', ['%' . mb_strtolower($datos['ape_pat_per']) . '%'])
+                    ->whereRaw('LOWER(nom_per) LIKE ?', ['%'.mb_strtolower($datos['nom_per']).'%'])
+                    ->whereRaw('LOWER(ape_pat_per) LIKE ?', ['%'.mb_strtolower($datos['ape_pat_per']).'%'])
                     ->limit(8)
                     ->get();
             }
@@ -1189,7 +1197,7 @@ class PersonaInteligente extends SoporteInteligenteBase
             'personal_existente' => (bool) ($coincidencias['personal_existente'] ?? false),
             'persona_principal' => $personaPrincipal ? [
                 'cod_per' => $personaPrincipal->cod_per ?? null,
-                'nombre' => trim(($personaPrincipal->nom_per ?? '') . ' ' . ($personaPrincipal->ape_pat_per ?? '') . ' ' . ($personaPrincipal->ape_mat_per ?? '')),
+                'nombre' => trim(($personaPrincipal->nom_per ?? '').' '.($personaPrincipal->ape_pat_per ?? '').' '.($personaPrincipal->ape_mat_per ?? '')),
                 'ci' => $personaPrincipal->ci_per ?? null,
                 'correo' => $personaPrincipal->ema_per ?? null,
                 'estado' => $this->personaEstaActiva($personaPrincipal) ? self::ESTADO_ACTIVO : self::ESTADO_INACTIVO,

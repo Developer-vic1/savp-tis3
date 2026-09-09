@@ -2,10 +2,9 @@
 
 namespace App\Support\AulaVirtual;
 
-use App\Models\AulaVirtual\AsistenciaClase;
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\Estudiante;
+use App\Models\InscripcionEstudiante;
+use App\Support\Academico\CalendarioAcademicoInteligente;
+use App\Support\Academico\SeguimientoAcademicoInteligente;
 use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -14,12 +13,13 @@ use Illuminate\Support\Facades\Schema;
 class AsistenciaInteligente extends SoporteInteligenteBase
 {
     public const UMBRAL_AUSENCIAS_CONSECUTIVAS = 3;
+
     public const UMBRAL_INASISTENCIA_GRUPAL_ANOMALA = 0.50; // 50% o más de inasistencia súbita
 
     /**
      * Analiza una sesión de asistencia antes de ser confirmada o cerrada.
      */
-    public function analizarSesion(string $codCla, array $estudiantesMarcados, string $fecha, bool $modoCierre = false): array
+    public function analizarSesion(string $codCla, array $estudiantesMarcados, string $fecha, bool $modoCierre = false, ?string $codHbl = null): array
     {
         $bloqueos = [];
         $advertencias = [];
@@ -43,28 +43,71 @@ class AsistenciaInteligente extends SoporteInteligenteBase
             return $this->construirResultado(false, false, self::ESTADO_BLOQUEADO, self::RIESGO_CRITICO, $bloqueos, [], [], $hallazgos);
         }
 
+        $plan = ! empty($clase->cod_pas)
+            ? DB::table('plan_asignatura')->where('cod_pas', $clase->cod_pas)->first()
+            : (! empty($clase->cod_pes) ? DB::table('plan_especialidad')->where('cod_pes', $clase->cod_pes)->first() : null);
+        if ($plan && Schema::hasTable('calendario_evento')) {
+            $ambito = (array) $plan;
+            if ($codHbl) {
+                $dia = [1 => 'LUNES', 2 => 'MARTES', 3 => 'MIERCOLES', 4 => 'JUEVES', 5 => 'VIERNES', 6 => 'SABADO', 7 => 'DOMINGO'][Carbon::parse($fecha)->isoWeekday()];
+                $detalle = DB::table('horario_detalle as d')->join('horario_bloque as b', 'b.cod_hbl', '=', 'd.cod_hbl')
+                    ->join('horario as h', 'h.cod_hor', '=', 'd.cod_hor')
+                    ->join('plantilla_horaria as p', 'p.cod_pho', '=', 'h.cod_pho')
+                    ->where('d.est_hde', 'ACTIVO')->where('h.est_hor', 'ACTIVO')->where('p.est_pho', true)
+                    ->where(fn ($q) => $q->whereNull('p.fec_ini_pho')->orWhereDate('p.fec_ini_pho', '<=', $fecha))
+                    ->where(fn ($q) => $q->whereNull('p.fec_fin_pho')->orWhereDate('p.fec_fin_pho', '>=', $fecha))
+                    ->where('d.dia_hde', $dia)
+                    ->where('d.cod_hbl', $codHbl)->where(! empty($clase->cod_pas) ? 'd.cod_pas' : 'd.cod_pes', ! empty($clase->cod_pas) ? $clase->cod_pas : $clase->cod_pes)->first(['d.cod_hde', 'b.hor_ini_hbl', 'b.hor_fin_hbl']);
+                if (! $detalle) {
+                    $bloqueos[] = 'El bloque seleccionado no corresponde al plan de la clase.';
+                } else {
+                    $ambito += ['cod_hde' => $detalle->cod_hde, 'hora_inicio' => $detalle->hor_ini_hbl, 'hora_fin' => $detalle->hor_fin_hbl];
+                }
+            }
+            $calendario = app(CalendarioAcademicoInteligente::class)->puedeRegistrarAsistencia($plan->cod_gea, $fecha, $ambito);
+            $bloqueos = array_merge($bloqueos, $calendario['bloqueos']);
+            $advertencias = array_merge($advertencias, $calendario['advertencias']);
+            foreach (array_keys($estudiantesMarcados) as $codEst) {
+                $inscripcion = InscripcionEstudiante::where('cod_est', $codEst)->where('cod_gea', $plan->cod_gea)->first();
+                if (! $inscripcion || ! $inscripcion->vigencias()->enFecha($fecha)->where('cod_cur', $plan->cod_cur)->where('cod_par', $plan->cod_par)->where('cod_tur', $plan->cod_tur)->exists()) {
+                    $bloqueos[] = 'El estudiante '.$codEst.' no tiene vigencia para la fecha y el grupo de asistencia.';
+                }
+                $novedades = app(SeguimientoAcademicoInteligente::class)->novedadesVigentes($codEst, $plan->cod_gea, $fecha);
+                if ($novedades->isNotEmpty()) {
+                    $advertencias[] = 'El estudiante '.$codEst.' tiene una novedad vigente; revise justificación y adaptación horaria.';
+                }
+            }
+        }
+
         // 2. Obtener lista oficial de estudiantes pertenecientes a la clase
         $estudiantesOficiales = collect();
         if (Schema::hasTable('clase_estudiante')) {
             $estudiantesOficiales = DB::table('clase_estudiante')
                 ->where('cod_cla', $codCla)
-                ->where('est_cla_est', 'ACTIVO')
+                ->when(! $plan, fn ($q) => $q->where('est_cla_est', 'ACTIVO'))
                 ->pluck('cod_est');
+            if ($plan && Schema::hasTable('inscripcion_vigencia')) {
+                $vigentes = DB::table('inscripcion_vigencia as v')->join('inscripcion_estudiante as i', 'i.cod_ins', '=', 'v.cod_ins')
+                    ->where('i.cod_gea', $plan->cod_gea)->where('v.cod_cur', $plan->cod_cur)->where('v.cod_par', $plan->cod_par)->where('v.cod_tur', $plan->cod_tur)
+                    ->where('v.est_ivg', '<>', 'ANULADA')->whereDate('v.fii_ivg', '<=', $fecha)->where(fn ($q) => $q->whereNull('v.ffi_ivg')->orWhereDate('v.ffi_ivg', '>=', $fecha))->pluck('i.cod_est');
+                $estudiantesOficiales = $estudiantesOficiales->intersect($vigentes)->values();
+            }
         }
 
         $totalOficiales = $estudiantesOficiales->count();
         $datosCalculados['total_estudiantes_oficiales'] = $totalOficiales;
+        $datosCalculados['estudiantes_oficiales'] = $estudiantesOficiales->all();
 
         // 3. Comprobar Pertenencia Estricta (Backend Defensivo)
         $noPertenecen = [];
         foreach (array_keys($estudiantesMarcados) as $codEst) {
-            if ($totalOficiales > 0 && ! $estudiantesOficiales->contains($codEst)) {
+            if (! $estudiantesOficiales->contains($codEst)) {
                 $noPertenecen[] = $codEst;
             }
         }
 
         if (count($noPertenecen) > 0) {
-            $msg = 'Se detectaron estudiantes en el registro que no pertenecen a esta clase (' . implode(', ', array_slice($noPertenecen, 0, 3)) . ').';
+            $msg = 'Se detectaron estudiantes en el registro que no pertenecen a esta clase ('.implode(', ', array_slice($noPertenecen, 0, 3)).').';
             $bloqueos[] = $msg;
             $this->registrarHallazgo($hallazgos, 'AV_ESTUDIANTE_NO_PERTENECE', self::TIPO_INTEGRIDAD, self::COMP_BLOQUEO, $msg, self::RIESGO_CRITICO, ['no_pertenecen' => $noPertenecen]);
         }
@@ -103,11 +146,11 @@ class AsistenciaInteligente extends SoporteInteligenteBase
         $datosCalculados['sin_marcar'] = count($faltantesPorMarcar);
 
         if ($modoCierre && count($faltantesPorMarcar) > 0) {
-            $msg = 'No se puede consolidar la asistencia porque hay ' . count($faltantesPorMarcar) . ' estudiante(s) sin marcar.';
+            $msg = 'No se puede consolidar la asistencia porque hay '.count($faltantesPorMarcar).' estudiante(s) sin marcar.';
             $bloqueos[] = $msg;
             $this->registrarHallazgo($hallazgos, 'AV_ASISTENCIA_INCOMPLETA', self::TIPO_INTEGRIDAD, self::COMP_BLOQUEO, $msg, self::RIESGO_ALTO, ['sin_marcar' => count($faltantesPorMarcar)]);
         } elseif (count($faltantesPorMarcar) > 0) {
-            $adv = 'Existen ' . count($faltantesPorMarcar) . ' estudiantes pendientes de registrar en esta sesión.';
+            $adv = 'Existen '.count($faltantesPorMarcar).' estudiantes pendientes de registrar en esta sesión.';
             $advertencias[] = $adv;
             $this->registrarHallazgo($hallazgos, 'AV_ASISTENCIA_PARCIAL', self::TIPO_PEDAGOGICA, self::COMP_ADVERTENCIA, $adv, self::RIESGO_BAJO);
         }
@@ -124,7 +167,7 @@ class AsistenciaInteligente extends SoporteInteligenteBase
         if (Schema::hasTable('asistencia_estudiante') && Schema::hasTable('asistencia_clase')) {
             $estudiantesConFaltaReiterada = $this->detectarFaltasReiteradas($codCla, array_keys($estudiantesMarcados));
             if (count($estudiantesConFaltaReiterada) > 0) {
-                $adv = count($estudiantesConFaltaReiterada) . ' estudiante(s) acumulan 3 o más inasistencias continuas. Se sugiere alerta temprana para coordinación o secretaría.';
+                $adv = count($estudiantesConFaltaReiterada).' estudiante(s) acumulan 3 o más inasistencias continuas. Se sugiere alerta temprana para coordinación o secretaría.';
                 $advertencias[] = $adv;
                 $this->registrarHallazgo($hallazgos, 'AV_ASISTENCIA_ANOMALA_INDIVIDUAL', self::TIPO_ESTADISTICA, self::COMP_ADVERTENCIA, $adv, self::RIESGO_MEDIO, [
                     'estudiantes_afectados' => $estudiantesConFaltaReiterada,
@@ -162,23 +205,16 @@ class AsistenciaInteligente extends SoporteInteligenteBase
      */
     private function detectarFaltasReiteradas(string $codCla, array $codigosEstudiantes): array
     {
+        $plan = DB::table('clase_virtual as c')->join('plan_asignatura as p', 'p.cod_pas', '=', 'c.cod_pas')->where('c.cod_cla', $codCla)->select('p.cod_gea')->first();
+        if (! $plan) {
+            return [];
+        }
+        $soporte = app(SeguimientoAcademicoInteligente::class);
         $afectados = [];
-
         foreach ($codigosEstudiantes as $codEst) {
-            $ultimasAsistencias = DB::table('asistencia_estudiante')
-                ->join('asistencia_clase', 'asistencia_estudiante.cod_asi_cla', '=', 'asistencia_clase.cod_asi_cla')
-                ->join('estado_asistencia', 'asistencia_estudiante.cod_est_asi', '=', 'estado_asistencia.cod_est_asi')
-                ->where('asistencia_clase.cod_cla', $codCla)
-                ->where('asistencia_estudiante.cod_est', $codEst)
-                ->orderByDesc('asistencia_clase.fec_asi_cla')
-                ->limit(3)
-                ->pluck('estado_asistencia.nom_est_asi');
-
-            if ($ultimasAsistencias->count() >= 3) {
-                $todasFaltas = $ultimasAsistencias->every(fn ($nom) => str_contains(strtoupper((string) $nom), 'FALT') || str_contains(strtoupper((string) $nom), 'AUS'));
-                if ($todasFaltas) {
-                    $afectados[] = $codEst;
-                }
+            $analisis = $soporte->analizar($codEst, $plan->cod_gea);
+            if (in_array('AUSENCIAS_CONSECUTIVAS', $analisis['advertencias'], true)) {
+                $afectados[] = $codEst;
             }
         }
 

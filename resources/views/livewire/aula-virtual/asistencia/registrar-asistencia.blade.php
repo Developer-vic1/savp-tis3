@@ -1,4 +1,15 @@
 <div class="p-4 sm:p-6 max-w-7xl mx-auto space-y-6">
+    <label class="ui-label">Bloque de asistencia
+        <select wire:model.live="codHbl" class="ui-select">
+            <option value="">Jornada completa</option>
+            @foreach($bloques as $bloque)
+                <option value="{{ $bloque->cod_hbl }}">{{ $bloque->hor_ini_hbl }} – {{ $bloque->hor_fin_hbl }}</option>
+            @endforeach
+        </select>
+    </label>
+    <label class="ui-label">Motivo de rectificación, cuando la asistencia ya está cerrada
+        <textarea wire:model="motivoRectificacion" rows="2" class="ui-textarea"></textarea>
+    </label>
     <!-- Encabezado de Sesión y Horario -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 sm:p-6">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">

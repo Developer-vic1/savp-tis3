@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PublicacionClase extends Model
 {
     protected $table = 'publicacion_clase';
+
     protected $primaryKey = 'cod_pub';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -44,7 +46,7 @@ class PublicacionClase extends Model
                     ? ((int) str_replace('PUB_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $publicacionClase->cod_pub = 'PUB_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $publicacionClase->cod_pub = 'PUB_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
 
             if (! $publicacionClase->fec_pub && $publicacionClase->est_pub === 'PUBLICADO') {

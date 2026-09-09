@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DocumentoInscripcionEstudiante extends Model
 {
     protected $table = 'documento_inscripcion_estudiante';
+
     protected $primaryKey = 'cod_die';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -54,7 +56,7 @@ class DocumentoInscripcionEstudiante extends Model
                 ? ((int) str_replace('DIE_', '', $ultimo)) + 1
                 : 1;
 
-            $documento->cod_die = 'DIE_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+            $documento->cod_die = 'DIE_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
         });
     }
 
@@ -78,7 +80,7 @@ class DocumentoInscripcionEstudiante extends Model
             $indice++;
         }
 
-        return round($bytes, 2) . ' ' . $unidades[$indice];
+        return round($bytes, 2).' '.$unidades[$indice];
     }
 
     public function getEstaVencidoAttribute(): bool

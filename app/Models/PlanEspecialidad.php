@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\AulaVirtual\ClaseVirtual;
 use Illuminate\Database\Eloquent\Model;
 
 class PlanEspecialidad extends Model
 {
     protected $table = 'plan_especialidad';
+
     protected $primaryKey = 'cod_pes';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -27,7 +31,7 @@ class PlanEspecialidad extends Model
     {
         static::creating(function ($plan) {
 
-            if (!$plan->cod_pes) {
+            if (! $plan->cod_pes) {
 
                 $ultimo = self::where('cod_pes', 'like', 'PES_%')
                     ->orderByDesc('cod_pes')
@@ -37,12 +41,17 @@ class PlanEspecialidad extends Model
                     ? ((int) str_replace('PES_', '', $ultimo)) + 1
                     : 1;
 
-                $plan->cod_pes = 'PES_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $plan->cod_pes = 'PES_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }
 
     public function especialidad()
+    {
+        return $this->belongsTo(EspecialidadTecnica::class, 'cod_esp', 'cod_esp');
+    }
+
+    public function especialidadTecnica()
     {
         return $this->belongsTo(EspecialidadTecnica::class, 'cod_esp', 'cod_esp');
     }
@@ -70,5 +79,15 @@ class PlanEspecialidad extends Model
     public function gestionAcademica()
     {
         return $this->belongsTo(GestionAcademica::class, 'cod_gea', 'cod_gea');
+    }
+
+    public function horariosDetalle()
+    {
+        return $this->hasMany(HorarioDetalle::class, 'cod_pes', 'cod_pes');
+    }
+
+    public function claseVirtual()
+    {
+        return $this->hasOne(ClaseVirtual::class, 'cod_pes', 'cod_pes');
     }
 }

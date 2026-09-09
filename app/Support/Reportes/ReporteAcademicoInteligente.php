@@ -2,11 +2,25 @@
 
 namespace App\Support\Reportes;
 
+use App\Models\ReporteGenerado;
 use App\Support\Core\SoporteInteligenteBase;
 use App\Support\Evaluacion\CalificacionInteligente;
+use Illuminate\Support\Facades\DB;
 
 class ReporteAcademicoInteligente extends SoporteInteligenteBase
 {
+    public function reportesAnterioresACambios()
+    {
+        $ultimaModificacion = collect(['calificacion', 'inscripcion_estudiante', 'periodo_evaluacion'])
+            ->map(fn ($tabla) => DB::table($tabla)->max('updated_at'))->filter()->max();
+        if (! $ultimaModificacion) {
+            return collect();
+        }
+
+        return ReporteGenerado::where('estado', 'generado')->where('created_at', '<', $ultimaModificacion)
+            ->orderByDesc('created_at')->limit(10)->get(['codigo', 'nombre_archivo', 'created_at']);
+    }
+
     public function clasificar(float $nota): string
     {
         return app(CalificacionInteligente::class)->clasificar($nota);

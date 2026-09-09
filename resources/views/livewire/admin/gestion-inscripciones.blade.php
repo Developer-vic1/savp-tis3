@@ -1017,7 +1017,7 @@
                                             {!! $icon('trash', 'h-4 w-4') !!}
                                         </button>
 
-                                        <button type="button" wire:click="confirmarRetiro('{{ $inscripcion->cod_ins }}')" class="ui-icon-btn" title="Retirar">
+                                        <button type="button" wire:click="abrirCambio('{{ $inscripcion->cod_ins }}')" class="ui-icon-btn" title="Gestionar cambio">
                                             {!! $icon('x', 'h-4 w-4') !!}
                                         </button>
                                     @endif
@@ -2967,72 +2967,66 @@
         </div>
     @endif
 
-    @if ($modalAnular)
+    @if ($modalCambio)
         <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarAnular"></div>
-            <div class="ui-modal savp-modal-shell w-full max-w-2xl overflow-hidden">
+            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarCambio"></div>
+            <div class="ui-modal savp-modal-shell w-full max-w-3xl overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="titulo-cambio">
                 <div class="ui-modal-header flex items-start justify-between gap-4">
-                    <div>
-                        <p class="ui-kicker">Acción sensible</p>
-                        <h3 class="ui-title text-xl font-black">¿Anular inscripción?</h3>
-                        <p class="ui-muted mt-1 text-sm">La inscripción no será eliminada físicamente.</p>
-                    </div>
-                    <button type="button" wire:click="cerrarAnular" class="ui-icon-btn">{!! $icon('x') !!}</button>
+                    <h3 id="titulo-cambio" class="ui-title">Cambios en la inscripción</h3>
+                    <button type="button" wire:click="cerrarCambio" class="ui-icon-btn" aria-label="Cerrar">{!! $icon('x') !!}</button>
                 </div>
-
-                <div class="p-5">
-                    <div class="ui-alert-warning">Registra un motivo claro para conservar trazabilidad institucional.</div>
-
-                    <div class="mt-4">
-                        <label class="ui-label">Motivo de anulación</label>
-                        <textarea wire:model.live.debounce.800ms="motivoAccion" rows="4" class="ui-textarea" placeholder="Describe el motivo de anulación."></textarea>
-                        @error('motivoAccion') <p class="ui-error">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-
-                <div class="ui-modal-footer flex justify-end gap-2">
-                    <button type="button" wire:click="cerrarAnular" class="ui-btn-secondary">Cancelar</button>
-                    <button type="button" wire:click="anularInscripcion" class="ui-btn-danger">Anular inscripción</button>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    @if ($modalRetirar)
-        <div class="savp-modal-wrap">
-            <div class="ui-modal-backdrop savp-modal-backdrop" wire:click="cerrarRetiro"></div>
-            <div class="ui-modal savp-modal-shell w-full max-w-2xl overflow-hidden">
-                <div class="ui-modal-header flex items-start justify-between gap-4">
-                    <div>
-                        <p class="ui-kicker">Registro de retiro</p>
-                        <h3 class="ui-title text-xl font-black">¿Registrar retiro académico?</h3>
-                        <p class="ui-muted mt-1 text-sm">El estudiante será marcado como retirado, conservando historial.</p>
-                    </div>
-                    <button type="button" wire:click="cerrarRetiro" class="ui-icon-btn">{!! $icon('x') !!}</button>
-                </div>
-
                 <div class="p-5 space-y-4">
-                    <div>
-                        <label class="ui-label">Fecha de retiro</label>
-                        <input type="date" wire:model.live="fechaRetiro" class="ui-input">
-                        @error('fechaRetiro') <p class="ui-error">{{ $message }}</p> @enderror
-                    </div>
-
-                    <div>
-                        <label class="ui-label">Motivo de retiro</label>
-                        <textarea wire:model.live.debounce.800ms="motivoAccion" rows="4" class="ui-textarea" placeholder="Describe el motivo de retiro."></textarea>
-                        @error('motivoAccion') <p class="ui-error">{{ $message }}</p> @enderror
-                    </div>
+                    <p class="ui-field-readonly">{{ $detalleInscripcion['estudiante'] ?? '' }} · {{ $detalleInscripcion['gestion'] ?? '' }} · {{ $detalleInscripcion['curso'] ?? '' }} / {{ $detalleInscripcion['paralelo'] ?? '' }} · {{ $detalleInscripcion['turno'] ?? '' }} · {{ $detalleInscripcion['estado'] ?? '' }}</p>
+                    <div class="ui-alert-info">Se conserva la asistencia, las notas, las entregas y los archivos. El cambio actualizará la vigencia y la membresía del Aula Virtual. Las correcciones retroactivas requieren autorización superior.</div>
+                    <p class="ui-help">Actividad existente: {{ collect($actividadCambio)->map(fn ($cantidad, $tipo) => $tipo.': '.$cantidad)->implode(' · ') }}</p>
+                    <label class="ui-label" for="accion-cambio">Acción</label>
+                    <select id="accion-cambio" wire:model.live="accionCambio" class="ui-select">
+                        @foreach ($opcionesCambio as $opcion)
+                            <option value="{{ $opcion }}">{{ $opcion }}</option>
+                        @endforeach
+                    </select>
+                    <label class="ui-label" for="fecha-cambio">Fecha efectiva</label>
+                    <input id="fecha-cambio" type="date" wire:model="fechaRetiro" class="ui-input">
+                    @if (in_array($accionCambio, ['CAMBIO', 'REINGRESO', 'RESTITUCION']))
+                        <div class="grid grid-cols-1 gap-3 md:grid-cols-2">
+                            @foreach (['cod_cur' => ['Curso', 'cursos'], 'cod_par' => ['Paralelo', 'paralelos'], 'cod_tur' => ['Turno', 'turnos']] as $campo => [$etiqueta, $catalogo])
+                                <label class="ui-label">{{ $etiqueta }}
+                                    <select wire:model="destinoCambio.{{ $campo }}" class="ui-select">
+                                        @foreach ($catalogos[$catalogo] ?? [] as $item)
+                                            <option value="{{ $item[$campo] }}">{{ $item['nombre'] ?? $item[$campo] }}</option>
+                                        @endforeach
+                                    </select>
+                                </label>
+                            @endforeach
+                            <label class="ui-label">Especialidad
+                                <select wire:model="destinoCambio.cod_esp_tec" class="ui-select">
+                                    <option value="">Sin especialidad</option>
+                                    @foreach ($catalogos['especialidades_tecnicas'] ?? [] as $item)
+                                        <option value="{{ $item['cod_esp_tec'] }}">{{ $item['nombre'] ?? $item['cod_esp_tec'] }}</option>
+                                    @endforeach
+                                </select>
+                            </label>
+                        </div>
+                    @endif
+                    <label class="ui-label" for="motivo-cambio">Motivo obligatorio</label>
+                    <textarea id="motivo-cambio" wire:model="motivoAccion" class="ui-textarea" rows="3"></textarea>
+                    @foreach ($errors->all() as $error)<p class="ui-error">{{ $error }}</p>@endforeach
+                    <div class="ui-table-wrap"><table class="ui-table">
+                        <thead><tr><th>Inicio</th><th>Fin</th><th>Curso / paralelo / turno</th><th>Tipo</th><th>Estado</th></tr></thead>
+                        <tbody>@foreach ($historialVigencias as $vigencia)
+                            <tr><td>{{ substr($vigencia['fii_ivg'], 0, 10) }}</td><td>{{ substr($vigencia['ffi_ivg'] ?? '', 0, 10) ?: 'Vigente' }}</td><td>{{ $vigencia['cod_cur'] }} / {{ $vigencia['cod_par'] }} / {{ $vigencia['cod_tur'] }}</td><td>{{ $vigencia['tip_ivg'] }}</td><td>{{ $vigencia['est_ivg'] }}</td></tr>
+                        @endforeach</tbody>
+                    </table></div>
                 </div>
-
                 <div class="ui-modal-footer flex justify-end gap-2">
-                    <button type="button" wire:click="cerrarRetiro" class="ui-btn-secondary">Cancelar</button>
-                    <button type="button" wire:click="registrarRetiro" class="ui-btn-danger">Registrar retiro</button>
+                    <button type="button" wire:click="cerrarCambio" class="ui-btn-secondary">Cancelar</button>
+                    <button type="button" wire:click="aplicarCambio" wire:loading.attr="disabled" wire:target="aplicarCambio" class="ui-btn-primary" @disabled(empty($opcionesCambio))>
+                        {{ match ($accionCambio) { 'RETIRO' => 'Confirmar retiro', 'ANULACION' => 'Confirmar anulación', 'REINGRESO' => 'Confirmar reingreso', 'RESTITUCION' => 'Confirmar restitución', default => 'Aplicar cambio' } }}
+                    </button>
                 </div>
             </div>
         </div>
     @endif
-
     {{-- =========================================================
         ESTILOS Y ANIMACIONES
     ========================================================== --}}

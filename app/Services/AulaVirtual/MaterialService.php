@@ -55,7 +55,7 @@ class MaterialService
                     ->orderByDesc('cod_mat')
                     ->value('cod_mat');
                 $num = $ultimo ? ((int) str_replace('MATC_', '', $ultimo)) + 1 : 1;
-                $codMat = 'MATC_' . str_pad($num, 4, '0', STR_PAD_LEFT);
+                $codMat = 'MATC_'.str_pad($num, 4, '0', STR_PAD_LEFT);
 
                 $material = MaterialClase::create([
                     'cod_mat' => $codMat,

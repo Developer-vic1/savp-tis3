@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
+use Illuminate\Database\Seeder;
 
 class UsuarioAdminSeeder extends Seeder
 {
@@ -159,7 +159,7 @@ class UsuarioAdminSeeder extends Seeder
                 'email' => 'jorge.flores@gmail.com',
                 'password' => 'Estudiante123',
                 'role' => 'Estudiante',
-            ]
+            ],
         ];
 
         foreach ($usuarios as $data) {

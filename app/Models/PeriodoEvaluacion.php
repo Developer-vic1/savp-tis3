@@ -7,11 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class PeriodoEvaluacion extends Model
 {
     protected $table = 'periodo_evaluacion';
+
     protected $primaryKey = 'cod_pev';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
+        'cod_gea', 'fii_pev', 'ffi_pev', 'fec_cie_pev',
         'cod_pev', // Código periodo evaluación
         'nom_pev', // Nombre periodo evaluación
         'ord_pev', // Orden periodo evaluación
@@ -22,7 +26,7 @@ class PeriodoEvaluacion extends Model
     {
         static::creating(function ($periodo) {
 
-            if (!$periodo->cod_pev) {
+            if (! $periodo->cod_pev) {
 
                 $ultimo = self::where('cod_pev', 'like', 'PEV_%')
                     ->orderByDesc('cod_pev')
@@ -32,7 +36,7 @@ class PeriodoEvaluacion extends Model
                     ? ((int) str_replace('PEV_', '', $ultimo)) + 1
                     : 1;
 
-                $periodo->cod_pev = 'PEV_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $periodo->cod_pev = 'PEV_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }

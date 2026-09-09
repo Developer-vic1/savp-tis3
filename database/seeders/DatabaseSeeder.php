@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\DATOS\DatosSAVPTIS3Seeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,7 +24,7 @@ class DatabaseSeeder extends Seeder
             PersonaSeeder::class,
             PersonalInstitucionalSeeder::class,
             UsuarioAdminSeeder::class,
-            \Database\Seeders\DATOS\DatosSAVPTIS3Seeder::class,
+            DatosSAVPTIS3Seeder::class,
         ]);
     }
 }

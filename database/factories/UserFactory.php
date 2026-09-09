@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Persona;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
@@ -26,7 +27,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $persona = \App\Models\Persona::create([
+        $persona = Persona::create([
             'nom_per' => fake()->firstName(),
             'ape_pat_per' => fake()->lastName(),
             'ape_mat_per' => fake()->lastName(),
@@ -40,11 +41,11 @@ class UserFactory extends Factory
             'est_per' => 'ACTIVO',
         ]);
 
-        $ultimo = \App\Models\User::where('cod_usu', 'like', 'USU_%')
+        $ultimo = User::where('cod_usu', 'like', 'USU_%')
             ->orderByDesc('cod_usu')
             ->value('cod_usu');
         $numero = $ultimo ? ((int) str_replace('USU_', '', $ultimo)) + 1 : 1;
-        $codUsu = 'USU_' . str_pad($numero, 4, '0', STR_PAD_LEFT);
+        $codUsu = 'USU_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
 
         return [
             'cod_usu' => $codUsu,

@@ -4,8 +4,6 @@ namespace App\Livewire\Admin;
 
 use App\Services\BitacoraService;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -16,27 +14,47 @@ abstract class CatalogoInstitucional extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $search = '';
+
     public string $estado = '';
+
     public string $extraFiltro1 = '';
+
     public string $extraFiltro2 = '';
+
     public int $perPage = 10;
+
     public bool $modalFormulario = false;
+
     public bool $modalDetalle = false;
+
     public bool $editando = false;
+
     public ?string $seleccionado = null;
+
     public array $form = [];
+
     public array $analisis = [];
+
     public array $detalle = [];
 
     abstract protected function modelo(): string;
+
     abstract protected function soporte(): object;
+
     abstract protected function clavePrimaria(): string;
+
     abstract protected function campoNombre(): string;
+
     abstract protected function campoEstado(): string;
+
     abstract protected function camposFormulario(): array;
+
     abstract protected function camposBusqueda(): array;
+
     abstract protected function reglas(): array;
+
     abstract protected function vista(): string;
+
     abstract protected function configuracion(): array;
 
     protected function relacionConteo(): ?string
@@ -136,6 +154,7 @@ abstract class CatalogoInstitucional extends Component
 
         if (! ($this->analisis['puede_guardar'] ?? false)) {
             $this->dispatch('swal:warning', title: 'Registro bloqueado', text: implode(' ', $this->analisis['bloqueos'] ?? []));
+
             return;
         }
 
@@ -147,11 +166,11 @@ abstract class CatalogoInstitucional extends Component
             $registro = $modelo::query()->findOrFail($this->seleccionado);
             $anteriores = $registro->toArray();
             $registro->update($this->form);
-            $accion = 'ACTUALIZAR_' . mb_strtoupper($this->configuracion()['tabla']);
+            $accion = 'ACTUALIZAR_'.mb_strtoupper($this->configuracion()['tabla']);
         } else {
             $registro = $modelo::query()->create($this->form);
             $anteriores = null;
-            $accion = 'CREAR_' . mb_strtoupper($this->configuracion()['tabla']);
+            $accion = 'CREAR_'.mb_strtoupper($this->configuracion()['tabla']);
         }
 
         BitacoraService::registrar(
@@ -209,14 +228,14 @@ abstract class CatalogoInstitucional extends Component
             ->when($this->search !== '', function (Builder $query) {
                 $query->where(function (Builder $sub) {
                     foreach ($this->camposBusqueda() as $campo) {
-                        $sub->orWhere($campo, 'ILIKE', '%' . trim($this->search) . '%');
+                        $sub->orWhere($campo, 'ILIKE', '%'.trim($this->search).'%');
                     }
                 });
             })
             ->when($this->estado !== '', fn (Builder $query) => $query->where($this->campoEstado(), $this->estado));
 
         foreach ($this->filtrosAdicionales() as $indice => $filtro) {
-            $propiedad = 'extraFiltro' . ($indice + 1);
+            $propiedad = 'extraFiltro'.($indice + 1);
             if ($this->{$propiedad} !== '') {
                 $query->where($filtro['campo'], $this->{$propiedad});
             }

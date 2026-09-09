@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Livewire\Admin\Bitacora;
 use App\Models\User;
 use App\Services\BitacoraService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 

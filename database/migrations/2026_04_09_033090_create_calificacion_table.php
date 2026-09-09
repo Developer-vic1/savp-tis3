@@ -14,19 +14,19 @@ return new class extends Migration
 
             $table->string('cod_est', 20); // Código estudiante
             $table->foreign('cod_est')
-                  ->references('cod_est')
-                  ->on('estudiante')
-                  ->cascadeOnDelete();
+                ->references('cod_est')
+                ->on('estudiante')
+                ->cascadeOnDelete();
 
             $table->string('cod_asi', 20); // Código asignatura
             $table->foreign('cod_asi')
-                  ->references('cod_asi')
-                  ->on('asignatura');
+                ->references('cod_asi')
+                ->on('asignatura');
 
             $table->string('cod_pev', 20); // Código periodo evaluación
             $table->foreign('cod_pev')
-                  ->references('cod_pev')
-                  ->on('periodo_evaluacion');
+                ->references('cod_pev')
+                ->on('periodo_evaluacion');
 
             $table->decimal('not_cal', 5, 2); // Nota calificación
 

@@ -13,10 +13,10 @@ use App\Models\Estudiante;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class TareasEntregasFlujoTest extends TestCase
@@ -24,9 +24,13 @@ class TareasEntregasFlujoTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUser;
+
     protected User $estudianteUser;
+
     protected string $codCla;
+
     protected string $codDoc;
+
     protected string $codEst;
 
     protected function setUp(): void
@@ -59,9 +63,9 @@ class TareasEntregasFlujoTest extends TestCase
         $this->codDoc = $docente->cod_doc;
 
         // 0. Spatie Permissions
-        \Spatie\Permission\Models\Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
-        \Spatie\Permission\Models\Permission::findOrCreate('Aula_Virtual_Docente', 'web');
-        \Spatie\Permission\Models\Permission::findOrCreate('Aula_Virtual_Estudiante', 'web');
+        Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
+        Permission::findOrCreate('Aula_Virtual_Docente', 'web');
+        Permission::findOrCreate('Aula_Virtual_Estudiante', 'web');
 
         $this->docenteUser = User::create([
             'cod_usu' => 'USU_DOC_02',

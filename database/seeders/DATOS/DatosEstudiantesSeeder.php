@@ -8,6 +8,6 @@ class DatosEstudiantesSeeder extends Seeder
 {
     public function run(): void
     {
-        (new SoporteDatosBolivia())->crearEstudiantes();
+        (new SoporteDatosBolivia)->crearEstudiantes();
     }
 }

@@ -3,15 +3,64 @@
 namespace App\Support\Evaluacion;
 
 use App\Models\Calificacion;
+use App\Models\Estudiante;
+use App\Models\PeriodoEvaluacion;
+use App\Models\PlanAsignatura;
 use App\Support\Core\SoporteInteligenteBase;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CalificacionInteligente extends SoporteInteligenteBase
 {
+    public function previsualizarImportacion(array $filas): array
+    {
+        $errores = [];
+        $advertencias = [];
+        $validos = [];
+        $claves = [];
+        if ($filas === [] || count($filas) > 500) {
+            $errores[] = 'La importación debe contener entre 1 y 500 filas.';
+        }
+        foreach ($filas as $indice => $fila) {
+            $plan = PlanAsignatura::find($fila['cod_pas'] ?? '');
+            $periodo = PeriodoEvaluacion::find($fila['cod_pev'] ?? '');
+            $fila['cod_asi'] = $plan?->cod_asi;
+            $fila['est_cal'] = $fila['est_cal'] ?? 'ACTIVO';
+            $analisis = $this->analizar($fila);
+            $bloqueos = $analisis['bloqueos'];
+            if (! $plan || ! $periodo || $plan->cod_gea !== $periodo->cod_gea || ! $periodo->fii_pev || ! $periodo->ffi_pev) {
+                $bloqueos[] = 'Plan y periodo incompatibles o incompletos.';
+            }
+            if (! Estudiante::whereKey($fila['cod_est'] ?? '')->exists()) {
+                $bloqueos[] = 'El estudiante no existe.';
+            }
+            if ($periodo && ! in_array($periodo->est_pev, ['ACTIVO', 'EN_CIERRE', 'REABIERTO'], true)) {
+                $bloqueos[] = 'El periodo no permite importación normal.';
+            }
+            $clave = implode('|', [$fila['cod_est'] ?? '', $fila['cod_pas'] ?? '', $fila['cod_pev'] ?? '']);
+            if (isset($claves[$clave])) {
+                $bloqueos[] = 'Fila duplicada dentro de la importación.';
+            }
+            $claves[$clave] = true;
+            foreach ($bloqueos as $bloqueo) {
+                $errores[] = 'Fila '.($indice + 1).': '.$bloqueo;
+            }
+            foreach ($analisis['advertencias'] ?? [] as $advertencia) {
+                $advertencias[] = 'Fila '.($indice + 1).': '.$advertencia;
+            }
+            if ($bloqueos === []) {
+                $validos[] = $fila;
+            }
+        }
+
+        return ['puede_continuar' => $errores === [], 'validos' => $validos, 'errores' => $errores, 'advertencias' => $advertencias, 'total' => count($filas)];
+    }
+
     public const NOTA_MINIMA = 0;
+
     public const NOTA_MAXIMA = 100;
+
     public const NOTA_APROBATORIA = 51;
+
     public const UMBRAL_VARIACION_ATIPICA = 35.0;
 
     /**
@@ -31,7 +80,7 @@ class CalificacionInteligente extends SoporteInteligenteBase
             $duplicado = Calificacion::query()
                 ->when($ignorarCodigo, fn ($q) => $q->where('cod_cal', '!=', $ignorarCodigo))
                 ->where('cod_est', $codEst)
-                ->where('cod_asi', $codAsi)
+                ->when(! empty($datos['cod_pas']), fn ($q) => $q->where('cod_pas', $datos['cod_pas']), fn ($q) => $q->where('cod_asi', $codAsi))
                 ->where('cod_pev', $codPev)
                 ->exists();
         }
@@ -53,7 +102,7 @@ class CalificacionInteligente extends SoporteInteligenteBase
         }
 
         if ($nota < self::NOTA_MINIMA || $nota > self::NOTA_MAXIMA) {
-            $msg = 'La calificación debe estar entre ' . self::NOTA_MINIMA . ' y ' . self::NOTA_MAXIMA . ' puntos.';
+            $msg = 'La calificación debe estar entre '.self::NOTA_MINIMA.' y '.self::NOTA_MAXIMA.' puntos.';
             $bloqueos[] = $msg;
             $this->registrarHallazgo($hallazgos, 'CAL_FUERA_RANGO', self::TIPO_NORMATIVA, self::COMP_BLOQUEO, $msg, self::RIESGO_CRITICO);
         }

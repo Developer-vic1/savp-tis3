@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PlantillaHoraria extends Model
 {
     protected $table = 'plantilla_horaria';
+
     protected $primaryKey = 'cod_pho';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -59,7 +61,7 @@ class PlantillaHoraria extends Model
                 ? (int) str_replace('PHO_', '', $ultimoCodigo)
                 : 0;
 
-            $plantilla->cod_pho = 'PHO_' . str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
+            $plantilla->cod_pho = 'PHO_'.str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
         });
     }
 

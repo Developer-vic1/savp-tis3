@@ -10,10 +10,10 @@ use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\User;
 use App\Services\AulaVirtual\CursoVirtualService;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
 use Tests\TestCase;
 
 class Bloque1ArquitecturaSeguridadTest extends TestCase
@@ -21,13 +21,19 @@ class Bloque1ArquitecturaSeguridadTest extends TestCase
     use DatabaseTransactions;
 
     protected User $docenteUserA;
+
     protected User $docenteUserB;
+
     protected User $estudianteUserA;
+
     protected User $estudianteUserB;
 
     protected ClaseVirtual $claseA;
+
     protected ClaseVirtual $claseB;
+
     protected Tarea $tareaA;
+
     protected Tarea $tareaB;
 
     protected function setUp(): void
@@ -35,9 +41,9 @@ class Bloque1ArquitecturaSeguridadTest extends TestCase
         parent::setUp();
 
         // 0. Permisos Spatie
-        \Spatie\Permission\Models\Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
-        \Spatie\Permission\Models\Permission::findOrCreate('Aula_Virtual_Docente', 'web');
-        \Spatie\Permission\Models\Permission::findOrCreate('Aula_Virtual_Estudiante', 'web');
+        Permission::findOrCreate('Acceso_Aula_Virtual', 'web');
+        Permission::findOrCreate('Aula_Virtual_Docente', 'web');
+        Permission::findOrCreate('Aula_Virtual_Estudiante', 'web');
 
         // 1. Configuración académica base
         DB::table('gestion_academica')->updateOrInsert(

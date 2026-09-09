@@ -13,12 +13,12 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     /**
      * Validate and update the given user's profile information.
      *
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
      */
     public function update(User $user, array $input): void
     {
         Validator::make($input, [
-            'email'   => [
+            'email' => [
                 'required',
                 'email',
                 'max:255',
@@ -26,7 +26,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             ],
             'tel_per' => ['nullable', 'string', 'max:20'],
             'dir_per' => ['nullable', 'string', 'max:255'],
-            'photo'   => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -54,7 +54,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     /**
      * Update the given verified user's profile information.
      *
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
      */
     protected function updateVerifiedUser(User $user, array $input): void
     {

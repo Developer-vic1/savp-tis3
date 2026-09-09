@@ -74,7 +74,7 @@
                                     <button wire:click="abrirDetalle('{{ $registro->getKey() }}')" class="ui-btn-secondary">Ver</button>
                                     <button wire:click="abrirEditar('{{ $registro->getKey() }}')" class="ui-btn-secondary">Editar</button>
                                     <button wire:click="cambiarEstado('{{ $registro->getKey() }}')" class="ui-btn-secondary">
-                                        {{ $registro->{$configuracion['estado']} === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+                                        {{ ($configuracion['gestion_estado_periodo'] ?? false) ? 'Gestionar periodo' : ($registro->{$configuracion['estado']} === 'ACTIVO' ? 'Desactivar' : 'Activar') }}
                                     </button>
                                 </div>
                             </td>
@@ -119,6 +119,16 @@
                             </label>
                         @endif
 
+                        @foreach ($configuracion['campos_adicionales'] ?? [] as $campo => $definicion)
+                            <label><span class="ui-label">{{ $definicion['etiqueta'] }}</span>
+                                @if ($definicion['tipo'] === 'select')
+                                    <select wire:model.live="form.{{ $campo }}" class="ui-select"><option value="">Seleccionar</option>@foreach($definicion['opciones'] as $valor => $nombre)<option value="{{ $valor }}">{{ $nombre }}</option>@endforeach</select>
+                                @else
+                                    <input type="{{ $definicion['tipo'] }}" wire:model.live="form.{{ $campo }}" class="ui-input">
+                                @endif
+                                @error('form.'.$campo)<span class="ui-error">{{ $message }}</span>@enderror
+                            </label>
+                        @endforeach
                         @if (isset($configuracion['orden']))
                             <label class="block">
                                 <span class="ui-label">Orden evaluativo</span>
@@ -222,5 +232,18 @@
                 </div>
             </section>
         </div>
+    @endif
+    @if(($configuracion['gestion_estado_periodo'] ?? false) && $modalEstadoPeriodo)
+        <div class="ui-modal-backdrop"></div>
+        <section class="ui-modal fixed inset-4 z-50 mx-auto max-w-xl overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="titulo-estado-periodo">
+            <div class="ui-modal-header"><h2 id="titulo-estado-periodo" class="ui-title">Gestionar periodo</h2></div>
+            <div class="space-y-4 p-5">
+                <p class="ui-alert-warning">El cierre exige calificaciones completas. La reapertura conserva el cierre anterior en la bitácora.</p>
+                <label class="ui-label">Estado de destino<select wire:model="destinoPeriodo" class="ui-select">@foreach($opcionesEstadoPeriodo as $opcion)<option>{{ $opcion }}</option>@endforeach</select></label>
+                <label class="ui-label">Motivo<textarea wire:model="motivoPeriodo" class="ui-textarea"></textarea></label>
+                @error('motivoPeriodo')<p class="ui-error">{{ $message }}</p>@enderror
+            </div>
+            <div class="ui-modal-footer flex justify-end gap-2"><button type="button" wire:click="$set('modalEstadoPeriodo', false)" class="ui-btn-secondary">Cancelar</button><button type="button" wire:click="aplicarEstadoPeriodo" wire:loading.attr="disabled" class="ui-btn-primary" @disabled(empty($opcionesEstadoPeriodo))>{{ $destinoPeriodo === 'CERRADO' ? 'Cerrar periodo' : ($destinoPeriodo === 'REABIERTO' ? 'Reabrir periodo' : 'Aplicar cambio') }}</button></div>
+        </section>
     @endif
 </div>

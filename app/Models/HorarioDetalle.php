@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class HorarioDetalle extends Model
 {
     protected $table = 'horario_detalle';
+
     protected $primaryKey = 'cod_hde';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -47,7 +49,7 @@ class HorarioDetalle extends Model
                     ? (int) str_replace('HDE_', '', $ultimoCodigo)
                     : 0;
 
-                $detalle->cod_hde = 'HDE_' . str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
+                $detalle->cod_hde = 'HDE_'.str_pad((string) ($ultimoNumero + 1), 4, '0', STR_PAD_LEFT);
             }
 
             if (empty($detalle->est_hde)) {
@@ -66,6 +68,11 @@ class HorarioDetalle extends Model
     }
 
     public function bloque(): BelongsTo
+    {
+        return $this->belongsTo(HorarioBloque::class, 'cod_hbl', 'cod_hbl');
+    }
+
+    public function horarioBloque(): BelongsTo
     {
         return $this->belongsTo(HorarioBloque::class, 'cod_hbl', 'cod_hbl');
     }

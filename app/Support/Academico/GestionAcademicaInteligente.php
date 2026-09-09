@@ -2,6 +2,7 @@
 
 namespace App\Support\Academico;
 
+use App\Models\CalendarioEvento;
 use App\Support\Core\SoporteInteligenteBase;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -16,9 +17,13 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
     // ============================================================
 
     public const ESTADO_PLANIFICADA = 'PLANIFICADA';
+
     public const ESTADO_ACTIVA = 'ACTIVA';
+
     public const ESTADO_EN_CIERRE = 'EN_CIERRE';
+
     public const ESTADO_CERRADA = 'CERRADA';
+
     public const ESTADO_ANULADA = 'ANULADA';
 
     public const ESTADOS_OFICIALES = [
@@ -30,19 +35,27 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
     ];
 
     public const DIAS_HABILES_CURRICULARES = 200;
+
     public const CANTIDAD_TRIMESTRES = 3;
+
     public const DESCANSO_PEDAGOGICO_DIAS_HABILES = 10;
 
     public const DIAS_TRIMESTRE_1 = 66;
+
     public const DIAS_TRIMESTRE_2 = 68;
+
     public const DIAS_TRIMESTRE_3 = 66;
 
     public const DIAS_CALENDARIO_MINIMO_BLOQUEO = 180;
+
     public const DIAS_CALENDARIO_MINIMO_RECOMENDADO = 270;
+
     public const DIAS_CALENDARIO_MAXIMO_RECOMENDADO = 330;
+
     public const DIAS_CALENDARIO_MAXIMO_BLOQUEO = 365;
 
     public const MESES_INICIO_RECOMENDADOS = [1, 2];
+
     public const MESES_CIERRE_RECOMENDADOS = [11, 12];
 
     public const TIPOS_EXPORTACION = [
@@ -334,6 +347,43 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
         $bloqueos = [];
         $advertencias = [];
         $sugerencias = [];
+
+        if (Schema::hasTable('inscripcion_vigencia')) {
+            $sinVigencia = DB::table('inscripcion_estudiante as i')->where('i.cod_gea', $codGea)
+                ->whereIn('i.est_ins', ['ACTIVA', 'CONFIRMADA', 'OBSERVADA'])
+                ->whereNotExists(fn ($q) => $q->selectRaw('1')->from('inscripcion_vigencia as v')->whereColumn('v.cod_ins', 'i.cod_ins')->where('v.est_ivg', 'ACTIVA'))->count();
+            if ($sinVigencia) {
+                $bloqueos[] = "Inscripciones sin vigencia activa: {$sinVigencia}.";
+            }
+        }
+        if (Schema::hasColumn('periodo_evaluacion', 'cod_gea')) {
+            $periodos = DB::table('periodo_evaluacion')->where('cod_gea', $codGea)->whereNotIn('est_pev', ['CERRADO', 'INACTIVO'])->count();
+            if ($periodos) {
+                $bloqueos[] = "Periodos abiertos: {$periodos}.";
+            }
+            if (DB::table('periodo_evaluacion')->whereNull('cod_gea')->exists()) {
+                $advertencias[] = 'Existen periodos históricos sin gestión asignada que requieren revisión.';
+            }
+        }
+        if (Schema::hasTable('seguimiento_academico') && DB::table('seguimiento_academico')->where('cod_gea', $codGea)->whereIn('tip_seg', ['ADMINISTRATIVO', 'INTEGRAL'])->whereIn('est_seg', ['ABIERTO', 'EN_SEGUIMIENTO'])->exists()) {
+            $bloqueos[] = 'Existen seguimientos administrativos pendientes de resolución.';
+        }
+        if (Schema::hasTable('calendario_evento')) {
+            if ($gestion->fii_gea && $gestion->ffi_gea) {
+                $grupos = DB::table('inscripcion_estudiante')->where('cod_gea', $codGea)->select('cod_cur', 'cod_par', 'cod_tur')->distinct()->get();
+                foreach ($grupos as $grupo) {
+                    $dias = app(CalendarioAcademicoInteligente::class)->calcularDiasEfectivos($codGea, substr((string) $gestion->fii_gea, 0, 10), substr((string) $gestion->ffi_gea, 0, 10), (array) $grupo);
+                    if ($dias < self::DIAS_HABILES_CURRICULARES) {
+                        $bloqueos[] = "Días efectivos insuficientes para {$grupo->cod_cur}/{$grupo->cod_par}/{$grupo->cod_tur}: {$dias}.";
+                    }
+                }
+            }
+            foreach (CalendarioEvento::where('cod_gea', $codGea)->whereIn('est_cae', ['CONFIRMADO', 'FINALIZADO'])->get() as $evento) {
+                if (app(CalendarioAcademicoInteligente::class)->calcularSaldoRecuperacion($evento) > 0) {
+                    $advertencias[] = 'Existe saldo de recuperación pendiente: '.$evento->nom_cae;
+                }
+            }
+        }
 
         if (! in_array($estado, [self::ESTADO_ACTIVA, self::ESTADO_EN_CIERRE], true)) {
             $bloqueos[] = 'Solo una gestión ACTIVA o EN_CIERRE puede cerrarse definitivamente.';
@@ -726,6 +776,7 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
         if (! $inicio || ! $fin) {
             $bloqueos[] = 'La fecha de inicio y la fecha de cierre de la gestión son obligatorias.';
             $sugerencias[] = 'Usa el inicio institucional y cierre institucional sugeridos para la gestión.';
+
             return compact('bloqueos', 'advertencias', 'sugerencias', 'resumen');
         }
 
@@ -734,6 +785,7 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
             $fechaFin = Carbon::parse($fin)->startOfDay();
         } catch (Throwable) {
             $bloqueos[] = 'Las fechas ingresadas no tienen un formato válido.';
+
             return compact('bloqueos', 'advertencias', 'sugerencias', 'resumen');
         }
 
@@ -798,6 +850,7 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
             $diasHabiles = $this->calcularDiasHabilesReferenciales($inicio, $fin);
         } catch (Throwable) {
             $resultado['bloqueos'][] = 'No se pudo calcular los días hábiles referenciales.';
+
             return $resultado;
         }
 
@@ -1029,8 +1082,8 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
     {
         return Schema::hasTable('gestion_academica')
             && DB::table('gestion_academica')
-            ->where('ani_gea', $anio)
-            ->exists();
+                ->where('ani_gea', $anio)
+                ->exists();
     }
 
     private function existeGestionActiva(?string $exceptoCodGea = null): bool
@@ -1041,7 +1094,7 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
 
         return DB::table('gestion_academica')
             ->whereIn('est_gea', self::estadosActivosCompatibles())
-            ->when($exceptoCodGea, fn($query) => $query->where('cod_gea', '!=', $exceptoCodGea))
+            ->when($exceptoCodGea, fn ($query) => $query->where('cod_gea', '!=', $exceptoCodGea))
             ->exists();
     }
 
@@ -1378,7 +1431,7 @@ class GestionAcademicaInteligente extends SoporteInteligenteBase
 
     private function totalPendientes(array $pendientes): int
     {
-        return array_sum(array_map(fn($valor) => (int) $valor, $pendientes));
+        return array_sum(array_map(fn ($valor) => (int) $valor, $pendientes));
     }
 
     private function nivelRiesgo(array $bloqueos, array $advertencias): string
