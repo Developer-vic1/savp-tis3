@@ -1,17 +1,17 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\OFICIAL;
 
-use Carbon\Carbon;
+use App\Models\Turno;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
-class TurnoSeeder extends Seeder
+class TurnosOficialesSeeder extends Seeder
 {
+    /**
+     * Registra los turnos institucionales oficiales de SAVP.
+     */
     public function run(): void
     {
-        $now = Carbon::now();
-
         $turnos = [
             [
                 'cod_tur' => 'TUR_0001',
@@ -19,8 +19,6 @@ class TurnoSeeder extends Seeder
                 'hor_ini_tur' => '07:45',
                 'hor_fin_tur' => '13:20',
                 'est_tur' => 'ACTIVO',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
             [
                 'cod_tur' => 'TUR_0002',
@@ -28,13 +26,11 @@ class TurnoSeeder extends Seeder
                 'hor_ini_tur' => '14:00',
                 'hor_fin_tur' => '18:00',
                 'est_tur' => 'ACTIVO',
-                'created_at' => $now,
-                'updated_at' => $now,
             ],
         ];
 
         foreach ($turnos as $turno) {
-            DB::table('turno')->updateOrInsert(
+            Turno::updateOrCreate(
                 ['cod_tur' => $turno['cod_tur']],
                 $turno
             );
