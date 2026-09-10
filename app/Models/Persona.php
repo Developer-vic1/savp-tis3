@@ -27,6 +27,14 @@ class Persona extends Model
         'tel_per',
         'ema_per',
         'dir_per',
+        'zona_per',
+        'ave_per',
+        'cal_per',
+        'num_per',
+        'ref_per',
+        'ciu_per',
+        'mun_per',
+        'dep_per',
         'fot_per',
         'est_per',
     ];
@@ -52,15 +60,18 @@ class Persona extends Model
     {
         static::creating(function ($persona) {
             if (! $persona->cod_per) {
-                $ultimo = self::where('cod_per', 'like', 'PER_%')
-                    ->orderByDesc('cod_per')
-                    ->value('cod_per');
+                $codigos = self::where('cod_per', 'like', 'PER_%')->pluck('cod_per');
+                $maxNumero = 0;
+                foreach ($codigos as $cod) {
+                    if (preg_match('/^PER_(\d+)$/', $cod, $matches)) {
+                        $num = (int) $matches[1];
+                        if ($num > $maxNumero) {
+                            $maxNumero = $num;
+                        }
+                    }
+                }
 
-                $numero = $ultimo
-                    ? ((int) str_replace('PER_', '', $ultimo)) + 1
-                    : 1;
-
-                $persona->cod_per = 'PER_'.str_pad($numero, 4, '0', STR_PAD_LEFT);
+                $persona->cod_per = 'PER_'.str_pad((string) ($maxNumero + 1), 4, '0', STR_PAD_LEFT);
             }
         });
     }

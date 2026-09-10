@@ -1255,8 +1255,8 @@
 
                                 <div>
                                     <label class="ui-label">Fecha de nacimiento <span class="text-red-500">*</span></label>
-                                    <input type="date" wire:model.live="form.fec_nac_per" data-field="fecha"
-                                        min="1906-01-01" max="{{ now()->format('Y-m-d') }}" x-on:change="touch('fecha')"
+                                    <input type="date" wire:model.blur="form.fec_nac_per" data-field="fecha"
+                                        min="{{ now()->subYears(120)->format('Y-m-d') }}" max="{{ now()->format('Y-m-d') }}" x-on:change="touch('fecha')"
                                         class="ui-input">
                                     <p x-show="shouldShow('fecha')" x-cloak x-text="validation.errors.fecha"
                                         class="ui-error"></p>
@@ -1859,8 +1859,8 @@
 
                                 <div>
                                     <label class="ui-label">Fecha de nacimiento <span class="text-red-500">*</span></label>
-                                    <input type="date" wire:model.live="formEditar.fec_nac_per" data-field="fecha"
-                                        min="1906-01-01" max="{{ now()->format('Y-m-d') }}" x-on:change="touch('fecha')"
+                                    <input type="date" wire:model.blur="formEditar.fec_nac_per" data-field="fecha"
+                                        min="{{ now()->subYears(120)->format('Y-m-d') }}" max="{{ now()->format('Y-m-d') }}" x-on:change="touch('fecha')"
                                         class="ui-input">
                                     <p x-show="shouldShow('fecha')" x-cloak x-text="validation.errors.fecha"
                                         class="ui-error"></p>

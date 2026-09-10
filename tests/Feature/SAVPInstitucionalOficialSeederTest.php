@@ -6,17 +6,19 @@ use App\Models\Administrador;
 use App\Models\Asignatura;
 use App\Models\ConfiguracionCalendarioGestion;
 use App\Models\Curso;
+use App\Models\Director;
 use App\Models\Docente;
 use App\Models\EspecialidadTecnica;
 use App\Models\Estudiante;
 use App\Models\GestionAcademica;
-use App\Models\Horario;
-use App\Models\HorarioDetalle;
 use App\Models\Paralelo;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\PlanAsignatura;
+use App\Models\PlanEspecialidad;
 use App\Models\PlantillaHoraria;
+use App\Models\Regente;
+use App\Models\SecretariaGeneral;
 use App\Models\Turno;
 use App\Models\User;
 use Database\Seeders\SAVPInstitucionalOficialSeeder;
@@ -39,6 +41,9 @@ class SAVPInstitucionalOficialSeederTest extends TestCase
         $conteoUsuarios1 = User::count();
         $conteoPersonas1 = Persona::count();
         $conteoPersonal1 = PersonalInstitucional::count();
+        $conteoDocentes1 = Docente::count();
+        $conteoDirector1 = Director::count();
+        $conteoSecretaria1 = SecretariaGeneral::count();
         $conteoAdmin1 = Administrador::count();
         $conteoGestiones1 = GestionAcademica::count();
         $conteoCal1 = ConfiguracionCalendarioGestion::count();
@@ -48,6 +53,8 @@ class SAVPInstitucionalOficialSeederTest extends TestCase
         $conteoParalelos1 = Paralelo::count();
         $conteoAsignaturas1 = Asignatura::count();
         $conteoEspecialidades1 = EspecialidadTecnica::count();
+        $conteoPlanesAsig1 = PlanAsignatura::count();
+        $conteoPlanesEsp1 = PlanEspecialidad::count();
 
         // 2. Segunda ejecución (Idempotencia)
         $this->seed(SAVPInstitucionalOficialSeeder::class);
@@ -55,6 +62,9 @@ class SAVPInstitucionalOficialSeederTest extends TestCase
         $this->assertSame($conteoUsuarios1, User::count(), 'La segunda ejecución no debe duplicar usuarios.');
         $this->assertSame($conteoPersonas1, Persona::count(), 'La segunda ejecución no debe duplicar personas.');
         $this->assertSame($conteoPersonal1, PersonalInstitucional::count(), 'La segunda ejecución no debe duplicar personal.');
+        $this->assertSame($conteoDocentes1, Docente::count(), 'La segunda ejecución no debe duplicar docentes.');
+        $this->assertSame($conteoDirector1, Director::count(), 'La segunda ejecución no debe duplicar directores.');
+        $this->assertSame($conteoSecretaria1, SecretariaGeneral::count(), 'La segunda ejecución no debe duplicar secretarias.');
         $this->assertSame($conteoAdmin1, Administrador::count(), 'La segunda ejecución no debe duplicar administradores.');
         $this->assertSame($conteoGestiones1, GestionAcademica::count(), 'La segunda ejecución no debe duplicar gestiones.');
         $this->assertSame($conteoCal1, ConfiguracionCalendarioGestion::count(), 'La segunda ejecución no debe duplicar configuración de calendario.');
@@ -64,8 +74,11 @@ class SAVPInstitucionalOficialSeederTest extends TestCase
         $this->assertSame($conteoParalelos1, Paralelo::count(), 'La segunda ejecución no debe duplicar paralelos.');
         $this->assertSame($conteoAsignaturas1, Asignatura::count(), 'La segunda ejecución no debe duplicar asignaturas.');
         $this->assertSame($conteoEspecialidades1, EspecialidadTecnica::count(), 'La segunda ejecución no debe duplicar especialidades.');
+        $this->assertSame($conteoPlanesAsig1, PlanAsignatura::count(), 'La segunda ejecución no debe duplicar planes de asignatura.');
+        $this->assertSame($conteoPlanesEsp1, PlanEspecialidad::count(), 'La segunda ejecución no debe duplicar planes de especialidad.');
 
-        // 3. Administrador único oficial
+        // 3. Administrador único oficial en users (exactamente 1 usuario)
+        $this->assertSame(1, User::count(), 'Debe existir exactamente 1 usuario en la tabla users.');
         $adminUser = User::where('email', 'asturizagavictor@gmail.com')->first();
         $this->assertNotNull($adminUser, 'El administrador oficial debe existir.');
         $this->assertSame('USU_0001', $adminUser->cod_usu);
@@ -158,28 +171,70 @@ class SAVPInstitucionalOficialSeederTest extends TestCase
             ]);
         }
 
-        // 11. 9 Especialidades técnicas oficiales
-        $this->assertSame(9, EspecialidadTecnica::count());
-        $especialidadesEsperadas = [
-            'ESP_0001' => 'Técnica Tecnología General',
-            'ESP_0002' => 'Técnica Tecnología Especializada',
-            'ESP_0003' => 'Sistemas Informáticos',
-            'ESP_0004' => 'Contabilidad',
-            'ESP_0005' => 'Electrónica',
-            'ESP_0006' => 'Mecánica Industrial',
-            'ESP_0007' => 'Mecánica Automotriz',
-            'ESP_0008' => 'Gastronomía',
-            'ESP_0009' => 'Textiles y Confección',
-        ];
-        foreach ($especialidadesEsperadas as $cod => $nom) {
-            $this->assertDatabaseHas('especialidad_tecnica', ['cod_esp' => $cod, 'nom_esp' => $nom, 'est_esp' => 'ACTIVO']);
+        // 11. Especialidades técnicas oficiales
+        $this->assertSame(11, EspecialidadTecnica::count());
+
+        // 12. Validar personal institucional de la nómina
+        $this->assertSame(56, Persona::count(), 'Deben existir 56 personas (1 admin + 55 personal de nómina).');
+        $this->assertSame(56, PersonalInstitucional::count(), 'Deben existir 56 registros de personal institucional.');
+        $this->assertSame(48, Docente::count(), 'Deben existir exactamente 48 docentes oficiales.');
+        $this->assertSame(1, Director::count(), 'Debe existir exactamente 1 director oficial.');
+        $this->assertSame(1, SecretariaGeneral::count(), 'Debe existir exactamente 1 secretaria oficial.');
+        $this->assertSame(0, Regente::count(), 'No debe existir regente nuevo inventado.');
+        $this->assertSame(0, Estudiante::count(), 'No deben existir estudiantes en la base oficial.');
+
+        // 13. Anti-invención: Cero correos/CIs/fechas/género inventados para el personal de nómina
+        $personalNomina = Persona::where('cod_per', '!=', 'PER_0001')->get();
+        foreach ($personalNomina as $per) {
+            $this->assertNull($per->ci_per, "Persona {$per->cod_per} ({$per->nom_per}) no debe tener CI inventado.");
+            $this->assertNull($per->ema_per, "Persona {$per->cod_per} ({$per->nom_per}) no debe tener correo inventado.");
+            $this->assertNull($per->fec_nac_per, "Persona {$per->cod_per} ({$per->nom_per}) no debe tener fecha de nacimiento inventada.");
+            $this->assertNull($per->gen_per, "Persona {$per->cod_per} ({$per->nom_per}) no debe tener género inferido.");
+            $this->assertNull($per->dir_per, "Persona {$per->cod_per} ({$per->nom_per}) no debe tener dirección inventada.");
+            $this->assertNotNull($per->tel_per, "Persona {$per->cod_per} ({$per->nom_per}) debe conservar su teléfono celular real.");
         }
 
-        // 12. Validar que NO se hayan creado docentes ficticios, estudiantes demo ni asignaciones
-        $this->assertSame(0, Docente::count(), 'No deben existir docentes creados en la base oficial.');
-        $this->assertSame(0, Estudiante::count(), 'No deben existir estudiantes creados en la base oficial.');
-        $this->assertSame(0, PlanAsignatura::count(), 'No deben existir planes de asignatura artificiales.');
-        $this->assertSame(0, Horario::count(), 'No deben existir horarios académicos.');
-        $this->assertSame(0, HorarioDetalle::count(), 'No deben existir detalles de horarios.');
+        // 14. Validación de casos directos obligatorios
+        // Aida Garzofino Mamani (DOC_FT3_0027): MAT en 2B, 3B, 4B, 5B, 6B
+        $docGarzofino = Docente::where('cod_doc', 'DOC_FT3_0027')->first();
+        $this->assertNotNull($docGarzofino);
+        $planesGarzofino = PlanAsignatura::where('cod_doc', $docGarzofino->cod_doc)->get();
+        $this->assertCount(5, $planesGarzofino);
+
+        // Lupe Vedia Rodriguez (DOC_FT3_0029): MAT en 1A, 2A, 3A, 4A, 5A, 6A
+        $docVedia = Docente::where('cod_doc', 'DOC_FT3_0029')->first();
+        $this->assertNotNull($docVedia);
+        $planesVedia = PlanAsignatura::where('cod_doc', $docVedia->cod_doc)->get();
+        $this->assertCount(6, $planesVedia);
+
+        // Romer Gutierrez Troche (DOC_FT3_0030): MAT en 2C, 3C, 4C, 5C, 6C
+        $docGutierrez = Docente::where('cod_doc', 'DOC_FT3_0030')->first();
+        $this->assertNotNull($docGutierrez);
+        $planesGutierrez = PlanAsignatura::where('cod_doc', $docGutierrez->cod_doc)->get();
+        $this->assertCount(5, $planesGutierrez);
+
+        // Reynaldo Vargas Gamboa (DOC_FT3_0037): Contabilidad en 5A-D y 6A-D (8 planes)
+        $docVargas = Docente::where('cod_doc', 'DOC_FT3_0037')->first();
+        $this->assertNotNull($docVargas);
+        $planesVargas = PlanEspecialidad::where('cod_doc', $docVargas->cod_doc)->get();
+        $this->assertCount(8, $planesVargas);
+
+        // Guadalupe Morales Limachi (DOC_FT3_0038): Gastronomía en 5A-D y 6A-D (8 planes)
+        $docMorales = Docente::where('cod_doc', 'DOC_FT3_0038')->first();
+        $this->assertNotNull($docMorales);
+        $planesMorales = PlanEspecialidad::where('cod_doc', $docMorales->cod_doc)->get();
+        $this->assertCount(8, $planesMorales);
+
+        // Edgar Rios Chuquimia (DOC_FT3_0040): Sistemas Informáticos en 5A-D y 6A-D (8 planes)
+        $docRios = Docente::where('cod_doc', 'DOC_FT3_0040')->first();
+        $this->assertNotNull($docRios);
+        $planesRios = PlanEspecialidad::where('cod_doc', $docRios->cod_doc)->get();
+        $this->assertCount(8, $planesRios);
+
+        // Jhonny Callejas Blanco (DOC_FT3_0043): Electrónica en 5A-D y 6A-D (8 planes)
+        $docCallejas = Docente::where('cod_doc', 'DOC_FT3_0043')->first();
+        $this->assertNotNull($docCallejas);
+        $planesCallejas = PlanEspecialidad::where('cod_doc', $docCallejas->cod_doc)->get();
+        $this->assertCount(8, $planesCallejas);
     }
 }

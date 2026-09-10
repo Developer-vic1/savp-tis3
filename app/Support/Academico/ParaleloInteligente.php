@@ -315,7 +315,7 @@ class ParaleloInteligente extends SoporteInteligenteBase
                 continue;
             }
 
-            $similitud = self::calcularSimilitud($nombreNormalizado, self::normalizar($nombre));
+            $similitud = self::calcularSimilitudParalelo($nombreNormalizado, self::normalizar($nombre));
 
             if ($similitud >= self::MIN_SIMILITUD_SIMILAR) {
                 $coincidencias[] = [
@@ -374,7 +374,7 @@ class ParaleloInteligente extends SoporteInteligenteBase
             return true;
         }
 
-        return self::calcularSimilitud($antesNormalizado, $despuesNormalizado) >= self::MIN_SIMILITUD_DUPLICADO;
+        return self::calcularSimilitudParalelo($antesNormalizado, $despuesNormalizado) >= self::MIN_SIMILITUD_DUPLICADO;
     }
 
     private static function duplicadoPrincipal(array $coincidencias): ?array
@@ -774,7 +774,7 @@ class ParaleloInteligente extends SoporteInteligenteBase
     |--------------------------------------------------------------------------
     */
 
-    public static function calcularSimilitud(string $a, string $b): int
+    public static function calcularSimilitudParalelo(string $a, string $b): int
     {
         $a = self::normalizar($a);
         $b = self::normalizar($b);

@@ -1,4 +1,15 @@
 *.log
+*.local.php
+database/seeders/OFICIAL/FUENTES/*.local.php
+database/seeders/POBLACION/FUENTES/*.local.php
+database/seeders/CARGA/FUENTES/*.local.php
+database/backups/
+*.dump
+*.sql
+snapshot_*.json
+scratch_*
+inspect_db.php
+take_snapshot.php
 .DS_Store
 .env
 .env.backup
@@ -23,3 +34,4 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+

@@ -6,6 +6,7 @@ use App\Models\Persona;
 use App\Services\BitacoraService;
 use App\Support\Personas\PersonaInteligente;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -810,7 +811,9 @@ class GestionPersonas extends Component
             'ci_per' => $persona->ci_per ?? '',
             'com_per' => $persona->com_per ?? '',
             'exp_per' => $persona->exp_per ?? '',
-            'fec_nac_per' => $persona->fec_nac_per ?? '',
+            'fec_nac_per' => $persona->fec_nac_per instanceof CarbonInterface
+                ? $persona->fec_nac_per->format('Y-m-d')
+                : ($persona->fec_nac_per ? Carbon::parse($persona->fec_nac_per)->format('Y-m-d') : ''),
             'gen_per' => $persona->gen_per ?? '',
             'tel_per' => $persona->tel_per ?? '',
             'ema_per' => $persona->ema_per ?? '',
@@ -1332,7 +1335,9 @@ class GestionPersonas extends Component
             'ci_per' => $this->normalizarCi($datos['ci_per'] ?? null),
             'com_per' => $this->normalizarMayuscula($datos['com_per'] ?? null),
             'exp_per' => $this->normalizarExpedido($datos['exp_per'] ?? null),
-            'fec_nac_per' => $datos['fec_nac_per'] ?: null,
+            'fec_nac_per' => ! empty($datos['fec_nac_per'])
+                ? ($datos['fec_nac_per'] instanceof Carbon ? $datos['fec_nac_per']->format('Y-m-d') : Carbon::parse($datos['fec_nac_per'])->format('Y-m-d'))
+                : null,
             'gen_per' => $this->normalizarGenero($datos['gen_per'] ?? null),
             'tel_per' => $this->normalizarTelefono($datos['tel_per'] ?? null),
             'ema_per' => $this->normalizarCorreo($datos['ema_per'] ?? null),
@@ -1592,6 +1597,14 @@ class GestionPersonas extends Component
         $this->form['tel_per'] = $this->normalizarTelefono($this->form['tel_per']);
         $this->form['ema_per'] = $this->normalizarCorreo($this->form['ema_per']);
 
+        if (! empty($this->form['fec_nac_per'])) {
+            try {
+                $this->form['fec_nac_per'] = Carbon::parse($this->form['fec_nac_per'])->format('Y-m-d');
+            } catch (\Throwable) {
+                // conservar
+            }
+        }
+
         if (! filled($this->form['dir_per'])) {
             $this->sincronizarDireccionCompletaCrear();
         }
@@ -1608,6 +1621,14 @@ class GestionPersonas extends Component
         $this->formEditar['gen_per'] = $this->normalizarGenero($this->formEditar['gen_per']);
         $this->formEditar['tel_per'] = $this->normalizarTelefono($this->formEditar['tel_per']);
         $this->formEditar['ema_per'] = $this->normalizarCorreo($this->formEditar['ema_per']);
+
+        if (! empty($this->formEditar['fec_nac_per'])) {
+            try {
+                $this->formEditar['fec_nac_per'] = Carbon::parse($this->formEditar['fec_nac_per'])->format('Y-m-d');
+            } catch (\Throwable) {
+                // conservar
+            }
+        }
 
         if (! filled($this->formEditar['dir_per'])) {
             $this->sincronizarDireccionCompletaEditar();

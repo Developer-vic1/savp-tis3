@@ -8,7 +8,8 @@ use Illuminate\Database\Seeder;
 class EspecialidadesOficialesSeeder extends Seeder
 {
     /**
-     * Registra las 9 especialidades técnicas institucionales oficiales de SAVP.
+     * Registra las especialidades técnicas institucionales oficiales de SAVP
+     * según la estructura institucional y la nómina oficial BTH de la U.E.T.H. Franz Tamayo 3.
      */
     public function run(): void
     {
@@ -65,6 +66,18 @@ class EspecialidadesOficialesSeeder extends Seeder
                 'cod_esp' => 'ESP_0009',
                 'nom_esp' => 'Textiles y Confección',
                 'des_esp' => 'Especialidad técnica enfocada en diseño, patronaje y confección textil.',
+                'est_esp' => 'ACTIVO',
+            ],
+            [
+                'cod_esp' => 'ESP_0010',
+                'nom_esp' => 'Belleza Integral',
+                'des_esp' => 'Especialidad técnica BTH enfocada en estética, cosmetología y belleza integral.',
+                'est_esp' => 'ACTIVO',
+            ],
+            [
+                'cod_esp' => 'ESP_0011',
+                'nom_esp' => 'Carpintería en Madera y Metal',
+                'des_esp' => 'Especialidad técnica BTH enfocada en carpintería, estructuras en madera y metalmecánica.',
                 'est_esp' => 'ACTIVO',
             ],
         ];

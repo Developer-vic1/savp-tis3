@@ -1419,7 +1419,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
         foreach (self::mapaRedaccionAcademica() as $grupo) {
             foreach ($grupo['entradas'] as $entradaReferencia) {
                 $referenciaNormalizada = self::normalizar($entradaReferencia);
-                $similitud = self::calcularSimilitud($normalizado, $referenciaNormalizada);
+                $similitud = self::calcularSimilitudAsignatura($normalizado, $referenciaNormalizada);
 
                 if (
                     $similitud >= self::MIN_SIMILITUD_REDACTABLE
@@ -1556,7 +1556,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
             }
 
             $nombreNormalizado = self::normalizar($nombre);
-            $similitudNombre = self::calcularSimilitud($normalizado, $nombreNormalizado);
+            $similitudNombre = self::calcularSimilitudAsignatura($normalizado, $nombreNormalizado);
             $mismaSigla = $sigla !== '' && mb_strtoupper($sigla) === mb_strtoupper($siglaEntrada);
 
             if ($similitudNombre >= 70 || $mismaSigla) {
@@ -1826,7 +1826,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
 
         foreach (self::catalogo() as $asignatura) {
             if (
-                self::calcularSimilitud($normalizado, $asignatura['nombre']) >= 60
+                self::calcularSimilitudAsignatura($normalizado, $asignatura['nombre']) >= 60
                 || self::coincideConAsignatura($normalizado, $asignatura)
             ) {
                 $carreras = array_merge($carreras, $asignatura['carreras_relacionadas']);
@@ -1910,7 +1910,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
         return $reemplazos[$texto] ?? $texto;
     }
 
-    public static function calcularSimilitud(string $a, string $b): int
+    public static function calcularSimilitudAsignatura(string $a, string $b): int
     {
         $a = self::normalizar($a);
         $b = self::normalizar($b);
@@ -1950,7 +1950,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
             return true;
         }
 
-        return self::calcularSimilitud($antesNormalizado, $despuesNormalizado) >= 92;
+        return self::calcularSimilitudAsignatura($antesNormalizado, $despuesNormalizado) >= 92;
     }
 
     private static function mejorCoincidenciaCatalogo(string $normalizado): ?array
@@ -1958,7 +1958,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
         $mejor = null;
 
         foreach (self::catalogo() as $sigla => $asignatura) {
-            $similitudNombre = self::calcularSimilitud($normalizado, $asignatura['nombre']);
+            $similitudNombre = self::calcularSimilitudAsignatura($normalizado, $asignatura['nombre']);
             $similitudPalabras = 0;
 
             foreach ($asignatura['palabras_clave'] as $palabraClave) {
@@ -1966,7 +1966,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
 
                 $similitudPalabras = max(
                     $similitudPalabras,
-                    self::calcularSimilitud($normalizado, $claveNormalizada)
+                    self::calcularSimilitudAsignatura($normalizado, $claveNormalizada)
                 );
 
                 if (
@@ -2003,7 +2003,7 @@ class AsignaturaInteligente extends SoporteInteligenteBase
 
     private static function coincideConAsignatura(string $normalizado, array $asignatura): bool
     {
-        if (self::calcularSimilitud($normalizado, $asignatura['nombre']) >= 88) {
+        if (self::calcularSimilitudAsignatura($normalizado, $asignatura['nombre']) >= 88) {
             return true;
         }
 
