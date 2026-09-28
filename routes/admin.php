@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\PlanesAsignaturaController;
 use App\Http\Controllers\Admin\ReporteAcademicoController;
 use App\Http\Controllers\Admin\ReporteAdministrativoController;
 use App\Http\Controllers\Admin\ReportePdfController;
+use App\Http\Controllers\Admin\RoleRequestDocumentController;
 use App\Http\Controllers\Admin\TipoVinculacionEstudianteController;
 use App\Http\Controllers\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware('actor:Administrador')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::view('/roles-permisos', 'admin.roles-permisos')->middleware('can:roles-permisos.gestionar')->name('roles-permisos');
+    Route::get('/roles-permisos/solicitudes/{roleRequest}/documento', RoleRequestDocumentController::class)
+        ->middleware(['can:roles-permisos.gestionar', 'can:roles.documentos.ver'])->name('roles-permisos.documento');
     Route::view('/asignaciones-regencia', 'admin.asignaciones-regencia')->middleware('can:regencia.asignaciones.gestionar')->name('asignaciones-regencia');
 
     $modules = [

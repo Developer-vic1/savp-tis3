@@ -23,7 +23,8 @@ final class PermissionLabel
                 'propio', 'propia', 'propios', 'propias' => 'Información propia',
                 default => count($parts) === 1 ? 'Compatibilidad con módulo existente' : 'Según autorización de la operación',
             },
-            'critical' => in_array($name, ['Panel_Administrador', 'roles-permisos.gestionar', 'usuarios.asignar_roles'], true)
+            'critical' => in_array($name, ['Panel_Administrador', 'Gestion_Roles_Permisos', 'Gestion_Usuarios', 'Bitacora', 'roles-permisos.gestionar', 'usuarios.asignar_roles', 'bitacora.ver.global', 'calificaciones.gestionar.global', 'calificaciones.rectificar', 'orientacion.configurar'], true)
+                || str_starts_with($name, 'roles.')
                 || in_array($action, ['desactivar', 'reset_password', 'eliminar'], true),
         ];
     }

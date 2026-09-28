@@ -9,6 +9,7 @@ use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
+use App\Support\PermissionLabel;
 
 class RolePermissionService
 {
@@ -16,12 +17,18 @@ class RolePermissionService
         'Panel_Administrador',
         'roles-permisos.gestionar',
         'usuarios.asignar_roles',
+        'roles.permisos.asignar',
+        'roles.crear',
     ];
 
     public function sync(Role $role, array $permissionNames, User $actor): void
     {
-        if (! $actor->hasRole('Administrador') || ! $actor->can('roles-permisos.gestionar') || $actor->est_usu !== 'ACTIVO' || $role->guard_name !== 'web') {
+        if (! $actor->hasRole('Administrador') || ! $actor->can('roles-permisos.gestionar') || ! $actor->can('roles.permisos.asignar') || $actor->est_usu !== 'ACTIVO' || $role->guard_name !== 'web') {
             throw new AuthorizationException('No tienes autorización para administrar roles y permisos.');
+        }
+
+        if (array_filter($permissionNames, fn ($name) => ! is_string($name)) !== []) {
+            throw ValidationException::withMessages(['permissions' => 'La selección contiene permisos inválidos.']);
         }
 
         $valid = Permission::query()
@@ -36,6 +43,18 @@ class RolePermissionService
             ]);
         }
 
+        $before = $role->permissions()->pluck('name')->sort()->values()->all();
+        $added = array_diff($valid, $before);
+        foreach ($added as $permission) {
+            if (! $actor->can($permission) || (PermissionLabel::describe($permission)['critical'] && $role->name !== 'Administrador')
+                || (str_ends_with($permission, '.global') && $role->name !== 'Administrador')) {
+                throw ValidationException::withMessages(['permissions' => 'No se puede conceder un permiso superior al propio ni ampliar permisos críticos a otro rol.']);
+            }
+        }
+        if ($actor->hasRole($role->name) && array_diff($before, $valid) !== []) {
+            throw ValidationException::withMessages(['permissions' => 'No puede retirar permisos de un rol asignado a su propia cuenta.']);
+        }
+
         if ($role->name === 'Administrador') {
             $existingCritical = Permission::query()->whereIn('name', self::ADMIN_CRITICAL)->pluck('name')->all();
             $missing = array_diff($existingCritical, $valid);
@@ -46,8 +65,6 @@ class RolePermissionService
                 ]);
             }
         }
-
-        $before = $role->permissions()->pluck('name')->sort()->values()->all();
 
         DB::transaction(function () use ($role, $valid, $actor, $before): void {
             $role->syncPermissions($valid);

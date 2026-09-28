@@ -1,5 +1,21 @@
 # PETER 2 — Auditoría de reestructuración, Fase 1
 
+## Fase 2 — Gobernanza institucional de roles (2026-09-28)
+
+Se amplió `/admin/roles-permisos` sobre el módulo existente. La matriz y `RolePermissionService` siguen operativos, ahora con autorización granular para asignar permisos, protección de permisos críticos y bloqueo de auto retiro de permisos. Los seis roles institucionales no se eliminan desde este módulo. La protección del último Administrador en `GestionUsuarios` permanece.
+
+`InstitutionalRoleGovernance` contiene reglas determinísticas versionadas (`SAVP-INSTITUCIONAL-2026-1`). Distingue duplicados nominales y funcionales, nombres reservados, justificación insuficiente, permisos críticos/legados/globales, coherencia del dominio y alcance menor disponible. Son **reglas del sistema**, no afirmaciones normativas del Ministerio. Devuelve estado, explicación, razones, sugerencia, permisos permitidos/bloqueados y advertencias. No usa LLM.
+
+`RoleRequestService` ejecuta solicitudes, revisión independiente y creación transaccional. El adjunto se valida por contenido MIME, extensión y tamaño (10 MB); se guarda con nombre aleatorio en el disco privado `local`, con SHA-256 y metadatos. Un hash reutilizado requiere explicación expresa. La descarga pasa por `actor:Administrador`, los permisos `roles-permisos.gestionar` y `roles.documentos.ver`, y nunca revela la ruta de almacenamiento. Bitácora registra solicitud, documento, revisión/rechazo/cancelación y creación sin copiar el contenido del archivo.
+
+`InstitutionalAuthorityService` exige exactamente un Director activo relacionado con personal institucional activo y Persona. Si falta o hay varios, bloquea la solicitud. El nombre aparece desde BD y no es editable. `InstitutionalDocumentAnalyzer` deja un contrato versionado de evidencia; la integración Python de Peter 3 está **pendiente**. No se afirma autenticidad de firma ni sello. En ausencia de analizador se exige revisión documental por **otro** Administrador: identidad coincidente, legibilidad y presencia aparente de firma y sello, más fundamento escrito. Revisión y creación revalidan autoridad; creación además verifica hash/archivo, permisos y duplicados dentro de la transacción. El solicitante no puede aprobar su propia evidencia.
+
+La migration `2026_09_28_000001_create_role_requests_table.php` crea `role_requests` con solicitud, permisos JSON, análisis, autoridad, documento, revisor, estado y rol creado. **No se ejecutó**. `RolSeeder` idempotente añade `roles.solicitudes.{ver,crear,analizar,cancelar}`, `roles.{crear,editar,desactivar}`, `roles.permisos.asignar` y `roles.documentos.ver`; `roles-permisos.gestionar` ya existía. **No se ejecutó ningún seeder ni se modificó la BD.** Tras revisión y respaldo institucional, aplicar `php artisan migrate` y `php artisan db:seed --class=RolSeeder` en el entorno autorizado. El seeder también sincroniza su catálogo preexistente de permisos, por lo que debe revisarse ese efecto antes de ejecutarlo.
+
+Se ejecutaron 13 pruebas unitarias sin BD (29 aserciones) del analizador de roles, autoridad activa/ausente/ambigua, autorización granular y fallback documental; compilación Blade, listado de rutas y análisis sintáctico. Quedan pendientes pruebas de integración con BD aislada (incluida manipulación Livewire y carrera de creación), pruebas visuales autenticadas móvil/oscuro, y el contrato/servicio Python de Peter 3. `app.css` y `app.js` no se modificaron. Riesgo operativo: la revisión manual depende de la diligencia del segundo Administrador; no hay verificación criptográfica de firma ni OCR y por diseño no se habilita creación automática por el documento.
+
+---
+
 Fecha: 2026-09-28. Worktree: `C:\laragon\www\savp-reestructuracion`.
 Rama: `feature/REESTRUCTURACION`.
 Base original: `a5fb7eac5efafa0ac9530cc41b77852869a740ae`.
