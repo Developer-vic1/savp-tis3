@@ -12,7 +12,7 @@ class AulaVirtualAsistenciaPolicy
     {
         $service = app(CursoVirtualService::class);
 
-        return (bool) ($service->cursoParaEstudiante($user, $asistencia->cod_cla)
+        return $user->can('Acceso_Aula_Virtual') && (bool) ($service->cursoParaEstudiante($user, $asistencia->cod_cla)
             ?? $service->cursoParaDocente($user, $asistencia->cod_cla));
     }
 

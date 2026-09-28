@@ -5,12 +5,15 @@
         : ($user?->can('Aula_Virtual_Estudiante') || $user?->hasRole('Estudiante') ? 'Estudiante' : 'Aula Virtual');
 
     $linksEstudiante = [
-        ['perm' => 'Mis_Asignaturas', 'label' => 'Mis asignaturas', 'route' => 'aula-virtual.estudiante.asignaturas'],
-        ['perm' => 'Tareas_Aula', 'label' => 'Actividades pendientes', 'route' => 'aula-virtual.inicio'],
-        ['perm' => 'Materiales_Aula', 'label' => 'Materiales', 'route' => 'aula-virtual.estudiante.asignaturas'],
-        ['perm' => 'Calificaciones_Aula', 'label' => 'Calificaciones', 'route' => 'aula-virtual.estudiante.asignaturas'],
-        ['perm' => 'Asistencia_Aula', 'label' => 'Mi asistencia', 'route' => 'aula-virtual.estudiante.asistencia'],
-        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Orientacion academica-profesional', 'route' => 'aula-virtual.estudiante.orientacion'],
+        ['perm' => 'Mis_Asignaturas', 'label' => 'Mis materias', 'route' => 'aula-virtual.estudiante.asignaturas'],
+        ['perm' => 'Calificaciones_Aula', 'label' => 'Mi progreso', 'route' => 'estudiante.area', 'params' => ['area' => 'progreso']],
+        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Mis intereses', 'route' => 'estudiante.intereses'],
+        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Mi futuro académico', 'route' => 'estudiante.area', 'params' => ['area' => 'futuro']],
+        ['perm' => 'Perfil_Academico', 'label' => 'Mi preparación', 'route' => 'estudiante.area', 'params' => ['area' => 'preparacion']],
+        ['perm' => 'Perfil_Academico', 'label' => 'Mi plan', 'route' => 'estudiante.area', 'params' => ['area' => 'plan']],
+        ['perm' => 'Materiales_Aula', 'label' => 'Fuentes académicas', 'route' => 'estudiante.area', 'params' => ['area' => 'fuentes']],
+        ['perm' => 'Perfil_Academico', 'label' => 'Asistente de estudio', 'route' => 'estudiante.area', 'params' => ['area' => 'asistente']],
+        ['perm' => 'Seguridad_Cuenta', 'label' => 'Mi perfil', 'route' => 'profile.show'],
     ];
 
     $linksDocente = [
@@ -102,7 +105,7 @@
                 <div class="space-y-1">
                     @foreach ($linksEstudiante as $link)
                         @can($link['perm'])
-                            <a href="{{ Route::has($link['route']) ? route($link['route']) : route('aula-virtual.inicio') }}"
+                            <a href="{{ Route::has($link['route']) ? route($link['route'], $link['params'] ?? []) : route('aula-virtual.inicio') }}"
                                 class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
                                 style="color: var(--ui-muted);"
                                 onmouseover="this.style.color='var(--ui-primary)'"

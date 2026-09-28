@@ -46,6 +46,10 @@ class AulaVirtualPermissionSeeder extends Seeder
             'Notificaciones_Aula',
             'Orientacion_Academica_Profesional',
             'Seguridad_Cuenta',
+            'aula.entregas.gestionar.propias',
+            'asistencia.ver.propia',
+            'orientacion.realizar',
+            'orientacion.ver.propia',
         ];
 
         $permisosDocente = [
@@ -65,6 +69,11 @@ class AulaVirtualPermissionSeeder extends Seeder
             'Reportes_Aula',
             'Orientacion_Academica_Profesional',
             'Seguridad_Cuenta',
+            'aula.materiales.gestionar.curso',
+            'aula.tareas.gestionar.curso',
+            'aula.entregas.revisar.curso',
+            'asistencia.gestionar.curso',
+            'calificaciones.gestionar.curso',
         ];
 
         $permisosAdministrativos = [
@@ -81,6 +90,8 @@ class AulaVirtualPermissionSeeder extends Seeder
             'Reportes_Aula',
             'Orientacion_Academica_Profesional',
             'Gestion_Roles_Permisos',
+            'roles-permisos.gestionar',
+            'orientacion.configurar',
         ];
 
         $todosLosPermisos = array_unique([

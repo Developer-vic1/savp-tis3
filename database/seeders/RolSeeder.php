@@ -194,6 +194,75 @@ class RolSeeder extends Seeder
 
         /*
         |--------------------------------------------------------------------------
+        | PERMISOS POR ACCIÓN Y ALCANCE
+        |--------------------------------------------------------------------------
+        | Conviven con los permisos legados durante la transición. No se eliminan
+        | nombres antiguos para no interrumpir rutas y componentes existentes.
+        */
+        $permisosPorAccion = [
+            'usuarios.ver.global' => [$admin],
+            'usuarios.ver.institucional' => [$secretaria],
+            'usuarios.crear' => [$admin, $secretaria],
+            'usuarios.editar' => [$admin, $secretaria],
+            'usuarios.activar' => [$admin, $secretaria],
+            'usuarios.desactivar' => [$admin, $secretaria],
+            'usuarios.reset_password' => [$admin, $secretaria],
+            'usuarios.asignar_roles' => [$admin],
+            'roles-permisos.gestionar' => [$admin],
+            'regencia.asignaciones.gestionar' => [$admin],
+            'calificaciones.rectificar' => [$admin],
+
+            'personas.ver.institucional' => [$admin, $director, $secretaria],
+            'personas.gestionar.institucional' => [$admin, $secretaria],
+            'estudiantes.ver.global' => [$admin],
+            'estudiantes.ver.institucional' => [$director, $secretaria, $regente],
+            'estudiantes.ver.curso' => [$docente],
+            'estudiantes.ver.propio' => [$estudiante],
+            'estudiantes.gestionar.institucional' => [$admin, $secretaria],
+
+            'cursos.ver.global' => [$admin],
+            'cursos.ver.institucional' => [$director, $secretaria, $regente],
+            'cursos.ver.asignados' => [$docente],
+            'cursos.ver.propios' => [$estudiante],
+            'cursos.gestionar.global' => [$admin],
+            'inscripciones.ver.institucional' => [$admin, $director, $secretaria, $regente],
+            'inscripciones.ver.curso' => [$docente],
+            'inscripciones.ver.propias' => [$estudiante],
+            'inscripciones.gestionar.institucional' => [$admin, $secretaria],
+
+            'calificaciones.ver.global' => [$admin],
+            'calificaciones.ver.institucional' => [$director, $regente],
+            'calificaciones.ver.curso' => [$docente],
+            'calificaciones.ver.propias' => [$estudiante],
+            'calificaciones.gestionar.global' => [$admin],
+            'calificaciones.gestionar.curso' => [$docente],
+            'asistencia.ver.institucional' => [$admin, $director, $regente],
+            'asistencia.ver.curso' => [$docente],
+            'asistencia.ver.propia' => [$estudiante],
+            'asistencia.gestionar.curso' => [$docente],
+
+            'aula.materiales.gestionar.curso' => [$docente],
+            'aula.tareas.gestionar.curso' => [$docente],
+            'aula.entregas.gestionar.propias' => [$estudiante],
+            'aula.entregas.revisar.curso' => [$docente],
+            'orientacion.realizar' => [$estudiante],
+            'orientacion.ver.propia' => [$estudiante],
+            'orientacion.ver.curso' => [$docente],
+            'orientacion.ver.institucional' => [$admin, $director, $regente],
+            'orientacion.configurar' => [$admin],
+            'reportes.ver.institucional' => [$admin, $director, $secretaria, $regente],
+            'reportes.exportar.institucional' => [$admin, $director],
+            'bitacora.ver.global' => [$admin],
+            'integraciones.peter3.usar' => [$admin, $director, $docente, $estudiante],
+        ];
+
+        foreach ($permisosPorAccion as $nombre => $roles) {
+            $permiso = Permission::firstOrCreate(['name' => $nombre, 'guard_name' => 'web']);
+            $permiso->syncRoles($roles);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
         | Limpiar caché nuevamente
         |--------------------------------------------------------------------------
         */

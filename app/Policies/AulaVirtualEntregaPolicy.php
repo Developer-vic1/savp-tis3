@@ -13,13 +13,13 @@ class AulaVirtualEntregaPolicy
         $service = app(CursoVirtualService::class);
         $estudiante = $service->estudianteDeUsuario($user);
 
-        if ($estudiante && $entrega->cod_est === $estudiante->cod_est) {
+        if ($user->can('Aula_Virtual_Estudiante') && $estudiante && $entrega->cod_est === $estudiante->cod_est) {
             return true;
         }
 
         $entrega->loadMissing('tarea');
 
-        return (bool) $service->cursoParaDocente($user, $entrega->tarea->cod_cla);
+        return $user->can('Aula_Virtual_Docente') && $entrega->tarea && (bool) $service->cursoParaDocente($user, $entrega->tarea->cod_cla);
     }
 
     public function grade(User $user, EntregaTarea $entrega): bool
@@ -27,6 +27,6 @@ class AulaVirtualEntregaPolicy
         $entrega->loadMissing('tarea');
 
         return $user->can('Aula_Virtual_Docente')
-            && (bool) app(CursoVirtualService::class)->cursoParaDocente($user, $entrega->tarea->cod_cla);
+            && $entrega->tarea && (bool) app(CursoVirtualService::class)->cursoParaDocente($user, $entrega->tarea->cod_cla);
     }
 }

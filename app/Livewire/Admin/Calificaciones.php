@@ -23,6 +23,7 @@ class Calificaciones extends Component
     public string $periodoFiltro = '';
     public string $asignaturaFiltro = '';
     public string $estado = '';
+    public string $gestionFiltro = '';
     public bool $modalFormulario = false;
     public bool $editando = false;
     public ?string $seleccionado = null;
@@ -35,6 +36,7 @@ class Calificaciones extends Component
     public function updatedPeriodoFiltro(): void { $this->resetPage(); }
     public function updatedAsignaturaFiltro(): void { $this->resetPage(); }
     public function updatedEstado(): void { $this->resetPage(); }
+    public function updatedGestionFiltro(): void { $this->resetPage(); }
 
     public function abrirCrear(): void
     {
@@ -47,7 +49,8 @@ class Calificaciones extends Component
     public function abrirEditar(string $codigo): void
     {
         $calificacion = Calificacion::findOrFail($codigo);
-        $this->form = $calificacion->only(['cod_est', 'cod_asi', 'cod_pev', 'not_cal', 'obs_cal', 'est_cal']);
+        abort_unless($calificacion->cod_pas, 409, 'Nota histórica pendiente de reconciliación de su asignación.');
+        $this->form = $calificacion->only(['cod_est', 'cod_asi', 'cod_pas', 'cod_pev', 'not_cal', 'obs_cal', 'est_cal']);
         $this->seleccionado = $codigo;
         $this->editando = true;
         $this->analizar();
@@ -62,6 +65,9 @@ class Calificaciones extends Component
 
     public function analizar(): void
     {
+        if (! empty($this->form['cod_pas'])) {
+            $this->form['cod_asi'] = \App\Models\PlanAsignatura::find($this->form['cod_pas'])?->cod_asi;
+        }
         $this->analisis = app(CalificacionInteligente::class)->analizar($this->form, $this->seleccionado);
     }
 
@@ -73,6 +79,7 @@ class Calificaciones extends Component
 
     public function guardar(): void
     {
+        abort_unless(app(\App\Services\GradeService::class)->available(), 409, 'El historial por gestión requiere aplicación autorizada del esquema.');
         $this->analizar();
         if (! ($this->analisis['puede_guardar'] ?? false)) {
             $this->dispatch('swal:warning', title: 'Calificación bloqueada', text: implode(' ', $this->analisis['bloqueos'] ?? []));
@@ -83,31 +90,16 @@ class Calificaciones extends Component
         $this->validate([
             'form.cod_est' => ['required', 'exists:estudiante,cod_est'],
             'form.cod_asi' => ['required', 'exists:asignatura,cod_asi'],
+            'form.cod_pas' => ['required', 'exists:plan_asignatura,cod_pas'],
             'form.cod_pev' => ['required', 'exists:periodo_evaluacion,cod_pev'],
             'form.not_cal' => ['required', 'numeric', 'min:0', 'max:100'],
             'form.obs_cal' => ['nullable', 'string', 'max:255'],
             'form.est_cal' => ['required', Rule::in(['ACTIVO', 'INACTIVO', 'ANULADO'])],
         ]);
 
-        $anterior = null;
-        if ($this->editando && $this->seleccionado) {
-            $calificacion = Calificacion::findOrFail($this->seleccionado);
-            $anterior = $calificacion->toArray();
-            $calificacion->update($this->form);
-        } else {
-            $calificacion = Calificacion::create($this->form);
-        }
-
-        BitacoraService::registrar(
-            accion: $this->editando ? 'ACTUALIZAR_CALIFICACION' : 'CREAR_CALIFICACION',
-            tabla: 'calificacion',
-            registro: $calificacion->cod_cal,
-            modulo: 'Calificaciones',
-            nombreRegistro: $calificacion->cod_cal,
-            descripcion: 'Se guardó una calificación sobre 100 con validación académica.',
-            valoresAnteriores: $anterior,
-            valoresNuevos: $calificacion->fresh()->toArray(),
-        );
+        app(\App\Services\GradeService::class)->save(auth()->user(), $this->form['cod_pas'], $this->form['cod_est'], $this->form['cod_pev'],
+            (float) $this->form['not_cal'], $this->form['obs_cal'] ?? null,
+            $this->editando ? Calificacion::findOrFail($this->seleccionado) : null, $this->form['motivo'] ?? null, $this->form['est_cal']);
 
         $this->modalFormulario = false;
         $this->dispatch('swal:success', title: 'Calificación guardada', text: 'La calificación fue registrada correctamente.');
@@ -115,21 +107,23 @@ class Calificaciones extends Component
 
     public function cambiarEstado(string $codigo): void
     {
-        $calificacion = Calificacion::findOrFail($codigo);
-        $calificacion->update(['est_cal' => $calificacion->est_cal === 'ACTIVO' ? 'ANULADO' : 'ACTIVO']);
-        $this->dispatch('swal:success', title: 'Estado actualizado', text: 'El estado de la calificación fue actualizado.');
+        $this->abrirEditar($codigo);
+        $this->form['est_cal'] = $this->form['est_cal'] === 'ACTIVO' ? 'ANULADO' : 'ACTIVO';
+        $this->addError('form.motivo', 'Para cambiar el estado indica el motivo de rectificación y guarda la nota.');
     }
 
     public function limpiarFiltros(): void
     {
         $this->search = $this->periodoFiltro = $this->asignaturaFiltro = $this->estado = '';
+        $this->gestionFiltro = '';
         $this->resetPage();
     }
 
     public function render()
     {
         $query = Calificacion::query()
-            ->with(['estudiante.persona', 'estudiante.especialidad', 'asignatura', 'periodoEvaluacion'])
+            ->with(['estudiante.persona', 'estudiante.especialidad', 'asignatura', 'periodoEvaluacion', 'planAsignatura.gestionAcademica', 'planAsignatura.curso', 'planAsignatura.paralelo'])
+            ->when($this->gestionFiltro !== '', fn ($q) => $q->whereHas('planAsignatura', fn ($p) => $p->where('cod_gea', $this->gestionFiltro)))
             ->when($this->search !== '', function (Builder $query) {
                 $search = trim($this->search);
                 $query->where(function (Builder $sub) use ($search) {
@@ -142,20 +136,24 @@ class Calificaciones extends Component
             ->when($this->estado !== '', fn ($q) => $q->where('est_cal', $this->estado));
 
         $soporte = app(CalificacionInteligente::class);
-        $menor = Calificacion::with('asignatura')->where('est_cal', 'ACTIVO')->get()->groupBy('cod_asi')
-            ->map(fn ($items) => ['nombre' => $items->first()->asignatura?->nom_asi, 'promedio' => round($items->avg('not_cal'), 2)])
-            ->sortBy('promedio')->first();
+        $metricQuery = (clone $query)->where('est_cal', 'ACTIVO');
+        $lowest = (clone $metricQuery)->select('cod_asi')->selectRaw('AVG(not_cal) as promedio')
+            ->groupBy('cod_asi')->orderBy('promedio')->first();
+        $menor = $lowest ? ['nombre' => $lowest->asignatura?->nom_asi, 'promedio' => round($lowest->promedio, 2)] : null;
 
         return view('livewire.admin.calificaciones', [
+            'years' => \App\Models\GestionAcademica::orderByDesc('ani_gea')->get(),
+            'plans' => \App\Models\PlanAsignatura::with('asignatura', 'gestionAcademica', 'curso', 'paralelo')->orderByDesc('cod_gea')->get(),
+            'ready' => app(\App\Services\GradeService::class)->available(),
             'calificaciones' => $query->orderByDesc('created_at')->paginate(10),
             'estudiantes' => Estudiante::with('persona')->where('est_est', 'ACTIVO')->get()->sortBy(fn ($e) => $e->persona?->ape_pat_per),
             'asignaturas' => Asignatura::where('est_asi', 'ACTIVO')->orderBy('nom_asi')->get(),
-            'periodos' => PeriodoEvaluacion::where('est_pev', 'ACTIVO')->orderBy('ord_pev')->get(),
+            'periodos' => PeriodoEvaluacion::orderBy('ord_pev')->get(),
             'soporte' => $soporte,
             'metricas' => [
-                'promedio' => round((float) Calificacion::where('est_cal', 'ACTIVO')->avg('not_cal'), 2),
-                'riesgo' => Calificacion::where('est_cal', 'ACTIVO')->where('not_cal', '<=', 50)->count(),
-                'destacadas' => Calificacion::where('est_cal', 'ACTIVO')->where('not_cal', '>=', 90)->count(),
+                'promedio' => ($avg = (clone $metricQuery)->avg('not_cal')) === null ? null : round((float) $avg, 2),
+                'riesgo' => (clone $metricQuery)->where('not_cal', '<=', 50)->count(),
+                'destacadas' => (clone $metricQuery)->where('not_cal', '>=', 90)->count(),
                 'menor' => $menor,
             ],
         ]);
@@ -163,7 +161,7 @@ class Calificaciones extends Component
 
     private function limpiarFormulario(): void
     {
-        $this->form = ['cod_est' => '', 'cod_asi' => '', 'cod_pev' => '', 'not_cal' => '', 'obs_cal' => '', 'est_cal' => 'ACTIVO'];
+        $this->form = ['cod_est' => '', 'cod_asi' => '', 'cod_pas' => '', 'cod_pev' => '', 'not_cal' => '', 'obs_cal' => '', 'motivo' => '', 'est_cal' => 'ACTIVO'];
         $this->analisis = [];
     }
 }

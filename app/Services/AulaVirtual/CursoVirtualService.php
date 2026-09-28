@@ -17,17 +17,27 @@ class CursoVirtualService
 {
     public function estudianteDeUsuario(User $user): ?Estudiante
     {
+        if (! $user->hasRole('Estudiante') || ! $user->cod_per || $user->est_usu !== 'ACTIVO') {
+            return null;
+        }
+
         return Estudiante::query()
             ->with('persona')
+            ->where('est_est', 'ACTIVO')
             ->where('cod_per', $user->cod_per)
             ->first();
     }
 
     public function docenteDeUsuario(User $user): ?Docente
     {
+        if (! $user->hasRole('Docente') || ! $user->cod_per || $user->est_usu !== 'ACTIVO') {
+            return null;
+        }
+
         return Docente::query()
             ->with('personalInstitucional.persona')
-            ->whereHas('personalInstitucional', fn ($query) => $query->where('cod_per', $user->cod_per))
+            ->where('est_doc', 'ACTIVO')
+            ->whereHas('personalInstitucional', fn ($query) => $query->where('cod_per', $user->cod_per)->where('est_pin', 'ACTIVO'))
             ->first();
     }
 
@@ -41,6 +51,20 @@ class CursoVirtualService
 
         return ClaseVirtual::query()
             ->with($this->relacionesCurso())
+            ->with([
+                'materiales' => fn ($q) => $q->where('est_mat', 'ACTIVO'),
+                'tareas' => fn ($q) => $q->whereIn('est_tar', ['PUBLICADA', 'CERRADA']),
+                'tareas.entregas' => fn ($q) => $q->where('cod_est', $estudiante->cod_est),
+                'estudiantes' => fn ($q) => $q->where('cod_est', $estudiante->cod_est),
+            ])
+            ->whereHas('planAsignatura', function ($plan) use ($estudiante) {
+                $plan->whereExists(function ($enrollment) use ($estudiante) {
+                    $enrollment->selectRaw('1')->from('inscripcion_estudiante')->where('cod_est', $estudiante->cod_est)->where('est_ins', 'ACTIVA');
+                    foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
+                        $enrollment->whereColumn('inscripcion_estudiante.'.$field, 'plan_asignatura.'.$field);
+                    }
+                });
+            })
             ->whereHas('estudiantes', function ($query) use ($estudiante) {
                 $query->where('cod_est', $estudiante->cod_est)
                     ->where('est_cla_est', 'ACTIVO');

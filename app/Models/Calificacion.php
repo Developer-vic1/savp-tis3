@@ -10,12 +10,14 @@ class Calificacion extends Model
     protected $primaryKey = 'cod_cal';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $casts = ['not_cal' => 'decimal:2'];
 
     protected $fillable = [
         'cod_cal', // Código calificación
         'cod_est', // Código estudiante
         'cod_asi', // Código asignatura
         'cod_pev', // Código periodo evaluación
+        'cod_pas', // Asignación contextual: gestión, curso, paralelo, turno y docente
         'not_cal', // Nota calificación
         'obs_cal', // Observación calificación
         'est_cal', // Estado calificación
@@ -55,5 +57,10 @@ class Calificacion extends Model
     public function periodoEvaluacion()
     {
         return $this->belongsTo(PeriodoEvaluacion::class, 'cod_pev', 'cod_pev');
+    }
+
+    public function planAsignatura()
+    {
+        return $this->belongsTo(PlanAsignatura::class, 'cod_pas', 'cod_pas');
     }
 }

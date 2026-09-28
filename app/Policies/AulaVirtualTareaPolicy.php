@@ -10,7 +10,7 @@ class AulaVirtualTareaPolicy
 {
     public function submit(User $user, Tarea $tarea): bool
     {
-        return $user->can('Aula_Virtual_Estudiante')
+        return $tarea->est_tar === 'PUBLICADA' && $user->can('Aula_Virtual_Estudiante')
             && (bool) app(CursoVirtualService::class)->cursoParaEstudiante($user, $tarea->cod_cla);
     }
 

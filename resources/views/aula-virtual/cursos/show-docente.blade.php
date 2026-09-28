@@ -15,6 +15,7 @@
                 <div class="flex flex-wrap gap-2">
                     @include('aula-virtual.componentes.icon-action-button', ['href' => route('aula-virtual.docente.asistencia.registrar', $curso->cod_cla), 'icon' => 'asistencia', 'label' => 'Asistencia', 'variant' => 'secondary'])
                     @include('aula-virtual.componentes.icon-action-button', ['href' => route('aula-virtual.materiales.index', $curso->cod_cla), 'icon' => 'crear-material', 'label' => 'Materiales'])
+                    @include('aula-virtual.componentes.icon-action-button', ['href' => route('docente.cursos.calificaciones', $curso->cod_cla), 'icon' => 'revisar', 'label' => 'Calificaciones', 'variant' => 'secondary'])
                 </div>
             </div>
         </section>

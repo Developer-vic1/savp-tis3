@@ -14,6 +14,7 @@ class CalificacionInteligente
             ->when($ignorarCodigo, fn ($q) => $q->where('cod_cal', '!=', $ignorarCodigo))
             ->where('cod_est', $datos['cod_est'] ?? '')
             ->where('cod_asi', $datos['cod_asi'] ?? '')
+            ->when(\Illuminate\Support\Facades\Schema::hasColumn('calificacion', 'cod_pas'), fn ($q) => $q->where('cod_pas', $datos['cod_pas'] ?? null))
             ->where('cod_pev', $datos['cod_pev'] ?? '')
             ->exists();
 
@@ -28,7 +29,7 @@ class CalificacionInteligente
             $bloqueos[] = 'La nota debe estar entre 0 y 100.';
         }
         if ($duplicado) {
-            $bloqueos[] = 'Ya existe una calificación para estudiante, asignatura y periodo.';
+            $bloqueos[] = 'Ya existe una calificación para estudiante, asignación y periodo.';
         }
 
         return [

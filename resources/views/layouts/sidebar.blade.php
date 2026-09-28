@@ -9,5 +9,9 @@ IMPORTANTE:
 --}}
 
 <aside class="hidden lg:block" aria-label="Barra lateral principal del sistema">
-    <x-menu />
+    @if (Auth::user()?->hasRole('Administrador'))
+        <x-menu />
+    @else
+        @include('components.actor-menu')
+    @endif
 </aside>

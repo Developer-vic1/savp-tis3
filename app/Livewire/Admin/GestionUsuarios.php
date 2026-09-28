@@ -44,6 +44,11 @@ class GestionUsuarios extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    public function mount(): void
+    {
+        abort_unless(Auth::user()?->hasRole('Administrador'), 403);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Filtros y tabla
@@ -240,6 +245,8 @@ class GestionUsuarios extends Component
     */
     public function guardarUsuario(): void
     {
+        $this->authorizeUserAction('usuarios.crear');
+        $this->authorizeUserAction('usuarios.asignar_roles');
         $this->validate();
 
         DB::beginTransaction();
@@ -436,6 +443,12 @@ class GestionUsuarios extends Component
 
     public function guardarEdicionUsuario(): void
     {
+        $this->authorizeUserAction('usuarios.editar');
+        $this->authorizeUserAction('usuarios.asignar_roles');
+        if (! empty($this->formEditar['password'])) {
+            $this->authorizeUserAction('usuarios.reset_password');
+        }
+        $this->authorizeUserAction(($this->formEditar['est_usu'] ?? '') === 'ACTIVO' ? 'usuarios.activar' : 'usuarios.desactivar');
         $this->validate($this->rulesEditarUsuario(), $this->messages);
 
         DB::beginTransaction();
@@ -455,6 +468,14 @@ class GestionUsuarios extends Component
 
             $rolAnterior = $usuario->roles->first()?->name;
             $rolNuevo = $this->formEditar['role'];
+
+            if ($usuario->hasRole('Administrador')
+                && ($rolNuevo !== 'Administrador' || $this->formEditar['est_usu'] !== 'ACTIVO')
+                && $this->esUltimoAdministrador($usuario)) {
+                DB::rollBack();
+                $this->addError('formEditar.role', 'No puedes retirar el rol al último Administrador activo.');
+                return;
+            }
 
             $data = [
                 'email' => $this->limpiarCorreo($this->formEditar['email']),
@@ -591,6 +612,7 @@ class GestionUsuarios extends Component
     */
     public function aplicarAccionLote(): void
     {
+        $this->authorizeUserAction($this->accionLote === 'activar' ? 'usuarios.activar' : 'usuarios.desactivar');
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;
@@ -618,7 +640,7 @@ class GestionUsuarios extends Component
             $omitidos = [];
 
             foreach ($usuarios as $usuario) {
-                if ($this->accionLote === 'inactivar' && $usuario->cod_usu === $usuarioActual) {
+                if ($this->accionLote === 'inactivar' && ($usuario->cod_usu === $usuarioActual || $this->esUltimoAdministrador($usuario))) {
                     $omitidos[] = $usuario->cod_usu;
                     continue;
                 }
@@ -795,6 +817,26 @@ class GestionUsuarios extends Component
         return 'USU_' . str_pad((string) $nuevo, 4, '0', STR_PAD_LEFT);
     }
 
+    private function esUltimoAdministrador(User $usuario): bool
+    {
+        // Todas las bajas de administradores comparten este bloqueo transaccional.
+        Role::query()->where('name', 'Administrador')->where('guard_name', 'web')->lockForUpdate()->first();
+        if (! $usuario->hasRole('Administrador')) {
+            return false;
+        }
+
+        return User::query()
+            ->where('cod_usu', '!=', $usuario->cod_usu)
+            ->where('est_usu', 'ACTIVO')
+            ->whereHas('roles', fn ($query) => $query->where('name', 'Administrador'))
+            ->doesntExist();
+    }
+
+    private function authorizeUserAction(string $permission): void
+    {
+        abort_unless(Auth::user()?->est_usu === 'ACTIVO' && Auth::user()->hasRole('Administrador') && Auth::user()->can($permission), 403, 'No tienes autorización para realizar esta acción.');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Acciones individuales
@@ -802,6 +844,7 @@ class GestionUsuarios extends Component
     */
     public function desactivarUsuario(string $codUsu): void
     {
+        $this->authorizeUserAction('usuarios.desactivar');
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;
@@ -825,6 +868,11 @@ class GestionUsuarios extends Component
 
             if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra inactivo.');
+                return;
+            }
+
+            if ($this->esUltimoAdministrador($usuario)) {
+                $this->dispatch('error-general', mensaje: 'No puedes desactivar al último Administrador activo.');
                 return;
             }
 
@@ -855,6 +903,7 @@ class GestionUsuarios extends Component
 
     public function reactivarUsuario(string $codUsu): void
     {
+        $this->authorizeUserAction('usuarios.activar');
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
             return;

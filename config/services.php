@@ -41,4 +41,17 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'peter3' => [
+        'url' => env('PETER3_API_URL'),
+        'connect_timeout' => (int) env('PETER3_CONNECT_TIMEOUT', 3),
+        'timeout' => (int) env('PETER3_TIMEOUT', 10),
+        'version' => env('PETER3_API_VERSION', 'v1'),
+        'paths' => [
+            'health' => env('PETER3_HEALTH_PATH', '/health'),
+            'analysis' => env('PETER3_ANALYSIS_PATH'),
+            'knowledge' => env('PETER3_KNOWLEDGE_PATH'),
+            'tutor' => env('PETER3_TUTOR_PATH'),
+        ],
+    ],
+
 ];

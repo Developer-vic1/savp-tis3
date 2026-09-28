@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\BitacoraService;
+use App\Services\RoleDashboardResolver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -140,14 +141,9 @@ class GoogleAuthController extends Controller
                 return redirect()->route('aula-virtual.inicio');
             }
 
-            if ($user->hasRole('Administrador') && Route::has('admin.dashboard')) {
-                return redirect()->route('admin.dashboard');
-            } elseif ($user->hasRole('Director') && Route::has('director.dashboard')) {
-                return redirect()->route('director.dashboard');
-            } elseif ($user->hasRole('Docente') && Route::has('docente.dashboard')) {
-                return redirect()->route('docente.dashboard');
-            } elseif ($user->hasRole('Estudiante') && Route::has('estudiante.aula-virtual')) {
-                return redirect()->route('estudiante.aula-virtual');
+            $workspace = app(RoleDashboardResolver::class)->routeFor($user);
+            if ($workspace && Route::has($workspace)) {
+                return redirect()->route($workspace);
             }
 
             return redirect()->route('dashboard');

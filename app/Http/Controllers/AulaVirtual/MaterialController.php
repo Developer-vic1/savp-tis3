@@ -21,7 +21,9 @@ class MaterialController extends Controller
 
         return view('aula-virtual.materiales.index', [
             'curso' => $clase,
-            'materiales' => $clase->materiales()->latest()->get(),
+            'materiales' => $clase->materiales()
+                ->when(! $this->cursos->cursoParaDocente($request->user(), $curso), fn ($query) => $query->where('est_mat', 'ACTIVO'))
+                ->latest()->get(),
         ]);
     }
 
@@ -48,14 +50,14 @@ class MaterialController extends Controller
 
     public function descargar(Request $request, MaterialClase $material)
     {
-        abort_if(! $this->puedeVerCurso($request, $material->cod_cla), 403);
+        \Illuminate\Support\Facades\Gate::authorize('view', $material);
 
         return $this->materiales->descargar($material);
     }
 
     public function publicar(Request $request, MaterialClase $material)
     {
-        abort_if(! $this->cursos->cursoParaDocente($request->user(), $material->cod_cla), 403);
+        \Illuminate\Support\Facades\Gate::authorize('update', $material);
         $material->forceFill(['est_mat' => 'ACTIVO'])->save();
 
         return back()->with('status', 'Material publicado.');
@@ -63,7 +65,7 @@ class MaterialController extends Controller
 
     public function ocultar(Request $request, MaterialClase $material)
     {
-        abort_if(! $this->cursos->cursoParaDocente($request->user(), $material->cod_cla), 403);
+        \Illuminate\Support\Facades\Gate::authorize('update', $material);
         $material->forceFill(['est_mat' => 'OCULTO'])->save();
 
         return back()->with('status', 'Material oculto.');

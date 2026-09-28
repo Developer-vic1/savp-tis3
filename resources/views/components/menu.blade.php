@@ -161,6 +161,17 @@
                             </a>
                     @endcan
 
+                    @role('Administrador')
+                        <a href="{{ route('admin.roles-permisos') }}"
+                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
+                            style="{{ request()->routeIs('admin.roles-permisos') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}">
+                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3 4.5 6v5.25c0 4.64 3.2 8.71 7.5 9.75 4.3-1.04 7.5-5.11 7.5-9.75V6L12 3Zm0 5.25v4.5m0 3h.008v.008H12v-.008Z" />
+                            </svg>
+                            <span x-show="sidebarOpen" x-cloak>Roles y permisos</span>
+                        </a>
+                    @endrole
+
                     @can('Personal_Institucional')
                             <a href="{{ route('admin.personal-institucional') }}"
                                 class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition" style="{{ request()->routeIs('admin.personal-institucional')

@@ -40,6 +40,7 @@ class TareaController extends Controller
 
     public function entregar(Request $request, Tarea $tarea)
     {
+        abort_unless(in_array($tarea->est_tar, ['PUBLICADA', 'CERRADA'], true), 404);
         abort_if(! $this->cursos->cursoParaEstudiante($request->user(), $tarea->cod_cla), 403);
 
         $estudiante = $this->cursos->estudianteDeUsuario($request->user());
