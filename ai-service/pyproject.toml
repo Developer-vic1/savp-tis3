@@ -1,0 +1,56 @@
+[project]
+name = "savp-ai-service"
+version = "0.1.0"
+description = "Servicio analítico académico-vocacional reproducible para SAVP-TIS3"
+readme = "README.md"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "beautifulsoup4>=4.15.0",
+    "easyocr>=1.7.2",
+    "faiss-cpu>=1.15.1",
+    "fastapi>=0.116,<1.0",
+    "lxml>=6.1.3",
+    "pillow>=12.3.0",
+    "pydantic-settings>=2.10,<3.0",
+    "pymupdf>=1.28.2",
+    "pypdf>=6.19.0",
+    "sentence-transformers>=6.1.0",
+    "uvicorn[standard]>=0.35,<1.0",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28,<1.0",
+    "mypy>=1.17,<2.0",
+    "psutil>=7.0,<8.0",
+    "pytest>=8.4,<10.0",
+    "pytest-asyncio>=1.1,<2.0",
+    "pytest-cov>=6.2,<8.0",
+    "ruff>=0.12,<1.0",
+    "types-psutil>=7.2.2.20260906",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers --cov=app --cov-report=term-missing"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = ["ocr: prueba de integración con inferencia OCR real"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]

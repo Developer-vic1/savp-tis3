@@ -1,0 +1,30 @@
+{
+  "fixture_type": "SYNTHETIC_SCENARIO",
+  "scenario_note": "Intereses I altos y evidencia matemática actual baja; no es una predicción.",
+  "schema_version": "1.0",
+  "student_id": "SYN-SCENARIO-001",
+  "academic": {
+    "records": [{"subject": "Matemática", "score": 48, "period": "T1", "period_order": 1}]
+  },
+  "vocational": {
+    "instrument_id": "onet-mini-ip-2.0-es",
+    "instrument_version": "2.0-es-2025",
+    "responses": [
+      {"item_id": 1, "value": 1}, {"item_id": 2, "value": 4},
+      {"item_id": 3, "value": 1}, {"item_id": 4, "value": 1},
+      {"item_id": 5, "value": 1}, {"item_id": 6, "value": 1},
+      {"item_id": 7, "value": 1}, {"item_id": 8, "value": 4},
+      {"item_id": 9, "value": 1}, {"item_id": 10, "value": 1},
+      {"item_id": 11, "value": 1}, {"item_id": 12, "value": 1},
+      {"item_id": 13, "value": 1}, {"item_id": 14, "value": 4},
+      {"item_id": 15, "value": 1}, {"item_id": 16, "value": 1},
+      {"item_id": 17, "value": 1}, {"item_id": 18, "value": 1},
+      {"item_id": 19, "value": 1}, {"item_id": 20, "value": 4},
+      {"item_id": 21, "value": 1}, {"item_id": 22, "value": 1},
+      {"item_id": 23, "value": 1}, {"item_id": 24, "value": 1},
+      {"item_id": 25, "value": 1}, {"item_id": 26, "value": 4},
+      {"item_id": 27, "value": 1}, {"item_id": 28, "value": 1},
+      {"item_id": 29, "value": 1}, {"item_id": 30, "value": 1}
+    ]
+  }
+}

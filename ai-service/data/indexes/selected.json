@@ -1,0 +1,23 @@
+{
+  "selection_version": "retrieval-selection-v1.2.0",
+  "dataset_version": "retrieval-bo-v1.1.0",
+  "model_id": "intfloat/multilingual-e5-small",
+  "index_directory": "data/indexes/intfloat__multilingual_e5_small",
+  "selection_rule": "max(semantic_ndcg_at_5, semantic_recall_at_5, semantic_mrr, -semantic_query_latency_mean)",
+  "relevance_level": "CHUNK_LEVEL_MANUAL",
+  "hybrid_version": "bm25-rrf-v1.0.0",
+  "semantic_metrics": {
+    "recall_at_1": 0.275,
+    "recall_at_3": 0.3583,
+    "recall_at_5": 0.6667,
+    "mrr": 0.508,
+    "ndcg_at_5": 0.4926
+  },
+  "hybrid_metrics": {
+    "recall_at_1": 0.3833,
+    "recall_at_3": 0.6917,
+    "recall_at_5": 0.775,
+    "mrr": 0.6667,
+    "ndcg_at_5": 0.646
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "dataset_version": "retrieval-bo-v1.1.0",
+  "created_at": "2026-09-28",
+  "relevance_level": "CHUNK_LEVEL_MANUAL",
+  "labeling_policy": "Cada fragmento relevante fue inspeccionado y contiene evidencia suficiente para responder total o parcialmente la consulta. Las respuestas esperadas no se usan para recuperar ni puntuar.",
+  "queries": [
+    {
+      "query_id": "Q01",
+      "query": "¿Cuál es el objetivo del Bachillerato Técnico Humanístico?",
+      "expected_answer": "Formar integralmente con valores y enfoques tecnológico, productivo, comunitario y socioambiental, articulando teoría y práctica para continuar estudios superiores, emprender o insertarse laboralmente.",
+      "relevant_source_ids": ["BO-ME-BTH-RM-0244-2023"],
+      "relevant_chunk_ids": ["cc18195d0d2595b17f84a383", "112fcaa01158b48859b7417d"]
+    },
+    {
+      "query_id": "Q02",
+      "query": "¿El BTH permite continuar estudios en educación superior?",
+      "expected_answer": "Sí. Al concluir el área Técnica Tecnológica se obtiene el Título de Técnico Medio, que permite continuar la formación en Educación Superior.",
+      "relevant_source_ids": ["BO-ME-BTH-RM-0244-2023"],
+      "relevant_chunk_ids": ["113a2bb9cd46d91aaa09ae23"]
+    },
+    {
+      "query_id": "Q03",
+      "query": "¿Qué carreras técnicas especializadas reconoce el BTH, incluida Sistemas Informáticos?",
+      "expected_answer": "El anexo enumera las carreras por área productiva e incluye Sistemas Informáticos entre las carreras de Producción Mecánica y Tecnológica.",
+      "relevant_source_ids": ["BO-ME-BTH-RM-0244-2023"],
+      "relevant_chunk_ids": ["0881e0b29f0978c7bd8c2335"]
+    },
+    {
+      "query_id": "Q04",
+      "query": "¿En qué área productiva BTH están Robótica y Electrónica?",
+      "expected_answer": "En Producción Mecánica y Tecnológica.",
+      "relevant_source_ids": ["BO-ME-BTH-RM-0244-2023"],
+      "relevant_chunk_ids": ["0881e0b29f0978c7bd8c2335"]
+    },
+    {
+      "query_id": "Q05",
+      "query": "campos y áreas de saberes de la educación secundaria boliviana",
+      "expected_answer": "El currículo organiza Secundaria Comunitaria Productiva en Cosmos y Pensamiento; Comunidad y Sociedad; Vida, Tierra y Territorio; y Ciencia, Tecnología y Producción, con sus áreas de saberes.",
+      "relevant_source_ids": ["BO-ME-CURRICULO-BASE-2012"],
+      "relevant_chunk_ids": ["bd9ab3adc2977f5f4e4e15f7"]
+    },
+    {
+      "query_id": "Q06",
+      "query": "¿Cómo se evalúa el área Técnica Tecnológica respecto al perfil de salida del Técnico Medio?",
+      "expected_answer": "Se valora y evidencia el hacer, considerando el perfil de salida del profesional Técnico Medio.",
+      "relevant_source_ids": ["BO-ME-BTH-RM-0244-2023"],
+      "relevant_chunk_ids": ["528047f333874ab7ffc2069e"]
+    },
+    {
+      "query_id": "Q07",
+      "query": "materias del primer semestre de Ingeniería de Sistemas en la UCB",
+      "expected_answer": "Álgebra Lineal, Matemáticas Discretas, Introducción a la Programación, Ingeniería de Sistemas y Pensamiento Crítico.",
+      "relevant_source_ids": ["BO-UCB-LP-SIS-MALLA-2026"],
+      "relevant_chunk_ids": ["21b69739cd8f55f039992acd"]
+    },
+    {
+      "query_id": "Q08",
+      "query": "¿Qué prerrequisito tiene Programación I en Sistemas UCB?",
+      "expected_answer": "SIS-111, Introducción a la Programación.",
+      "relevant_source_ids": ["BO-UCB-LP-SIS-MALLA-2026"],
+      "relevant_chunk_ids": ["21b69739cd8f55f039992acd"]
+    },
+    {
+      "query_id": "Q09",
+      "query": "áreas de estudio de Ingeniería de Sistemas: inteligencia artificial, redes y datos",
+      "expected_answer": "Programación y software; sistemas de información y bases de datos; redes y seguridad; inteligencia artificial y ciencia de datos; gestión de proyectos e innovación.",
+      "relevant_source_ids": ["BO-UCB-LP-SIS-PROFILE-2026", "BO-UCB-LP-SIS-MALLA-2026"],
+      "relevant_chunk_ids": ["497314e4093a1b9c03e6a81d", "21b69739cd8f55f039992acd"]
+    },
+    {
+      "query_id": "Q10",
+      "query": "¿Cuánto dura la carrera de Ingeniería de Sistemas de la UCB La Paz?",
+      "expected_answer": "9 semestres.",
+      "relevant_source_ids": ["BO-UCB-LP-SIS-PROFILE-2026"],
+      "relevant_chunk_ids": ["2778c66ba9d49d68a36ecc0f"]
+    },
+    {
+      "query_id": "Q11",
+      "query": "asignaturas iniciales de Psicología UCB psicofisiología y escritura académica",
+      "expected_answer": "El primer semestre incluye Introducción a la Psicología, Teorías y Paradigmas, Desarrollo Infantil, Psicofisiología, Taller de Psicofisiología y Escritura Académica.",
+      "relevant_source_ids": ["BO-UCB-LP-PSI-MALLA-2026"],
+      "relevant_chunk_ids": ["bf3385cad0814354f9d0daa5"]
+    },
+    {
+      "query_id": "Q12",
+      "query": "áreas profesionales clínica educativa social y organizacional en Psicología",
+      "expected_answer": "La formación y el ejercicio abarcan las áreas clínica, educativa, social-comunitaria, organizacional y forense.",
+      "relevant_source_ids": ["BO-UCB-LP-PSI-PROFILE-2026"],
+      "relevant_chunk_ids": ["f6dcc30fb3b9f4bc48817e9f", "953883df7131001d77261c2b", "50d99d4e4e7f222e6a921b5a"]
+    },
+    {
+      "query_id": "Q13",
+      "query": "¿Qué materia de Psicología aborda neurociencia en el segundo semestre?",
+      "expected_answer": "Psicobiología y Neurociencia (PSI-209).",
+      "relevant_source_ids": ["BO-UCB-LP-PSI-MALLA-2026"],
+      "relevant_chunk_ids": ["bf3385cad0814354f9d0daa5"]
+    },
+    {
+      "query_id": "Q14",
+      "query": "primeras materias de Ingeniería Civil UCB cálculo física química dibujo",
+      "expected_answer": "Química General I y Laboratorio, Física I y Laboratorio, Álgebra Lineal, Cálculo I y Dibujo Técnico Computarizado.",
+      "relevant_source_ids": ["BO-UCB-LP-CIV-MALLA-2026"],
+      "relevant_chunk_ids": ["9b65a7af8f71a8edb4d46405"]
+    },
+    {
+      "query_id": "Q15",
+      "query": "áreas de Ingeniería Civil: estructuras geotecnia hidráulica y carreteras",
+      "expected_answer": "Incluye estructuras, vías de transporte, geotecnia, sanitaria y medio ambiente, hidráulica e hidrología, geodesia y topografía.",
+      "relevant_source_ids": ["BO-UCB-LP-CIV-PROFILE-2026", "BO-UCB-LP-CIV-MALLA-2026"],
+      "relevant_chunk_ids": ["7c2fa2800a58c50ba2884bc8", "9b65a7af8f71a8edb4d46405", "3f38670bababa54cd31213f4"]
+    },
+    {
+      "query_id": "Q16",
+      "query": "materias iniciales del plan 2023 de Ingeniería Civil UMSA",
+      "expected_answer": "Cálculo I, Química General para Ingeniería Civil y Laboratorio, Álgebra Lineal y Teoría Matricial, Diseño Técnico I, y Redacción y Preparación de Informes.",
+      "relevant_source_ids": ["BO-UMSA-LP-CIV-PLAN-2023"],
+      "relevant_chunk_ids": ["7778bf4a6926dfd3edcf6f19"]
+    },
+    {
+      "query_id": "Q17",
+      "query": "¿Qué asignaturas de quinto semestre cubren suelos e hidráulica en Ingeniería Civil UMSA?",
+      "expected_answer": "Hidráulica I y Mecánica de Suelos I y Laboratorio.",
+      "relevant_source_ids": ["BO-UMSA-LP-CIV-PLAN-2023"],
+      "relevant_chunk_ids": ["12b04d54b340f4e2501c4d39"]
+    },
+    {
+      "query_id": "Q18",
+      "query": "malla de Ingeniería Ambiental con biología química y ecología",
+      "expected_answer": "El primer ciclo incluye Biología General, Química General, Ecología Integral y, en el segundo semestre, Ecología General.",
+      "relevant_source_ids": ["BO-UCB-LP-IAM-MALLA-2026"],
+      "relevant_chunk_ids": ["5e920a51d5286fba952624bc"]
+    },
+    {
+      "query_id": "Q19",
+      "query": "gestión de residuos tratamiento de aguas y cambio climático como áreas profesionales",
+      "expected_answer": "Ingeniería Ambiental comprende gestión integral de residuos, tratamiento de aguas residuales, remediación, cambio climático y gestión del riesgo.",
+      "relevant_source_ids": ["BO-UCB-LP-IAM-PROFILE-2026", "BO-UCB-LP-IAM-MALLA-2026"],
+      "relevant_chunk_ids": ["d67f7473489bdcdad639a7ea", "d83de654303d08c2b7ec79ee", "63b146c360d0d2fd9e011467"]
+    },
+    {
+      "query_id": "Q20",
+      "query": "¿Qué carrera universitaria tiene Desarrollo Sostenible en el primer semestre?",
+      "expected_answer": "Ingeniería Ambiental de la UCB La Paz, mediante Desarrollo Sostenible e Integral.",
+      "relevant_source_ids": ["BO-UCB-LP-IAM-MALLA-2026"],
+      "relevant_chunk_ids": ["5e920a51d5286fba952624bc"]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "fixture_type": "SYNTHETIC",
+  "schema_version": "1.0",
+  "student_id": "SYN-PARTIAL-001",
+  "academic": {
+    "records": [
+      {"subject": "Matemática", "score": 70, "period": "T1", "period_order": 1},
+      {"subject": "Matemática", "score": 76, "period": "T2", "period_order": 2}
+    ]
+  }
+}
