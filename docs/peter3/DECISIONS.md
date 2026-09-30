@@ -51,4 +51,6 @@
 
 - Tipo: **DECISIÓN DE DISEÑO**.
 - Estado: aceptada para el primer hito.
-- Decisión: `/knowledge/search` devuelve 503 tipado mientras no exista índice; `/tutor/query` responde de forma estructurada con evidencia insuficiente y sin inventar contenido.
+- Decisión inicial, ya superada: `/knowledge/search` devolvía 503 mientras no existía índice. En el
+  estado actual usa el índice seleccionado; conserva 503 solo para indisponibilidad de carga.
+  `/tutor/query` responde de forma estructurada y se abstiene sin evidencia suficiente.

@@ -1,0 +1,20 @@
+{
+  "criteria_version": "v2_evidence_based",
+  "status": "CONFIGURACIÓN EXPERIMENTAL",
+  "purpose": "Exploración académico-vocacional basada en evidencia sin score compuesto ni umbrales inventados.",
+  "aggregation_policy": "NO_COMPOSITE_SCORE",
+  "ranking_policy": "NO_GLOBAL_RANKING",
+  "missing_data_policy": "UNKNOWN_NOT_ZERO",
+  "preparation_policy": "OBSERVED_EVIDENCE_ONLY",
+  "academic_match_policy": "DOCUMENTED_LABEL_CONTAINMENT",
+  "riasec_career_comparison": "DOCUMENTED_OCCUPATIONAL_REFERENCE_ONLY",
+  "technical_relation_policy": "TRACEABLE_BRIDGE_RELATIONS_ONLY",
+  "declared_interest_policy": "DOCUMENTED_CATALOG_TERMS_ONLY",
+  "limitations": [
+    "No asigna porcentajes de afinidad, preparación o compatibilidad.",
+    "No usa umbrales académicos inventados para declarar suficiencia.",
+    "No convierte ausencia de evidencia en valor cero.",
+    "Solo presenta referencias RIASEC ocupacionales mediante el crosswalk documentado; no calcula compatibilidad.",
+    "Las relaciones del puente secundaria-universidad conservan su estado experimental o hipotético."
+  ]
+}

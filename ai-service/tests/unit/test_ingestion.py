@@ -1,12 +1,12 @@
 from pathlib import Path
 
-import pymupdf
 from PIL import Image
 
 from app.ingestion.chunking import build_chunks
 from app.ingestion.extractors import extract_html, extract_pdf, extract_text
 from app.ingestion.models import KnowledgeChunk
 from app.knowledge.registry import load_source_manifest
+from tests.pdf_helpers import open_pdf
 
 DATA_ROOT = Path(__file__).resolve().parents[2] / "data"
 
@@ -26,7 +26,7 @@ class FakeOcr:
 
 
 def _digital_pdf(path: Path) -> None:
-    document = pymupdf.open()
+    document = open_pdf()
     page = document.new_page()
     page.insert_text(
         (72, 72),
@@ -38,13 +38,13 @@ def _digital_pdf(path: Path) -> None:
 
 
 def _scanned_pdf(path: Path) -> None:
-    source = pymupdf.open()
+    source = open_pdf()
     page = source.new_page()
     page.insert_text((72, 120), "Matemática y ciencias para secundaria", fontsize=24)
     image = page.get_pixmap(dpi=160, alpha=False).tobytes("png")
     source.close()
 
-    scanned = pymupdf.open()
+    scanned = open_pdf()
     scanned_page = scanned.new_page()
     scanned_page.insert_image(scanned_page.rect, stream=image)
     scanned.save(path)
@@ -126,9 +126,9 @@ def test_generated_official_corpus_conforms_to_chunk_contract() -> None:
         KnowledgeChunk.model_validate_json(line)
         for line in corpus_path.read_text(encoding="utf-8").splitlines()
     ]
-    assert len(chunks) == 689
+    assert len(chunks) == 773
     assert len({chunk.chunk_id for chunk in chunks}) == len(chunks)
-    assert len({chunk.source_id for chunk in chunks}) == 11
+    assert len({chunk.source_id for chunk in chunks}) == 12
     assert all(chunk.official for chunk in chunks)
     ocr_chunks = [chunk for chunk in chunks if chunk.extraction_method == "OCR"]
     assert len(ocr_chunks) == 35

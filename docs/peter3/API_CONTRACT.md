@@ -36,7 +36,9 @@ La respuesta incluye: `status`, `trace_id`, `generated_at`, versiones, `input_ha
 
 ## `POST /api/v1/knowledge/search`
 
-Entrada: `schema_version`, `query`, `top_k` (1–20) y filtros opcionales. Mientras no exista corpus versionado devuelve 503 `SAVP_AI_KNOWLEDGE_INDEX_UNAVAILABLE`. No se fabrican fuentes.
+Entrada: `schema_version`, `query`, `top_k` (1–20) y filtros opcionales. Consulta el corpus
+versionado y devuelve evidencia oficial; si el índice no puede cargarse responde 503
+`SAVP_AI_KNOWLEDGE_INDEX_UNAVAILABLE`. No se fabrican fuentes.
 
 ## `POST /api/v1/tutor/query`
 

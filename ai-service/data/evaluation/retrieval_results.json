@@ -1,8 +1,8 @@
 {
   "evaluation_version": "embedding-ab-v1.2.0",
-  "dataset_version": "retrieval-bo-v1.1.0",
+  "dataset_version": "retrieval-bo-v2.0.0",
   "relevance_level": "CHUNK_LEVEL_MANUAL",
-  "query_count": 20,
+  "query_count": 30,
   "device": "cpu",
   "hybrid_version": "bm25-rrf-v1.0.0",
   "models": [
@@ -14,47 +14,81 @@
         "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
         "model_slug": "sentence_transformers__paraphrase_multilingual_minilm_l12_v2",
         "dimension": 384,
-        "chunk_count": 689,
+        "chunk_count": 773,
         "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
         "exact": true,
-        "corpus_sha256": "216b088aa0ee997cf4eea7ce0cdd93af19162ed57420d6acb85520f0d470e0e3",
-        "build_seconds": 37.3981
+        "corpus_sha256": "bda50b487fd2b7d974a9201ddfdd6f87a48aefe8b0dad38b508e5e112e369d3d",
+        "build_seconds": 67.8158
       },
       "semantic_chunk_metrics": {
-        "recall_at_1": 0.225,
-        "recall_at_3": 0.3667,
-        "recall_at_5": 0.4167,
-        "mrr": 0.4021,
-        "ndcg_at_5": 0.3567
+        "recall_at_1": 0.15,
+        "recall_at_3": 0.2611,
+        "recall_at_5": 0.2944,
+        "mrr": 0.2847,
+        "ndcg_at_5": 0.2507
       },
       "hybrid_chunk_metrics": {
-        "recall_at_1": 0.2583,
-        "recall_at_3": 0.5167,
-        "recall_at_5": 0.65,
-        "mrr": 0.5003,
-        "ndcg_at_5": 0.5012
+        "recall_at_1": 0.1722,
+        "recall_at_3": 0.3778,
+        "recall_at_5": 0.4667,
+        "mrr": 0.3591,
+        "ndcg_at_5": 0.3572
+      },
+      "split_chunk_metrics": {
+        "DEV": {
+          "semantic": {
+            "recall_at_1": 0.0778,
+            "recall_at_3": 0.1778,
+            "recall_at_5": 0.2444,
+            "mrr": 0.2389,
+            "ndcg_at_5": 0.1913
+          },
+          "hybrid": {
+            "recall_at_1": 0.1222,
+            "recall_at_3": 0.2444,
+            "recall_at_5": 0.3333,
+            "mrr": 0.3048,
+            "ndcg_at_5": 0.2619
+          }
+        },
+        "TEST": {
+          "semantic": {
+            "recall_at_1": 0.2222,
+            "recall_at_3": 0.3444,
+            "recall_at_5": 0.3444,
+            "mrr": 0.3306,
+            "ndcg_at_5": 0.3101
+          },
+          "hybrid": {
+            "recall_at_1": 0.2222,
+            "recall_at_3": 0.5111,
+            "recall_at_5": 0.6,
+            "mrr": 0.4133,
+            "ndcg_at_5": 0.4526
+          }
+        }
       },
       "semantic_source_metrics_diagnostic": {
-        "recall_at_1": 0.575,
-        "recall_at_3": 0.8,
-        "recall_at_5": 0.85,
-        "mrr": 0.7542,
-        "ndcg_at_5": 0.7459
+        "recall_at_1": 0.4167,
+        "recall_at_3": 0.6444,
+        "recall_at_5": 0.6889,
+        "mrr": 0.5787,
+        "ndcg_at_5": 0.5822
       },
       "hybrid_source_metrics_diagnostic": {
-        "recall_at_1": 0.65,
-        "recall_at_3": 0.85,
-        "recall_at_5": 0.925,
-        "mrr": 0.8125,
-        "ndcg_at_5": 0.824
+        "recall_at_1": 0.4778,
+        "recall_at_3": 0.7111,
+        "recall_at_5": 0.7611,
+        "mrr": 0.6528,
+        "ndcg_at_5": 0.6571
       },
-      "build_total_seconds": 37.4409,
-      "hybrid_build_seconds": 0.1356,
-      "semantic_query_latency_ms_mean": 26.5687,
-      "semantic_query_latency_ms_max": 34.5457,
-      "hybrid_query_latency_ms_mean": 35.3875,
-      "hybrid_query_latency_ms_max": 49.5372,
-      "rss_delta_mb": 981.38,
+      "build_total_seconds": 67.9006,
+      "hybrid_build_seconds": 0.2372,
+      "semantic_query_latency_ms_mean": 48.0763,
+      "semantic_query_latency_ms_max": 72.1419,
+      "hybrid_query_latency_ms_mean": 84.4538,
+      "hybrid_query_latency_ms_max": 772.411,
+      "rss_delta_mb": 756.04,
       "per_query": [
         {
           "query_id": "Q01",
@@ -122,20 +156,20 @@
               "39665a5826bbea238f66a375",
               "e2e85b5b8c6d503dc7f90941",
               "d1647e47fda4e5f8fc2486b7",
-              "cc18195d0d2595b17f84a383",
-              "6366dc77a265f60174bc894d"
+              "6366dc77a265f60174bc894d",
+              "cc18195d0d2595b17f84a383"
             ],
             "top_scores": [
-              0.907738,
-              0.901316,
+              0.913704,
+              0.912162,
               0.812084,
-              0.762619,
-              0.755967,
-              0.749849,
-              0.748494,
+              0.772647,
+              0.768786,
+              0.762977,
+              0.753201,
               0.737903,
-              0.731061,
-              0.729665
+              0.736896,
+              0.731061
             ],
             "semantic_ranks": [
               3,
@@ -146,20 +180,20 @@
               18,
               22,
               64,
-              72,
-              6
+              6,
+              72
             ],
             "lexical_ranks": [
-              12,
-              16,
+              11,
+              14,
               3,
-              19,
-              26,
-              25,
-              21,
+              17,
+              23,
+              22,
+              20,
               2,
-              1,
-              54
+              51,
+              1
             ]
           }
         },
@@ -232,16 +266,16 @@
               "17fb07b7e4e07e1b5aa4aee5"
             ],
             "top_scores": [
-              0.938462,
+              0.945793,
               0.935714,
               0.917808,
               0.910651,
               0.884801,
-              0.79668,
-              0.782435,
+              0.78862,
+              0.774186,
               0.755967,
-              0.743684,
-              0.736651
+              0.738188,
+              0.728773
             ],
             "semantic_ranks": [
               5,
@@ -256,16 +290,16 @@
               19
             ],
             "lexical_ranks": [
-              5,
+              4,
               10,
               1,
               8,
               7,
-              26,
-              25,
+              28,
+              27,
               16,
-              14,
-              27
+              15,
+              29
             ]
           }
         },
@@ -331,8 +365,8 @@
               "64e2fd23fef58075c1005a27",
               "0d2404fd8820a44581249117",
               "404a083dbb2bd473f9ee7a31",
-              "e464c44997113e539d934ec0",
               "5b4759b445e13bd6888db799",
+              "e464c44997113e539d934ec0",
               "b72b204624defd39eef6ba9e",
               "1a7afa3329ff627ac382d1ce",
               "6b4582541c3cc3b02ffa1f57"
@@ -340,13 +374,13 @@
             "top_scores": [
               0.91776,
               0.912277,
-              0.859405,
+              0.863887,
               0.847222,
               0.831818,
-              0.821053,
-              0.819124,
+              0.824475,
+              0.824468,
               0.763305,
-              0.755133,
+              0.761099,
               0.744646
             ],
             "semantic_ranks": [
@@ -355,8 +389,8 @@
               2,
               3,
               10,
-              1,
               13,
+              1,
               39,
               32,
               8
@@ -364,13 +398,13 @@
             "lexical_ranks": [
               8,
               10,
-              23,
+              22,
               24,
               17,
-              35,
-              16,
+              15,
+              34,
               7,
-              12,
+              11,
               43
             ]
           }
@@ -440,20 +474,20 @@
               "b72b204624defd39eef6ba9e",
               "113a2bb9cd46d91aaa09ae23",
               "7ce37f4f3c174b57926b3e2e",
-              "b2a9e10364bca004de800b45",
-              "0264d3eaaf7fbca609a94fb4"
+              "0264d3eaaf7fbca609a94fb4",
+              "47e853f1537559b86f69037e"
             ],
             "top_scores": [
-              0.962121,
+              0.955224,
               0.888039,
               0.887039,
               0.86564,
               0.79856,
-              0.788052,
-              0.755133,
-              0.744811,
-              0.744006,
-              0.74178
+              0.782412,
+              0.761099,
+              0.74043,
+              0.737246,
+              0.720441
             ],
             "semantic_ranks": [
               1,
@@ -464,19 +498,19 @@
               2,
               32,
               3,
-              5,
-              4
+              4,
+              7
             ],
             "lexical_ranks": [
-              6,
+              7,
               2,
               5,
               9,
               3,
-              43,
-              12,
+              45,
+              11,
+              59,
               57,
-              51,
               55
             ]
           }
@@ -495,8 +529,8 @@
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-BTH-RM-0244-2023",
               "BO-ME-CURRICULO-BASE-2012",
-              "BO-ME-CURRICULO-BASE-2012",
-              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
               "BO-ME-CURRICULO-BASE-2012"
             ],
             "top_chunk_ids": [
@@ -507,9 +541,9 @@
               "c945bdaa95b67ec8d6d0329b",
               "228d7ddab256d6d3e4c05b76",
               "41d5c140ca62462077d4219b",
-              "46044fd874bf4751b7c154c2",
-              "aae0c6dd1fd9609a8a0cc7af",
-              "6e9167e7639a2664d83fcb17"
+              "2f72a072807e415bb5945cf3",
+              "5f45ead91fdd1a0a47c829d0",
+              "46044fd874bf4751b7c154c2"
             ],
             "top_scores": [
               0.793035,
@@ -519,16 +553,16 @@
               0.755096,
               0.749576,
               0.74096,
-              0.737365,
-              0.727683,
-              0.693856
+              0.738502,
+              0.737709,
+              0.737365
             ]
           },
           "hybrid": {
             "top_source_ids": [
               "BO-ME-CURRICULO-BASE-2012",
-              "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-CURRICULO-BASE-2012",
@@ -539,51 +573,51 @@
             ],
             "top_chunk_ids": [
               "c945bdaa95b67ec8d6d0329b",
-              "015ac1e9600d7e55bc046603",
               "228d7ddab256d6d3e4c05b76",
-              "7a3f224857983258cafa9306",
-              "2958c2086d5593e5ce8bfa86",
-              "74765112b88696b40d10441f",
+              "015ac1e9600d7e55bc046603",
               "75b04b518ea79f1f0e43d194",
-              "a58558fb216d20421b9b8542",
-              "316289f231309ea4d07524f8",
-              "3aed1e8f8ade6d62cd8fb1f6"
+              "7a3f224857983258cafa9306",
+              "74765112b88696b40d10441f",
+              "3f885ad507cf16811e487794",
+              "2958c2086d5593e5ce8bfa86",
+              "3aed1e8f8ade6d62cd8fb1f6",
+              "a58558fb216d20421b9b8542"
             ],
             "top_scores": [
-              0.811927,
-              0.797615,
-              0.793643,
-              0.780903,
-              0.767569,
-              0.765347,
-              0.760684,
-              0.746679,
-              0.743902,
-              0.740802
+              0.800753,
+              0.758238,
+              0.748884,
+              0.731061,
+              0.718542,
+              0.714187,
+              0.711739,
+              0.70152,
+              0.694795,
+              0.689464
             ],
             "semantic_ranks": [
               5,
-              35,
               6,
-              13,
-              18,
-              43,
+              52,
               1,
-              17,
               22,
-              38
+              61,
+              3,
+              29,
+              55,
+              27
             ],
             "lexical_ranks": [
-              29,
-              4,
               32,
-              24,
-              21,
-              5,
-              57,
-              27,
-              22,
-              11
+              43,
+              4,
+              72,
+              28,
+              6,
+              74,
+              25,
+              11,
+              30
             ]
           }
         },
@@ -649,23 +683,23 @@
               "7c99177526c1797a9f3e8cb8",
               "77fb7563dbe82edc35f4e93c",
               "b1f8c1646cd8c6d6a42c4704",
+              "5b4759b445e13bd6888db799",
               "1a7afa3329ff627ac382d1ce",
               "6ba4351a4adb6e063ec966f3",
               "3c178c0a41fd310fbbef2373",
-              "8a53094b7f96237137267ef3",
-              "5b4759b445e13bd6888db799"
+              "8a53094b7f96237137267ef3"
             ],
             "top_scores": [
               1.0,
               0.904098,
-              0.900174,
-              0.896289,
-              0.80101,
+              0.894371,
+              0.890794,
+              0.804818,
+              0.786589,
               0.784229,
               0.780455,
-              0.777354,
-              0.774137,
-              0.772997
+              0.772647,
+              0.768786
             ],
             "semantic_ranks": [
               1,
@@ -673,23 +707,23 @@
               4,
               3,
               6,
+              34,
               26,
               38,
               17,
-              23,
-              34
+              23
             ],
             "lexical_ranks": [
               1,
               2,
-              12,
-              14,
-              30,
+              13,
+              15,
+              29,
+              6,
               11,
               5,
-              20,
-              15,
-              8
+              21,
+              16
             ]
           }
         },
@@ -767,11 +801,11 @@
               0.876543,
               0.855196,
               0.854191,
-              0.820945,
+              0.816772,
               0.815653,
               0.815451,
               0.807666,
-              0.786939
+              0.793699
             ],
             "semantic_ranks": [
               2,
@@ -791,11 +825,11 @@
               21,
               8,
               9,
-              25,
+              26,
               11,
               30,
               22,
-              36
+              34
             ]
           }
         },
@@ -850,10 +884,10 @@
               "BO-ME-BTH-RM-0244-2023",
               "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UCB-LP-SIS-PROFILE-2026",
-              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
               "BO-UCB-LP-SIS-MALLA-2026",
-              "BO-UCB-LP-SIS-PROFILE-2026",
-              "BO-UCB-LP-SIS-MALLA-2026"
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-PROFILE-2026"
             ],
             "top_chunk_ids": [
               "959b63cbc686020e590c2090",
@@ -862,46 +896,46 @@
               "648a7e203786c8df3f3009fe",
               "6b4582541c3cc3b02ffa1f57",
               "497314e4093a1b9c03e6a81d",
-              "5db623bffb0ae3923f570930",
+              "1607fe87e2e1ef51f31d2445",
               "02b75fc220bb796eeb3585fd",
-              "2778c66ba9d49d68a36ecc0f",
-              "ea301807129365c01fbc91a5"
+              "5db623bffb0ae3923f570930",
+              "2778c66ba9d49d68a36ecc0f"
             ],
             "top_scores": [
               0.983871,
               0.976563,
               0.924242,
-              0.884058,
-              0.776486,
-              0.708904,
-              0.646559,
-              0.642526,
-              0.61575,
-              0.588476
+              0.859837,
+              0.772997,
+              0.701987,
+              0.638803,
+              0.633209,
+              0.620212,
+              0.604004
             ],
             "semantic_ranks": [
               2,
               1,
               6,
               9,
-              33,
-              86,
-              46,
-              116,
-              130,
-              125
+              34,
+              91,
+              95,
+              126,
+              47,
+              145
             ],
             "lexical_ranks": [
               2,
               4,
               6,
-              9,
+              13,
               8,
               1,
-              25,
+              9,
               5,
-              7,
-              12
+              31,
+              7
             ]
           }
         },
@@ -982,7 +1016,7 @@
               0.931352,
               0.912277,
               0.898808,
-              0.741049,
+              0.738145,
               0.722631,
               0.719788
             ],
@@ -994,7 +1028,7 @@
               6,
               4,
               5,
-              42,
+              43,
               12,
               13
             ],
@@ -1064,9 +1098,9 @@
               "BO-UCB-LP-SIS-MALLA-2026",
               "BO-UCB-LP-CIV-PROFILE-2026",
               "BO-ME-CURRICULO-BASE-2012",
-              "BO-ME-BTH-RM-0244-2023",
               "BO-UCB-LP-CIV-PROFILE-2026",
-              "BO-UCB-LP-CIV-MALLA-2026"
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023"
             ],
             "top_chunk_ids": [
               "959b63cbc686020e590c2090",
@@ -1076,9 +1110,9 @@
               "21b69739cd8f55f039992acd",
               "7f7d5eca21f40433cac2ded5",
               "9a2828e211b77675552a6e02",
-              "d1647e47fda4e5f8fc2486b7",
               "02bd0df8087b36a0daa3bf84",
-              "b986f3a29b1e9ee1647e6fba"
+              "b986f3a29b1e9ee1647e6fba",
+              "d8edb3de939d14078de572a4"
             ],
             "top_scores": [
               0.991935,
@@ -1087,10 +1121,10 @@
               0.865292,
               0.855307,
               0.848514,
-              0.819292,
-              0.721014,
-              0.704185,
-              0.691155
+              0.801835,
+              0.710089,
+              0.698386,
+              0.653322
             ],
             "semantic_ranks": [
               2,
@@ -1100,9 +1134,9 @@
               19,
               4,
               3,
-              1,
               6,
-              12
+              12,
+              37
             ],
             "lexical_ranks": [
               1,
@@ -1111,10 +1145,10 @@
               10,
               5,
               22,
-              31,
-              78,
-              66,
-              54
+              36,
+              63,
+              51,
+              30
             ]
           }
         },
@@ -1169,8 +1203,8 @@
               "BO-UCB-LP-PSI-MALLA-2026",
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
-              "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-ME-CURRICULO-BASE-2012"
             ],
@@ -1181,8 +1215,8 @@
               "bf3385cad0814354f9d0daa5",
               "3313dd6467165d18ac2c22a8",
               "0513afdc94ef6a9cb4c1cbb2",
-              "959b63cbc686020e590c2090",
               "606f98cffc3bf6988782356f",
+              "959b63cbc686020e590c2090",
               "f6911012bef638e2fac53332",
               "6a59a926ea1c539dbfbd9036"
             ],
@@ -1190,11 +1224,11 @@
               0.984127,
               0.968498,
               0.926156,
-              0.906667,
+              0.901316,
               0.888725,
-              0.879929,
-              0.878835,
-              0.878835,
+              0.885732,
+              0.885732,
+              0.873032,
               0.870547,
               0.828105
             ],
@@ -1202,11 +1236,11 @@
               1,
               2,
               3,
-              15,
+              16,
               4,
               6,
-              7,
               12,
+              7,
               5,
               9
             ],
@@ -1216,9 +1250,9 @@
               9,
               1,
               14,
-              13,
               12,
-              7,
+              6,
+              13,
               16,
               19
             ]
@@ -1277,10 +1311,10 @@
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-BTH-RM-0244-2023",
-              "BO-UCB-LP-PSI-MALLA-2026",
-              "BO-ME-CURRICULO-BASE-2012"
+              "BO-UCB-LP-PSI-MALLA-2026"
             ],
             "top_chunk_ids": [
               "953883df7131001d77261c2b",
@@ -1289,46 +1323,46 @@
               "f6911012bef638e2fac53332",
               "f6dcc30fb3b9f4bc48817e9f",
               "25b1370d1ad5e9694b56cf93",
+              "6993ff833f48d4ade3b9098a",
               "9d8362d378cf17d3ccf8676d",
               "cf80dbf10a5660c17d7ab072",
-              "bf3385cad0814354f9d0daa5",
-              "1ff50cb4440bddb92f3e2faf"
+              "bf3385cad0814354f9d0daa5"
             ],
             "top_scores": [
               1.0,
               0.976062,
-              0.904945,
-              0.885443,
-              0.819892,
-              0.787392,
-              0.738145,
-              0.722547,
-              0.695987,
-              0.688047
+              0.91126,
+              0.890794,
+              0.812988,
+              0.764411,
+              0.736651,
+              0.72619,
+              0.695683,
+              0.691351
             ],
             "semantic_ranks": [
               1,
               2,
               5,
               3,
-              33,
+              35,
               16,
-              43,
-              18,
-              79,
-              6
+              19,
+              45,
+              20,
+              82
             ],
             "lexical_ranks": [
               1,
               3,
-              10,
-              16,
-              2,
-              19,
               9,
-              32,
-              4,
-              75
+              15,
+              2,
+              24,
+              27,
+              10,
+              37,
+              4
             ]
           }
         },
@@ -1348,7 +1382,7 @@
               "BO-ME-CURRICULO-BASE-2012",
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-ME-BTH-RM-0244-2023",
-              "BO-ME-CURRICULO-BASE-2012"
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024"
             ],
             "top_chunk_ids": [
               "3313dd6467165d18ac2c22a8",
@@ -1360,7 +1394,7 @@
               "2d6f6287d0abde9c184efb95",
               "f6dcc30fb3b9f4bc48817e9f",
               "5b2619fcfc4e9c5aa0588fa7",
-              "daba1fb1ab784b9aced29cc1"
+              "2cce73d8d884fd7e32414332"
             ],
             "top_scores": [
               0.561868,
@@ -1372,15 +1406,15 @@
               0.434393,
               0.424523,
               0.418783,
-              0.417811
+              0.418129
             ]
           },
           "hybrid": {
             "top_source_ids": [
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
-              "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
               "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-PROFILE-2026",
@@ -1391,8 +1425,8 @@
             "top_chunk_ids": [
               "953883df7131001d77261c2b",
               "0513afdc94ef6a9cb4c1cbb2",
-              "3313dd6467165d18ac2c22a8",
               "363416761b913bfac3ec5491",
+              "3313dd6467165d18ac2c22a8",
               "606f98cffc3bf6988782356f",
               "f6911012bef638e2fac53332",
               "f6dcc30fb3b9f4bc48817e9f",
@@ -1403,34 +1437,34 @@
             "top_scores": [
               0.976062,
               0.976062,
-              0.896104,
               0.891699,
+              0.891026,
               0.877878,
-              0.841182,
+              0.836701,
               0.829779,
-              0.780903,
-              0.762931,
-              0.69354
+              0.772459,
+              0.752066,
+              0.682608
             ],
             "semantic_ranks": [
               2,
               3,
-              1,
               6,
+              1,
               4,
               5,
               8,
-              24,
-              56,
-              30
+              26,
+              61,
+              33
             ],
             "lexical_ranks": [
               3,
               2,
-              17,
               11,
+              18,
               16,
-              22,
+              23,
               20,
               13,
               1,
@@ -1488,8 +1522,8 @@
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
-              "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023"
@@ -1500,9 +1534,9 @@
               "2ebca67b3ab7175b06ccfbc9",
               "77d7ec2b529ebfdc62d24eea",
               "6bfc18d0fbb7230422218a15",
-              "83333ef0cc651530bb887bda",
               "7f7d5eca21f40433cac2ded5",
               "5c0d89366dc8743fe262b435",
+              "83333ef0cc651530bb887bda",
               "12b04d54b340f4e2501c4d39",
               "c018a646db5ff6e434909fa3"
             ],
@@ -1512,11 +1546,11 @@
               0.953125,
               0.901935,
               0.879929,
-              0.874283,
               0.863887,
               0.835773,
-              0.818319,
-              0.78218
+              0.835773,
+              0.822694,
+              0.78713
             ],
             "semantic_ranks": [
               1,
@@ -1524,9 +1558,9 @@
               4,
               13,
               6,
-              14,
               2,
               12,
+              14,
               7,
               17
             ],
@@ -1536,11 +1570,11 @@
               4,
               3,
               13,
-              6,
               22,
               14,
-              24,
-              19
+              12,
+              23,
+              18
             ]
           }
         },
@@ -1795,7 +1829,7 @@
               0.598259,
               0.597111,
               0.591872,
-              0.59154,
+              0.591541,
               0.588722,
               0.585298,
               0.585298
@@ -1809,8 +1843,8 @@
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
-              "BO-UCB-LP-CIV-MALLA-2026",
               "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UCB-LP-CIV-PROFILE-2026"
             ],
@@ -1821,8 +1855,8 @@
               "44fc9f24e79bf1da79017dab",
               "83333ef0cc651530bb887bda",
               "5c0d89366dc8743fe262b435",
-              "b986f3a29b1e9ee1647e6fba",
               "133a965246d33d142557611c",
+              "b986f3a29b1e9ee1647e6fba",
               "6bfc18d0fbb7230422218a15",
               "7f7d5eca21f40433cac2ded5"
             ],
@@ -1833,8 +1867,8 @@
               0.90415,
               0.903753,
               0.885732,
-              0.863887,
               0.858824,
+              0.855031,
               0.831818,
               0.80518
             ],
@@ -1845,8 +1879,8 @@
               9,
               8,
               6,
-              2,
               1,
+              2,
               17,
               3
             ],
@@ -1857,8 +1891,8 @@
               6,
               7,
               12,
-              22,
               25,
+              24,
               10,
               35
             ]
@@ -1895,7 +1929,7 @@
               "9b65a7af8f71a8edb4d46405"
             ],
             "top_scores": [
-              0.703748,
+              0.703747,
               0.630134,
               0.576515,
               0.57451,
@@ -2050,7 +2084,7 @@
               0.825073,
               0.783147,
               0.738044,
-              0.718441
+              0.704832
             ],
             "semantic_ranks": [
               1,
@@ -2074,7 +2108,7 @@
               8,
               3,
               12,
-              53
+              59
             ]
           }
         },
@@ -2125,62 +2159,1120 @@
             "top_source_ids": [
               "BO-UCB-LP-IAM-PROFILE-2026",
               "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-BTH-RM-0244-2023",
-              "BO-UCB-LP-CIV-PROFILE-2026",
               "BO-UCB-LP-IAM-PROFILE-2026",
               "BO-ME-BTH-RM-0244-2023",
-              "BO-ME-BTH-RM-0244-2023",
-              "BO-ME-BTH-RM-0244-2023",
-              "BO-UCB-LP-PSI-MALLA-2026"
+              "BO-ME-BTH-RM-0244-2023"
             ],
             "top_chunk_ids": [
               "dbddf8834837f42eac6dc1c4",
               "a536629b92756bc217058840",
-              "bfaa8be8649345a92e7a707b",
-              "be8108a5d7c60c51d073d9d2",
               "7899e8cd8acee890339fdf51",
+              "53184973cb6ca83002321f8e",
+              "be8108a5d7c60c51d073d9d2",
+              "bfaa8be8649345a92e7a707b",
+              "5560652228902c8aa58e1677",
               "9554eb4b58ce28db98b5fdb8",
               "be6bb4b79c7c4540215d83c3",
-              "07e6ffa94a9a5ea91e9af39d",
-              "5560652228902c8aa58e1677",
-              "363416761b913bfac3ec5491"
+              "cd28d6e5d809bcde68c7d9ee"
             ],
             "top_scores": [
-              0.729915,
-              0.660045,
-              0.639474,
-              0.637387,
-              0.632264,
-              0.605318,
-              0.581954,
-              0.580738,
-              0.574288,
-              0.569399
+              0.69826,
+              0.658226,
+              0.656012,
+              0.653571,
+              0.629237,
+              0.616701,
+              0.600674,
+              0.597838,
+              0.589301,
+              0.58674
             ],
             "semantic_ranks": [
-              30,
-              69,
-              21,
-              162,
+              31,
+              70,
               8,
+              24,
+              176,
+              21,
+              20,
               2,
               15,
-              7,
-              20,
-              116
+              22
             ],
             "lexical_ranks": [
-              18,
+              24,
               12,
-              56,
+              87,
+              45,
               1,
-              106,
-              209,
-              114,
-              183,
-              98,
-              17
+              67,
+              79,
+              228,
+              107,
+              82
+            ]
+          }
+        },
+        {
+          "query_id": "Q21",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "377c382ad47665c42375ac25",
+              "34087146aea21b42e30bd5d3",
+              "888ce986e29c66ebfea5ee8d",
+              "314c77b0e68b9259b5ccf366",
+              "79bdae32799b425b669d127b",
+              "a761bbfe48b4a34d2a270d1f",
+              "54626c84547702c789b2c3f6",
+              "baf285f5e3d0a2710df64221",
+              "bd9ab3adc2977f5f4e4e15f7",
+              "5e2bab1eaccfb3efa8b9e03b"
+            ],
+            "top_scores": [
+              0.58767,
+              0.571693,
+              0.562678,
+              0.537036,
+              0.525245,
+              0.517503,
+              0.497366,
+              0.48967,
+              0.485701,
+              0.480975
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-SIS-PROFILE-2026"
+            ],
+            "top_chunk_ids": [
+              "25cdbaa5177f4235bdc60a2e",
+              "34087146aea21b42e30bd5d3",
+              "1a1fb95b9faaf8a605dfcbca",
+              "959b63cbc686020e590c2090",
+              "9d8362d378cf17d3ccf8676d",
+              "f183f5937637bbc3b5b6427f",
+              "f6dcc30fb3b9f4bc48817e9f",
+              "42e6dba7ffcf9e0d9fc7d3d4",
+              "6690ef3178d3394307302ea9",
+              "2778c66ba9d49d68a36ecc0f"
+            ],
+            "top_scores": [
+              0.764742,
+              0.668236,
+              0.6568,
+              0.587259,
+              0.572664,
+              0.569318,
+              0.556574,
+              0.531716,
+              0.514162,
+              0.513821
+            ],
+            "semantic_ranks": [
+              31,
+              2,
+              125,
+              171,
+              16,
+              380,
+              361,
+              493,
+              88,
+              624
+            ],
+            "lexical_ranks": [
+              11,
+              113,
+              2,
+              7,
+              118,
+              1,
+              3,
+              4,
+              39,
+              5
+            ]
+          }
+        },
+        {
+          "query_id": "Q22",
+          "relevant_chunk_ids": [
+            "7778bf4a6926dfd3edcf6f19"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023"
+            ],
+            "top_chunk_ids": [
+              "02bd0df8087b36a0daa3bf84",
+              "7f7d5eca21f40433cac2ded5",
+              "3cd169ffa29a31cf26c3b1c0",
+              "d2ac7d14b20d9003857aa5ba",
+              "b986f3a29b1e9ee1647e6fba",
+              "48d65194c679f545e542ce5c",
+              "7899e8cd8acee890339fdf51",
+              "9a2828e211b77675552a6e02",
+              "77d7ec2b529ebfdc62d24eea",
+              "d8edb3de939d14078de572a4"
+            ],
+            "top_scores": [
+              0.744818,
+              0.717211,
+              0.685912,
+              0.676029,
+              0.64669,
+              0.642314,
+              0.608926,
+              0.603694,
+              0.59758,
+              0.596273
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023"
+            ],
+            "top_chunk_ids": [
+              "3cd169ffa29a31cf26c3b1c0",
+              "7f7d5eca21f40433cac2ded5",
+              "adcbb49d64ea81411913b49b",
+              "77d7ec2b529ebfdc62d24eea",
+              "02bd0df8087b36a0daa3bf84",
+              "7778bf4a6926dfd3edcf6f19",
+              "5c0d89366dc8743fe262b435",
+              "12b04d54b340f4e2501c4d39",
+              "83333ef0cc651530bb887bda",
+              "d8edb3de939d14078de572a4"
+            ],
+            "top_scores": [
+              0.953358,
+              0.933964,
+              0.921513,
+              0.90415,
+              0.901316,
+              0.842951,
+              0.835773,
+              0.830893,
+              0.82674,
+              0.816964
+            ],
+            "semantic_ranks": [
+              3,
+              2,
+              11,
+              9,
+              1,
+              25,
+              12,
+              16,
+              18,
+              10
+            ],
+            "lexical_ranks": [
+              5,
+              9,
+              2,
+              6,
+              16,
+              3,
+              14,
+              11,
+              10,
+              20
+            ]
+          }
+        },
+        {
+          "query_id": "Q23",
+          "relevant_chunk_ids": [
+            "0881e0b29f0978c7bd8c2335"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "497314e4093a1b9c03e6a81d",
+              "6fd1d403d2b4d673089ec76c",
+              "64e2fd23fef58075c1005a27",
+              "0be6167ff21a6e574980386f",
+              "48d65194c679f545e542ce5c",
+              "6cff8d8a9dce97e603764d3a",
+              "7c99177526c1797a9f3e8cb8",
+              "51d27c34e833a8942e89c787",
+              "fa8686f35c6c6b9c752a4919",
+              "404a083dbb2bd473f9ee7a31"
+            ],
+            "top_scores": [
+              0.729873,
+              0.590842,
+              0.587191,
+              0.586035,
+              0.5853,
+              0.581777,
+              0.577505,
+              0.576089,
+              0.575138,
+              0.574419
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "497314e4093a1b9c03e6a81d",
+              "627e15272ea6738638476d4e",
+              "bc0e8e1358cf8cd695210e29",
+              "959b63cbc686020e590c2090",
+              "acda41279c301a74fec3d7ca",
+              "f0a0e8e01ae26ea67067f298",
+              "21b69739cd8f55f039992acd",
+              "05d014a4fb08d0ca95031350",
+              "e40385a959cc78552141b1ce",
+              "e464c44997113e539d934ec0"
+            ],
+            "top_scores": [
+              0.991935,
+              0.818829,
+              0.720851,
+              0.718626,
+              0.671352,
+              0.670391,
+              0.666297,
+              0.652093,
+              0.644551,
+              0.641533
+            ],
+            "semantic_ranks": [
+              1,
+              14,
+              52,
+              66,
+              73,
+              119,
+              47,
+              25,
+              58,
+              110
+            ],
+            "lexical_ranks": [
+              2,
+              15,
+              8,
+              4,
+              9,
+              1,
+              20,
+              44,
+              19,
+              6
+            ]
+          }
+        },
+        {
+          "query_id": "Q24",
+          "relevant_chunk_ids": [
+            "953883df7131001d77261c2b",
+            "f6dcc30fb3b9f4bc48817e9f"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "50d99d4e4e7f222e6a921b5a",
+              "953883df7131001d77261c2b",
+              "078bd7127f58aff4f44173d1",
+              "f6911012bef638e2fac53332",
+              "88ba15c7f31717b25e2b5b6a",
+              "f6dcc30fb3b9f4bc48817e9f",
+              "daba1fb1ab784b9aced29cc1",
+              "ad933bdc2d2f054317673880",
+              "caab81230b465fd25dfd69a7",
+              "f89a64c199982f9c9eb7001e"
+            ],
+            "top_scores": [
+              0.707221,
+              0.631382,
+              0.585725,
+              0.556109,
+              0.525934,
+              0.524208,
+              0.518414,
+              0.506733,
+              0.506675,
+              0.500779
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "50d99d4e4e7f222e6a921b5a",
+              "953883df7131001d77261c2b",
+              "f6dcc30fb3b9f4bc48817e9f",
+              "078bd7127f58aff4f44173d1",
+              "f6911012bef638e2fac53332",
+              "88ba15c7f31717b25e2b5b6a",
+              "0513afdc94ef6a9cb4c1cbb2",
+              "d366553c139e8e1c30c9790e",
+              "bf3385cad0814354f9d0daa5",
+              "0e0e174d2cc62262567eece3"
+            ],
+            "top_scores": [
+              0.991935,
+              0.991935,
+              0.946248,
+              0.901935,
+              0.862638,
+              0.819805,
+              0.757241,
+              0.731269,
+              0.698554,
+              0.692508
+            ],
+            "semantic_ranks": [
+              1,
+              2,
+              6,
+              3,
+              4,
+              5,
+              27,
+              17,
+              73,
+              56
+            ],
+            "lexical_ranks": [
+              2,
+              1,
+              3,
+              13,
+              19,
+              27,
+              15,
+              31,
+              5,
+              11
+            ]
+          }
+        },
+        {
+          "query_id": "Q25",
+          "relevant_chunk_ids": [
+            "5e920a51d5286fba952624bc",
+            "7778bf4a6926dfd3edcf6f19",
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023"
+            ],
+            "top_chunk_ids": [
+              "7f7d5eca21f40433cac2ded5",
+              "2778c66ba9d49d68a36ecc0f",
+              "b986f3a29b1e9ee1647e6fba",
+              "48d65194c679f545e542ce5c",
+              "d8edb3de939d14078de572a4",
+              "c696663f52ea0007d1a1df63",
+              "39dd7e3346332e6cdd4301ab",
+              "d2ac7d14b20d9003857aa5ba",
+              "02bd0df8087b36a0daa3bf84",
+              "66b29df67e8633668b691153"
+            ],
+            "top_scores": [
+              0.636359,
+              0.629292,
+              0.57058,
+              0.565059,
+              0.561982,
+              0.555433,
+              0.536706,
+              0.522337,
+              0.518687,
+              0.515069
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023"
+            ],
+            "top_chunk_ids": [
+              "143ff2548a3825fe43de791d",
+              "17f1eba62dd7ed936a8fe634",
+              "6a88d1e1b2bb12b645902e78",
+              "aebf03ab454fd5a5cef5fba9",
+              "eb08b5fde5990c21ba479b85",
+              "ed056364deaf7c6de671a825",
+              "6bfc18d0fbb7230422218a15",
+              "b986f3a29b1e9ee1647e6fba",
+              "9b65a7af8f71a8edb4d46405",
+              "2ebca67b3ab7175b06ccfbc9"
+            ],
+            "top_scores": [
+              0.854651,
+              0.850759,
+              0.847222,
+              0.819259,
+              0.815822,
+              0.812696,
+              0.810827,
+              0.79856,
+              0.797692,
+              0.776486
+            ],
+            "semantic_ranks": [
+              26,
+              25,
+              24,
+              29,
+              28,
+              27,
+              20,
+              3,
+              15,
+              33
+            ],
+            "lexical_ranks": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              11,
+              37,
+              18,
+              8
+            ]
+          }
+        },
+        {
+          "query_id": "Q26",
+          "relevant_chunk_ids": [
+            "113a2bb9cd46d91aaa09ae23",
+            "528047f333874ab7ffc2069e"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "c945bdaa95b67ec8d6d0329b",
+              "3f885ad507cf16811e487794",
+              "228d7ddab256d6d3e4c05b76",
+              "e65320d6b6ae693cc6937819",
+              "078bd7127f58aff4f44173d1",
+              "feab410576be6bf0dcc5d213",
+              "2f72a072807e415bb5945cf3",
+              "e6cc4b674fce496514ae1286",
+              "41d5c140ca62462077d4219b",
+              "75b04b518ea79f1f0e43d194"
+            ],
+            "top_scores": [
+              0.748505,
+              0.737696,
+              0.713375,
+              0.712624,
+              0.70526,
+              0.670081,
+              0.668325,
+              0.658986,
+              0.656955,
+              0.655877
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "c945bdaa95b67ec8d6d0329b",
+              "228d7ddab256d6d3e4c05b76",
+              "7899e8cd8acee890339fdf51",
+              "41d5c140ca62462077d4219b",
+              "e65320d6b6ae693cc6937819",
+              "456db36819a0a32d1f50463d",
+              "b25caa602dc6d0624ae342fd",
+              "feab410576be6bf0dcc5d213",
+              "bf3385cad0814354f9d0daa5",
+              "cc18195d0d2595b17f84a383"
+            ],
+            "top_scores": [
+              0.991935,
+              0.946248,
+              0.838778,
+              0.805124,
+              0.775582,
+              0.724265,
+              0.715199,
+              0.714187,
+              0.709394,
+              0.678492
+            ],
+            "semantic_ranks": [
+              1,
+              3,
+              26,
+              9,
+              4,
+              76,
+              64,
+              6,
+              11,
+              13
+            ],
+            "lexical_ranks": [
+              2,
+              6,
+              3,
+              24,
+              42,
+              1,
+              5,
+              61,
+              49,
+              57
+            ]
+          }
+        },
+        {
+          "query_id": "Q27",
+          "relevant_chunk_ids": [],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "fcd14d0c233cb2335b5b1d0f",
+              "078bd7127f58aff4f44173d1",
+              "b451c3e908e7b4985b12c887",
+              "b64c81211729957072212b4e",
+              "363416761b913bfac3ec5491",
+              "c6fb2bc74d75124360ad6eb2",
+              "7b49d7fc0affc30bce0a9693",
+              "1cb7b7f267b629d270d88276",
+              "49474b877aa317f868aeeb2f",
+              "75c3acedb21fbde03b209de1"
+            ],
+            "top_scores": [
+              0.31688,
+              0.281545,
+              0.277827,
+              0.270933,
+              0.265991,
+              0.261653,
+              0.2506,
+              0.241165,
+              0.237222,
+              0.230874
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "bc4cf380d0bdb4f334ff760f",
+              "fcd14d0c233cb2335b5b1d0f",
+              "078bd7127f58aff4f44173d1",
+              "b451c3e908e7b4985b12c887",
+              "b64c81211729957072212b4e",
+              "363416761b913bfac3ec5491",
+              "c6fb2bc74d75124360ad6eb2",
+              "7b49d7fc0affc30bce0a9693",
+              "1cb7b7f267b629d270d88276",
+              "49474b877aa317f868aeeb2f"
+            ],
+            "top_scores": [
+              0.564756,
+              0.5,
+              0.491935,
+              0.484127,
+              0.476562,
+              0.469231,
+              0.462121,
+              0.455224,
+              0.448529,
+              0.442029
+            ],
+            "semantic_ranks": [
+              411,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "lexical_ranks": [
+              1,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        {
+          "query_id": "Q28",
+          "relevant_chunk_ids": [],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "7899e8cd8acee890339fdf51",
+              "5e920a51d5286fba952624bc",
+              "e314c27affdf98beec3cb4f6",
+              "11f93e15854b22c5ce90ed48",
+              "bf3385cad0814354f9d0daa5",
+              "9554eb4b58ce28db98b5fdb8",
+              "1df784fc67ca1896d480e00a",
+              "045a925d58cc4df85c403270",
+              "6f2c90a1065dc8be529b55b2",
+              "bc4a962d5f76e367c99a8f42"
+            ],
+            "top_scores": [
+              0.553523,
+              0.525495,
+              0.474593,
+              0.46702,
+              0.461886,
+              0.459179,
+              0.458472,
+              0.455865,
+              0.453487,
+              0.450122
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-PROFILE-2026"
+            ],
+            "top_chunk_ids": [
+              "7899e8cd8acee890339fdf51",
+              "9554eb4b58ce28db98b5fdb8",
+              "e314c27affdf98beec3cb4f6",
+              "5e920a51d5286fba952624bc",
+              "bf3385cad0814354f9d0daa5",
+              "9cb870c1e9744d30f0b58d73",
+              "3125abf240b457a47aa07655",
+              "79c7a44eb01ab0fdac53cd23",
+              "d7adffb45482ec0d9b17d610",
+              "5deb89334dbc44c243a7ebe8"
+            ],
+            "top_scores": [
+              0.901316,
+              0.897835,
+              0.834702,
+              0.748238,
+              0.736775,
+              0.732505,
+              0.720851,
+              0.710544,
+              0.705224,
+              0.611509
+            ],
+            "semantic_ranks": [
+              1,
+              6,
+              3,
+              2,
+              5,
+              45,
+              52,
+              34,
+              62,
+              93
+            ],
+            "lexical_ranks": [
+              16,
+              10,
+              27,
+              59,
+              54,
+              9,
+              8,
+              19,
+              7,
+              14
+            ]
+          }
+        },
+        {
+          "query_id": "Q29",
+          "relevant_chunk_ids": [],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "8e8f671dca1f676bfc1bb3b2",
+              "a312b0ea5a7af950da7fcd70",
+              "d5f2c9d0c28e88f99009083c",
+              "100b9e59566c1d007f9723ce",
+              "02b75fc220bb796eeb3585fd",
+              "3f4231d45088c3c2bd7ea5d4",
+              "7899e8cd8acee890339fdf51",
+              "717199a1b2bd4e4a973d178b",
+              "e65683789dc8d1e23b7d053d",
+              "005cb00bd9ea6c88cea5330a"
+            ],
+            "top_scores": [
+              0.343205,
+              0.336075,
+              0.295056,
+              0.288885,
+              0.273218,
+              0.271095,
+              0.266499,
+              0.264785,
+              0.26234,
+              0.256692
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "f4a358601049bace8e85e2e0",
+              "a312b0ea5a7af950da7fcd70",
+              "0e155095ac13339829c0cfbe",
+              "02b75fc220bb796eeb3585fd",
+              "8743e30c3dce5faa141f3923",
+              "8e8f671dca1f676bfc1bb3b2",
+              "5f0621c9f451440b2fc3149f",
+              "2d6f6287d0abde9c184efb95",
+              "543ad2522232eb744830fcd0",
+              "100b9e59566c1d007f9723ce"
+            ],
+            "top_scores": [
+              0.788052,
+              0.7162,
+              0.711077,
+              0.690245,
+              0.683723,
+              0.658031,
+              0.64387,
+              0.626118,
+              0.621951,
+              0.606904
+            ],
+            "semantic_ranks": [
+              43,
+              2,
+              13,
+              5,
+              16,
+              1,
+              25,
+              22,
+              62,
+              4
+            ],
+            "lexical_ranks": [
+              2,
+              76,
+              44,
+              78,
+              48,
+              133,
+              47,
+              60,
+              22,
+              174
+            ]
+          }
+        },
+        {
+          "query_id": "Q30",
+          "relevant_chunk_ids": [
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "274abc5e86fc19fd95f91260",
+              "5f0621c9f451440b2fc3149f",
+              "d1299723799246a4c754af2b",
+              "effde19f8067207f22f4eea8",
+              "6690ef3178d3394307302ea9",
+              "b0168c39a0da044b6451d49c",
+              "62017eee3d1d747b71c0ba08",
+              "c6fb2bc74d75124360ad6eb2",
+              "0405730c31d583c834b67576",
+              "fd87a4d9e79b06a8b3ae975b"
+            ],
+            "top_scores": [
+              0.565618,
+              0.557366,
+              0.556852,
+              0.545371,
+              0.540527,
+              0.537615,
+              0.533373,
+              0.529392,
+              0.528923,
+              0.527403
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "11854e7bd9f7f1169a47bce8",
+              "959b63cbc686020e590c2090",
+              "26f8c7eeeabf1593340a818c",
+              "9f57caa1640b0434731ba91e",
+              "f6c132c1cdf67db1c2255a25",
+              "141709a675d1f3bffb9f5e78",
+              "bcf0b3d2854eaa5387c27692",
+              "a9b3e25fae6dadac6b061cef",
+              "21b69739cd8f55f039992acd",
+              "274abc5e86fc19fd95f91260"
+            ],
+            "top_scores": [
+              0.666005,
+              0.594284,
+              0.55957,
+              0.557977,
+              0.551501,
+              0.540525,
+              0.535439,
+              0.513315,
+              0.510578,
+              0.5
+            ],
+            "semantic_ranks": [
+              95,
+              238,
+              452,
+              353,
+              347,
+              231,
+              356,
+              163,
+              491,
+              1
+            ],
+            "lexical_ranks": [
+              5,
+              2,
+              1,
+              3,
+              4,
+              10,
+              6,
+              21,
+              7,
+              null
             ]
           }
         }
@@ -2194,47 +3286,81 @@
         "model_id": "intfloat/multilingual-e5-small",
         "model_slug": "intfloat__multilingual_e5_small",
         "dimension": 384,
-        "chunk_count": 689,
+        "chunk_count": 773,
         "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
         "exact": true,
-        "corpus_sha256": "216b088aa0ee997cf4eea7ce0cdd93af19162ed57420d6acb85520f0d470e0e3",
-        "build_seconds": 65.8013
+        "corpus_sha256": "bda50b487fd2b7d974a9201ddfdd6f87a48aefe8b0dad38b508e5e112e369d3d",
+        "build_seconds": 112.1759
       },
       "semantic_chunk_metrics": {
-        "recall_at_1": 0.275,
-        "recall_at_3": 0.3583,
-        "recall_at_5": 0.6667,
-        "mrr": 0.508,
-        "ndcg_at_5": 0.4926
+        "recall_at_1": 0.2167,
+        "recall_at_3": 0.3222,
+        "recall_at_5": 0.5444,
+        "mrr": 0.4112,
+        "ndcg_at_5": 0.3992
       },
       "hybrid_chunk_metrics": {
-        "recall_at_1": 0.3833,
-        "recall_at_3": 0.6917,
-        "recall_at_5": 0.775,
-        "mrr": 0.6667,
-        "ndcg_at_5": 0.646
+        "recall_at_1": 0.2556,
+        "recall_at_3": 0.5944,
+        "recall_at_5": 0.6667,
+        "mrr": 0.5159,
+        "ndcg_at_5": 0.5161
+      },
+      "split_chunk_metrics": {
+        "DEV": {
+          "semantic": {
+            "recall_at_1": 0.1444,
+            "recall_at_3": 0.2333,
+            "recall_at_5": 0.3778,
+            "mrr": 0.3395,
+            "ndcg_at_5": 0.2881
+          },
+          "hybrid": {
+            "recall_at_1": 0.1556,
+            "recall_at_3": 0.4111,
+            "recall_at_5": 0.5222,
+            "mrr": 0.4206,
+            "ndcg_at_5": 0.3929
+          }
+        },
+        "TEST": {
+          "semantic": {
+            "recall_at_1": 0.2889,
+            "recall_at_3": 0.4111,
+            "recall_at_5": 0.7111,
+            "mrr": 0.4829,
+            "ndcg_at_5": 0.5104
+          },
+          "hybrid": {
+            "recall_at_1": 0.3556,
+            "recall_at_3": 0.7778,
+            "recall_at_5": 0.8111,
+            "mrr": 0.6111,
+            "ndcg_at_5": 0.6393
+          }
+        }
       },
       "semantic_source_metrics_diagnostic": {
-        "recall_at_1": 0.775,
-        "recall_at_3": 0.9,
-        "recall_at_5": 1.0,
-        "mrr": 0.9125,
-        "ndcg_at_5": 0.9183
+        "recall_at_1": 0.6611,
+        "recall_at_3": 0.7778,
+        "recall_at_5": 0.8444,
+        "mrr": 0.7917,
+        "ndcg_at_5": 0.7822
       },
       "hybrid_source_metrics_diagnostic": {
-        "recall_at_1": 0.775,
-        "recall_at_3": 0.95,
-        "recall_at_5": 0.975,
-        "mrr": 0.925,
-        "ndcg_at_5": 0.9192
+        "recall_at_1": 0.6611,
+        "recall_at_3": 0.8444,
+        "recall_at_5": 0.8611,
+        "mrr": 0.8111,
+        "ndcg_at_5": 0.7994
       },
-      "build_total_seconds": 65.85,
-      "hybrid_build_seconds": 0.1488,
-      "semantic_query_latency_ms_mean": 26.3956,
-      "semantic_query_latency_ms_max": 46.0319,
-      "hybrid_query_latency_ms_mean": 35.3528,
-      "hybrid_query_latency_ms_max": 56.6797,
-      "rss_delta_mb": -102.98,
+      "build_total_seconds": 112.2816,
+      "hybrid_build_seconds": 0.2626,
+      "semantic_query_latency_ms_mean": 33.9774,
+      "semantic_query_latency_ms_max": 48.1114,
+      "hybrid_query_latency_ms_mean": 44.4627,
+      "hybrid_query_latency_ms_max": 70.2029,
+      "rss_delta_mb": -221.18,
       "per_query": [
         {
           "query_id": "Q01",
@@ -2303,19 +3429,19 @@
               "17fb07b7e4e07e1b5aa4aee5",
               "80c587494262ffc046cd98a5",
               "69bf97d2c220cdf9f85bbdf2",
-              "a2413050ab9151bfe8eead0c"
+              "2c04430b98f87b42ae792fbc"
             ],
             "top_scores": [
               0.962121,
-              0.938684,
+              0.945793,
               0.873185,
               0.872666,
-              0.755133,
-              0.719024,
-              0.694403,
-              0.676532,
-              0.660851,
-              0.656364
+              0.778262,
+              0.72987,
+              0.727719,
+              0.690345,
+              0.671123,
+              0.66522
             ],
             "semantic_ranks": [
               6,
@@ -2327,18 +3453,18 @@
               15,
               25,
               19,
-              24
+              22
             ],
             "lexical_ranks": [
               1,
-              6,
+              5,
               2,
               4,
+              26,
+              14,
+              35,
               32,
-              16,
-              46,
-              36,
-              51,
+              47,
               44
             ]
           }
@@ -2415,13 +3541,13 @@
               0.969231,
               0.935714,
               0.913704,
-              0.860692,
-              0.830824,
+              0.855196,
+              0.823457,
               0.809875,
               0.808834,
-              0.808084,
+              0.797615,
               0.769174,
-              0.751891
+              0.744012
             ],
             "semantic_ranks": [
               5,
@@ -2439,13 +3565,13 @@
               1,
               10,
               11,
-              14,
-              30,
+              15,
+              32,
               7,
               13,
-              32,
+              35,
               3,
-              27
+              29
             ]
           }
         },
@@ -2520,11 +3646,11 @@
             "top_scores": [
               0.954057,
               0.940465,
-              0.912162,
+              0.917808,
               0.881393,
               0.877878,
               0.872666,
-              0.855196,
+              0.849845,
               0.838664,
               0.818319,
               0.80812
@@ -2544,11 +3670,11 @@
             "lexical_ranks": [
               2,
               8,
-              14,
+              13,
               5,
               4,
               17,
-              15,
+              16,
               6,
               24,
               30
@@ -2616,8 +3742,8 @@
               "0ff01e415ac23ce330a855cb",
               "0881e0b29f0978c7bd8c2335",
               "f51c892b43959ce1e52449bf",
-              "1a01ca4c19198e53c2065a5a",
               "8a53094b7f96237137267ef3",
+              "1a01ca4c19198e53c2065a5a",
               "113a2bb9cd46d91aaa09ae23",
               "0d2404fd8820a44581249117",
               "e358ed24c2f1f2443e663956",
@@ -2628,20 +3754,20 @@
               0.991935,
               0.939351,
               0.938462,
-              0.924242,
-              0.913704,
-              0.900174,
+              0.919841,
+              0.917345,
+              0.90614,
               0.802771,
               0.777354,
-              0.760505
+              0.766308
             ],
             "semantic_ranks": [
               1,
               2,
               7,
               5,
-              6,
               3,
+              6,
               4,
               17,
               20,
@@ -2652,12 +3778,12 @@
               1,
               3,
               5,
-              6,
+              10,
+              7,
               11,
-              12,
               15,
               17,
-              13
+              12
             ]
           }
         },
@@ -2676,8 +3802,8 @@
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-CURRICULO-BASE-2012",
-              "BO-ME-BTH-RM-0244-2023",
-              "BO-ME-CURRICULO-BASE-2012"
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023"
             ],
             "top_chunk_ids": [
               "c0afc0ff33768630a7189b41",
@@ -2688,8 +3814,8 @@
               "1f71d47bac8b359bf61dd007",
               "3aed1e8f8ade6d62cd8fb1f6",
               "1febb0e3a15d09522d400117",
-              "960eae5f9564950183843e28",
-              "43b59f0a4ec4f53cccf7d597"
+              "882f6a763703139b708f8175",
+              "960eae5f9564950183843e28"
             ],
             "top_scores": [
               0.86814,
@@ -2700,8 +3826,8 @@
               0.861573,
               0.861511,
               0.859653,
-              0.858866,
-              0.85811
+              0.858949,
+              0.858866
             ]
           },
           "hybrid": {
@@ -2719,8 +3845,8 @@
             ],
             "top_chunk_ids": [
               "74765112b88696b40d10441f",
-              "9ba100bede5b54ad973a6e18",
               "c0afc0ff33768630a7189b41",
+              "9ba100bede5b54ad973a6e18",
               "3aed1e8f8ade6d62cd8fb1f6",
               "58c02ba289726353efefa28b",
               "43b59f0a4ec4f53cccf7d597",
@@ -2730,35 +3856,35 @@
               "015ac1e9600d7e55bc046603"
             ],
             "top_scores": [
-              0.938462,
+              0.931352,
+              0.901316,
               0.898602,
-              0.891026,
               0.884801,
-              0.879929,
-              0.877743,
+              0.881393,
+              0.871606,
               0.870203,
-              0.8413,
-              0.808595,
-              0.794271
+              0.827175,
+              0.792208,
+              0.778543
             ],
             "semantic_ranks": [
               5,
-              2,
               1,
+              2,
               7,
-              13,
-              10,
+              14,
+              11,
               3,
-              19,
-              34,
-              36
+              22,
+              39,
+              41
             ],
             "lexical_ranks": [
-              5,
-              15,
-              18,
-              11,
               6,
+              16,
+              15,
+              11,
+              5,
               9,
               19,
               7,
@@ -2821,7 +3947,7 @@
               "BO-ME-BTH-RM-0244-2023",
               "BO-ME-BTH-RM-0244-2023",
               "BO-ME-BTH-RM-0244-2023",
-              "BO-ME-CURRICULO-BASE-2012"
+              "BO-ME-BTH-RM-0244-2023"
             ],
             "top_chunk_ids": [
               "528047f333874ab7ffc2069e",
@@ -2833,19 +3959,19 @@
               "1a7afa3329ff627ac382d1ce",
               "f73c96c8029fd1db303f5dd4",
               "5b4759b445e13bd6888db799",
-              "c945bdaa95b67ec8d6d0329b"
+              "f034d256594af6b3db4be406"
             ],
             "top_scores": [
               1.0,
               0.961166,
               0.926156,
               0.91776,
-              0.898602,
-              0.859325,
+              0.893251,
+              0.853523,
               0.847386,
-              0.830893,
-              0.811625,
-              0.743902
+              0.825681,
+              0.825216,
+              0.736481
             ],
             "semantic_ranks": [
               1,
@@ -2857,19 +3983,19 @@
               13,
               11,
               24,
-              22
+              16
             ],
             "lexical_ranks": [
               1,
               2,
               3,
               5,
-              15,
-              12,
-              11,
               16,
-              8,
-              22
+              13,
+              11,
+              17,
+              6,
+              31
             ]
           }
         },
@@ -3033,55 +4159,55 @@
               "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UCB-LP-CIV-PROFILE-2026",
-              "BO-ME-BTH-RM-0244-2023"
+              "BO-UCB-LP-SIS-PROFILE-2026"
             ],
             "top_chunk_ids": [
               "959b63cbc686020e590c2090",
               "21b69739cd8f55f039992acd",
               "6215426042d47c231786daa5",
-              "02b75fc220bb796eeb3585fd",
               "ea301807129365c01fbc91a5",
+              "02b75fc220bb796eeb3585fd",
               "ee28db79fbb62ce79ac5fb54",
               "ba95d284aee43ea5612a633b",
               "497314e4093a1b9c03e6a81d",
               "7899e8cd8acee890339fdf51",
-              "e9b2783b422868c4bd18e075"
+              "2778c66ba9d49d68a36ecc0f"
             ],
             "top_scores": [
               0.991935,
               0.953125,
               0.924242,
+              0.921513,
               0.91776,
-              0.915547,
               0.875153,
-              0.847222,
-              0.787736,
-              0.662,
-              0.614944
+              0.851597,
+              0.785047,
+              0.652406,
+              0.595777
             ],
             "semantic_ranks": [
               1,
               4,
               6,
-              8,
               2,
+              8,
               18,
               3,
-              46,
-              57,
-              34
+              47,
+              59,
+              157
             ],
             "lexical_ranks": [
               2,
               4,
               6,
+              11,
               5,
-              12,
               3,
-              24,
+              23,
               1,
-              16,
-              45
+              17,
+              7
             ]
           }
         },
@@ -3239,8 +4365,8 @@
             "top_source_ids": [
               "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UCB-LP-SIS-PROFILE-2026",
-              "BO-UCB-LP-CIV-PROFILE-2026",
               "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
               "BO-UCB-LP-SIS-PROFILE-2026",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UCB-LP-SIS-MALLA-2026",
@@ -3251,8 +4377,8 @@
             "top_chunk_ids": [
               "959b63cbc686020e590c2090",
               "2778c66ba9d49d68a36ecc0f",
-              "7899e8cd8acee890339fdf51",
               "ea301807129365c01fbc91a5",
+              "7899e8cd8acee890339fdf51",
               "ba95d284aee43ea5612a633b",
               "0349355f440d901ce6768442",
               "21b69739cd8f55f039992acd",
@@ -3263,20 +4389,20 @@
             "top_scores": [
               1.0,
               0.968498,
+              0.946248,
               0.945793,
-              0.939351,
               0.921513,
               0.919841,
               0.892842,
-              0.890558,
-              0.84174,
+              0.884058,
+              0.810827,
               0.789759
             ],
             "semantic_ranks": [
               1,
               4,
-              5,
               3,
+              5,
               2,
               10,
               12,
@@ -3287,13 +4413,13 @@
             "lexical_ranks": [
               1,
               2,
+              6,
               4,
-              7,
               11,
               3,
               5,
-              8,
-              14,
+              9,
+              20,
               22
             ]
           }
@@ -3345,8 +4471,8 @@
             "top_source_ids": [
               "BO-UCB-LP-PSI-MALLA-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
-              "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
               "BO-ME-CURRICULO-BASE-2012",
               "BO-ME-CURRICULO-BASE-2012",
@@ -3357,8 +4483,8 @@
             "top_chunk_ids": [
               "bf3385cad0814354f9d0daa5",
               "363416761b913bfac3ec5491",
-              "953883df7131001d77261c2b",
               "606f98cffc3bf6988782356f",
+              "953883df7131001d77261c2b",
               "0513afdc94ef6a9cb4c1cbb2",
               "46831d820c8093d4423d1fd1",
               "c1010a65bec478728a842f71",
@@ -3370,8 +4496,8 @@
               1.0,
               0.976062,
               0.938684,
-              0.931786,
-              0.909744,
+              0.938684,
+              0.915547,
               0.898808,
               0.870547,
               0.867386,
@@ -3381,8 +4507,8 @@
             "semantic_ranks": [
               1,
               3,
-              6,
               4,
+              6,
               2,
               5,
               16,
@@ -3393,9 +4519,9 @@
             "lexical_ranks": [
               1,
               2,
+              6,
               4,
-              7,
-              13,
+              12,
               11,
               5,
               14,
@@ -3483,8 +4609,8 @@
               0.909744,
               0.90415,
               0.885732,
-              0.859325,
-              0.85654
+              0.86564,
+              0.861891
             ],
             "semantic_ranks": [
               1,
@@ -3507,8 +4633,8 @@
               2,
               6,
               12,
-              10,
-              16
+              9,
+              15
             ]
           }
         },
@@ -3587,9 +4713,9 @@
               0.929577,
               0.894371,
               0.885443,
-              0.851328,
+              0.84625,
               0.82179,
-              0.820481,
+              0.815999,
               0.808266
             ],
             "semantic_ranks": [
@@ -3611,9 +4737,9 @@
               11,
               13,
               16,
-              17,
+              18,
               10,
-              22,
+              23,
               14
             ]
           }
@@ -3677,11 +4803,11 @@
             "top_chunk_ids": [
               "9b65a7af8f71a8edb4d46405",
               "7778bf4a6926dfd3edcf6f19",
-              "6a88d1e1b2bb12b645902e78",
               "143ff2548a3825fe43de791d",
+              "6a88d1e1b2bb12b645902e78",
               "17f1eba62dd7ed936a8fe634",
-              "ed056364deaf7c6de671a825",
               "aebf03ab454fd5a5cef5fba9",
+              "ed056364deaf7c6de671a825",
               "eb08b5fde5990c21ba479b85",
               "12b04d54b340f4e2501c4d39",
               "77d7ec2b529ebfdc62d24eea"
@@ -3689,23 +4815,23 @@
             "top_scores": [
               0.991935,
               0.991935,
-              0.897253,
-              0.897253,
-              0.897059,
-              0.859325,
-              0.859325,
-              0.859155,
-              0.847222,
+              0.90415,
+              0.903753,
+              0.903753,
+              0.86564,
+              0.865292,
+              0.865292,
+              0.851597,
               0.842951
             ],
             "semantic_ranks": [
               1,
               2,
-              7,
               9,
+              7,
               8,
-              10,
               12,
+              10,
               11,
               3,
               25
@@ -3713,13 +4839,13 @@
             "lexical_ranks": [
               2,
               1,
-              9,
-              7,
+              6,
               8,
-              12,
-              10,
+              7,
+              9,
               11,
-              24,
+              10,
+              23,
               3
             ]
           }
@@ -4011,7 +5137,7 @@
               0.946248,
               0.933964,
               0.912162,
-              0.871951,
+              0.863095,
               0.858225,
               0.845774,
               0.843345,
@@ -4035,7 +5161,7 @@
               3,
               2,
               1,
-              22,
+              24,
               6,
               5,
               9,
@@ -4230,7 +5356,7 @@
               0.878835,
               0.835386,
               0.823279,
-              0.774603
+              0.770879
             ],
             "semantic_ranks": [
               1,
@@ -4254,7 +5380,7 @@
               12,
               4,
               9,
-              30
+              31
             ]
           }
         },
@@ -4308,10 +5434,10 @@
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
-              "BO-UCB-LP-IAM-PROFILE-2026",
               "BO-UCB-LP-PSI-MALLA-2026",
               "BO-UMSA-LP-CIV-PLAN-2023",
               "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-IAM-PROFILE-2026",
               "BO-UMSA-LP-CIV-PLAN-2023"
             ],
             "top_chunk_ids": [
@@ -4320,22 +5446,22 @@
               "143ff2548a3825fe43de791d",
               "17f1eba62dd7ed936a8fe634",
               "6a88d1e1b2bb12b645902e78",
-              "dbddf8834837f42eac6dc1c4",
               "363416761b913bfac3ec5491",
               "aebf03ab454fd5a5cef5fba9",
               "eb08b5fde5990c21ba479b85",
+              "dbddf8834837f42eac6dc1c4",
               "ed056364deaf7c6de671a825"
             ],
             "top_scores": [
-              0.940465,
-              0.886076,
+              0.933964,
+              0.891026,
               0.859405,
               0.856078,
               0.853106,
-              0.84625,
               0.831818,
               0.823882,
               0.820945,
+              0.818319,
               0.818319
             ],
             "semantic_ranks": [
@@ -4344,23 +5470,1081 @@
               23,
               22,
               21,
-              7,
               10,
               26,
               25,
+              7,
               24
             ],
             "lexical_ranks": [
-              8,
-              19,
+              9,
+              18,
               2,
               3,
               4,
-              18,
               17,
               5,
               6,
+              24,
               7
+            ]
+          }
+        },
+        {
+          "query_id": "Q21",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "ea301807129365c01fbc91a5",
+              "959b63cbc686020e590c2090",
+              "21b69739cd8f55f039992acd",
+              "6215426042d47c231786daa5",
+              "4954a943ea94dc4641b3f77c",
+              "02b75fc220bb796eeb3585fd",
+              "b986f3a29b1e9ee1647e6fba",
+              "363416761b913bfac3ec5491",
+              "3aed1e8f8ade6d62cd8fb1f6",
+              "8d98bf262a9de351fdebb611"
+            ],
+            "top_scores": [
+              0.85988,
+              0.848456,
+              0.845869,
+              0.844141,
+              0.840466,
+              0.839787,
+              0.836201,
+              0.835202,
+              0.835193,
+              0.835124
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-SIS-PROFILE-2026"
+            ],
+            "top_chunk_ids": [
+              "ea301807129365c01fbc91a5",
+              "959b63cbc686020e590c2090",
+              "21b69739cd8f55f039992acd",
+              "6215426042d47c231786daa5",
+              "2778c66ba9d49d68a36ecc0f",
+              "ee28db79fbb62ce79ac5fb54",
+              "02b75fc220bb796eeb3585fd",
+              "f6dcc30fb3b9f4bc48817e9f",
+              "0349355f440d901ce6768442",
+              "497314e4093a1b9c03e6a81d"
+            ],
+            "top_scores": [
+              0.962121,
+              0.947159,
+              0.926156,
+              0.877878,
+              0.865335,
+              0.792743,
+              0.773346,
+              0.756448,
+              0.755133,
+              0.717162
+            ],
+            "semantic_ranks": [
+              1,
+              2,
+              3,
+              4,
+              17,
+              15,
+              6,
+              52,
+              32,
+              40
+            ],
+            "lexical_ranks": [
+              6,
+              7,
+              9,
+              16,
+              5,
+              19,
+              38,
+              3,
+              12,
+              14
+            ]
+          }
+        },
+        {
+          "query_id": "Q22",
+          "relevant_chunk_ids": [
+            "7778bf4a6926dfd3edcf6f19"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-PROFILE-2026"
+            ],
+            "top_chunk_ids": [
+              "7778bf4a6926dfd3edcf6f19",
+              "0349355f440d901ce6768442",
+              "89749489ddaf98eb35fcb8d5",
+              "b986f3a29b1e9ee1647e6fba",
+              "7c2fa2800a58c50ba2884bc8",
+              "e82f1d4171807fe8cd321c46",
+              "3f38670bababa54cd31213f4",
+              "9b65a7af8f71a8edb4d46405",
+              "77d7ec2b529ebfdc62d24eea",
+              "3cd169ffa29a31cf26c3b1c0"
+            ],
+            "top_scores": [
+              0.873728,
+              0.872305,
+              0.870896,
+              0.869221,
+              0.869056,
+              0.866072,
+              0.8659,
+              0.861505,
+              0.861388,
+              0.861239
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-PROFILE-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023"
+            ],
+            "top_chunk_ids": [
+              "0349355f440d901ce6768442",
+              "7778bf4a6926dfd3edcf6f19",
+              "89749489ddaf98eb35fcb8d5",
+              "adcbb49d64ea81411913b49b",
+              "3cd169ffa29a31cf26c3b1c0",
+              "77d7ec2b529ebfdc62d24eea",
+              "6bfc18d0fbb7230422218a15",
+              "2ebca67b3ab7175b06ccfbc9",
+              "02bd0df8087b36a0daa3bf84",
+              "44fc9f24e79bf1da79017dab"
+            ],
+            "top_scores": [
+              0.991935,
+              0.984127,
+              0.960689,
+              0.921513,
+              0.904945,
+              0.90415,
+              0.813912,
+              0.809875,
+              0.807982,
+              0.799104
+            ],
+            "semantic_ranks": [
+              2,
+              1,
+              3,
+              11,
+              10,
+              9,
+              17,
+              26,
+              15,
+              27
+            ],
+            "lexical_ranks": [
+              1,
+              3,
+              4,
+              2,
+              5,
+              6,
+              13,
+              7,
+              16,
+              8
+            ]
+          }
+        },
+        {
+          "query_id": "Q23",
+          "relevant_chunk_ids": [
+            "0881e0b29f0978c7bd8c2335"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "8a53094b7f96237137267ef3",
+              "a9c44fb6cda2d5fb8e196883",
+              "fe371926e3d3f7f8e9e96230",
+              "3c178c0a41fd310fbbef2373",
+              "3125abf240b457a47aa07655",
+              "b813299563f38cf6afdf591e",
+              "e314c27affdf98beec3cb4f6",
+              "6cff8d8a9dce97e603764d3a",
+              "9867148302c1b60fffe336cf",
+              "07e6ffa94a9a5ea91e9af39d"
+            ],
+            "top_scores": [
+              0.865614,
+              0.862533,
+              0.861839,
+              0.860697,
+              0.859148,
+              0.857818,
+              0.857177,
+              0.85614,
+              0.854443,
+              0.854406
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "e314c27affdf98beec3cb4f6",
+              "6215426042d47c231786daa5",
+              "b813299563f38cf6afdf591e",
+              "8a53094b7f96237137267ef3",
+              "627e15272ea6738638476d4e",
+              "07e6ffa94a9a5ea91e9af39d",
+              "5b6314bf054931201ee286bc",
+              "813fada855d349d02b41e7cb",
+              "f772386dac04ee6e0f9bda17",
+              "04db6c228e8ee78027043c36"
+            ],
+            "top_scores": [
+              0.924455,
+              0.907738,
+              0.879929,
+              0.838889,
+              0.813333,
+              0.767236,
+              0.734993,
+              0.731825,
+              0.69457,
+              0.673577
+            ],
+            "semantic_ranks": [
+              7,
+              12,
+              6,
+              1,
+              15,
+              10,
+              30,
+              20,
+              48,
+              65
+            ],
+            "lexical_ranks": [
+              5,
+              3,
+              13,
+              30,
+              15,
+              32,
+              17,
+              27,
+              14,
+              11
+            ]
+          }
+        },
+        {
+          "query_id": "Q24",
+          "relevant_chunk_ids": [
+            "953883df7131001d77261c2b",
+            "f6dcc30fb3b9f4bc48817e9f"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UCB-LP-PSI-PROFILE-2026"
+            ],
+            "top_chunk_ids": [
+              "50d99d4e4e7f222e6a921b5a",
+              "953883df7131001d77261c2b",
+              "606f98cffc3bf6988782356f",
+              "0513afdc94ef6a9cb4c1cbb2",
+              "bf3385cad0814354f9d0daa5",
+              "8a53094b7f96237137267ef3",
+              "363416761b913bfac3ec5491",
+              "3c178c0a41fd310fbbef2373",
+              "03120b7de05513d9474bdf57",
+              "f6dcc30fb3b9f4bc48817e9f"
+            ],
+            "top_scores": [
+              0.8818,
+              0.871474,
+              0.871027,
+              0.86476,
+              0.862084,
+              0.853608,
+              0.853591,
+              0.852922,
+              0.852647,
+              0.851847
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-PSI-PROFILE-2026",
+              "BO-UCB-LP-PSI-MALLA-2026"
+            ],
+            "top_chunk_ids": [
+              "50d99d4e4e7f222e6a921b5a",
+              "953883df7131001d77261c2b",
+              "606f98cffc3bf6988782356f",
+              "bf3385cad0814354f9d0daa5",
+              "f6dcc30fb3b9f4bc48817e9f",
+              "0513afdc94ef6a9cb4c1cbb2",
+              "078bd7127f58aff4f44173d1",
+              "bd9ab3adc2977f5f4e4e15f7",
+              "f6911012bef638e2fac53332",
+              "363416761b913bfac3ec5491"
+            ],
+            "top_scores": [
+              0.991935,
+              0.991935,
+              0.946248,
+              0.938462,
+              0.919841,
+              0.883229,
+              0.847386,
+              0.804861,
+              0.798238,
+              0.763305
+            ],
+            "semantic_ranks": [
+              1,
+              2,
+              3,
+              5,
+              10,
+              4,
+              11,
+              12,
+              14,
+              7
+            ],
+            "lexical_ranks": [
+              2,
+              1,
+              6,
+              5,
+              3,
+              15,
+              13,
+              20,
+              19,
+              39
+            ]
+          }
+        },
+        {
+          "query_id": "Q25",
+          "relevant_chunk_ids": [
+            "5e920a51d5286fba952624bc",
+            "7778bf4a6926dfd3edcf6f19",
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026"
+            ],
+            "top_chunk_ids": [
+              "6a88d1e1b2bb12b645902e78",
+              "17f1eba62dd7ed936a8fe634",
+              "143ff2548a3825fe43de791d",
+              "ed056364deaf7c6de671a825",
+              "eb08b5fde5990c21ba479b85",
+              "aebf03ab454fd5a5cef5fba9",
+              "7778bf4a6926dfd3edcf6f19",
+              "12b04d54b340f4e2501c4d39",
+              "9b65a7af8f71a8edb4d46405",
+              "2778c66ba9d49d68a36ecc0f"
+            ],
+            "top_scores": [
+              0.87709,
+              0.87709,
+              0.87709,
+              0.87709,
+              0.87709,
+              0.87709,
+              0.876296,
+              0.876176,
+              0.875648,
+              0.873067
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UMSA-LP-CIV-PLAN-2023"
+            ],
+            "top_chunk_ids": [
+              "6a88d1e1b2bb12b645902e78",
+              "143ff2548a3825fe43de791d",
+              "17f1eba62dd7ed936a8fe634",
+              "ed056364deaf7c6de671a825",
+              "aebf03ab454fd5a5cef5fba9",
+              "eb08b5fde5990c21ba479b85",
+              "7778bf4a6926dfd3edcf6f19",
+              "9b65a7af8f71a8edb4d46405",
+              "21b69739cd8f55f039992acd",
+              "7c728cdb35e81b3e4625c0bb"
+            ],
+            "top_scores": [
+              0.984127,
+              0.984127,
+              0.983871,
+              0.938684,
+              0.938684,
+              0.938462,
+              0.910448,
+              0.833055,
+              0.824927,
+              0.813333
+            ],
+            "semantic_ranks": [
+              1,
+              3,
+              2,
+              4,
+              6,
+              5,
+              7,
+              9,
+              12,
+              15
+            ],
+            "lexical_ranks": [
+              3,
+              1,
+              2,
+              6,
+              4,
+              5,
+              7,
+              18,
+              16,
+              15
+            ]
+          }
+        },
+        {
+          "query_id": "Q26",
+          "relevant_chunk_ids": [
+            "113a2bb9cd46d91aaa09ae23",
+            "528047f333874ab7ffc2069e"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024"
+            ],
+            "top_chunk_ids": [
+              "c945bdaa95b67ec8d6d0329b",
+              "813fada855d349d02b41e7cb",
+              "112fcaa01158b48859b7417d",
+              "cc18195d0d2595b17f84a383",
+              "113a2bb9cd46d91aaa09ae23",
+              "228d7ddab256d6d3e4c05b76",
+              "6040b9bd9db1cd858e49cc2b",
+              "4d39386e704778d9afa1db0a",
+              "1cb7b7f267b629d270d88276",
+              "05d014a4fb08d0ca95031350"
+            ],
+            "top_scores": [
+              0.888476,
+              0.885462,
+              0.884704,
+              0.881282,
+              0.880521,
+              0.876419,
+              0.875471,
+              0.872094,
+              0.871788,
+              0.871519
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "c945bdaa95b67ec8d6d0329b",
+              "228d7ddab256d6d3e4c05b76",
+              "113a2bb9cd46d91aaa09ae23",
+              "1a7afa3329ff627ac382d1ce",
+              "6cff8d8a9dce97e603764d3a",
+              "4d39386e704778d9afa1db0a",
+              "005cb00bd9ea6c88cea5330a",
+              "d6c41cb20a27aad0202573c2",
+              "cc18195d0d2595b17f84a383",
+              "5b2619fcfc4e9c5aa0588fa7"
+            ],
+            "top_scores": [
+              0.991935,
+              0.924242,
+              0.860256,
+              0.855196,
+              0.818572,
+              0.762962,
+              0.75897,
+              0.74296,
+              0.737246,
+              0.731831
+            ],
+            "semantic_ranks": [
+              1,
+              6,
+              5,
+              15,
+              21,
+              8,
+              48,
+              46,
+              4,
+              43
+            ],
+            "lexical_ranks": [
+              2,
+              6,
+              18,
+              8,
+              9,
+              37,
+              4,
+              7,
+              57,
+              10
+            ]
+          }
+        },
+        {
+          "query_id": "Q27",
+          "relevant_chunk_ids": [],
+          "semantic": {
+            "top_source_ids": [
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "363416761b913bfac3ec5491",
+              "606f98cffc3bf6988782356f",
+              "ea301807129365c01fbc91a5",
+              "21b69739cd8f55f039992acd",
+              "4954a943ea94dc4641b3f77c",
+              "e82f1d4171807fe8cd321c46",
+              "6215426042d47c231786daa5",
+              "133a965246d33d142557611c",
+              "62ce4b631d2aa52a0fc51948",
+              "6e479392941b54073d1ded39"
+            ],
+            "top_scores": [
+              0.818076,
+              0.812224,
+              0.811766,
+              0.811657,
+              0.810836,
+              0.810373,
+              0.809852,
+              0.809657,
+              0.808217,
+              0.808023
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-PSI-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "bc4cf380d0bdb4f334ff760f",
+              "363416761b913bfac3ec5491",
+              "606f98cffc3bf6988782356f",
+              "ea301807129365c01fbc91a5",
+              "21b69739cd8f55f039992acd",
+              "4954a943ea94dc4641b3f77c",
+              "e82f1d4171807fe8cd321c46",
+              "6215426042d47c231786daa5",
+              "133a965246d33d142557611c",
+              "62ce4b631d2aa52a0fc51948"
+            ],
+            "top_scores": [
+              0.719424,
+              0.5,
+              0.491935,
+              0.484127,
+              0.476562,
+              0.469231,
+              0.462121,
+              0.455224,
+              0.448529,
+              0.442029
+            ],
+            "semantic_ranks": [
+              79,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ],
+            "lexical_ranks": [
+              1,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        },
+        {
+          "query_id": "Q28",
+          "relevant_chunk_ids": [],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "d7adffb45482ec0d9b17d610",
+              "9cb870c1e9744d30f0b58d73",
+              "903f25241aae7d8014948ff0",
+              "9554eb4b58ce28db98b5fdb8",
+              "476a73323b70c4b7e06717ba",
+              "d83de654303d08c2b7ec79ee",
+              "1febb0e3a15d09522d400117",
+              "d67f7473489bdcdad639a7ea",
+              "bd1cd4824e19b1138502b050",
+              "293aa636ace69f281ee1c3f5"
+            ],
+            "top_scores": [
+              0.84008,
+              0.833964,
+              0.824898,
+              0.822599,
+              0.820898,
+              0.819242,
+              0.818306,
+              0.817824,
+              0.816739,
+              0.816635
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-PROFILE-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-PSI-MALLA-2026"
+            ],
+            "top_chunk_ids": [
+              "d7adffb45482ec0d9b17d610",
+              "9cb870c1e9744d30f0b58d73",
+              "9554eb4b58ce28db98b5fdb8",
+              "476a73323b70c4b7e06717ba",
+              "959b63cbc686020e590c2090",
+              "79c7a44eb01ab0fdac53cd23",
+              "3125abf240b457a47aa07655",
+              "e314c27affdf98beec3cb4f6",
+              "43b59f0a4ec4f53cccf7d597",
+              "bf3385cad0814354f9d0daa5"
+            ],
+            "top_scores": [
+              0.955224,
+              0.933964,
+              0.912277,
+              0.875897,
+              0.774137,
+              0.772152,
+              0.75661,
+              0.727118,
+              0.712772,
+              0.697121
+            ],
+            "semantic_ranks": [
+              1,
+              2,
+              4,
+              5,
+              15,
+              19,
+              39,
+              21,
+              32,
+              11
+            ],
+            "lexical_ranks": [
+              7,
+              9,
+              10,
+              15,
+              23,
+              19,
+              8,
+              27,
+              20,
+              54
+            ]
+          }
+        },
+        {
+          "query_id": "Q29",
+          "relevant_chunk_ids": [],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-MALLA-2026"
+            ],
+            "top_chunk_ids": [
+              "f46114e182c0067eabd01624",
+              "21b69739cd8f55f039992acd",
+              "4954a943ea94dc4641b3f77c",
+              "d83de654303d08c2b7ec79ee",
+              "1e8a3283f68e0c823d73fb0d",
+              "02b75fc220bb796eeb3585fd",
+              "ee28db79fbb62ce79ac5fb54",
+              "1d9e4334e2ce4382b99b8c63",
+              "8af4b87b85c7c6ae2cb2a044",
+              "5e920a51d5286fba952624bc"
+            ],
+            "top_scores": [
+              0.849679,
+              0.849081,
+              0.845901,
+              0.84565,
+              0.84493,
+              0.843384,
+              0.843156,
+              0.842581,
+              0.842051,
+              0.841491
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "f4a358601049bace8e85e2e0",
+              "4954a943ea94dc4641b3f77c",
+              "668297407d0600d0c866beb3",
+              "21b69739cd8f55f039992acd",
+              "293aa636ace69f281ee1c3f5",
+              "7778bf4a6926dfd3edcf6f19",
+              "5b9bdd6baab9c92144ebb759",
+              "d83de654303d08c2b7ec79ee",
+              "17a354aa0dc3ed5ccd87406c",
+              "f54229ea01a530d71d349c80"
+            ],
+            "top_scores": [
+              0.921513,
+              0.851597,
+              0.839658,
+              0.830824,
+              0.829591,
+              0.734615,
+              0.722808,
+              0.69919,
+              0.696843,
+              0.68384
+            ],
+            "semantic_ranks": [
+              11,
+              3,
+              24,
+              2,
+              23,
+              70,
+              13,
+              4,
+              74,
+              17
+            ],
+            "lexical_ranks": [
+              2,
+              23,
+              4,
+              30,
+              6,
+              1,
+              40,
+              77,
+              5,
+              46
+            ]
+          }
+        },
+        {
+          "query_id": "Q30",
+          "relevant_chunk_ids": [
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic": {
+            "top_source_ids": [
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-ME-BTH-RM-0244-2023"
+            ],
+            "top_chunk_ids": [
+              "6690ef3178d3394307302ea9",
+              "effde19f8067207f22f4eea8",
+              "12fec9cf6f706642333f5e8e",
+              "afb7849f31683319c37d65be",
+              "0405730c31d583c834b67576",
+              "2bae73933df3883f0539ed68",
+              "25cdbaa5177f4235bdc60a2e",
+              "ef62f68b2d1e94e2945000b6",
+              "c2ba86be1d44063c125e2d3f",
+              "dbcb86dc5437d5f99036884e"
+            ],
+            "top_scores": [
+              0.830222,
+              0.825152,
+              0.824268,
+              0.824022,
+              0.823937,
+              0.823721,
+              0.823262,
+              0.823134,
+              0.821938,
+              0.821058
+            ]
+          },
+          "hybrid": {
+            "top_source_ids": [
+              "BO-UCB-LP-SIS-MALLA-2026",
+              "BO-UCB-LP-SIS-PROFILE-2026",
+              "BO-UCB-LP-CIV-MALLA-2026",
+              "BO-ME-BTH-RM-0244-2023",
+              "BO-UCB-LP-IAM-MALLA-2026",
+              "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+              "BO-UMSA-LP-CIV-PLAN-2023",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012",
+              "BO-ME-CURRICULO-BASE-2012"
+            ],
+            "top_chunk_ids": [
+              "21b69739cd8f55f039992acd",
+              "959b63cbc686020e590c2090",
+              "9b65a7af8f71a8edb4d46405",
+              "11854e7bd9f7f1169a47bce8",
+              "5e920a51d5286fba952624bc",
+              "a9b3e25fae6dadac6b061cef",
+              "7778bf4a6926dfd3edcf6f19",
+              "26f8c7eeeabf1593340a818c",
+              "bcf0b3d2854eaa5387c27692",
+              "9f57caa1640b0434731ba91e"
+            ],
+            "top_scores": [
+              0.713698,
+              0.696633,
+              0.679345,
+              0.620221,
+              0.571816,
+              0.564815,
+              0.563191,
+              0.553982,
+              0.552895,
+              0.525737
+            ],
+            "semantic_ranks": [
+              58,
+              89,
+              44,
+              142,
+              175,
+              102,
+              206,
+              505,
+              276,
+              673
+            ],
+            "lexical_ranks": [
+              7,
+              2,
+              19,
+              5,
+              9,
+              21,
+              8,
+              1,
+              6,
+              3
             ]
           }
         }
@@ -4369,25 +6553,59 @@
   ],
   "selected": {
     "selection_version": "retrieval-selection-v1.2.0",
-    "dataset_version": "retrieval-bo-v1.1.0",
+    "dataset_version": "retrieval-bo-v2.0.0",
     "model_id": "intfloat/multilingual-e5-small",
     "index_directory": "data/indexes/intfloat__multilingual_e5_small",
     "selection_rule": "max(semantic_ndcg_at_5, semantic_recall_at_5, semantic_mrr, -semantic_query_latency_mean)",
     "relevance_level": "CHUNK_LEVEL_MANUAL",
     "hybrid_version": "bm25-rrf-v1.0.0",
     "semantic_metrics": {
-      "recall_at_1": 0.275,
-      "recall_at_3": 0.3583,
-      "recall_at_5": 0.6667,
-      "mrr": 0.508,
-      "ndcg_at_5": 0.4926
+      "recall_at_1": 0.2167,
+      "recall_at_3": 0.3222,
+      "recall_at_5": 0.5444,
+      "mrr": 0.4112,
+      "ndcg_at_5": 0.3992
     },
     "hybrid_metrics": {
-      "recall_at_1": 0.3833,
-      "recall_at_3": 0.6917,
-      "recall_at_5": 0.775,
-      "mrr": 0.6667,
-      "ndcg_at_5": 0.646
+      "recall_at_1": 0.2556,
+      "recall_at_3": 0.5944,
+      "recall_at_5": 0.6667,
+      "mrr": 0.5159,
+      "ndcg_at_5": 0.5161
+    },
+    "split_chunk_metrics": {
+      "DEV": {
+        "semantic": {
+          "recall_at_1": 0.1444,
+          "recall_at_3": 0.2333,
+          "recall_at_5": 0.3778,
+          "mrr": 0.3395,
+          "ndcg_at_5": 0.2881
+        },
+        "hybrid": {
+          "recall_at_1": 0.1556,
+          "recall_at_3": 0.4111,
+          "recall_at_5": 0.5222,
+          "mrr": 0.4206,
+          "ndcg_at_5": 0.3929
+        }
+      },
+      "TEST": {
+        "semantic": {
+          "recall_at_1": 0.2889,
+          "recall_at_3": 0.4111,
+          "recall_at_5": 0.7111,
+          "mrr": 0.4829,
+          "ndcg_at_5": 0.5104
+        },
+        "hybrid": {
+          "recall_at_1": 0.3556,
+          "recall_at_3": 0.7778,
+          "recall_at_5": 0.8111,
+          "mrr": 0.6111,
+          "ndcg_at_5": 0.6393
+        }
+      }
     }
   }
 }

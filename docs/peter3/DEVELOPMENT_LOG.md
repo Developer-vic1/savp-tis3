@@ -1,64 +1,19 @@
-# Registro de desarrollo
+# Registro de desarrollo PETER 3
 
-## 2026-09-28 — Learning Analytics ampliado
+## Consolidación final — 2026-09-29
 
-- Se añadieron escalas explícitas por nota y normalización determinista a 0–100.
-- Se añadieron área curricular, tendencia global por promedios de período, dispersión,
-  consistencia y cobertura temporal.
-- Se modelaron tareas detalladas y métricas de entrega, puntualidad, atraso, notas y
-  regularidad, con estados de evidencia y nulos honestos.
-- RIASEC ahora expone puntajes brutos, normalizados y cobertura del instrumento completo.
-- Evidencia ejecutada: `25 passed`; cobertura total 96%; Ruff limpio; mypy estricto limpio.
+- Se auditó el núcleo V2, RIASEC, Learning Analytics, bridge, catálogo, crosswalk y robustez.
+- Se corrigieron códigos/perfiles O*NET 31.0 y se degradaron afirmaciones relacionales excesivas.
+- Se incorporó la RM 0190/2024 y se validaron 12/12 snapshots por SHA-256 y URL.
+- Se creó el registro de 11 referencias externas/internas y el test de integridad cruzada.
+- Se alinearon 29 parámetros con constantes reales y clases de evidencia honestas.
+- Se consolidó el corpus en 773 chunks, 12 fuentes, 414 páginas digitales y 22 páginas OCR;
+  35 chunks conservan contenido OCR.
+- Se reconstruyeron dos índices FAISS 773×384 y se reprodujo el benchmark de 30 consultas.
+- Se ampliaron guards/evaluator a ataques dentro de evidencia; prompt evaluation cerró 13/13.
+- Se añadió E2E real, demo de 14 bloques y benchmark integral por componente.
+- Se resolvió el tipado PyMuPDF con un adaptador y `mypy .` quedó limpio.
+- Cierre: 100 pruebas aprobadas, 1 omitida por condición OCR y cobertura total 92%.
 
-## 2026-09-28 — Fuentes, catálogo, puente y ranking
-
-- Se preservaron 11 snapshots oficiales (Ministerio, UCB y UMSA) con SHA-256.
-- Se creó un catálogo no exhaustivo de dos universidades y cinco identidades de carrera.
-- Se versionaron 12 relaciones secundaria/BTH–universidad como configuración experimental
-  pendiente de revisión experta.
-- Se implementaron afinidad 60/25/15, preparación con cobertura, compatibilidad 55/45,
-  ranking estable, fortalezas, brechas y ruta determinista.
-- Sensibilidad ejecutada: pesos 80/20 y 20/80 conservan el primer resultado; cobertura mínima
-  0.70 suprime el ranking.
-- Evidencia ejecutada: `35 passed`; cobertura total 96%; Ruff limpio; mypy estricto del
-  servicio limpio.
-
-## 2026-09-28 — Ingesta y OCR
-
-- Se implementó detección y extracción de PDF digital/escaneado, HTML y TXT/MD.
-- Se ejecutó EasyOCR real en español sobre un PDF imagen-only: prueba aprobada en 89.28 s y
-  confianza 0.8691.
-- Se renderizaron e inspeccionaron tres páginas representativas según el flujo de QA PDF.
-- Se generó `bo-official-corpus-1.0.0`: 11 fuentes, 818 chunks, 389 páginas digitales, 22
-  páginas OCR y 11 páginas sin texto recuperable explícitamente advertidas.
-- 35 chunks OCR conservan confianza (mínimo 0.4638; media 0.7656).
-- Reconstrucción completa medida: 315.3 s en CPU.
-- Evidencia ejecutada: `40 passed, 1 skipped`; la prueba omitida en suite ordinaria se ejecutó
-  y aprobó de forma explícita con `RUN_REAL_OCR=1`; Ruff y mypy limpios.
-
-## 2026-09-28 — Auditoría y aislamiento
-
-- Se confirmó la base `integration/savp-consolidado` en `a5fb7eac...`.
-- Git rechazó el cambio directo por cambios ajenos en Laravel; no se hizo stash, commit ni reset.
-- Se creó `feature/APORTE` y un worktree hermano limpio.
-- Se leyeron todos los Markdown encontrados y cuatro informes históricos.
-- Se inspeccionaron únicamente rutas y servicios RIASEC relevantes para definir fronteras.
-
-## 2026-09-28 — Investigación RIASEC
-
-- Se verificó la versión oficial web Mini‑IP 2.0 (2025), español, 30 reactivos, escala y scoring.
-- Se revisaron licencia, confiabilidad, validez convergente y ausencia de evidencia boliviana.
-- Se decidió reproducción literal CC BY‑ND 4.0, sin adaptación cultural silenciosa.
-
-## Regla para cada función
-
-Antes del código se documentaron problema, evidencia, componente, contrato y tests en `RIASEC_IMPLEMENTATION.md`, `STUDENT_PROFILE.md` y `LEARNING_ANALYTICS.md`.
-
-## Verificación final
-
-- Entorno: Python 3.14.0; uv 0.12.19; lock reproducible generado.
-- `pytest`: 16 aprobadas, 97% de cobertura.
-- `ruff check .`: aprobado.
-- `mypy app`: aprobado en modo estricto.
-- Benchmark directo: N=1,000, media 0.3740 ms, p95 0.7061 ms.
-- No se ejecutaron commit, push, merge, rebase, migraciones, seeders ni conexiones a PostgreSQL.
+Los resultados anteriores a esta consolidación eran hitos intermedios y quedan sustituidos por
+`PETER3_FINAL_AUDIT.md`, `FINAL_STATUS.md` y los JSON de evaluación vigentes.

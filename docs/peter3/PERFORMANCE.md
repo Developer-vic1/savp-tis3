@@ -1,28 +1,23 @@
-# Rendimiento medido
+# Rendimiento medido — PETER 3
 
-Fecha: 2026-09-28. Comando: `.venv/Scripts/uv run python scripts/benchmark.py`.
+Fecha: 2026-09-29. Comando:
 
-## Entorno
+```powershell
+.venv312\Scripts\python.exe scripts\benchmark_peter3.py --repetitions 20
+```
 
-- Windows 11 `10.0.26200`, Python `3.14.0`.
-- CPU: 8 núcleos físicos / 16 lógicos.
-- RAM total visible: 16,435,761,152 bytes.
-- FastAPI `0.141.1`, Pydantic `2.13.5`, psutil `7.2.2`.
-- Dataset: `complete_profile.json`, explícitamente sintético.
-- Criterios: `core-criteria-0.1.0`.
+Entorno: Windows 11 `10.0.26200`, Python 3.12.14, CPU AMD64 Family 25 Model 117,
+8 núcleos físicos/16 lógicos, 16.435 GB RAM, ejecución CPU. Fixture sintético; E5 y el índice
+FAISS seleccionado reales; proceso caliente.
 
-## Resultados
+| Componente | N | Mediana | p95 |
+|---|---:|---:|---:|
+| Analysis V2 | 20 | 10.293 ms | 15.690 ms |
+| Retrieval híbrido | 20 | 44.997 ms | 49.809 ms |
+| Tutor estructurado con retrieval | 20 | 52.223 ms | 60.452 ms |
+| Pipeline integral | 20 | 108.883 ms | 125.236 ms |
 
-| Medición | Resultado |
-|---|---:|
-| análisis directo, N | 1,000 |
-| latencia media | 0.3740 ms |
-| mediana | 0.3208 ms |
-| p95 | 0.7061 ms |
-| máximo | 1.2769 ms |
-| importación fría de la app, N | 5 |
-| importación fría media | 1,216.3399 ms |
-| importación fría mínima/máxima | 1,119.1364 / 1,320.8621 ms |
-| RSS antes/después | 34,967,552 / 34,668,544 bytes |
-
-El delta RSS negativo (`-299,008` bytes) es ruido normal del proceso/gestor de memoria y no se interpreta como ahorro. Estas cifras son locales, no un SLA ni una medición de HTTP/red/concurrencia.
+El resultado íntegro está en `ai-service/data/evaluation/performance_results.json`. El pipeline
+integral se mide mediante funciones de servicio; no incluye HTTP, red, concurrencia, descarga ni
+carga fría del modelo/índice. Estas cifras no son un SLA. El LLM local no está incluido porque su
+runtime no estaba disponible.

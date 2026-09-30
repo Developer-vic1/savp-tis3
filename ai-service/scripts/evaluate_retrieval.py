@@ -18,12 +18,24 @@ from app.retrieval.index import (
 from app.retrieval.metrics import aggregate_metrics
 
 DATASET_PATH = SERVICE_ROOT / "data" / "evaluation" / "retrieval_queries.json"
+DEV_DATASET_PATH = SERVICE_ROOT / "data" / "evaluation" / "retrieval_dev.json"
+TEST_DATASET_PATH = SERVICE_ROOT / "data" / "evaluation" / "retrieval_test.json"
 RESULTS_PATH = SERVICE_ROOT / "data" / "evaluation" / "retrieval_results.json"
 
 
 def main() -> None:
     dataset: dict[str, Any] = json.loads(DATASET_PATH.read_text(encoding="utf-8"))
     queries: list[dict[str, Any]] = dataset["queries"]
+    split_query_ids = {
+        "DEV": {
+            str(item["query_id"])
+            for item in json.loads(DEV_DATASET_PATH.read_text(encoding="utf-8"))["queries"]
+        },
+        "TEST": {
+            str(item["query_id"])
+            for item in json.loads(TEST_DATASET_PATH.read_text(encoding="utf-8"))["queries"]
+        },
+    }
     corpus = load_corpus()
     chunk_sources = {chunk.chunk_id: chunk.source_id for chunk in corpus}
     for item in queries:
@@ -108,6 +120,23 @@ def main() -> None:
             semantic_source_rankings, relevant_sources
         )
         hybrid_source_metrics = aggregate_metrics(hybrid_source_rankings, relevant_sources)
+        split_chunk_metrics: dict[str, dict[str, dict[str, float]]] = {}
+        for split_name, query_ids in split_query_ids.items():
+            positions = [
+                position
+                for position, item in enumerate(queries)
+                if str(item["query_id"]) in query_ids
+            ]
+            split_chunk_metrics[split_name] = {
+                "semantic": aggregate_metrics(
+                    [semantic_chunk_rankings[position] for position in positions],
+                    [relevant_chunks[position] for position in positions],
+                ),
+                "hybrid": aggregate_metrics(
+                    [hybrid_chunk_rankings[position] for position in positions],
+                    [relevant_chunks[position] for position in positions],
+                ),
+            }
         rss_after = process.memory_info().rss
         results.append(
             {
@@ -116,6 +145,7 @@ def main() -> None:
                 "index_manifest": manifest,
                 "semantic_chunk_metrics": semantic_chunk_metrics,
                 "hybrid_chunk_metrics": hybrid_chunk_metrics,
+                "split_chunk_metrics": split_chunk_metrics,
                 "semantic_source_metrics_diagnostic": semantic_source_metrics,
                 "hybrid_source_metrics_diagnostic": hybrid_source_metrics,
                 "build_total_seconds": round(build_total_seconds, 4),
@@ -162,6 +192,7 @@ def main() -> None:
         "hybrid_version": HYBRID_VERSION,
         "semantic_metrics": selected["semantic_chunk_metrics"],
         "hybrid_metrics": selected["hybrid_chunk_metrics"],
+        "split_chunk_metrics": selected["split_chunk_metrics"],
     }
     output = {
         "evaluation_version": "embedding-ab-v1.2.0",

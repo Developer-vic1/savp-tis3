@@ -3,9 +3,9 @@
   "model_id": "intfloat/multilingual-e5-small",
   "model_slug": "intfloat__multilingual_e5_small",
   "dimension": 384,
-  "chunk_count": 689,
+  "chunk_count": 773,
   "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
   "exact": true,
-  "corpus_sha256": "216b088aa0ee997cf4eea7ce0cdd93af19162ed57420d6acb85520f0d470e0e3",
-  "build_seconds": 65.8013
+  "corpus_sha256": "bda50b487fd2b7d974a9201ddfdd6f87a48aefe8b0dad38b508e5e112e369d3d",
+  "build_seconds": 112.1759
 }

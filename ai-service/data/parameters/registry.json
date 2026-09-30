@@ -1,0 +1,525 @@
+{
+  "registry_version": "1.0.0",
+  "governance_purpose": "Registro exhaustivo y gobernanza de parámetros algorítmicos, normativos, psicométricos y de ingeniería en SAVP-TIS3",
+  "governance_principles": [
+    "NINGUN_NUMERO_SIN_PROCEDENCIA",
+    "PROHIBICION_DE_PESOS_ARBITRARIOS_EN_DECISION",
+    "SEPARACION_DE_PARAMETROS_NORMATIVOS_DE_EMPIRICOS",
+    "AUDITORIA_DE_INVARIANTES_Y_UMBRALES"
+  ],
+  "categories": [
+    "PSYCHOMETRIC_DOMAIN",
+    "EDUCATIONAL_NORMATIVE",
+    "DECISION_MODEL_MCDA",
+    "RETRIEVAL_IR_ENGINEERING",
+    "PROMPT_LLM",
+    "OPERATIONAL_API"
+  ],
+  "classifications": [
+    "DOCUMENTED",
+    "DERIVED",
+    "EMPIRICALLY_EVALUATED",
+    "EXPERIMENTAL",
+    "PROHIBITED"
+  ],
+  "parameters": [
+    {
+      "parameter_id": "PARAM-RIASEC-SCALE-MIN",
+      "category": "PSYCHOMETRIC_DOMAIN",
+      "construct": "Límite inferior de la escala de respuesta por reactivo en Mini-IP",
+      "classification": "DOCUMENTED",
+      "value": 0,
+      "unit": "puntos_likert",
+      "method": "Escala computarizada oficial Mini-IP (0=Me disgusta mucho a 4=Me gusta mucho); la interfaz web española muestra teclas equivalentes 1 a 5",
+      "source_ids": [
+        "USDOL-ETA-ONET-IP-2026"
+      ],
+      "scope": "Evaluación vocacional RIASEC",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_OFFICIAL",
+      "limitations": [
+        "No extrapolable a escalas escolares ni predictoras de éxito profesional."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-RIASEC-SCALE-MAX",
+      "category": "PSYCHOMETRIC_DOMAIN",
+      "construct": "Límite superior de la escala de respuesta por reactivo en Mini-IP",
+      "classification": "DOCUMENTED",
+      "value": 4,
+      "unit": "puntos_likert",
+      "method": "Escala oficial O*NET Interest Profiler Short Form / Mini-IP",
+      "source_ids": [
+        "USDOL-ETA-ONET-IP-2026"
+      ],
+      "scope": "Evaluación vocacional RIASEC",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_OFFICIAL",
+      "limitations": [
+        "Rango 0 a 4 por reactivo; suma 0 a 20 por dimensión."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-RIASEC-ITEMS-PER-DIM",
+      "category": "PSYCHOMETRIC_DOMAIN",
+      "construct": "Cantidad de reactivos por dimensión RIASEC en Mini-IP 2.0",
+      "classification": "DOCUMENTED",
+      "value": 5,
+      "unit": "reactivos",
+      "method": "Estructura formal de 30 reactivos del Mini-IP (5 reactivos por dimensión R, I, A, S, E, C)",
+      "source_ids": [
+        "USDOL-ETA-ONET-IP-2026"
+      ],
+      "scope": "Scoring de intereses vocacionales",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_OFFICIAL",
+      "limitations": [
+        "Versión corta (Mini-IP); menor confiabilidad test-retest que la versión de 60 items."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-RIASEC-HOLLAND-CODE-LENGTH",
+      "category": "PSYCHOMETRIC_DOMAIN",
+      "construct": "Longitud del código primario de Holland derivado",
+      "classification": "DERIVED",
+      "value": 3,
+      "unit": "letras",
+      "method": "Extracción de las dimensiones de mayor puntaje ordenadas descendentemente (Three-Letter Holland Code)",
+      "source_ids": [
+        "USDOL-ETA-ONET-IP-2026"
+      ],
+      "scope": "Perfil vocacional primario",
+      "version": "1.0.0",
+      "review_status": "DOCUMENTED_STANDARD",
+      "limitations": [
+        "En caso de empate en puntajes, el orden alfabético secundario no implica jerarquía psicológica."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-BOLIVIA-SEC-SCORE-SCALE-MIN",
+      "category": "EDUCATIONAL_NORMATIVE",
+      "construct": "Calificación mínima en escala del Subsistema de Educación Regular de Bolivia",
+      "classification": "DOCUMENTED",
+      "value": 1,
+      "unit": "puntos_escala_100",
+      "method": "Reglamento de Evaluación del Desarrollo Curricular del SEP",
+      "source_ids": [
+        "BO-ME-EVALUACION-REGULAR-RM-0190-2024"
+      ],
+      "scope": "Registro académico escolar",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_OFFICIAL",
+      "limitations": [
+        "Aplica al subsistema regular; no es una escala estandarizada internacionalmente."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-BOLIVIA-SEC-SCORE-SCALE-MAX",
+      "category": "EDUCATIONAL_NORMATIVE",
+      "construct": "Calificación máxima en escala del Subsistema de Educación Regular de Bolivia",
+      "classification": "DOCUMENTED",
+      "value": 100,
+      "unit": "puntos_escala_100",
+      "method": "Reglamento de Evaluación del Desarrollo Curricular del SEP",
+      "source_ids": [
+        "BO-ME-EVALUACION-REGULAR-RM-0190-2024"
+      ],
+      "scope": "Registro académico escolar",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_OFFICIAL",
+      "limitations": [
+        "No equivale a percentiles normativos universitarios."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-BOLIVIA-SEC-PASSING-THRESHOLD",
+      "category": "EDUCATIONAL_NORMATIVE",
+      "construct": "Nota mínima de aprobación en educación secundaria comunitaria productiva",
+      "classification": "DOCUMENTED",
+      "value": 51,
+      "unit": "puntos_escala_100",
+      "method": "Norma oficial de aprobación escolar del Ministerio de Educación de Bolivia",
+      "source_ids": [
+        "BO-ME-EVALUACION-REGULAR-RM-0190-2024"
+      ],
+      "scope": "Desempeño escolar secundario",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_OFFICIAL",
+      "limitations": [
+        "Acredita suficiencia escolar; NO demuestra preparación universitaria para carreras de alta exigencia."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-V1-AFFINITY-RIASEC-WEIGHT",
+      "category": "DECISION_MODEL_MCDA",
+      "construct": "Peso ponderado de RIASEC en afinidad V1 (0.60)",
+      "classification": "PROHIBITED",
+      "value": 0.6,
+      "unit": "peso_lineal",
+      "method": "Configuración heurística de V1 experimental",
+      "source_ids": [],
+      "scope": "Recommendation V1 (Deprecado en V2)",
+      "version": "1.0.0",
+      "review_status": "PROHIBITED_IN_V2",
+      "limitations": [
+        "Sin fundamento psicométrico ni validez predictiva demostrada; PROHIBIDO en Recommendation V2."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-V1-ACADEMIC-REQUIRED-THRESHOLD",
+      "category": "DECISION_MODEL_MCDA",
+      "construct": "Umbrales de suficiencia académica inventados en V1 (required=65, 70, 75)",
+      "classification": "PROHIBITED",
+      "value": "65/70/75",
+      "unit": "puntos_escala_100",
+      "method": "Configuración heurística de V1 para calcular brechas numéricas",
+      "source_ids": [],
+      "scope": "Recommendation V1 (Deprecado en V2)",
+      "version": "1.0.0",
+      "review_status": "PROHIBITED_IN_V2",
+      "limitations": [
+        "Las universidades no publican notas mínimas escolares requeridas; PROHIBIDO en Recommendation V2."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-V2-AGGREGATION-POLICY",
+      "category": "DECISION_MODEL_MCDA",
+      "construct": "Política de agregación de evidencia V2",
+      "classification": "DOCUMENTED",
+      "value": "NO_COMPOSITE_SCORE",
+      "unit": "enum_policy",
+      "method": "Directriz metodológica de desacoplamiento de dimensiones de evidencia independientes",
+      "source_ids": [
+        "PETER3-V2-FOUNDATION-2026"
+      ],
+      "scope": "Recommendation V2",
+      "version": "2.0.0",
+      "review_status": "ACTIVE_POLICY",
+      "limitations": [
+        "No genera ranking global agregado; preserva evidencia observada."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-V2-MISSING-DATA-POLICY",
+      "category": "DECISION_MODEL_MCDA",
+      "construct": "Tratamiento de datos no observados en V2",
+      "classification": "DOCUMENTED",
+      "value": "UNKNOWN_NOT_ZERO",
+      "unit": "enum_policy",
+      "method": "Preservación de la ausencia de evidencia como dato desconocido o no observado",
+      "source_ids": [
+        "PETER3-V2-FOUNDATION-2026"
+      ],
+      "scope": "Recommendation V2",
+      "version": "2.0.0",
+      "review_status": "ACTIVE_POLICY",
+      "limitations": [
+        "Impide castigar al estudiante por omisión de datos o materias no cursadas."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-EMBEDDING-MODEL-SELECTED",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Modelo de embeddings seleccionado para recuperación densa",
+      "classification": "EMPIRICALLY_EVALUATED",
+      "value": "intfloat/multilingual-e5-small",
+      "unit": "huggingface_model_id",
+      "method": "Benchmark empírico en dataset oficial de consultas (nDCG@5, Recall@5, MRR)",
+      "source_ids": [
+        "PETER3-RETRIEVAL-BENCHMARK-2026"
+      ],
+      "scope": "Semantic Indexing y RAG",
+      "version": "1.2.0",
+      "review_status": "EMPIRICALLY_VALIDATED",
+      "limitations": [
+        "Requiere prefijo query: / passage: conforme a la especificación de E5."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-EMBEDDING-DIMENSION",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Dimensión del vector denso de embedding",
+      "classification": "DOCUMENTED",
+      "value": 384,
+      "unit": "dimensiones",
+      "method": "Arquitectura del modelo transformer multilingual-e5-small",
+      "source_ids": [
+        "INTFLOAT-E5-2023"
+      ],
+      "scope": "Índice FAISS",
+      "version": "1.0.0",
+      "review_status": "VALIDATED_TECHNICAL",
+      "limitations": [
+        "Vector fijo de 384 floats normalizados en L2."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-RRF-CONSTANT-K",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Constante de suavizado K en Reciprocal Rank Fusion",
+      "classification": "EXPERIMENTAL",
+      "value": 60,
+      "unit": "constante_entera",
+      "method": "Valor convencional del método RRF descrito por Cormack et al. (2009); no se ejecutó una ablación local de k",
+      "source_ids": [
+        "CORMACK-RRF-2009"
+      ],
+      "scope": "Recuperador híbrido BM25 + Dense FAISS",
+      "version": "1.0.0",
+      "review_status": "ENGINEERING_DEFAULT_NOT_ABLATED",
+      "limitations": [
+        "Configuración de ingeniería no demostrada como óptima para este corpus."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-BM25-K1",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Parámetro de saturación de frecuencia de términos en BM25",
+      "classification": "EXPERIMENTAL",
+      "value": 1.5,
+      "unit": "constante_flotante",
+      "method": "Valor convencional de Okapi BM25; no se ejecutó una ablación local de k1",
+      "source_ids": [
+        "ROBERTSON-WALKER-BM25-1994"
+      ],
+      "scope": "Índice léxico BM25",
+      "version": "1.0.0",
+      "review_status": "ENGINEERING_DEFAULT_NOT_ABLATED",
+      "limitations": [
+        "Ajustable según la colección; no demostrado como óptimo para este corpus."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-BM25-B",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Parámetro de penalización por longitud de documento en BM25",
+      "classification": "EXPERIMENTAL",
+      "value": 0.75,
+      "unit": "constante_flotante",
+      "method": "Valor convencional de Okapi BM25; no se ejecutó una ablación local de b",
+      "source_ids": [
+        "ROBERTSON-WALKER-BM25-1994"
+      ],
+      "scope": "Índice léxico BM25",
+      "version": "1.0.0",
+      "review_status": "ENGINEERING_DEFAULT_NOT_ABLATED",
+      "limitations": [
+        "Normaliza por longitud, pero no está demostrado como óptimo para este corpus."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-CHUNK-TARGET-CHARS",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Longitud objetivo de cada fragmento del corpus",
+      "classification": "EXPERIMENTAL",
+      "value": 1200,
+      "unit": "caracteres",
+      "method": "Configuración reproducible del pipeline de ingesta basada en caracteres",
+      "source_ids": [
+        "PETER3-ARCHITECTURE-2026"
+      ],
+      "scope": "Chunking del corpus",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": [
+        "No equivale a 1200 tokens y no fue optimizado mediante una ablación local."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-CHUNK-OVERLAP-CHARS",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Solapamiento objetivo entre fragmentos consecutivos",
+      "classification": "EXPERIMENTAL",
+      "value": 180,
+      "unit": "caracteres",
+      "method": "Configuración reproducible del pipeline de ingesta basada en caracteres",
+      "source_ids": [
+        "PETER3-ARCHITECTURE-2026"
+      ],
+      "scope": "Chunking del corpus",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": [
+        "No equivale a 180 tokens y no fue optimizado mediante una ablación local."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-TOP-K-RETRIEVAL",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Número de fragmentos recuperados en búsqueda",
+      "classification": "EXPERIMENTAL",
+      "value": 5,
+      "unit": "chunks",
+      "method": "Evaluación de trade-off entre cobertura de contexto y ventana de tokens",
+      "source_ids": [
+        "PETER3-RETRIEVAL-BENCHMARK-2026"
+      ],
+      "scope": "Knowledge Search y Tutor Context",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": [
+        "El benchmark reporta métricas a k=5, pero no compara suficientes valores de k para afirmar optimalidad."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-LLM-TEMPERATURE",
+      "category": "PROMPT_LLM",
+      "construct": "Temperatura de generación para el tutor LLM",
+      "classification": "EXPERIMENTAL",
+      "value": 0.0,
+      "unit": "temperatura",
+      "method": "Determinismo estricto para anclaje a fuentes y reproducibilidad de citas",
+      "source_ids": [
+        "PETER3-PROMPT-GOVERNANCE-2026"
+      ],
+      "scope": "Tutor LLM Provider",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": [
+        "Reduce variabilidad de muestreo; no demuestra por sí sola ausencia de alucinaciones."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-LLM-MAX-TOKENS",
+      "category": "PROMPT_LLM",
+      "construct": "Límite máximo de tokens generados en respuesta del tutor",
+      "classification": "EXPERIMENTAL",
+      "value": 384,
+      "unit": "tokens",
+      "method": "Restricción de concisión para respuestas explicativas concisas",
+      "source_ids": [
+        "PETER3-PROMPT-GOVERNANCE-2026"
+      ],
+      "scope": "Tutor LLM Provider",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_STANDARD",
+      "limitations": [
+        "Evita desbordes y respuestas sobre-extensas."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-LLM-UNTRUSTED-DELIMITER-START",
+      "category": "PROMPT_LLM",
+      "construct": "Delimitador de inicio de evidencia no confiable",
+      "classification": "DOCUMENTED",
+      "value": "--- BEGIN UNTRUSTED EVIDENCE ---",
+      "unit": "string_token",
+      "method": "Patrón de defensa contra inyecciones de prompt en documentos recuperados",
+      "source_ids": [
+        "OWASP-LLM-PROMPT-INJECTION-2025"
+      ],
+      "scope": "Prompt Renderer y Guardrails",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_STANDARD",
+      "limitations": [
+        "Aisla instrucciones maliciosas contenidas en textos externos."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-LLM-UNTRUSTED-DELIMITER-END",
+      "category": "PROMPT_LLM",
+      "construct": "Delimitador de fin de evidencia no confiable",
+      "classification": "DOCUMENTED",
+      "value": "--- END UNTRUSTED EVIDENCE ---",
+      "unit": "string_token",
+      "method": "Patrón de defensa contra inyecciones de prompt en documentos recuperados",
+      "source_ids": [
+        "OWASP-LLM-PROMPT-INJECTION-2025"
+      ],
+      "scope": "Prompt Renderer y Guardrails",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_STANDARD",
+      "limitations": [
+        "Aisla instrucciones maliciosas contenidas en textos externos."
+      ]
+    },
+    {
+      "parameter_id": "PARAM-IR-EVIDENCE-SCORE-THRESHOLD",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Umbral mínimo del score RRF normalizado para considerar evidencia suficiente",
+      "classification": "EXPERIMENTAL",
+      "value": 0.72,
+      "unit": "score_rrf_normalizado",
+      "method": "Guardrail operativo conservador del retrieval; no es probabilidad ni confidence calibrada",
+      "source_ids": ["PETER3-RETRIEVAL-BENCHMARK-2026"],
+      "scope": "Detección de evidencia insuficiente",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": ["No fue calibrado contra juicios humanos de suficiencia y requiere evaluación posterior."]
+    },
+    {
+      "parameter_id": "PARAM-IR-MIN-QUERY-TERM-OVERLAP",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Solapamiento léxico mínimo entre consulta y primer fragmento",
+      "classification": "EXPERIMENTAL",
+      "value": 0.2,
+      "unit": "proporción",
+      "method": "Guardrail léxico operativo para abstención",
+      "source_ids": ["PETER3-RETRIEVAL-BENCHMARK-2026"],
+      "scope": "Detección de evidencia insuficiente",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": ["Heurística no calibrada; puede producir falsos positivos o falsos negativos."]
+    },
+    {
+      "parameter_id": "PARAM-IR-EXCERPT-MAX-CHARS",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Longitud máxima del extracto entregado como evidencia",
+      "classification": "EXPERIMENTAL",
+      "value": 650,
+      "unit": "caracteres",
+      "method": "Límite operativo reproducible de contexto, medido en caracteres y no tokens",
+      "source_ids": ["PETER3-ARCHITECTURE-2026"],
+      "scope": "Knowledge evidence y tutor",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": ["Puede truncar contexto relevante; no fue optimizado mediante ablación."]
+    },
+    {
+      "parameter_id": "PARAM-TUTOR-CANDIDATE-K",
+      "category": "RETRIEVAL_IR_ENGINEERING",
+      "construct": "Cantidad de candidatos recuperados antes del recorte de contexto del tutor",
+      "classification": "EXPERIMENTAL",
+      "value": 8,
+      "unit": "chunks",
+      "method": "Configuración operativa del servicio de tutor",
+      "source_ids": ["PETER3-ARCHITECTURE-2026"],
+      "scope": "Tutor retrieval",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": ["No demostrado como óptimo para latencia o cobertura."]
+    },
+    {
+      "parameter_id": "PARAM-LLM-SEED",
+      "category": "PROMPT_LLM",
+      "construct": "Semilla reproducible solicitada al servidor LLM local",
+      "classification": "EXPERIMENTAL",
+      "value": 20260928,
+      "unit": "entero",
+      "method": "Configuración operativa de reproducibilidad cuando el runtime la soporta",
+      "source_ids": ["PETER3-PROMPT-GOVERNANCE-2026"],
+      "scope": "Tutor LLM Provider",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
+      "limitations": ["Una semilla no garantiza determinismo entre runtimes, hardware o versiones distintas."]
+    },
+    {
+      "parameter_id": "PARAM-API-HTTP-TIMEOUT-SECONDS",
+      "category": "OPERATIONAL_API",
+      "construct": "Timeout en llamadas HTTP de tutor o retrieval externo",
+      "classification": "EXPERIMENTAL",
+      "value": 45.0,
+      "unit": "segundos",
+      "method": "Prevención de bloqueos indefinidos en llamadas remotas",
+      "source_ids": [
+        "PETER3-ARCHITECTURE-2026"
+      ],
+      "scope": "Servicios FastAPI",
+      "version": "1.0.0",
+      "review_status": "ACTIVE_STANDARD",
+      "limitations": [
+        "Retorna error o fallback estructurado en caso de timeout."
+      ]
+    }
+  ]
+}

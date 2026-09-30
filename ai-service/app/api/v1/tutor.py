@@ -9,8 +9,8 @@ from app.contracts.requests import TutorQueryRequest
 from app.contracts.responses import TutorResponse
 from app.retrieval.hybrid import HybridRetriever
 from app.retrieval.service import selected_retrieval_metadata
-from app.tutor.providers import STRUCTURED_PROVIDER_VERSION
 from app.tutor.local_llm import LlamaCppHttpProvider, LocalLlmUnavailable
+from app.tutor.providers import STRUCTURED_PROVIDER_VERSION
 from app.tutor.service import answer_structured
 
 router = APIRouter(prefix="/api/v1", tags=["tutor"], dependencies=[Depends(verify_api_key)])

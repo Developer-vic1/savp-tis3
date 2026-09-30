@@ -3,6 +3,7 @@ import re
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
+from app.prompts.guards import detect_prompt_injection, quarantine_injected_evidence
 from app.tutor.providers import (
     ProviderAnswer,
     StructuredAnswerProvider,
@@ -10,6 +11,8 @@ from app.tutor.providers import (
 )
 
 LOCAL_PROVIDER_VERSION = "llama-cpp-http-v1.0.0"
+LLM_SEED = 20260928
+LLM_MAX_TOKENS = 384
 
 
 class LocalLlmUnavailable(RuntimeError):
@@ -45,7 +48,7 @@ class LlamaCppHttpProvider:
                 "institution": item.institution,
                 "page": item.page,
                 "section": item.section,
-                "text": item.summary,
+                "text": quarantine_injected_evidence(item.summary)[0],
             }
             for item in material.evidence[:4]
         ]
@@ -64,6 +67,10 @@ class LlamaCppHttpProvider:
         )
 
     def answer(self, material: TutorMaterial) -> ProviderAnswer:
+        if detect_prompt_injection(material.question)[0]:
+            raise LocalLlmUnavailable(
+                "La consulta contiene instrucciones adversarias y no se envía al LLM."
+            )
         body = {
             "model": self.model,
             "messages": [
@@ -71,8 +78,8 @@ class LlamaCppHttpProvider:
                 {"role": "user", "content": self._user_prompt(material)},
             ],
             "temperature": 0,
-            "seed": 20260928,
-            "max_tokens": 320,
+            "seed": LLM_SEED,
+            "max_tokens": LLM_MAX_TOKENS,
             "stream": False,
         }
         request = Request(
@@ -100,7 +107,9 @@ class LlamaCppHttpProvider:
         cited_sources = set(re.findall(r"\[([A-Z0-9][A-Z0-9-]+)\]", content))
         invented_sources = cited_sources - allowed_sources
         if invented_sources:
-            raise LocalLlmUnavailable("El modelo local generó una cita fuera del contexto permitido.")
+            raise LocalLlmUnavailable(
+                "El modelo local generó una cita fuera del contexto permitido."
+            )
         if allowed_sources and not cited_sources:
             raise LocalLlmUnavailable("El modelo local omitió las citas obligatorias.")
 

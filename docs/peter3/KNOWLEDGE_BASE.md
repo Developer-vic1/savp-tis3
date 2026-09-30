@@ -1,11 +1,12 @@
 # Base de conocimiento
 
-La ingesta operativa se documenta en `OCR_PIPELINE.md`; gobierno y versiones en
-`SOURCE_GOVERNANCE.md`. El corpus procesado se genera desde los snapshots del manifiesto y no
-desde URLs vivas durante una consulta.
+La base operativa contiene 12 snapshots oficiales gobernados por hash, 773 chunks trazables y
+dos índices FAISS exactos. `intfloat/multilingual-e5-small` es el modelo seleccionado por el
+benchmark A/B; BM25 y RRF complementan la recuperación semántica.
 
-Estado: diseño, sin corpus indexado.
+`POST /api/v1/knowledge/search` devuelve evidencia con fuente, chunk, institución, página o
+sección, URL, relevancia y versiones. Si no hay evidencia suficiente lo declara explícitamente;
+si el índice no carga, devuelve el error tipado 503. El corpus no contiene datos de estudiantes.
 
-El conocimiento global deberá separar Ministerio de Educación, normativa BTH, currículo, universidades y mallas institucionales. Cada fuente conservará institución, título, URL, oficialidad, fechas, hash, versión, sección y página.
-
-Hasta que exista un manifiesto revisado, `/api/v1/knowledge/search` devuelve 503 tipado y el tutor no inventa evidencia.
+El alcance no es exhaustivo: cubre normativa ministerial y cinco ofertas universitarias. La
+vigencia de documentos debe revisarse antes de despliegue y en cada actualización institucional.

@@ -48,8 +48,8 @@ del contenido oficial.
 
 ## Evidencia ejecutada 2026-09-28
 
-- Corpus: 11 fuentes, 818 chunks y 818 IDs únicos.
-- PDF: 389 páginas digitales y 22 páginas procesadas por OCR; 11 páginas visuales sin texto
+- Corpus: 12 fuentes, 773 chunks y 773 IDs únicos.
+- PDF: 414 páginas digitales y 22 páginas procesadas por OCR; 11 páginas visuales sin texto
   recuperable quedaron como advertencia, no como éxito.
 - Resultado: 35 chunks OCR, todos con confianza; mínimo 0.4638 y media 0.7656.
 - Escaneo sintético: texto español recuperado con confianza 0.8691; prueba real aprobada en

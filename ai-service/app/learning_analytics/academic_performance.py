@@ -1,12 +1,18 @@
 from collections import defaultdict
 from statistics import fmean, pstdev
 
+from app.contracts.evidence import AvailabilityStatus
 from app.contracts.requests import AcademicData, AcademicRecord, AttendanceData
 from app.contracts.responses import (
     AcademicProfile,
     EvidenceStatus,
     SubjectSummary,
     TemporalCoverage,
+)
+from app.contracts.v2 import (
+    AcademicEvidenceProfileV2,
+    DescriptiveStatistics,
+    ObservedAcademicHighlight,
 )
 from app.learning_analytics.trends import linear_slope, trend_label
 
@@ -19,6 +25,19 @@ def normalize_score(record: AcademicRecord) -> float:
     score_range = float(record.scale_max - record.scale_min)
     normalized = 100 * (float(record.score) - float(record.scale_min)) / score_range
     return _rounded(normalized)
+
+
+def descriptive_statistics(records: list[AcademicRecord]) -> DescriptiveStatistics:
+    values = [normalize_score(record) for record in records]
+    if not values:
+        raise ValueError("Se requiere al menos un registro para resumir evidencia académica")
+    return DescriptiveStatistics(
+        count=len(values),
+        mean=_rounded(fmean(values)),
+        minimum=min(values),
+        maximum=max(values),
+        standard_deviation=_rounded(pstdev(values)) if len(values) > 1 else None,
+    )
 
 
 def consistency_ratio(values: list[float]) -> float | None:
@@ -140,5 +159,99 @@ def build_academic_profile(
         attendance_ratio=attendance_ratio,
         strengths=strengths,
         areas_to_reinforce=reinforce,
+        warnings=warnings,
+    )
+
+
+def build_academic_evidence_profile_v2(
+    academic: AcademicData | None,
+) -> AcademicEvidenceProfileV2:
+    if academic is None:
+        return AcademicEvidenceProfileV2(
+            status=AvailabilityStatus.UNAVAILABLE,
+            summary=None,
+            subjects={},
+            areas={},
+            periods={},
+            temporal_period_count=0,
+            temporal_coverage_ratio=None,
+            best_observed_subject=None,
+            best_observed_area=None,
+            warnings=["No se recibió evidencia académica."],
+        )
+
+    records = academic.records
+    by_subject: dict[str, list[AcademicRecord]] = defaultdict(list)
+    by_area: dict[str, list[AcademicRecord]] = defaultdict(list)
+    by_period: dict[str, list[AcademicRecord]] = defaultdict(list)
+    for record in records:
+        by_subject[record.subject].append(record)
+        if record.area:
+            by_area[record.area].append(record)
+        period_label = record.period
+        if period_label is None and record.period_order is not None:
+            period_label = str(record.period_order)
+        if period_label is not None:
+            by_period[period_label].append(record)
+
+    subjects = {
+        label: descriptive_statistics(items)
+        for label, items in sorted(by_subject.items())
+    }
+    areas = {
+        label: descriptive_statistics(items) for label, items in sorted(by_area.items())
+    }
+    periods = {
+        label: descriptive_statistics(items) for label, items in sorted(by_period.items())
+    }
+    temporal = _temporal_coverage(records)
+    best_subject_label, best_subject = min(
+        subjects.items(), key=lambda item: (-item[1].mean, item[0].casefold())
+    )
+    best_area_highlight: ObservedAcademicHighlight | None = None
+    if areas:
+        best_area_label, best_area = min(
+            areas.items(), key=lambda item: (-item[1].mean, item[0].casefold())
+        )
+        best_area_highlight = ObservedAcademicHighlight(
+            kind="BEST_OBSERVED_AREA",
+            label=best_area_label,
+            mean=best_area.mean,
+            statement=(
+                f"{best_area_label} es el área con mayor promedio observado entre los "
+                "registros disponibles."
+            ),
+        )
+
+    warnings: list[str] = []
+    if temporal.period_count < 2 or len(temporal.observed_orders) < 2:
+        warnings.append(
+            "No hay dos períodos ordenados; la cobertura temporal es parcial o desconocida."
+        )
+    if not areas:
+        warnings.append("No se informaron áreas curriculares.")
+    status = (
+        AvailabilityStatus.AVAILABLE
+        if len(records) > 1 and len(temporal.observed_orders) >= 2
+        else AvailabilityStatus.PARTIAL
+    )
+    return AcademicEvidenceProfileV2(
+        status=status,
+        summary=descriptive_statistics(records),
+        subjects=subjects,
+        areas=areas,
+        periods=periods,
+        temporal_period_count=temporal.period_count,
+        temporal_coverage_ratio=temporal.ratio,
+        best_observed_subject=ObservedAcademicHighlight(
+            kind="BEST_OBSERVED_SUBJECT",
+            label=best_subject_label,
+            mean=best_subject.mean,
+            statement=(
+                f"{best_subject_label} es la asignatura con mayor promedio observado entre "
+                "los registros disponibles."
+            ),
+        ),
+        best_observed_area=best_area_highlight,
         warnings=warnings,
     )

@@ -1,0 +1,53 @@
+{
+  "benchmark_id": "peter3-performance-2026-09-29",
+  "scope": "LOCAL_CPU_WARM_PROCESS_REAL_SELECTED_INDEX",
+  "fixture_classification": "SYNTHETIC_TEST_FIXTURE",
+  "timing_clock": "time.perf_counter",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.14",
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "logical_cpu_count": 16,
+    "physical_cpu_count": 8,
+    "memory_total_bytes": 16435761152,
+    "embedding_device": "cpu",
+    "corpus_version": "bo-official-corpus-1.0.0",
+    "embedding_model": "intfloat/multilingual-e5-small",
+    "retrieval_version": "bm25-rrf-v1.0.0"
+  },
+  "results": {
+    "analysis_v2": {
+      "repetitions": 20,
+      "median_ms": 10.293,
+      "p95_ms": 15.69,
+      "minimum_ms": 7.496,
+      "maximum_ms": 31.189
+    },
+    "retrieval_hybrid": {
+      "repetitions": 20,
+      "median_ms": 44.997,
+      "p95_ms": 49.809,
+      "minimum_ms": 39.392,
+      "maximum_ms": 51.516
+    },
+    "tutor_structured_with_retrieval": {
+      "repetitions": 20,
+      "median_ms": 52.223,
+      "p95_ms": 60.452,
+      "minimum_ms": 47.751,
+      "maximum_ms": 61.345
+    },
+    "full_pipeline": {
+      "repetitions": 20,
+      "median_ms": 108.883,
+      "p95_ms": 125.236,
+      "minimum_ms": 99.956,
+      "maximum_ms": 146.029
+    }
+  },
+  "limitations": [
+    "Proceso caliente: no incluye descarga/carga inicial del modelo ni del índice.",
+    "Ejecución local de un solo proceso; no es una prueba de concurrencia ni capacidad.",
+    "El pipeline integral se mide como funciones de servicio, sin latencia HTTP o red."
+  ]
+}

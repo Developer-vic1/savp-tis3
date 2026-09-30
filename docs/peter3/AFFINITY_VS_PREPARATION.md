@@ -1,55 +1,59 @@
-# Afinidad frente a preparación
+# Afinidad, interés y preparación
 
-## Invariante
+## Invariantes
 
 ```text
-afinidad vocacional/técnica ≠ preparación académica actual ≠ probabilidad de éxito
+interés vocacional != aptitud
+afinidad != preparación
+preparación != capacidad
+calidad de evidencia != preparación
+compatibilidad != probabilidad de éxito
 ```
 
-RIASEC aporta evidencia de intereses. Las notas aportan evidencia académica contextual. Ninguna se usa para reescribir la otra.
+V2 no usa la palabra afinidad para esconder un agregado. Presenta relaciones separadas y sus
+limitaciones.
 
-## Evidencia y configuración
+## Qué conserva V1
 
-El catálogo boliviano inicial y el puente curricular ya existen como artefactos versionados.
-Los hechos oficiales son carreras, áreas, especialidades y asignaturas. Los perfiles RIASEC,
-pesos, umbrales y correspondencias son **CONFIGURACIÓN EXPERIMENTAL / NEEDS_EXPERT_REVIEW**.
+`v1_experimental` conserva targets RIASEC manuales, pesos 60/25/15, preparación 80/10/10,
+compatibilidad 55/45, umbrales y ranking. Su clasificación es
+`LEGACY_EXPERIMENTAL_BASELINE`. No se eliminó porque permite reproducir el estado histórico y
+estudiar sensibilidad; no es evidencia de validez científica.
 
-## Contrato de afinidad
+## Relaciones V2
 
-`v1_experimental` combina 60% similitud RIASEC, 25% BTH y 15% interés declarado. Si un
-componente falta, no se trata como cero: se informa cobertura y se renormalizan únicamente
-los pesos observados. Las calificaciones nunca participan en afinidad.
+`vocational_interest_relation` usa RIASEC únicamente si el crosswalk ocupacional contiene un
+perfil trazable. Muestra códigos y fuentes, pero no una distancia ni porcentaje.
 
-## Contrato de preparación
+`technical_relation` requiere observación técnica/BTH y relación del bridge. Una especialidad
+relacionada es evidencia técnica, no una instrucción de carrera.
 
-Cada requisito de carrera compara evidencia académica normalizada con una competencia y
-umbral del puente. Se informa cobertura. Con menos de 40% del peso de requisitos observado,
-`preparation_score = null`. El score combina conocimiento observado, consistencia y cobertura
-temporal con pesos 80/10/10, renormalizando componentes disponibles.
+`declared_interest_relation` usa solo `declared_interests` y etiquetas del catálogo. Las notas
+nunca se transforman en interés.
 
-## Compatibilidad y ranking
+`occupational_relation` conserva tipo, ocupación, taxonomía, estado de evidencia, fuentes,
+justificación y límites. Carrera y ocupación no son equivalentes.
 
-Cuando afinidad y preparación existen, compatibilidad = 55% afinidad + 45% preparación.
-No es probabilidad de éxito. El ranking ordena score descendente y `career_id` ascendente para
-desempatar; un LLM nunca puede modificarlo. Carreras sin preparación suficiente no se
-incluyen, pero se reportan como evidencia insuficiente.
+Cada dimensión expone `status`, `evidence`, `sources` y `limitations`. Ausencia es
+`UNAVAILABLE` o `INSUFFICIENT`, no 0.
 
-## Pruebas
+## Preparación V2
 
-Se prueban separación de notas/RIASEC, faltantes como nulos, pesos versionados, desempate,
-brechas `max(0, required-current)`, secuencia de ruta y sensibilidad a pesos/umbrales.
+Preparación describe evidencia académica/conceptual observada asociada a relaciones del bridge.
+No incorpora asistencia, regularidad, cobertura temporal ni calidad como bonificación o
+penalización. Los metadatos temporales pueden mejorar la descripción longitudinal, pero no
+cambian por sí solos el contenido observado.
 
-## Sensibilidad ejecutada sobre el fixture canónico
+No se usan `required=65/70/75`. Sin requisito cuantitativo oficial comparable se crea un área
+de refuerzo textual y no una brecha numérica.
 
-Comando: `python scripts/sensitivity.py` (Python 3.12.14).
+## Calidad de evidencia
 
-| Variante | Primer resultado | Score | ¿Cambia el orden? |
-|---|---|---:|---|
-| afinidad/preparación 55/45 | Ingeniería de Sistemas UCB | 82.82 | base |
-| 80/20 | Ingeniería de Sistemas UCB | 85.14 | no |
-| 20/80 | Ingeniería de Sistemas UCB | 79.58 | no |
-| cobertura mínima 0.70 | sin ranking | — | se suprime por insuficiencia |
+La calidad se mantiene fuera de `PreparationEvidenceProfile`. Sus dimensiones permiten saber
+cuánto y qué tipo de dato respaldó el análisis sin reinterpretarlo como preparación.
 
-En las tres combinaciones de peso, las dos identidades de Ingeniería Civil conservan el
-mismo score y el desempate estable por ID. Estos resultados describen un solo fixture
-sintético; no validan los pesos para población real.
+## Lenguaje de salida
+
+El sistema puede decir que Matemática tiene el mayor promedio observado entre los registros.
+No puede convertir ese máximo local en una fortaleza definitiva, inferir inteligencia, ordenar
+qué estudiar ni afirmar probabilidad de éxito.

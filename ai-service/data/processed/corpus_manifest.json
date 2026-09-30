@@ -1,8 +1,8 @@
 {
   "corpus_version": "bo-official-corpus-1.0.0",
-  "source_manifest_version": "1.0.0",
-  "source_count": 11,
-  "chunk_count": 689,
+  "source_manifest_version": "2.0.0",
+  "source_count": 12,
+  "chunk_count": 773,
   "statistics": [
     {
       "source_id": "BO-ME-CURRICULO-BASE-2012",
@@ -94,6 +94,14 @@
       "segments": 6,
       "chunks": 7,
       "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+      "segments": 27,
+      "chunks": 84,
+      "digital_pages": 27,
       "ocr_pages": 0,
       "warnings": []
     },

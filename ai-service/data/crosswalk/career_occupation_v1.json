@@ -1,0 +1,291 @@
+{
+  "crosswalk_version": "career-occupation-v1.0.0",
+  "created_at": "2026-09-29",
+  "taxonomy_standards": [
+    "ISCO-08 (ILO / OIT)",
+    "O*NET 31.0 / O*NET-SOC 2019 (USDOL/ETA)"
+  ],
+  "governance_principles": [
+    "CARRERA_NO_ES_OCUPACION",
+    "NO_EQUIVALENCIA_DIRECTA_AUTOMATICA",
+    "TRAZABILIDAD_DE_PERFIL_OCUPACIONAL_RIASEC",
+    "DISTINCION_ENTRE_OCUPACION_RELACIONADA_Y_POSIBLE"
+  ],
+  "allowed_relation_types": [
+    "RELATED_OCCUPATION",
+    "POSSIBLE_OCCUPATION",
+    "INSUFFICIENT_EVIDENCE"
+  ],
+  "relations": [
+    {
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "occupation_id": "ISCO-08-2512",
+      "occupation_system": "ISCO-08",
+      "occupation_title": "Desarrolladores de software",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": null,
+      "source_ids": [
+        "BO-UCB-LP-SIS-PROFILE-2026",
+        "ILO-ISCO-08-2012"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil profesional UCB declara áreas de programación y desarrollo de software; ISCO 2512 agrupa el diseño y programación de software.",
+      "limitations": [
+        "La formación en ingeniería de sistemas abarca también gestión de proyectos y arquitectura que exceden la programación operativa."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "occupation_id": "ONET-15-1252.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Software Developers",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "IC",
+      "source_ids": [
+        "BO-UCB-LP-SIS-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "O*NET 31.0 publica para Software Developers el código de intereses Investigativo-Convencional (IC); la vinculación con la carrera se apoya además en las áreas oficiales de programación y desarrollo.",
+      "limitations": [
+        "El perfil O*NET describe el mercado ocupacional estadounidense; se toma como referencia de intereses técnicos, no como norma contractual boliviana."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "occupation_id": "ONET-15-1211.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Computer Systems Analysts",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "IC",
+      "source_ids": [
+        "BO-UCB-LP-SIS-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil profesional explicita sistemas de información, bases de datos y gestión de proyectos tecnológicos; O*NET 31.0 publica para Computer Systems Analysts el código de intereses IC.",
+      "limitations": [
+        "La ingeniería boliviana otorga grado de licenciatura integrando análisis y programación."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "occupation_id": "ONET-15-1241.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Computer Network Architects",
+      "relation_type": "POSSIBLE_OCCUPATION",
+      "riasec_occupational_profile": "ICR",
+      "source_ids": [
+        "BO-UCB-LP-SIS-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "HYPOTHESIS",
+      "justification": "El perfil incluye redes y seguridad informática como área de estudio oficial.",
+      "limitations": [
+        "Ocupación especializada que suele requerir certificaciones industriales o experiencia post-grado."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-PSICOLOGIA",
+      "occupation_id": "ISCO-08-2634",
+      "occupation_system": "ISCO-08",
+      "occupation_title": "Psicólogos",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": null,
+      "source_ids": [
+        "BO-UCB-LP-PSI-PROFILE-2026",
+        "ILO-ISCO-08-2012"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil oficial de la carrera describe formación profesional en psicología e ISCO-08 clasifica Psicólogos como 2634; la relación entre ambos documentos es una inferencia trazable, no una equivalencia legal automática.",
+      "limitations": [
+        "El ejercicio profesional en Bolivia requiere matrícula del Colegio de Psicólogos y habilitación de salud según área."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-PSICOLOGIA",
+      "occupation_id": "ONET-19-3033.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Clinical and Counseling Psychologists",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "SIC",
+      "source_ids": [
+        "BO-UCB-LP-PSI-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil UCB explicita psicología clínica y orientación; O*NET 31.0 sustituyó el código 19-3031.00 por 19-3033.00 y publica el perfil Social-Investigativo-Convencional (SIC).",
+      "limitations": [
+        "La psicología clínica especializada requiere formación de postgrado según los estándares de salud pública."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-PSICOLOGIA",
+      "occupation_id": "ONET-19-3034.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "School Psychologists",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "SIC",
+      "source_ids": [
+        "BO-UCB-LP-PSI-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "Psicología educativa es un área oficial declarada en el perfil UCB; O*NET 31.0 identifica School Psychologists como 19-3034.00 con perfil SIC.",
+      "limitations": [
+        "En Bolivia la psicología educativa se ejerce tanto en unidades escolares como en gabinetes psicopedagógicos."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-PSICOLOGIA",
+      "occupation_id": "ONET-19-3032.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Industrial-Organizational Psychologists",
+      "relation_type": "POSSIBLE_OCCUPATION",
+      "riasec_occupational_profile": "IEC",
+      "source_ids": [
+        "BO-UCB-LP-PSI-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil UCB incluye psicología organizacional y gestión de talento humano; O*NET 31.0 identifica Industrial-Organizational Psychologists como 19-3032.00 con perfil IEC.",
+      "limitations": [
+        "Ocupación especializada de alta preparación; el perfil O*NET es una referencia estadounidense y no una habilitación profesional boliviana."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-CIVIL",
+      "occupation_id": "ISCO-08-2142",
+      "occupation_system": "ISCO-08",
+      "occupation_title": "Ingenieros civiles",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": null,
+      "source_ids": [
+        "BO-UCB-LP-CIV-PROFILE-2026",
+        "ILO-ISCO-08-2012"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil oficial describe diseño, cálculo y dirección de obras e ISCO-08 clasifica Ingenieros civiles como 2142; enlazar ambos documentos es una inferencia trazable.",
+      "limitations": [
+        "Requiere registro ante la Sociedad de Ingenieros de Bolivia (SIB) para firma de proyectos oficiales."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-CIVIL",
+      "occupation_id": "ONET-17-2051.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Civil Engineers",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "RIC",
+      "source_ids": [
+        "BO-UCB-LP-CIV-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "O*NET clasifica Civil Engineers como Realista-Investigativo-Convencional (RIC); coincide con el énfasis en estructuras, cálculo cuantitativo y obras físicas.",
+      "limitations": [
+        "No sustituye normativas bolivianas de construcción (CBH-87 / Norma Boliviana del Hormigón)."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UMSA-LP-ING-CIVIL",
+      "occupation_id": "ISCO-08-2142",
+      "occupation_system": "ISCO-08",
+      "occupation_title": "Ingenieros civiles",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": null,
+      "source_ids": [
+        "BO-UMSA-LP-CIV-PLAN-2023",
+        "ILO-ISCO-08-2012"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El Plan 2023 UMSA forma en cálculo estructural, vías, hidráulica y geotecnia e ISCO-08 clasifica Ingenieros civiles como 2142; el enlace es una inferencia trazable.",
+      "limitations": [
+        "El egresado debe registrarse en la SIB."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UMSA-LP-ING-CIVIL",
+      "occupation_id": "ONET-17-2051.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Civil Engineers",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "RIC",
+      "source_ids": [
+        "BO-UMSA-LP-CIV-PLAN-2023",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil de formación UMSA coincide con el perfil ocupacional O*NET RIC.",
+      "limitations": [
+        "La clasificación O*NET es una guía referencial de intereses."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-AMBIENTAL",
+      "occupation_id": "ISCO-08-2143",
+      "occupation_system": "ISCO-08",
+      "occupation_title": "Ingenieros medioambientales",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": null,
+      "source_ids": [
+        "BO-UCB-LP-IAM-PROFILE-2026",
+        "ILO-ISCO-08-2012"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "El perfil UCB describe prevención, mitigación y remediación ambiental e ISCO-08 clasifica Ingenieros medioambientales como 2143; la relación es una inferencia trazable.",
+      "limitations": [
+        "Requiere conocimiento de la Ley 1333 de Medio Ambiente de Bolivia."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-AMBIENTAL",
+      "occupation_id": "ONET-17-2081.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Environmental Engineers",
+      "relation_type": "RELATED_OCCUPATION",
+      "riasec_occupational_profile": "IRC",
+      "source_ids": [
+        "BO-UCB-LP-IAM-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "justification": "O*NET clasifica a los ingenieros ambientales como Investigativo-Realista-Convencional (IRC); refleja la modelación científica y trabajo de campo.",
+      "limitations": [
+        "Perfil internacional de referencia vocacional."
+      ],
+      "version": "1.0.0"
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-AMBIENTAL",
+      "occupation_id": "ONET-19-2041.00",
+      "occupation_system": "O*NET-SOC-2019",
+      "occupation_title": "Environmental Scientists and Specialists",
+      "relation_type": "POSSIBLE_OCCUPATION",
+      "riasec_occupational_profile": "IRC",
+      "source_ids": [
+        "BO-UCB-LP-IAM-PROFILE-2026",
+        "USDOL-ETA-ONET-31-2026"
+      ],
+      "evidence_status": "HYPOTHESIS",
+      "justification": "Áreas de gestión de recursos naturales y ecología comunitaria coinciden con la investigación científica ambiental.",
+      "limitations": [
+        "Enfoque más científico-académico que de diseño de ingeniería de plantas de tratamiento."
+      ],
+      "version": "1.0.0"
+    }
+  ]
+}

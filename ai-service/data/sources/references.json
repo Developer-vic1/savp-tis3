@@ -1,0 +1,175 @@
+{
+  "registry_version": "1.0.0",
+  "retrieved_at": "2026-09-29",
+  "references": [
+    {
+      "reference_id": "USDOL-ETA-ONET-IP-2026",
+      "reference_kind": "EXTERNAL_OFFICIAL",
+      "organization": "U.S. Department of Labor, Employment and Training Administration / National Center for O*NET Development",
+      "title": "O*NET Interest Profiler: Mini-IP and technical documentation",
+      "url": "https://www.onetcenter.org/IP.html",
+      "local_path": null,
+      "publication_date": "2021-03",
+      "retrieved_at": "2026-09-29",
+      "version": "Mini-IP 2.0 / manual 1.0",
+      "license": "CC BY-ND 4.0 for unmodified Career Exploration Tools content",
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "The computerized Mini-IP uses responses encoded 0 through 4; its Spanish user interface presents the equivalent labels as keys 1 through 5.",
+        "SAVP preserves the 30 official Spanish items and does not claim local Bolivian psychometric validation."
+      ]
+    },
+    {
+      "reference_id": "USDOL-ETA-ONET-31-2026",
+      "reference_kind": "EXTERNAL_OFFICIAL",
+      "organization": "U.S. Department of Labor, Employment and Training Administration / National Center for O*NET Development",
+      "title": "O*NET 31.0 Database and O*NET OnLine occupational profiles",
+      "url": "https://www.onetcenter.org/database.html",
+      "local_path": null,
+      "publication_date": "2026",
+      "retrieved_at": "2026-09-29",
+      "version": "O*NET 31.0 / O*NET-SOC 2019",
+      "license": "CC BY 4.0",
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "Occupational interest profiles describe the United States labor taxonomy and are used only as international vocational references, not as Bolivian admission rules."
+      ]
+    },
+    {
+      "reference_id": "ILO-ISCO-08-2012",
+      "reference_kind": "EXTERNAL_OFFICIAL",
+      "organization": "International Labour Organization",
+      "title": "International Standard Classification of Occupations: ISCO-08, Volume I",
+      "url": "https://www.ilo.org/publications/international-standard-classification-occupations-isco-08",
+      "local_path": null,
+      "publication_date": "2012-10-09",
+      "retrieved_at": "2026-09-29",
+      "version": "ISCO-08",
+      "license": null,
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "ISCO classifies occupations; mapping a university degree to an occupation remains an explicit documented inference."
+      ]
+    },
+    {
+      "reference_id": "INTFLOAT-E5-2023",
+      "reference_kind": "EXTERNAL_METHOD",
+      "organization": "Microsoft Research / intfloat",
+      "title": "Text Embeddings by Weakly-Supervised Contrastive Pre-training",
+      "url": "https://arxiv.org/abs/2212.03533",
+      "local_path": null,
+      "publication_date": "2022-12-07",
+      "retrieved_at": "2026-09-29",
+      "version": "multilingual-e5-small",
+      "license": "MIT for the published model weights",
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "The paper documents the embedding family; selection for SAVP is governed separately by the local retrieval benchmark."
+      ]
+    },
+    {
+      "reference_id": "CORMACK-RRF-2009",
+      "reference_kind": "EXTERNAL_METHOD",
+      "organization": "University of Waterloo",
+      "title": "Reciprocal Rank Fusion Outperforms Condorcet and Individual Rank Learning Methods",
+      "url": "https://doi.org/10.1145/1571941.1572114",
+      "local_path": null,
+      "publication_date": "2009",
+      "retrieved_at": "2026-09-29",
+      "version": "SIGIR 2009",
+      "license": null,
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "The publication supports the fusion method, not an empirically optimal value of k for the SAVP corpus."
+      ]
+    },
+    {
+      "reference_id": "ROBERTSON-WALKER-BM25-1994",
+      "reference_kind": "EXTERNAL_METHOD",
+      "organization": "City University London",
+      "title": "Some Simple Effective Approximations to the 2-Poisson Model for Probabilistic Weighted Retrieval",
+      "url": "https://dl.acm.org/doi/10.1145/188490.188561",
+      "local_path": null,
+      "publication_date": "1994",
+      "retrieved_at": "2026-09-29",
+      "version": "SIGIR 1994",
+      "license": null,
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "The publication supports BM25; k1 and b remain conventional engineering defaults until a declared local ablation is run."
+      ]
+    },
+    {
+      "reference_id": "OWASP-LLM-PROMPT-INJECTION-2025",
+      "reference_kind": "EXTERNAL_METHOD",
+      "organization": "OWASP Foundation",
+      "title": "LLM01: Prompt Injection",
+      "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/",
+      "local_path": null,
+      "publication_date": "2025",
+      "retrieved_at": "2026-09-29",
+      "version": "OWASP Top 10 for LLM Applications 2025",
+      "license": "CC BY-SA 4.0",
+      "verification_status": "VERIFIED",
+      "limitations": [
+        "Delimiters and lexical guards reduce known attack patterns but do not prove complete prompt-injection resistance."
+      ]
+    },
+    {
+      "reference_id": "PETER3-V2-FOUNDATION-2026",
+      "reference_kind": "INTERNAL_ARTIFACT",
+      "organization": "SAVP-TIS3 Peter 3",
+      "title": "Analytical Model V2 governance specification",
+      "url": null,
+      "local_path": "../docs/peter3/ANALYTICAL_MODEL_V2.md",
+      "publication_date": "2026-09-29",
+      "retrieved_at": "2026-09-29",
+      "version": "2.0.0",
+      "license": null,
+      "verification_status": "LOCAL_ARTIFACT",
+      "limitations": ["Internal design authority; not an external scientific source."]
+    },
+    {
+      "reference_id": "PETER3-RETRIEVAL-BENCHMARK-2026",
+      "reference_kind": "INTERNAL_ARTIFACT",
+      "organization": "SAVP-TIS3 Peter 3",
+      "title": "Retrieval benchmark result artifact",
+      "url": null,
+      "local_path": "data/evaluation/retrieval_results.json",
+      "publication_date": "2026-09-29",
+      "retrieved_at": "2026-09-29",
+      "version": "1.0.0",
+      "license": null,
+      "verification_status": "LOCAL_ARTIFACT",
+      "limitations": ["Results are valid only for the committed corpus, query split, environment, and index manifests recorded by the artifact."]
+    },
+    {
+      "reference_id": "PETER3-PROMPT-GOVERNANCE-2026",
+      "reference_kind": "INTERNAL_ARTIFACT",
+      "organization": "SAVP-TIS3 Peter 3",
+      "title": "Prompt system governance",
+      "url": null,
+      "local_path": "../docs/peter3/PROMPT_ENGINEERING.md",
+      "publication_date": "2026-09-29",
+      "retrieved_at": "2026-09-29",
+      "version": "1.0.0",
+      "license": null,
+      "verification_status": "LOCAL_ARTIFACT",
+      "limitations": ["Internal operational control; effectiveness is bounded by the tested scenario set."]
+    },
+    {
+      "reference_id": "PETER3-ARCHITECTURE-2026",
+      "reference_kind": "INTERNAL_ARTIFACT",
+      "organization": "SAVP-TIS3 Peter 3",
+      "title": "AI service architecture",
+      "url": null,
+      "local_path": "../docs/peter3/ARCHITECTURE.md",
+      "publication_date": "2026-09-29",
+      "retrieved_at": "2026-09-29",
+      "version": "1.0.0",
+      "license": null,
+      "verification_status": "LOCAL_ARTIFACT",
+      "limitations": ["Internal architecture record; not external evidence."]
+    }
+  ]
+}

@@ -11,6 +11,7 @@ from starlette.responses import Response
 
 from app import __version__
 from app.api.v1 import analysis, health, knowledge, tutor
+from app.api.v2 import analysis as analysis_v2
 from app.contracts.errors import DomainError, ErrorBody, ErrorCode, ErrorEnvelope
 
 logger = logging.getLogger("savp-ai")
@@ -57,6 +58,7 @@ app.include_router(health.router)
 app.include_router(analysis.router)
 app.include_router(knowledge.router)
 app.include_router(tutor.router)
+app.include_router(analysis_v2.router)
 
 
 @app.exception_handler(DomainError)
@@ -88,4 +90,3 @@ async def unexpected_error_handler(request: Request, exc: Exception) -> JSONResp
         "Ocurrió un error interno inesperado.",
         500,
     )
-

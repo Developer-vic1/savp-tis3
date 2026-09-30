@@ -7,7 +7,7 @@ from app.knowledge.registry import (
 
 def test_source_manifest_is_official_unique_and_matches_local_hashes() -> None:
     manifest = load_source_manifest()
-    assert len(manifest.sources) == 11
+    assert len(manifest.sources) == 12
     assert all(source.official for source in manifest.sources)
     assert validate_local_source_hashes() == []
 

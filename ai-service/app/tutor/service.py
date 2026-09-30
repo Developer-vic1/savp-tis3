@@ -18,6 +18,8 @@ ALLOWED_STUDENT_CONTEXT = {
     "preparation_label",
     "strengths",
 }
+TUTOR_CANDIDATE_K = 8
+TUTOR_CONTEXT_K = 5
 
 
 def _allowlisted(context: dict[str, Any] | None, allowed: set[str]) -> dict[str, Any]:
@@ -36,7 +38,7 @@ def answer_structured(
     if payload.level:
         query_parts.append(payload.level)
     retrieval_query = ". ".join(query_parts)
-    hits = retriever.search(retrieval_query, 8, official_only=True)
+    hits = retriever.search(retrieval_query, TUTOR_CANDIDATE_K, official_only=True)
     insufficient = evidence_is_insufficient(retrieval_query, hits)
     material = TutorMaterial(
         question=payload.question,
@@ -46,7 +48,9 @@ def answer_structured(
             payload.academic_context, ALLOWED_ACADEMIC_CONTEXT
         ),
         allowed_student_context=_allowlisted(payload.student_context, ALLOWED_STUDENT_CONTEXT),
-        evidence=[hit_to_evidence(hit, retrieval_query) for hit in hits[:5]],
+        evidence=[
+            hit_to_evidence(hit, retrieval_query) for hit in hits[:TUTOR_CONTEXT_K]
+        ],
         insufficient_evidence=insufficient,
     )
     return StructuredAnswerProvider().answer(material), material

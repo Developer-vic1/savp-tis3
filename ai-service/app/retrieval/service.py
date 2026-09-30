@@ -6,6 +6,10 @@ from app.knowledge.registry import SERVICE_ROOT
 from app.retrieval.hybrid import HYBRID_VERSION, HybridHit, HybridRetriever, tokenize
 from app.retrieval.index import SELECTED_INDEX, SemanticIndex
 
+EXCERPT_MAX_CHARS = 650
+EVIDENCE_SCORE_THRESHOLD = 0.72
+MIN_QUERY_TERM_OVERLAP = 0.2
+
 
 @lru_cache(maxsize=1)
 def get_retriever() -> HybridRetriever:
@@ -23,7 +27,9 @@ def selected_retrieval_metadata() -> dict[str, str]:
     }
 
 
-def relevant_excerpt(text: str, query: str, max_chars: int = 650) -> str:
+def relevant_excerpt(
+    text: str, query: str, max_chars: int = EXCERPT_MAX_CHARS
+) -> str:
     normalized_text = text.casefold()
     positions = [
         normalized_text.find(term.casefold())
@@ -76,4 +82,8 @@ def evidence_is_insufficient(query: str, hits: list[HybridHit]) -> bool:
         tokenize(" ".join((top.chunk.title, top.chunk.section or "", top.chunk.text)))
     )
     overlap = len(query_terms & document_terms) / len(query_terms)
-    return top.score < 0.72 or top.lexical_rank is None or overlap < 0.2
+    return (
+        top.score < EVIDENCE_SCORE_THRESHOLD
+        or top.lexical_rank is None
+        or overlap < MIN_QUERY_TERM_OVERLAP
+    )

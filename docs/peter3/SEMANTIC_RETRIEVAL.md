@@ -15,7 +15,7 @@ del dataset local, no de popularidad externa.
 
 FAISS usa `IndexFlatIP` con vectores L2-normalizados: producto interno equivale a similitud
 coseno y la búsqueda es exacta para este corpus pequeño. Índices aproximados no aportan una
-ventaja defendible con 818 chunks.
+ventaja defendible con los 773 chunks actuales.
 
 ## Componentes
 

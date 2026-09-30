@@ -7,7 +7,11 @@ from app.contracts.requests import (
     LearningActivityData,
     LearningTask,
 )
-from app.learning_analytics.academic_performance import build_academic_profile, normalize_score
+from app.learning_analytics.academic_performance import (
+    build_academic_evidence_profile_v2,
+    build_academic_profile,
+    normalize_score,
+)
 from app.learning_analytics.activity import build_learning_activity_profile
 from app.learning_analytics.trends import linear_slope, trend_label
 
@@ -87,6 +91,39 @@ def test_single_observation_keeps_variability_and_trend_unknown() -> None:
     assert profile.overall_trend_slope is None
     assert profile.temporal_coverage.ratio is None
     assert profile.evidence_status == "PARTIAL"
+
+
+def test_v2_subject_area_and_period_statistics_match_manual_calculation() -> None:
+    academic = AcademicData(
+        records=[
+            AcademicRecord(
+                subject="Matemática",
+                area="Ciencia",
+                score=60,
+                period="T1",
+                period_order=1,
+            ),
+            AcademicRecord(
+                subject="Matemática",
+                area="Ciencia",
+                score=80,
+                period="T2",
+                period_order=2,
+            ),
+        ]
+    )
+    profile = build_academic_evidence_profile_v2(academic)
+    assert profile.status == "AVAILABLE"
+    assert profile.summary is not None
+    assert profile.summary.mean == 70
+    assert profile.summary.minimum == 60
+    assert profile.summary.maximum == 80
+    assert profile.summary.standard_deviation == 10
+    assert profile.subjects["Matemática"].mean == 70
+    assert profile.areas["Ciencia"].mean == 70
+    assert profile.periods["T1"].mean == 60
+    assert profile.periods["T2"].mean == 80
+    assert profile.temporal_coverage_ratio == 1
 
 
 def test_detailed_learning_activity_calculates_delivery_grades_and_regularity() -> None:
