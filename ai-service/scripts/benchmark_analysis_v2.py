@@ -1,6 +1,9 @@
 import argparse
 import json
+import os
+import platform
 from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import median
 from time import perf_counter
@@ -22,7 +25,8 @@ def _percentile(values: list[float], quantile: float) -> float:
 
 
 def _measure(operation: Callable[[], object], repetitions: int) -> dict[str, float | int]:
-    for _ in range(min(10, repetitions)):
+    warmup = min(10, repetitions)
+    for _ in range(warmup):
         operation()
     measurements: list[float] = []
     for _ in range(repetitions):
@@ -31,6 +35,7 @@ def _measure(operation: Callable[[], object], repetitions: int) -> dict[str, flo
         measurements.append((perf_counter() - started) * 1_000)
     return {
         "repetitions": repetitions,
+        "warmup_iterations": warmup,
         "median_ms": round(median(measurements), 4),
         "p95_ms": round(_percentile(measurements, 0.95), 4),
     }
@@ -39,6 +44,11 @@ def _measure(operation: Callable[[], object], repetitions: int) -> dict[str, flo
 def main() -> None:
     parser = argparse.ArgumentParser(description="Benchmark reproducible del análisis V2.")
     parser.add_argument("--repetitions", type=int, default=200)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=SERVICE_ROOT / "data/evaluation/analysis_v2_phase2_performance.json",
+    )
     args = parser.parse_args()
     if args.repetitions < 20:
         raise ValueError("Se requieren al menos 20 repeticiones para reportar p95")
@@ -81,10 +91,21 @@ def main() -> None:
     }
     output = {
         "benchmark": "ANALYSIS_V2_LOCAL_NO_EXTERNAL_SERVICES",
+        "measured_at": datetime.now(UTC).isoformat(),
+        "environment": {
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "processor": platform.processor() or "not_reported_by_platform",
+            "logical_cpu_count": os.cpu_count(),
+        },
         "fixture_classification": "SYNTHETIC_TEST_FIXTURE",
         "timing_clock": "time.perf_counter",
         "results": results,
+        "limitations": ["Proceso caliente local; sin HTTP, retrieval, tutor ni concurrencia."],
     }
+    args.output.write_text(
+        json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
     print(json.dumps(output, ensure_ascii=False, indent=2))
 
 

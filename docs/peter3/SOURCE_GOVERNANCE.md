@@ -22,13 +22,13 @@ registros; un `source_id` documental debe tener snapshot local y SHA-256 válido
 | `BO-ME-BTH-RM-0244-2023` | Ministerio de Educación, BTH | `4e52e97cdc7e` |
 | `BO-ME-EVALUACION-REGULAR-RM-0190-2024` | Ministerio de Educación, evaluación regular | `6cff6cc77f84` |
 | `BO-UCB-LP-SIS-MALLA-2026` | UCB, Sistemas, malla | `dc5710e7015b` |
-| `BO-UCB-LP-SIS-PROFILE-2026` | UCB, Sistemas, perfil | `e421d607cd47` |
+| `BO-UCB-LP-SIS-PROFILE-2026` | UCB, Sistemas, perfil | `f6111db8c10e` |
 | `BO-UCB-LP-PSI-MALLA-2026` | UCB, Psicología, malla | `b0123e032f44` |
-| `BO-UCB-LP-PSI-PROFILE-2026` | UCB, Psicología, perfil | `787f2c5fbcc1` |
+| `BO-UCB-LP-PSI-PROFILE-2026` | UCB, Psicología, perfil | `51d3175182eb` |
 | `BO-UCB-LP-CIV-MALLA-2026` | UCB, Civil, malla | `831af84148a2` |
-| `BO-UCB-LP-CIV-PROFILE-2026` | UCB, Civil, perfil | `7f58bc18be6b` |
+| `BO-UCB-LP-CIV-PROFILE-2026` | UCB, Civil, perfil | `ddef19495fd9` |
 | `BO-UCB-LP-IAM-MALLA-2026` | UCB, Ambiental, malla | `6f53c96223e6` |
-| `BO-UCB-LP-IAM-PROFILE-2026` | UCB, Ambiental, perfil | `c583444f9547` |
+| `BO-UCB-LP-IAM-PROFILE-2026` | UCB, Ambiental, perfil | `51e8ee2b9ebb` |
 | `BO-UMSA-LP-CIV-PLAN-2023` | UMSA, Civil, plan | `750f43d245f1` |
 
 La RM 0190/2024 es la evidencia normativa de la escala escolar total sobre 100 y el umbral de
@@ -40,3 +40,17 @@ Los snapshots son inmutables: una actualización se incorpora con nuevo identifi
 hash. Cada chunk hereda fuente, institución, URL, hash, página o sección y método de extracción.
 El corpus contiene solo documentos públicos; no incluye expedientes ni identificadores de
 estudiantes. La vigencia institucional debe volver a verificarse antes de producción.
+# Auditoría fase 2 — 2026-09-30
+
+`scripts/verify_sources.py` comprueba IDs únicos, ubicación de referencias internas, SHA-256 de
+bytes locales, versión/hash de cada chunk frente a su fuente y hash del corpus en los manifiestos
+de índices. El estado es `FAIL` si aparece `MISSING`, `MISMATCH` o `STALE`.
+
+Los cuatro HTML de perfiles UCB que estaban activos en `ae386c7` tenían bytes distintos a los
+hashes declarados. Se descargaron nuevas versiones directamente de las cuatro URLs oficiales
+`lpz.ucb.edu.bo/pregrado/.../`, conservando los archivos anteriores, con nueva ruta fechada,
+URL final, timestamp UTC, `text/html; charset=UTF-8` y SHA-256 calculado de los bytes recibidos.
+La versión del registro subió a `2.1.0`. El corpus se reconstruyó para los cuatro HTML y se
+reparó la metadata `version` de 265 chunks del currículo ministerial solo después de verificar
+que sus hashes de fuente coincidían. Conserva 773 chunks. Los índices y las métricas de
+retrieval siguen `STALE`; ninguna cifra histórica debe presentarse como resultado de fase 2.

@@ -2,6 +2,18 @@
 
 Fecha de verificación: 2026-09-28.
 
+Reverificación fase 2: 2026-09-30. La aplicación oficial en español publicó el asset
+`https://onetinterestprofiler.org/es/assets/index-CD-U6n4j.js` (SHA-256 de los bytes descargados:
+`c2492eb96d2422dec7912861d6c5091b374b49ac3305100917cdbac3208d841b`). Se extrajeron
+los 30 triples `index`, `area`, `text` del propio asset oficial y se compararon uno por uno con
+`onet_mini_ip_v2_es.json`: 30/30 coincidieron, sin discrepancias de orden, dimensión ni texto.
+El fingerprint SHA-256 del arreglo canónico del instrumento es
+`309e17a1101401a8559a81dd6f11f08924a1de407d984d0a9722313c12f1cdb4` y está fijado
+en una prueba de contrato. La página oficial muestra las opciones 1–5; internamente se convierte
+`valor - 1` para sumar 0–20 por dimensión. La licencia oficial vigente permite redistribución
+literal bajo CC BY-ND 4.0 con atribución, enlace a licencia y sin versiones modificadas; una
+adaptación exige la licencia de desarrollador y validación del producto.
+
 ## Fuentes primarias consultadas
 
 1. National Center for O*NET Development, [Interest Profiler](https://www.onetcenter.org/IP.html).

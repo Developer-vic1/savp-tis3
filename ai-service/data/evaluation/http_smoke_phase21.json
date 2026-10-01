@@ -1,0 +1,42 @@
+{
+  "measured_at": "2026-10-01T01:38:20.082792+00:00",
+  "environment": "local FastAPI on Windows; 8 RIASEC requests, 4 workers",
+  "results": {
+    "riasec_instrument": {
+      "status": 200,
+      "latency_ms": 34.989,
+      "trace_id": "c80ffa16-bb54-423b-815e-f74980cea3fd"
+    },
+    "health": {
+      "status": 200,
+      "latency_ms": 10.209,
+      "trace_id": "170320db-12c1-41bb-b5c7-2477299c9134"
+    },
+    "riasec_score": {
+      "status": 200,
+      "latency_ms": 6.075,
+      "trace_id": "806ca331-df72-4da9-ad77-8caaed03a750"
+    },
+    "analysis_v2": {
+      "status": 200,
+      "latency_ms": 56.645,
+      "trace_id": "0ab5c5e4-fcc9-4b61-967e-031b3f88b8a7"
+    },
+    "knowledge": {
+      "status": 503,
+      "latency_ms": 9.362,
+      "trace_id": "f60fd5e4-d292-40ad-9cd3-238ff77234af"
+    },
+    "tutor": {
+      "status": 503,
+      "latency_ms": 10.347,
+      "trace_id": "16ff7715-01ec-4ca4-b5f7-3e729ed8973b"
+    },
+    "concurrent_riasec": {
+      "requests": 8,
+      "passed": 8,
+      "median_ms": 8.738
+    }
+  },
+  "status": "FAIL"
+}

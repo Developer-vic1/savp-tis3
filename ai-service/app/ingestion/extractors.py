@@ -1,13 +1,18 @@
+from __future__ import annotations
+
 import re
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import pymupdf
 from bs4 import BeautifulSoup
 from PIL import Image
 
 from app.ingestion.models import DocumentExtraction, ExtractedSegment
 from app.ingestion.ocr import EasyOcrSpanish, OcrEngine
 from app.knowledge.registry import SERVICE_ROOT, SourceRecord
+
+if TYPE_CHECKING:
+    import pymupdf
 
 DIGITAL_TEXT_THRESHOLD = 80
 OCR_DPI = 200
@@ -28,6 +33,8 @@ def extract_pdf(
     source_id: str,
     ocr_engine: OcrEngine | None = None,
 ) -> DocumentExtraction:
+    import pymupdf
+
     segments: list[ExtractedSegment] = []
     digital_pages: list[int] = []
     ocr_pages: list[int] = []
@@ -170,6 +177,8 @@ def extract_source(
 
 
 def render_pdf_page(path: Path, page_number: int, output: Path, dpi: int = 144) -> None:
+    import pymupdf
+
     with pymupdf.open(path) as document:  # type: ignore[no-untyped-call]
         if page_number < 1 or page_number > document.page_count:
             raise ValueError(f"Página fuera de rango: {page_number}")

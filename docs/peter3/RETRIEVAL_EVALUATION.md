@@ -1,4 +1,10 @@
+> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
+
 # Evaluación de retrieval — PETER 3
+
+Fase 2.1: las métricas de abajo son históricas. DEV y TEST del corpus actualizado no se han
+ejecutado por el bloqueo de Torch. `evaluate_retrieval_phase21.py` separa DEV, selección congelada
+y TEST sin sobrescritura; procedimiento en `PHASE21_WIP_CHECKPOINT.md`.
 
 Ejecución: 2026-09-29 sobre 773 chunks, CPU, 30 consultas con relevancia manual a nivel de
 chunk. Los conjuntos `retrieval_dev.json` y `retrieval_test.json` tienen 15 consultas cada uno,

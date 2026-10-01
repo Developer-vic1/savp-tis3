@@ -4,9 +4,13 @@
   "title": "O*NET Interest Profiler (Mini-IP Version 2.0) — español",
   "language": "es",
   "response_scale": {"minimum": 0, "maximum": 4},
+  "official_web_response_scale": {"minimum": 1, "maximum": 5},
+  "official_web_to_internal": "internal = official_web - 1; API V1 y analysis V2 reciben la escala interna 0–4",
   "scoring": "Suma de los cinco reactivos asignados a cada dimensión RIASEC; rango 0–20.",
   "license": "CC BY-ND 4.0",
   "source_url": "https://onetinterestprofiler.org/es/",
+  "license_url": "https://www.onetcenter.org/license_tools.html",
+  "retrieved_at": "2026-09-30",
   "attribution": "Incluye información de O*NET Career Exploration Tools de USDOL/ETA. O*NET es una marca de USDOL/ETA. USDOL/ETA no ha aprobado ni respaldado SAVP.",
   "items": [
     {"item_id": 1, "code": "R", "text": "Construir gabinetes para cocinas"},

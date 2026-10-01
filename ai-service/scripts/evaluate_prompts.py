@@ -1,4 +1,6 @@
 import json
+import platform
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import cast
 
@@ -18,7 +20,9 @@ def main() -> None:
     scenarios = [PromptEvaluationScenario.model_validate(item) for item in raw_scenarios]
     report = run_prompt_evaluation(scenarios)
     output = {
-        "evaluation_id": "peter3-prompt-evaluation-2026-09-29",
+        "evaluation_id": "peter3-prompt-evaluation-2026-09-30",
+        "evaluated_at": datetime.now(UTC).isoformat(),
+        "python": platform.python_version(),
         "scenario_dataset": str(SCENARIOS_PATH.relative_to(SERVICE_ROOT)).replace("\\", "/"),
         "provider": "structured-answer-v1.0.0",
         "result": report.model_dump(mode="json"),

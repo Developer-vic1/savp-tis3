@@ -1,25 +1,33 @@
 # Integration readiness — PETER 3
 
-Estado: preparado para una ejecución posterior de integración; este aporte no contiene cliente
-Laravel, migraciones, UI ni escrituras en base de datos.
+Checkpoint de fase 2.1: la verificación de fuentes/corpus pasa por separado, pero ambos índices
+siguen `STALE`. La reconstrucción está preparada para otro equipo en `PHASE21_WIP_CHECKPOINT.md`;
+no hay aprobación de integración ni commit final.
+
+Estado: `PETER3_NOT_READY` mientras se reconstruyen los índices y se reejecutan todos los
+gates de fase 2. Este aporte no contiene cliente Laravel, migraciones, UI ni escrituras en base de
+datos. El contrato detallado para PETER 2 está en `PETER2_INTEGRATION_CONTRACT.md`.
 
 ## Arranque
 
 ```powershell
 cd ai-service
-.\.venv312\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
 ```
 
-Variables relevantes: `SAVP_AI_API_KEY`, `SAVP_AI_HOST`, `SAVP_AI_PORT`,
+Variables relevantes: `SAVP_AI_ENV`, `SAVP_AI_API_KEY`, `SAVP_AI_HOST`, `SAVP_AI_PORT`,
 `SAVP_AI_LOCAL_LLM_ENABLED`, `SAVP_AI_LOCAL_LLM_URL`, `SAVP_AI_LOCAL_LLM_MODEL` y
-`SAVP_AI_LOCAL_LLM_TIMEOUT_SECONDS`. Para producción se recomienda API key obligatoria, red
-privada y logging sin cuerpos ni datos de estudiante.
+`SAVP_AI_LOCAL_LLM_TIMEOUT_SECONDS`. En `production` la API protegida exige una clave
+configurada; con configuración vacía devuelve `503`. Usar red privada y logging sin cuerpos ni
+datos de estudiante.
 
 ## Contrato HTTP
 
 | Método y ruta | Uso | Entrada | Salida |
 |---|---|---|---|
 | `GET /health` | salud | ninguna | servicio, versión y schema `1.0` |
+| `GET /api/v2/riasec/instrument` | cuestionario | ninguna | 30 reactivos, escala 1–5 y atribución |
+| `POST /api/v2/riasec/score` | scoring | versión y 30 respuestas públicas 1–5 | seis scores 0–20, códigos y trace |
 | `POST /api/v1/analysis` | legacy | `AnalysisRequest`, schema `1.0` | `AnalysisResponse` experimental |
 | `POST /api/v2/analysis` | principal futuro | `AnalysisV2Request`, schema `2.0` | `AnalysisV2Response` basada en evidencia |
 | `POST /api/v1/knowledge/search` | búsqueda | query, top-k y filtros opcionales | resultados, suficiencia, corpus/modelo/retrieval |
@@ -43,7 +51,7 @@ esperables incluyen 401 por key inválida/ausente, 422 por contrato, 503 por ín
 500 saneado para errores imprevistos. La integración debe registrar el trace, no el payload
 completo, y tratar 4xx como error de contrato y 5xx como recuperable.
 
-Timeout sugerido inicial: 5 s para health/análisis y 15 s para knowledge/tutor estructurado,
+Timeout sugerido inicial: 5 s para health/RIASEC y 30 s para análisis/knowledge/tutor estructurado,
 validándolo con carga real. Si se habilita LLM local, el presupuesto debe ser mayor que el timeout
 interno configurado (45 s) y contar con circuit breaker; el servicio mantiene fallback
 estructurado. Estos valores son recomendaciones operativas, no SLA medidos.

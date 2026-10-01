@@ -1,0 +1,47 @@
+{
+  "benchmark": "ANALYSIS_V2_LOCAL_NO_EXTERNAL_SERVICES",
+  "measured_at": "2026-10-01T00:41:35.523948+00:00",
+  "environment": {
+    "python": "3.12.10",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 23 Model 160 Stepping 0, AuthenticAMD",
+    "logical_cpu_count": 8
+  },
+  "fixture_classification": "SYNTHETIC_TEST_FIXTURE",
+  "timing_clock": "time.perf_counter",
+  "results": {
+    "validation_latency": {
+      "repetitions": 50,
+      "warmup_iterations": 10,
+      "median_ms": 0.0497,
+      "p95_ms": 0.0657
+    },
+    "riasec_latency": {
+      "repetitions": 50,
+      "warmup_iterations": 10,
+      "median_ms": 0.0278,
+      "p95_ms": 0.031
+    },
+    "learning_analytics_latency": {
+      "repetitions": 50,
+      "warmup_iterations": 10,
+      "median_ms": 0.267,
+      "p95_ms": 0.3338
+    },
+    "recommendation_v2_latency": {
+      "repetitions": 50,
+      "warmup_iterations": 10,
+      "median_ms": 5.165,
+      "p95_ms": 7.2662
+    },
+    "complete_analysis_latency": {
+      "repetitions": 50,
+      "warmup_iterations": 10,
+      "median_ms": 6.2266,
+      "p95_ms": 7.6337
+    }
+  },
+  "limitations": [
+    "Proceso caliente local; sin HTTP, retrieval, tutor ni concurrencia."
+  ]
+}

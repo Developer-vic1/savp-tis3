@@ -43,3 +43,12 @@ Si un documento malicioso contuviera texto como *"Ignora todas las instrucciones
 
 ### C. Validador Criptográfico/Léxico de Citas
 `validate_citations()` analiza el texto generado y verifica que todo identificador de formato `[SOURCE_ID]` corresponda de manera estricta al conjunto de fragmentos recuperados en la consulta actual. Si el modelo cita una fuente no provista en el contexto, la validación falla y se activa el fallback determinístico.
+# Corrección de métricas — fase 2
+
+`validate_citations()` comprueba solamente que el ID citado pertenece al conjunto recuperado;
+no determina si el fragmento respalda la afirmación concreta. El evaluador anterior confundía
+ambas propiedades al reportar `citation_support_rate=1.0` y `unsupported_claim_rate=0.0`.
+Desde esta fase esas dos métricas son `null` con `citation_support_status=NOT_EVALUATED` hasta
+tener anotaciones por afirmación y evidencia esperada. `citation_precision` conserva la medición
+de IDs existentes en los escenarios que requieren cita; tampoco debe interpretarse como soporte
+semántico. La evaluación de 2026-09-29 es histórica.

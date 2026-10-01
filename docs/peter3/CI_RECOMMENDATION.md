@@ -1,0 +1,3 @@
+# CI recomendado para PETER 1
+
+Desde `ai-service`, con Python 3.12 y dependencias bloqueadas por `uv.lock`: `python -m uv sync --locked --group dev`; luego `python -m pytest`, `python -m pytest --cov=app`, `python -m ruff check .`, `python -m mypy app scripts`, `python -m mypy .`, `python scripts/verify_sources.py`, `python -m pytest tests/unit/test_index_integrity.py tests/unit/test_referential_integrity.py tests/integration/test_peter3_full_e2e.py` y los smoke HTTP de contrato. El verificador único coordina estos gates. La evaluación de retrieval con modelos y OCR real requiere runners con recursos y caché explícitos; publicar su estado por separado. No se modifica `.github/workflows` desde PETER 3.

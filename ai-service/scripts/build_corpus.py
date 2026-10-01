@@ -4,6 +4,7 @@ from pathlib import Path
 
 from app.ingestion.chunking import build_chunks
 from app.ingestion.extractors import extract_source
+from app.ingestion.models import KnowledgeChunk
 from app.knowledge.registry import SERVICE_ROOT, load_source_manifest
 
 
@@ -59,6 +60,21 @@ def main() -> None:
     else:
         sources = selected_sources
 
+    if args.merge_existing:
+        for source in sources:
+            if source.source_id in selected:
+                continue
+            preserved = existing_lines.get(source.source_id)
+            if not preserved:
+                raise ValueError(f"no hay chunks existentes para conservar: {source.source_id}")
+            for line in preserved:
+                chunk = KnowledgeChunk.model_validate_json(line)
+                if chunk.document_hash != source.document_hash:
+                    raise ValueError(
+                        f"{source.source_id}: el hash de chunks preservados no coincide "
+                        "con la fuente; se requiere reextracción"
+                    )
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     statistics: list[dict[str, object]] = []
     total_chunks = 0
@@ -71,6 +87,16 @@ def main() -> None:
                         f"no hay chunks existentes para conservar: {source.source_id}"
                     )
                 for line in preserved:
+                    chunk = KnowledgeChunk.model_validate_json(line)
+                    if chunk.document_hash != source.document_hash:
+                        raise ValueError(
+                            f"{source.source_id}: el hash de chunks preservados no coincide "
+                            "con la fuente; se requiere reextracción"
+                        )
+                    if chunk.version != source.version:
+                        line = chunk.model_copy(
+                            update={"version": source.version}
+                        ).model_dump_json()
                     handle.write(line + "\n")
                 total_chunks += len(preserved)
                 prior = existing_statistics.get(source.source_id)

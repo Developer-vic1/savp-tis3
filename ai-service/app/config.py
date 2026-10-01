@@ -1,5 +1,6 @@
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -16,7 +17,7 @@ class Settings(BaseSettings):
     host: str = "127.0.0.1"
     port: int = Field(default=8001, ge=1, le=65535)
     api_key: str | None = None
-    env: str = "development"
+    env: Literal["development", "test", "production", "prod"] = "development"
     log_level: str = "INFO"
     knowledge_path: Path = Path("./data/processed")
     index_path: Path = Path("./data/indices")

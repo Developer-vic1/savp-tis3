@@ -81,3 +81,11 @@ produce warning; nunca se inventa.
 
 No existen `compatibility_score`, ranking global, probabilidad de éxito, inteligencia inferida
 ni brecha numérica sin requisito oficial. Las explicaciones son deterministas y no usan LLM.
+# RIASEC V2 para PETER 2 (fase 2)
+
+`GET /api/v2/riasec/instrument` entrega los 30 reactivos oficiales, el orden, las opciones
+públicas 1–5, la versión, licencia, atribución y limitaciones. `POST /api/v2/riasec/score` exige
+la versión exacta y una respuesta para cada ID; convierte `1→0` a `5→4` y usa el mismo
+`score_riasec` que Analysis V2. Devuelve seis puntajes 0–20, empates, Holland code y `trace_id`.
+El campo `vocational` de `POST /api/v2/analysis` conserva por ahora la escala interna 0–4; el
+contrato de integración explica esta distinción. Véase `PETER2_INTEGRATION_CONTRACT.md`.

@@ -165,21 +165,6 @@ def run_prompt_evaluation(
         )
 
     total = len(scenarios)
-    extractive_claim_count = 0
-    supported_claim_count = 0
-    for result, sc in zip(results, scenarios, strict=True):
-        if (
-            sc.retrieved_evidence_fixture
-            and not sc.expected_refusal
-            and not sc.expected_abstention
-            and not result["is_abstaining"]
-        ):
-            extractive_claim_count += 1
-            if result["valid_citations"]:
-                supported_claim_count += 1
-    citation_support_rate = (
-        supported_claim_count / extractive_claim_count if extractive_claim_count else 1.0
-    )
     return PromptEvaluationReport(
         total_scenarios=total,
         passed_scenarios=passed_scenarios,
@@ -191,8 +176,9 @@ def run_prompt_evaluation(
         )
         if total_citation_queries
         else 1.0,
-        citation_support_rate=round(citation_support_rate, 4),
-        unsupported_claim_rate=round(1.0 - citation_support_rate, 4),
+        citation_support_rate=None,
+        unsupported_claim_rate=None,
+        citation_support_status="NOT_EVALUATED",
         abstention_accuracy=round(abstention_accurate_count / total, 4)
         if total
         else 1.0,

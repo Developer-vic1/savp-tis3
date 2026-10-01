@@ -41,6 +41,9 @@ class SourceRecord(RegistryModel):
     sha256: str | None = None
     license: str | None = None
     superseded_by: str | None = None
+    snapshot_timestamp: str | None = None
+    final_url: str | None = None
+    content_type: str | None = None
     limitations: list[str] = Field(default_factory=list)
 
 

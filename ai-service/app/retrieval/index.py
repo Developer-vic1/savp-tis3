@@ -1,5 +1,8 @@
 import hashlib
 import json
+import platform
+from datetime import UTC, datetime
+from importlib.metadata import version
 from pathlib import Path
 from time import perf_counter
 from typing import Protocol
@@ -65,6 +68,11 @@ class SemanticIndex:
         self.chunks = chunks
         self.backend = backend or SentenceEmbeddingBackend(model_id)
 
+    def ensure_backend_available(self) -> None:
+        """Load the model before serving requests so failures map to HTTP 503."""
+        if isinstance(self.backend, SentenceEmbeddingBackend):
+            _ = self.backend.model
+
     @classmethod
     def create(
         cls,
@@ -96,10 +104,20 @@ class SemanticIndex:
             "model_slug": model_slug(self.model_id),
             "dimension": self.index.d,
             "chunk_count": len(self.chunks),
+            "embedding_rows": self.index.ntotal,
             "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
+            "normalized_l2": True,
             "exact": True,
             "corpus_sha256": hashlib.sha256(CORPUS_PATH.read_bytes()).hexdigest(),
             "build_seconds": round(build_seconds, 4),
+            "built_at": datetime.now(UTC).isoformat(),
+            "python_version": platform.python_version(),
+            "dependencies": {
+                package: version(package)
+                for package in ("torch", "sentence-transformers", "transformers", "faiss-cpu")
+            },
+            "model_revision": None,
+            "model_revision_status": "UNAVAILABLE_FROM_RUNTIME",
         }
         (directory / "manifest.json").write_text(
             json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
@@ -122,7 +140,15 @@ class SemanticIndex:
     @classmethod
     def load_selected(cls) -> "SemanticIndex":
         selected = json.loads(SELECTED_INDEX.read_text(encoding="utf-8"))
-        return cls.load(SERVICE_ROOT / str(selected["index_directory"]))
+        directory = SERVICE_ROOT / str(selected["index_directory"])
+        manifest = json.loads((directory / "manifest.json").read_text(encoding="utf-8"))
+        corpus_sha256 = hashlib.sha256(CORPUS_PATH.read_bytes()).hexdigest()
+        if manifest["corpus_sha256"] != corpus_sha256:
+            raise ValueError("El índice seleccionado está obsoleto respecto al corpus")
+        loaded = cls.load(directory)
+        if loaded.model_id != selected["model_id"] or loaded.chunks != load_corpus():
+            raise ValueError("Los metadatos/chunks del índice seleccionado no coinciden")
+        return loaded
 
     def search(
         self,

@@ -3,9 +3,10 @@ import json
 from pathlib import Path
 
 import faiss
+import pytest
 
 from app.ingestion.models import KnowledgeChunk
-from app.retrieval.index import INDEX_ROOT, SELECTED_INDEX, load_corpus
+from app.retrieval.index import INDEX_ROOT, SELECTED_INDEX, SemanticIndex, load_corpus
 
 SERVICE_ROOT = Path(__file__).resolve().parents[2]
 
@@ -69,3 +70,25 @@ def test_selected_index_consistency() -> None:
     assert "index_directory" in selected
     assert (SERVICE_ROOT / selected["index_directory"]).is_dir()
     assert (SERVICE_ROOT / selected["index_directory"] / "index.faiss").is_file()
+
+
+def test_selected_index_rejects_stale_corpus_before_loading_faiss(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    index_dir = tmp_path / "data" / "indexes" / "selected"
+    index_dir.mkdir(parents=True)
+    (index_dir / "manifest.json").write_text(
+        json.dumps({"corpus_sha256": "0" * 64}), encoding="utf-8"
+    )
+    selected = tmp_path / "data" / "indexes" / "selected.json"
+    selected.write_text(
+        json.dumps({"index_directory": "data/indexes/selected", "model_id": "test"}),
+        encoding="utf-8",
+    )
+    corpus = tmp_path / "corpus.jsonl"
+    corpus.write_text("{}\n", encoding="utf-8")
+    monkeypatch.setattr("app.retrieval.index.SERVICE_ROOT", tmp_path)
+    monkeypatch.setattr("app.retrieval.index.SELECTED_INDEX", selected)
+    monkeypatch.setattr("app.retrieval.index.CORPUS_PATH", corpus)
+    with pytest.raises(ValueError, match="obsoleto"):
+        SemanticIndex.load_selected()

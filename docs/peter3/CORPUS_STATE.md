@@ -1,4 +1,10 @@
+> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
+
 # Estado del corpus — PETER 3
+
+Fase 2.1: `verify_sources.py --upstream-only` pasa para 773 chunks con IDs únicos, textos no
+vacíos y SHA-256 `ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
+Los dos índices conservan el hash anterior y siguen `STALE`; véase `PHASE21_WIP_CHECKPOINT.md`.
 
 Estado reconstruido y verificado: 2026-09-29.
 

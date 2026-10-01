@@ -19,3 +19,9 @@
 ## Fallback esperado
 
 Ante conexión rechazada, timeout o 503, Laravel muestra un estado temporal sin producir HTTP 500 ni sustituir resultados con datos inventados.
+# Actualización fase 2
+
+El contrato operativo vigente para integrar PETER 2 está en
+`PETER2_INTEGRATION_CONTRACT.md`; incluye la API RIASEC V2, escala pública 1–5, autenticación
+obligatoria en producción, errores, timeouts y política de reintentos. Este documento conserva
+el contexto anterior de coordinación.

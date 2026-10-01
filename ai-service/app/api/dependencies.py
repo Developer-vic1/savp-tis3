@@ -10,7 +10,15 @@ from app.retrieval.service import get_retriever
 
 
 def verify_api_key(x_savp_ai_key: str | None = Header(default=None)) -> None:
-    expected = get_settings().api_key
+    settings = get_settings()
+    expected = settings.api_key
+
+    if settings.env.casefold() in {"production", "prod"} and not expected:
+        raise DomainError(
+            ErrorCode.SERVICE_TEMPORARILY_UNAVAILABLE,
+            "La autenticación del servicio no está configurada.",
+            status_code=503,
+        )
     if expected and (x_savp_ai_key is None or not secrets.compare_digest(expected, x_savp_ai_key)):
         raise DomainError(
             ErrorCode.INVALID_REQUEST,
@@ -22,7 +30,9 @@ def verify_api_key(x_savp_ai_key: str | None = Header(default=None)) -> None:
 @lru_cache(maxsize=1)
 def knowledge_retriever() -> HybridRetriever:
     try:
-        return get_retriever()
+        retriever = get_retriever()
+        retriever.semantic_index.ensure_backend_available()
+        return retriever
     except Exception as exc:
         raise DomainError(
             ErrorCode.KNOWLEDGE_INDEX_UNAVAILABLE,

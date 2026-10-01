@@ -36,7 +36,10 @@ def _reader() -> Any:
 class EasyOcrSpanish:
     engine_name = "EasyOCR"
     language = "es,en"
-    engine_version = version("easyocr")
+
+    @property
+    def engine_version(self) -> str:
+        return version("easyocr")
 
     def extract(self, image: Image.Image) -> tuple[str, float | None]:
         result: list[list[Any]] = _reader().readtext(

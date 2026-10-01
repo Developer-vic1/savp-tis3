@@ -1,4 +1,10 @@
+> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
+
 # Recuperación semántica
+
+Fase 2.1: E5 conserva prefijos `query: ` y `passage: `; MiniLM se conserva como alternativa.
+Ambos índices siguen `STALE` hasta generar embeddings reales en una máquina compatible con Torch.
+La reconstrucción y evaluación separada DEV/TEST están preparadas, no ejecutadas.
 
 ## Problema
 

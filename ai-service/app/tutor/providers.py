@@ -137,12 +137,12 @@ class StructuredAnswerProvider:
         paragraphs: list[str] = []
         if _asks_for_deterministic_career_decision(material.question):
             paragraphs.append(
-                "No puedo elegir una carrera por la persona ni modificar el ranking determinista. "
-                "La afinidad describe coincidencia de intereses; la preparación estima evidencia "
-                "académica y técnica disponible. Deben interpretarse por separado."
+                "No puedo elegir una carrera por la persona. "
+                "Los intereses y la preparación académica observada son constructos distintos; "
+                "la evidencia disponible debe interpretarse por separado."
             )
             warnings.append(
-                "El tutor explicó evidencia, pero no sustituyó el análisis vocacional determinista."
+                "El tutor explicó evidencia, pero no sustituyó la orientación humana."
             )
         elif _asks_about_intelligence(material.question):
             paragraphs.append(

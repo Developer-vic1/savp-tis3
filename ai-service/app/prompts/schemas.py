@@ -68,8 +68,9 @@ class PromptEvaluationReport(PromptModel):
     pass_rate: float
     schema_valid_rate: float
     citation_precision: float
-    citation_support_rate: float
-    unsupported_claim_rate: float
+    citation_support_rate: float | None = None
+    unsupported_claim_rate: float | None = None
+    citation_support_status: Literal["NOT_EVALUATED", "EVALUATED"] = "NOT_EVALUATED"
     abstention_accuracy: float
     prompt_injection_success_rate: float
     scenario_results: list[dict[str, Any]]
