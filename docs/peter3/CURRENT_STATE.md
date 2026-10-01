@@ -1,81 +1,25 @@
 # Estado actual de PETER 3
 
-> Auditoría ampliada 2026-09-28: la solicitud vigente exige también Learning
-> Analytics completo, conocimiento oficial, catálogo universitario, puente curricular,
-> ingesta/OCR, recuperación semántica, tutor basado en evidencia y evaluación real de
-> un LLM local. Esos bloques se controlan en `REQUIREMENTS_MATRIX.md`. Las secciones
-> históricas de este documento describen el núcleo inicial y no deben interpretarse
-> como una declaración de completitud del aporte total.
+Auditoría del 2026-09-30, rama `feature/APORTE`. Decisión: **NOT_SAFE_TO_COMMIT**. El detalle y los comandos están en `PETER3_FINAL_AUDIT.md`.
 
-Fecha: 2026-09-28.
+## Implementación encontrada
 
-## Qué se investigó
+- Servicio FastAPI V1, contratos Pydantic, perfil estudiantil, RIASEC, Learning Analytics y ranking experimental.
+- Cuatro rutas V1 y `GET /health`; **no existe** `POST /api/v2/analysis`.
+- 11 fuentes registradas; cinco ofertas de carrera en dos universidades; 12 relaciones experimentales del puente V1.
+- Corpus de 689 fragmentos y dos índices FAISS de 689 vectores; el índice seleccionado es E5 multilingüe.
+- Búsqueda híbrida y tutor estructurado por código; LLM local opcional. No hay consumidor Laravel.
 
-- Repositorio, ramas, worktrees, Markdown, informes históricos y frontera Laravel/Python.
-- O*NET® Interest Profiler: versión web vigente, idioma español, licencia, escala, scoring, confiabilidad y validez reportada.
+## Bloqueos comprobados
 
-## Qué se implementó
+1. Cuatro HTML UCB no coinciden con el SHA-256 del registro. El test existente de hashes fallaría con estos bytes.
+2. Ambos manifiestos de índice señalan el hash `216b088a…`, mientras el corpus actual tiene `fe64464f…`. El texto y el orden de los 689 fragmentos coinciden; faltan metadatos OCR en las copias del índice.
+3. V2, crosswalk de carrera a ocupación, registro de parámetros, conjuntos DEV/TEST y sistema de prompts versionados no existen.
+4. No había entorno Python del proyecto; el Python 3.12 disponible carece de FastAPI, pytest, Ruff, mypy, psutil y FAISS. No se obtuvieron resultados nuevos de tests, cobertura, API, retrieval ni rendimiento.
+5. No se encontró el informe académico actual en PDF/DOCX/ODT dentro del repositorio. DSRM, ICONIX y las cuatro fases se contrastan solo con los enunciados provistos para esta auditoría.
 
-- Worktree aislado sobre `feature/APORTE` desde `integration/savp-consolidado`.
-- Documentación inicial de continuidad y contrato v1.
-- Servicio FastAPI, contratos Pydantic, envelope estable de errores, fixtures y pruebas.
-- Scoring determinista O*NET® Mini‑IP 2.0 español.
-- Snapshot de perfil y analítica académica descriptiva.
+La API V1 conserva umbrales, pesos, un índice global de compatibilidad y `consistency_ratio` como componente de preparación. Son **heurísticas experimentales heredadas** y no deben presentarse como V2, aptitud o probabilidad de éxito. Los documentos históricos de 2026-09-28 no son evidencia de ejecución actual.
 
-## Qué funciona
+## Próximo paso
 
-- `GET /health` sin datos sensibles.
-- `POST /api/v1/analysis` para perfiles completos, parciales e insuficientes.
-- Diferenciación explícita de afinidad/intereses frente a preparación académica.
-- Manejo de faltantes, empates RIASEC, hash de entrada, versiones y `trace_id`.
-
-## Qué no funciona todavía
-
-- Catálogo validado de carreras bolivianas, afinidad, preparación por carrera, ranking, brechas y rutas.
-- Corpus oficial, ingestión, OCR, embeddings, retrieval, tutor con fuentes y LLM local.
-- Integración Laravel/PostgreSQL (deliberadamente no iniciada).
-
-## Entorno real
-
-- OS: Microsoft Windows NT 10.0.26200.0.
-- Python del host: 3.14.0 (`C:\Python314\python.exe`).
-- `uv` no estaba instalado al auditar; se instala dentro de `ai-service/.venv` y se registra después de resolver el entorno.
-
-## Dependencias instaladas
-
-Lock generado con `uv 0.12.19`. Directas: FastAPI `0.141.1`, Pydantic `2.13.5`, pydantic-settings `2.15.0`, Uvicorn `0.54.0`; desarrollo: HTTPX `0.28.1`, pytest `9.1.1`, pytest-asyncio `1.4.0`, pytest-cov `7.1.0`, coverage `7.16.2`, Ruff `0.16.9`, mypy `1.20.2`, psutil `7.2.2`. `ai-service/uv.lock` fija también todas las transitivas.
-
-## Resultados reales y mediciones
-
-- 16 pruebas aprobadas; cobertura de líneas 97%.
-- Ruff: sin hallazgos. Mypy estricto: sin hallazgos en 23 archivos fuente.
-- Benchmark sintético N=1,000: media `0.3740 ms`, p95 `0.7061 ms` para cálculo directo; importación fría media `1,216.3399 ms` (N=5).
-- Advertencia no bloqueante: FastAPI `TestClient` emite una deprecación de Starlette sobre `httpx`; no afecta respuestas ni producción.
-- No hay métricas predictivas ni afirmaciones de validación boliviana.
-
-## Archivos creados/modificados
-
-Solo `ai-service/**` y `docs/peter3/**` en el worktree aislado. No se modificó ningún archivo Laravel, SQL, PHP, Node ni del worktree original.
-
-## Decisiones
-
-Mini‑IP 2.0 español literal; core offline; estados por evidencia; afinidad/preparación separadas; conocimiento sin corpus falla de forma explícita. Detalle en `DECISIONS.md`.
-
-## Pendientes
-
-Fuentes bolivianas, catálogo universitario, puente de competencias, afinidad, preparación, ranking, gaps, rutas, ingestion/OCR, retrieval y evaluación de LLM local.
-
-## Dependencias para PETER 2
-
-Validar DTO, nullability, timeout, autenticación interna y fallback. Véanse `PETER2_INTEGRATION.md` y `PETER2_INTEGRATION_REQUEST.md`.
-
-## Riesgos
-
-- El contrato de PETER 2 todavía no existe; el contrato aquí es preliminar.
-- Python 3.14 es reciente y puede limitar compatibilidad de paquetes científicos posteriores.
-- La traducción O*NET® se reproduce literalmente; no se localiza para Bolivia sin un proceso de validación.
-- El Laravel actual mezcla promedio y “compatibilidad”; integrar ambos resultados sin corregir semántica confundiría preparación con afinidad.
-
-## Próximo paso recomendado
-
-Validar el contrato con PETER 2 y comenzar gobernanza de fuentes oficiales bolivianas antes de calcular afinidad o preparación por carrera.
+Recuperar la procedencia de los cuatro HTML, reconstruir o conciliar el corpus e índices, implementar o replanificar explícitamente V2 y el resto del alcance, instalar el entorno fijado por `uv.lock` y ejecutar todos los gates. No se realizó commit.

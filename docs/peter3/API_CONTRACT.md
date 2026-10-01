@@ -1,5 +1,7 @@
 # Contrato API v1 preliminar
 
+> Estado auditado el 2026-09-30: rutas comprobadas por código, sin prueba HTTP en este entorno. `POST /api/v2/analysis` no existe. Véase `INTEGRATION_READINESS.md`.
+
 Base path: `/api/v1`. Esquema: `1.0`. Este contrato debe ser revisado por PETER 2 antes de integrar.
 
 ## `GET /health`

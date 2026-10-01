@@ -1,11 +1,7 @@
 # Base de conocimiento
 
-La ingesta operativa se documenta en `OCR_PIPELINE.md`; gobierno y versiones en
-`SOURCE_GOVERNANCE.md`. El corpus procesado se genera desde los snapshots del manifiesto y no
-desde URLs vivas durante una consulta.
+Estado auditado el 2026-09-30: el repositorio tiene **11** fuentes registradas, un corpus de **689** fragmentos y dos índices FAISS. La ruta `POST /api/v1/knowledge/search` está implementada en código. No se verificó su ejecución HTTP en el entorno actual.
 
-Estado: diseño, sin corpus indexado.
+La ingesta y OCR se describen en `OCR_PIPELINE.md`; gobierno y versiones en `SOURCE_GOVERNANCE.md`; selección de embeddings en `SEMANTIC_RETRIEVAL.md`. El corpus se construye desde snapshots locales, no desde URLs durante cada consulta.
 
-El conocimiento global deberá separar Ministerio de Educación, normativa BTH, currículo, universidades y mallas institucionales. Cada fuente conservará institución, título, URL, oficialidad, fechas, hash, versión, sección y página.
-
-Hasta que exista un manifiesto revisado, `/api/v1/knowledge/search` devuelve 503 tipado y el tutor no inventa evidencia.
+La integridad **no** está aprobada: cuatro HTML UCB no coinciden con sus hashes y los índices conservan el hash de un corpus anterior. Hasta resolverlo, los resultados recuperados no deben presentarse como evidencia completamente trazable. Si el índice no puede cargarse, el código devuelve un error 503 tipado; ese comportamiento no se comprobó con HTTP en esta auditoría.

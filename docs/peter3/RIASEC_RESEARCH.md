@@ -15,11 +15,13 @@ Fecha de verificación: 2026-09-28.
 
 | Instrumento | Reactivos | Español oficial | Scoring | Licencia/uso | Decisión |
 |---|---:|---|---|---|---|
-| O*NET® Mini‑IP 2.0 | 30, 5 por dimensión | Sí, web oficial | 0–4; suma 0–20 por dimensión | reproducción literal CC BY‑ND 4.0; adaptación exige licencia de desarrollador y validación | seleccionado |
+| O*NET® Mini‑IP 2.0 | 30, 5 por dimensión | Sí, web oficial | web/API 1–5; contrato SAVP V1 0–4 tras restar 1; suma interna 0–20 | reproducción literal CC BY‑ND 4.0; adaptación exige licencia de desarrollador y validación | seleccionado |
 | O*NET® IP Short Form | 60, 10 por dimensión | Sí mediante web/API | 0–4; suma 0–40 | mismas opciones de licencia | no seleccionado por mayor carga |
 | 18REST | 18 | original en portugués | descrito en publicación | no ofrece una traducción española oficial equivalente en las fuentes revisadas | descartado para este hito |
 
 ## Evidencia documentada
+
+- La [web oficial](https://onetinterestprofiler.org/es/) y la [referencia de la API](https://services.onetcenter.org/reference/mpp/ip/ip_questions_30) presentan cinco opciones codificadas 1–5. El [manual](https://www.onetcenter.org/dl_files/IP_Manual.pdf) describe también una codificación web histórica 0–4. SAVP adopta esta última como escala computacional interna y documenta la transformación.
 
 - El Mini‑IP fue construido con teoría de respuesta al ítem, fidelidad estructural RIASEC, cobertura y balance de género.
 - El manual reporta alfa por dimensión de `.74` a `.81` en la muestra de validación (`N=575`) y correlaciones convergentes `.95–.96` con el Short Form.

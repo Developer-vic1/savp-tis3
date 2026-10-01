@@ -2,7 +2,7 @@ import pytest
 
 from app.contracts.errors import DomainError, ErrorCode
 from app.contracts.requests import RiasecResponse, VocationalData
-from app.riasec.scoring import score_riasec
+from app.riasec.scoring import official_web_value_to_internal, score_riasec
 
 
 def vocational(values: list[int]) -> VocationalData:
@@ -14,6 +14,17 @@ def vocational(values: list[int]) -> VocationalData:
             for index, value in enumerate(values, start=1)
         ],
     )
+
+
+@pytest.mark.parametrize("official,internal", [(1, 0), (2, 1), (3, 2), (4, 3), (5, 4)])
+def test_official_web_scale_conversion(official: int, internal: int) -> None:
+    assert official_web_value_to_internal(official) == internal
+
+
+@pytest.mark.parametrize("invalid", [0, 6, 1.5, True])
+def test_official_web_scale_rejects_invalid_values(invalid: object) -> None:
+    with pytest.raises(ValueError):
+        official_web_value_to_internal(invalid)  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize("value,expected", [(0, 0), (4, 20)])

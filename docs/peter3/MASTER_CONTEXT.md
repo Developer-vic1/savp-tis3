@@ -1,5 +1,7 @@
 # Contexto maestro de PETER 3
 
+> Documento histórico de arranque. Su descripción del primer hito y del worktree original no describe el estado actual. La auditoría vigente está en `PETER3_FINAL_AUDIT.md` (2026-09-30).
+
 Última actualización: 2026-09-28 (America/La_Paz).
 
 ## Identidad y alcance

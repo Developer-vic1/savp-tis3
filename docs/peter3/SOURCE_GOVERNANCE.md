@@ -1,5 +1,7 @@
 # Gobernanza de fuentes
 
+> Estado auditado el 2026-09-30: 11 snapshots registrados; cuatro HTML UCB no coinciden con el SHA-256 del registro. La integridad de fuentes está en FAIL hasta recuperar su procedencia. Véase `PETER3_FINAL_AUDIT.md`.
+
 ## Problema, evidencia y componente
 
 La orientación pierde trazabilidad si una URL cambia, un PDF se reemplaza silenciosamente o

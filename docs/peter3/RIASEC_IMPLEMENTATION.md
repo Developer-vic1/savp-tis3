@@ -23,6 +23,13 @@ score descendente y orden RIASEC para desempate, `top_codes`, empate superior y 
 seguro. No se publica puntaje parcial del instrumento: una respuesta faltante invalida el
 cálculo y la cobertura de una ejecución válida es 1.0.
 
+La web y el servicio API oficial de O*NET presentan respuestas **1–5**. El contrato
+actual de SAVP V1 recibe **0–4**. Un consumidor que capture la escala oficial debe
+convertirla explícitamente con `official_web_value_to_internal`: `1→0`, `2→1`,
+`3→2`, `4→3`, `5→4`. La función rechaza valores fuera de 1–5 y booleanos. No hay
+consumidor Laravel integrado que aplique todavía esta conversión; enviarla sin
+convertir puede dar un rechazo 422 o una puntuación desplazada.
+
 ## Tests
 
 Cobertura de instrumento completo, faltantes, duplicados, rango, extremos, perfil plano, empate, orden, versión y reproducibilidad.

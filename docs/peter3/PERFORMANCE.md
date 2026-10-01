@@ -1,5 +1,7 @@
 # Rendimiento medido
 
+> Registro histórico del 2026-09-28. No se pudo repetir este benchmark en la auditoría del 2026-09-30 porque el entorno actual no tiene las dependencias Python instaladas. No usar estos valores como rendimiento actual ni como SLA.
+
 Fecha: 2026-09-28. Comando: `.venv/Scripts/uv run python scripts/benchmark.py`.
 
 ## Entorno

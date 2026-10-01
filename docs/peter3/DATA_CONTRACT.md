@@ -16,7 +16,7 @@ Cada observación tiene `subject`, `score` entre 0 y 100, `period` y `period_ord
 
 ## RIASEC
 
-Los 30 reactivos son un conjunto versionado. No se admiten duplicados, faltantes, valores fraccionarios ni fuera de 0–4.
+Los 30 reactivos son un conjunto versionado. El contrato V1 recibe enteros 0–4; la web/API oficial usa 1–5 y el consumidor debe convertir explícitamente con `official_web_value_to_internal`. No se admiten duplicados, faltantes, valores fraccionarios ni fuera de 0–4.
 
 ## Hash y trazabilidad
 

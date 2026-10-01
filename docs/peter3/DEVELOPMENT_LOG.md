@@ -1,5 +1,7 @@
 # Registro de desarrollo
 
+> Registro histórico. Las cifras de corpus, pruebas y entorno de entradas anteriores no son el estado actual. Véase `PETER3_FINAL_AUDIT.md` (2026-09-30).
+
 ## 2026-09-28 — Learning Analytics ampliado
 
 - Se añadieron escalas explícitas por nota y normalización determinista a 0–100.

@@ -5,6 +5,13 @@ from app.riasec.instrument import load_instrument
 from app.riasec.interpretation import RIASEC_ORDER, ordered_codes, safe_interpretation
 
 
+def official_web_value_to_internal(value: int) -> int:
+    """Map an official 1–5 response to this service's documented 0–4 scale."""
+    if type(value) is not int or not 1 <= value <= 5:
+        raise ValueError("La respuesta oficial debe ser un entero entre 1 y 5")
+    return value - 1
+
+
 def score_riasec(data: VocationalData) -> RiasecProfile:
     instrument = load_instrument()
     unsupported_instrument = data.instrument_id != instrument["instrument_id"]

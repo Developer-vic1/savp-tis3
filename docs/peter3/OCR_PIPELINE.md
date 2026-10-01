@@ -48,7 +48,7 @@ del contenido oficial.
 
 ## Evidencia ejecutada 2026-09-28
 
-- Corpus: 11 fuentes, 818 chunks y 818 IDs únicos.
+- Corpus en el working tree auditado el 2026-09-30: 11 fuentes, 689 chunks y 689 IDs únicos; 35 chunks de OCR. Esta cifra se recalculó desde `data/processed/corpus.jsonl` y no implica que los snapshots de origen hayan pasado el control de hashes.
 - PDF: 389 páginas digitales y 22 páginas procesadas por OCR; 11 páginas visuales sin texto
   recuperable quedaron como advertencia, no como éxito.
 - Resultado: 35 chunks OCR, todos con confianza; mínimo 0.4638 y media 0.7656.

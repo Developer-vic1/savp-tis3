@@ -1,5 +1,7 @@
 # Puente secundaria–universidad
 
+> Estado auditado el 2026-09-30: existe un puente V1 de 12 relaciones experimentales, pendiente de revisión experta. No existe puente V2 ni clasificación `DIRECTLY_DOCUMENTED`/`DOCUMENT_SUPPORTED_INFERENCE`/etc. Véase `PETER3_FINAL_AUDIT.md`.
+
 ## Problema
 
 Una asignatura secundaria y una universitaria no son equivalentes por compartir palabras. El

@@ -1,5 +1,7 @@
 # Recuperación semántica
 
+> Estado auditado el 2026-09-30: hay dos índices FAISS de 689 vectores, pero sus manifiestos referencian un hash de corpus anterior. Las métricas guardadas son históricas y no se pudieron repetir en el entorno actual. Véase `PETER3_FINAL_AUDIT.md`.
+
 ## Problema
 
 La búsqueda por coincidencia literal falla ante paráfrasis como “materias al iniciar Sistemas”
@@ -15,7 +17,7 @@ del dataset local, no de popularidad externa.
 
 FAISS usa `IndexFlatIP` con vectores L2-normalizados: producto interno equivale a similitud
 coseno y la búsqueda es exacta para este corpus pequeño. Índices aproximados no aportan una
-ventaja defendible con 818 chunks.
+ventaja defendible con 689 chunks en el corpus actual (auditoría 2026-09-30). Las métricas históricas requieren reevaluación antes de usarse como resultado vigente.
 
 ## Componentes
 
@@ -41,4 +43,4 @@ una advertencia, nunca una cita inventada.
 - evaluación A/B real sobre el dataset completo;
 - endpoint con consulta, filtros y fuentes trazables.
 
-Los resultados, latencias y criterio de selección se añaden después de ejecutar el experimento.
+Los resultados y el criterio de selección históricos están en `data/evaluation/retrieval_results.json` y `data/indexes/selected.json`; deben reejecutarse con los datos íntegros y particiones DEV/TEST antes de declararlos actuales.

@@ -1,9 +1,13 @@
-# Limitaciones
+# Limitaciones vigentes
 
-- No existe validación localizada del Mini‑IP en Bolivia aportada o encontrada.
-- El contrato con PETER 2 es preliminar.
-- No existe todavía corpus oficial versionado ni catálogo universitario gobernado.
-- No se calculan afinidad, preparación, ranking, brechas o rutas por carrera.
-- No hay OCR, embeddings, FAISS, LLM local ni OpenAI.
-- Los fixtures son sintéticos y solo sirven para verificación de software.
-- El entorno usa Python 3.14; paquetes científicos posteriores deben comprobar compatibilidad antes de adoptarse.
+Auditoría del 2026-09-30. Véase `PETER3_FINAL_AUDIT.md`.
+
+- V1 es un motor experimental. Sus pesos, objetivos RIASEC por carrera, umbrales de notas, brechas numéricas y ranking no cuentan con validación científica ni revisión pedagógica documentada.
+- Interés, preparación, calidad de evidencia y capacidad son conceptos distintos. El resultado no decide carrera ni predice éxito.
+- El Mini-IP español no tiene validación local boliviana documentada para esta población. La web/API oficial usa escala 1–5; el contrato V1 usa 0–4 y requiere conversión explícita.
+- Cuatro snapshots HTML UCB no coinciden con sus hashes registrados. No se determinó su origen.
+- El corpus actual tiene 689 fragmentos, pero ambos índices conservan un hash del corpus anterior y copias sin metadatos OCR de 35 fragmentos.
+- No existen V2, crosswalk ocupacional, registro de parámetros, particiones DEV/TEST, prompts versionados ni E2E técnico completo.
+- No se verificaron ejecución, cobertura, calidad estática, recuperación, tutor, LLM ni rendimiento en el entorno actual por dependencias ausentes.
+- El corpus cubre 11 fuentes y cinco ofertas; no es exhaustivo. Los PDF ministeriales antiguos requieren revisión de vigencia.
+- El informe académico actual no está en el repositorio; sus promesas de DSRM, ICONIX y fases no pudieron contrastarse directamente con el documento original.
