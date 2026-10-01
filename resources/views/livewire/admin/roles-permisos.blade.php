@@ -8,6 +8,19 @@
         @endif
     </section>
 
+    <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-7" aria-label="Jerarquía de acceso">
+        <h2 class="text-xl font-bold">Jerarquía de acceso</h2>
+        <p class="ui-muted mt-2">Para entrar en un workspace, la cuenta activa debe tener un único actor institucional. El rol reúne permisos; cada permiso habilita módulos o acciones. Los seis actores son funciones distintas, no una cadena de herencia de permisos.</p>
+        <ol class="mt-5 grid gap-3 md:grid-cols-4">
+            @foreach (['1. Cuenta activa', '2. Rol institucional', '3. Permisos asignados', '4. Módulos y acciones'] as $step)
+                <li class="ui-card-soft rounded-2xl p-4 font-semibold">{{ $step }}</li>
+            @endforeach
+        </ol>
+        @unless(auth()->user()->can('roles-permisos.gestionar') && auth()->user()->can('roles.permisos.asignar'))
+            <p class="ui-alert-warning mt-5" role="status">Consulta disponible con el permiso histórico. La edición de permisos requiere la autorización nueva y permanece deshabilitada.</p>
+        @endunless
+    </section>
+
     <div class="grid gap-6 xl:grid-cols-[320px_1fr]">
         <aside class="ui-card card-shadow rounded-[2rem] p-5" aria-label="Roles disponibles">
             <h2 class="font-bold" style="color: var(--ui-text);">Roles</h2>
@@ -24,13 +37,45 @@
         </aside>
 
         <section class="ui-card card-shadow rounded-[2rem] p-5 sm:p-7">
+            <div class="ui-card-soft mb-6 rounded-2xl p-4 sm:p-5" aria-label="Ventanas originales del rol">
+                <h2 class="text-xl font-bold">Ventanas originales · {{ $selectedRole?->name }}</h2>
+                <p class="ui-muted mt-2 text-sm">{{ $roleWindows->count() }} ventanas del catálogo aprobado V001–V105. Rutas y estados tomados de la matriz de conciliación; PARCIAL o BLOQUEADA no significan certificación funcional ni autorizan accesos nuevos.</p>
+                <div class="mt-4 max-h-80 overflow-auto rounded-xl border" style="border-color: var(--ui-border);">
+                    <table class="w-full min-w-[800px] text-left text-sm">
+                        <thead style="background: var(--ui-surface-muted);"><tr><th class="px-3 py-2">ID</th><th class="px-3 py-2">Ventana original</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Ruta actual</th><th class="px-3 py-2">Objetivo</th></tr></thead>
+                        <tbody>
+                            @foreach($roleWindows as $window)
+                                <tr class="border-t" style="border-color: var(--ui-border);">
+                                    <td class="px-3 py-2 font-bold">{{ $window['id'] }}</td>
+                                    <td class="px-3 py-2">{{ $window['name'] }}<span class="ui-muted block text-xs">{{ $window['system'] }} · histórica {{ $window['current_path'] }}</span></td>
+                                    <td class="px-3 py-2">{{ match($window['status']) { 'PARTIAL' => 'PARCIAL', 'BLOCKED_EXTERNALLY_DB' => 'BLOQUEADA POR BD', 'BLOCKED_EXTERNALLY_INSTITUTIONAL' => 'BLOQUEADA POR DECISIÓN', default => $window['status'] } }}</td>
+                                    <td class="px-3 py-2">{{ $window['runtime_path'] }}</td>
+                                    <td class="px-3 py-2">{{ $window['target_path'] }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @if($legacyReadGrants->isNotEmpty())
+                    <h3 class="mt-5 font-bold">Lecturas habilitadas por permisos históricos</h3>
+                    <p class="ui-muted mt-1 text-sm">Compatibilidad de consulta calculada con los permisos que este rol tiene realmente en la base de datos. Las escrituras siguen sujetas a permisos propios.</p>
+                    <ul class="mt-3 grid gap-2 md:grid-cols-2">
+                        @foreach($legacyReadGrants as $grant)
+                            <li class="rounded-xl border px-3 py-2 text-sm" style="border-color: var(--ui-border);">
+                                <span class="font-semibold">{{ $grant['permission'] }}</span>
+                                <span class="ui-muted block">por {{ $grant['legacy'] }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <label class="block w-full max-w-xl">
                     <span class="sr-only">Buscar permisos</span>
                     <input wire:model.live.debounce.250ms="search" type="search" placeholder="Buscar permiso..."
                         class="w-full rounded-2xl border px-4 py-3" style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
                 </label>
-                <button type="button" wire:click="save" wire:confirm="¿Guardar estos cambios de permisos para todas las cuentas del rol? Los cambios sensibles quedarán registrados en Bitácora." wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles.permisos.asignar'))
+                <button type="button" wire:click="save" wire:confirm="¿Guardar estos cambios de permisos para todas las cuentas del rol? Los cambios sensibles quedarán registrados en Bitácora." wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))
                     class="rounded-2xl px-5 py-3 font-semibold text-white disabled:opacity-60" style="background: var(--ui-primary);">
                     Guardar cambios
                 </button>
@@ -48,8 +93,8 @@
                 <label class="ui-label">Estado<select class="ui-select" wire:model.live="selection"><option value="">Todos</option><option value="selected">Seleccionados</option><option value="unselected">Sin seleccionar</option></select></label>
             </div>
             <div class="flex flex-wrap gap-3">
-                <button type="button" class="ui-btn-secondary" wire:click="selectVisible(true)" wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles.permisos.asignar'))>Seleccionar visibles</button>
-                <button type="button" class="ui-btn-secondary" wire:click="selectVisible(false)" wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles.permisos.asignar'))>Deseleccionar visibles</button>
+                <button type="button" class="ui-btn-secondary" wire:click="selectVisible(true)" wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))>Seleccionar visibles</button>
+                <button type="button" class="ui-btn-secondary" wire:click="selectVisible(false)" wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))>Deseleccionar visibles</button>
             </div>
             <details class="ui-card-soft mt-4 p-4" @if(count($added) + count($removed)) open @endif>
                 <summary>Cambios pendientes: {{ count($added) }} agregados · {{ count($removed) }} retirados</summary>
@@ -69,7 +114,7 @@
                         <div class="mt-3 grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
                             @foreach ($permissions as $permission)
                                 <label class="flex cursor-pointer items-start gap-3 rounded-2xl border p-3" style="border-color: var(--ui-border);">
-                                    <input type="checkbox" wire:model.live="selectedPermissions" value="{{ $permission->name }}" @disabled(!auth()->user()->can('roles.permisos.asignar'))
+                                    <input type="checkbox" wire:model.live="selectedPermissions" value="{{ $permission->name }}" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))
                                         class="mt-1 rounded" style="color: var(--ui-primary);">
                                     @php($description = \App\Support\PermissionLabel::describe($permission->name))
                                     <span class="min-w-0 text-sm" style="color: var(--ui-text-soft);">

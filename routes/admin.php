@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('admin')->name('admin.')->middleware('actor:Administrador')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/lms-supervision', [InstitutionalQueryController::class, 'index'])->defaults('area', 'lms')->middleware('can:cursos.ver.institucional')->name('consulta');
-    Route::view('/roles-permisos', 'admin.roles-permisos')->middleware('can:roles-permisos.gestionar')->name('roles-permisos');
+    Route::view('/roles-permisos', 'admin.roles-permisos')->middleware('can:roles-permisos.ver')->name('roles-permisos');
     Route::get('/roles-permisos/solicitudes/{roleRequest}/documento', RoleRequestDocumentController::class)
         ->middleware(['can:roles-permisos.gestionar', 'can:roles.documentos.ver'])->name('roles-permisos.documento');
     Route::view('/asignaciones-regencia', 'admin.asignaciones-regencia')->middleware('can:regencia.asignaciones.gestionar')->name('asignaciones-regencia');

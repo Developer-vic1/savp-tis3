@@ -1,0 +1,11 @@
+Branch: feature/REESTRUCTURACION
+HEAD: 2f9d5e8dc5a85983b244f32efcd30b14ebd4c16b
+Staged files: 0
+Modified tracked: 73
+New including previous patch: 62
+Deleted: 0
+Changes in css/env/migrations/seeders: 0
+Routes including vendor: 127
+Protected prior files diff:
+22	12	resources/views/livewire/aula-virtual/orientacion/explorador-vocacional.blade.php
+68	20	resources/views/livewire/secretaria/cuentas.blade.php

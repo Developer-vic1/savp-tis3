@@ -1,0 +1,135 @@
+ M .env.example
+ M app/Http/Controllers/Admin/ReportePdfController.php
+ M app/Http/Controllers/AdminDashboardController.php
+ M app/Http/Controllers/AulaVirtual/AsistenciaController.php
+ M app/Http/Controllers/AulaVirtual/EntregaController.php
+ M app/Http/Controllers/AulaVirtual/MaterialController.php
+ M app/Http/Controllers/AulaVirtual/TareaController.php
+ M app/Http/Controllers/DashboardController.php
+ M app/Http/Controllers/Estudiante/ExperienceController.php
+ M app/Http/Controllers/InstitutionalQueryController.php
+ M app/Http/Controllers/WorkspaceController.php
+ M app/Http/Middleware/EnsureActorRole.php
+ M app/Livewire/Admin/GestionUsuarios.php
+ M app/Livewire/AulaVirtual/Cursos/CursoDetalleDocente.php
+ M app/Livewire/AulaVirtual/Cursos/CursoDetalleEstudiante.php
+ M app/Livewire/AulaVirtual/Materiales/CrearMaterial.php
+ M app/Livewire/AulaVirtual/Materiales/EditarMaterial.php
+ M app/Livewire/AulaVirtual/Orientacion/ExploradorVocacional.php
+ M app/Livewire/AulaVirtual/Tareas/CrearTarea.php
+ M app/Livewire/AulaVirtual/Tareas/EditarTarea.php
+ M app/Livewire/InstitutionalAuthorization.php
+ M app/Policies/AulaVirtualEntregaPolicy.php
+ M app/Policies/AulaVirtualTareaPolicy.php
+ M app/Providers/AppServiceProvider.php
+ M app/Services/AcademicAccessService.php
+ M app/Services/AporteIngenieril/AnalysisService.php
+ M app/Services/AporteIngenieril/AporteIngenierilClient.php
+ M app/Services/AporteIngenieril/KnowledgeService.php
+ M app/Services/AporteIngenieril/TutorService.php
+ M app/Services/AulaVirtual/AsistenciaService.php
+ M app/Services/AulaVirtual/CursoVirtualService.php
+ M app/Services/AulaVirtual/EntregaService.php
+ M app/Services/AulaVirtual/MaterialService.php
+ M app/Services/AulaVirtual/OrientacionService.php
+ M app/Services/AulaVirtual/TareaService.php
+ M app/Services/GradeService.php
+ M app/Services/InstitutionalDashboardService.php
+ M app/Services/OperationalAccountService.php
+ M app/Services/RegencyAccessService.php
+ M app/Services/Reportes/GeneradorSqlAcademicoService.php
+ M app/Services/Reportes/GeneradorZipReportesService.php
+ M app/Services/RoleDashboardResolver.php
+ M app/Services/RolePermissionService.php
+ M app/Services/RoleRequestService.php
+ M config/services.php
+ M resources/js/app.js
+ M resources/views/admin/dashboard-administrador.blade.php
+ M resources/views/aula-virtual/cursos/show-docente.blade.php
+ M resources/views/aula-virtual/cursos/show-estudiante.blade.php
+ M resources/views/aula-virtual/dashboard/docente.blade.php
+ M resources/views/aula-virtual/dashboard/estudiante.blade.php
+ M resources/views/aula-virtual/layouts/app.blade.php
+ M resources/views/aula-virtual/layouts/sidebar.blade.php
+ M resources/views/aula-virtual/tareas/entregar.blade.php
+ M resources/views/components/actor-menu.blade.php
+ M resources/views/estudiante/area.blade.php
+ M resources/views/layouts/app.blade.php
+ M resources/views/layouts/sidebar.blade.php
+ M resources/views/livewire/admin/gestion-usuarios.blade.php
+ M resources/views/livewire/aula-virtual/materiales/crear-material.blade.php
+ M resources/views/livewire/aula-virtual/orientacion/explorador-vocacional.blade.php
+ M resources/views/livewire/aula-virtual/tareas/crear-tarea.blade.php
+ M resources/views/livewire/secretaria/cuentas.blade.php
+ M resources/views/workspaces/consulta.blade.php
+ M resources/views/workspaces/institucional.blade.php
+ M routes/actors.php
+ M routes/aula_virtual.php
+ M tests/TestCase.php
+ M tests/Unit/AcademicSecurityTest.php
+ M tests/Unit/AporteIngenierilClientTest.php
+ M tests/Unit/AuthorizationBoundariesTest.php
+ M tests/Unit/RoleDashboardResolverTest.php
+ M tests/Unit/RoleRequestAuthorizationTest.php
+?? PETER2_REESTRUCTURACION.patch
+?? app/Contracts/SpecializedAcademicClient.php
+?? app/Livewire/Shared/CourseContent.php
+?? app/Livewire/Shared/CourseWorkspace.php
+?? app/Livewire/Shared/ModuleSearch.php
+?? app/Livewire/Shared/StudyAssistant.php
+?? app/Services/AulaVirtual/PublicacionService.php
+?? app/Services/InstitutionalQueryService.php
+?? app/Services/ReportAccessService.php
+?? app/Support/PrivateFilePath.php
+?? app/Support/WorkspaceNavigation.php
+?? docs/implementacion-maestra/00-ESTADO.md
+?? docs/implementacion-maestra/01-RUTAS.md
+?? docs/implementacion-maestra/02-WORKSPACES.md
+?? docs/implementacion-maestra/03-ADMIN.md
+?? docs/implementacion-maestra/04-DIRECTOR.md
+?? docs/implementacion-maestra/05-SECRETARIA.md
+?? docs/implementacion-maestra/06-REGENTE.md
+?? docs/implementacion-maestra/07-DOCENTE.md
+?? docs/implementacion-maestra/08-ESTUDIANTE.md
+?? docs/implementacion-maestra/09-LMS.md
+?? docs/implementacion-maestra/10-KARDEX.md
+?? docs/implementacion-maestra/11-LIVEWIRE.md
+?? docs/implementacion-maestra/12-UX-UI.md
+?? docs/implementacion-maestra/13-RBAC.md
+?? docs/implementacion-maestra/14-DATOS.md
+?? docs/implementacion-maestra/15-TESTS.md
+?? docs/implementacion-maestra/16-PENDIENTES-PETER1.md
+?? docs/implementacion-maestra/17-ARCHIVOS-MODIFICADOS.md
+?? docs/implementacion-maestra/18-CONEXIONES.md
+?? docs/implementacion-maestra/19-DARK-MODE.md
+?? docs/implementacion-maestra/20-DEUDA-TECNICA.md
+?? docs/implementacion-maestra/MATRIZ-105-VENTANAS.md
+?? docs/implementacion-maestra/MATRIZ-CONCILIACION-105.csv
+?? docs/implementacion-maestra/evidencia/blade-cache.txt
+?? docs/implementacion-maestra/evidencia/blade-php-lint.txt
+?? docs/implementacion-maestra/evidencia/catalogo-original-105.csv
+?? docs/implementacion-maestra/evidencia/composer-validate.txt
+?? docs/implementacion-maestra/evidencia/conciliacion-verificacion.txt
+?? docs/implementacion-maestra/evidencia/git-diff-check.txt
+?? docs/implementacion-maestra/evidencia/git-diff-stat.txt
+?? docs/implementacion-maestra/evidencia/git-modificados.txt
+?? docs/implementacion-maestra/evidencia/git-nuevos.txt
+?? docs/implementacion-maestra/evidencia/git-preservacion.txt
+?? docs/implementacion-maestra/evidencia/git-status.txt
+?? docs/implementacion-maestra/evidencia/inventario-arquitectura-original.csv
+?? docs/implementacion-maestra/evidencia/inventario-peter2.csv
+?? docs/implementacion-maestra/evidencia/php-lint.txt
+?? docs/implementacion-maestra/evidencia/routes.json
+?? docs/implementacion-maestra/evidencia/tests.txt
+?? docs/implementacion-maestra/evidencia/vite-build.txt
+?? resources/views/livewire/shared/course-content.blade.php
+?? resources/views/livewire/shared/course-workspace.blade.php
+?? resources/views/livewire/shared/module-search.blade.php
+?? resources/views/livewire/shared/study-assistant.blade.php
+?? routes/direccion.php
+?? routes/docente.php
+?? routes/estudiante.php
+?? routes/regencia.php
+?? routes/secretaria.php
+?? tests/Unit/PrivateFilePathTest.php
+?? tests/Unit/WorkspaceIntegrityTest.php

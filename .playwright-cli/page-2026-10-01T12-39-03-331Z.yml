@@ -1,0 +1,143 @@
+- generic [ref=f9e3]:
+  - complementary "Navegación de Secretaria" [ref=f9e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f9e6] [cursor=pointer]:
+      - /url: http://localhost:8000/secretaria
+      - img "Logo Franz Tamayo 3" [ref=f9e7]
+      - generic [ref=f9e8]:
+        - generic [ref=f9e9]: Franz Tamayo N°3
+        - generic [ref=f9e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f9e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f9e13]: ☰
+      - generic [ref=f9e14]: Secretaria
+    - navigation [ref=f9e15]:
+      - link "Inicio" [ref=f9e16] [cursor=pointer]:
+        - /url: http://localhost:8000/secretaria
+        - generic [aria-hidden] [ref=f9e17]: ⌂
+      - generic [ref=f9e19]:
+        - heading "Administración" [level=2] [ref=f9e20]
+        - link "Personas" [ref=f9e21] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/personas
+          - generic [aria-hidden] [ref=f9e22]: •
+        - link "Estudiantes" [ref=f9e24] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/estudiantes
+          - generic [aria-hidden] [ref=f9e25]: •
+        - link "Inscripciones" [ref=f9e27] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/inscripciones
+          - generic [aria-hidden] [ref=f9e28]: •
+        - link "Documentación" [ref=f9e30] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/documentacion
+          - generic [aria-hidden] [ref=f9e31]: •
+        - link "Cuentas operativas" [ref=f9e33] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/cuentas
+          - generic [aria-hidden] [ref=f9e34]: •
+        - link "Procedencia" [ref=f9e36] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/procedencia
+          - generic [aria-hidden] [ref=f9e37]: •
+        - link "Vinculación" [ref=f9e39] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/vinculacion
+          - generic [aria-hidden] [ref=f9e40]: •
+      - generic [ref=f9e42]:
+        - heading "Gestión académica" [level=2] [ref=f9e43]
+        - link "Calendario" [ref=f9e44] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/calendario
+          - generic [aria-hidden] [ref=f9e45]: •
+        - link "Cursos" [ref=f9e47] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/cursos
+          - generic [aria-hidden] [ref=f9e48]: •
+        - link "Paralelos" [ref=f9e50] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/paralelos
+          - generic [aria-hidden] [ref=f9e51]: •
+        - link "Turnos" [ref=f9e53] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/turnos
+          - generic [aria-hidden] [ref=f9e54]: •
+      - generic [ref=f9e56]:
+        - heading "Reportes" [level=2] [ref=f9e57]
+        - link "Reportes administrativos" [ref=f9e58] [cursor=pointer]:
+          - /url: http://localhost:8000/secretaria/reportes
+          - generic [aria-hidden] [ref=f9e59]: •
+    - generic [ref=f9e61]:
+      - link "Mi perfil" [ref=f9e62] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f9e63]: ○
+      - button "Cerrar sesión" [ref=f9e66] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f9e67]: ↪
+  - generic [ref=f9e69]:
+    - banner [ref=f9e70]:
+      - generic [ref=f9e72]:
+        - generic [ref=f9e73]: 01/10/2026
+        - generic [ref=f9e77]:
+          - generic [ref=f9e78]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f9e79]
+        - button "Notificaciones" [ref=f9e81] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f9e82] [cursor=pointer]
+        - button [ref=f9e86] [cursor=pointer]:
+          - generic [ref=f9e87]:
+            - img "EVELIN BALLON ALVAREZ" [ref=f9e88]
+            - generic [ref=f9e89]:
+              - paragraph [ref=f9e90]: EVELIN BALLON ALVAREZ
+              - paragraph [ref=f9e91]: Secretaria
+    - main [ref=f9e94]:
+      - generic [ref=f9e95]:
+        - generic [ref=f9e96]:
+          - paragraph [ref=f9e97]: Espacio de trabajo · Secretaria
+          - heading "Supervisión y trabajo institucional" [level=1] [ref=f9e98]
+          - paragraph [ref=f9e99]: Información real con el alcance correspondiente a tu rol. Las acciones no autorizadas no están disponibles en este espacio.
+          - paragraph [ref=f9e100]: "Gestión activa: 2026"
+        - region "Indicadores institucionales" [ref=f9e101]:
+          - article [ref=f9e102]:
+            - paragraph [ref=f9e103]: Personas registradas
+            - paragraph [ref=f9e104]: "668"
+          - article [ref=f9e105]:
+            - paragraph [ref=f9e106]: Cuentas activas
+            - paragraph [ref=f9e107]: "660"
+        - generic [ref=f9e108]:
+          - heading "Áreas de trabajo" [level=2] [ref=f9e109]
+          - generic [ref=f9e110]:
+            - link [ref=f9e111] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/personas
+              - heading "Personas" [level=3] [ref=f9e112]
+              - paragraph [ref=f9e113]: Administración
+            - link [ref=f9e114] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/estudiantes
+              - heading "Estudiantes" [level=3] [ref=f9e115]
+              - paragraph [ref=f9e116]: Administración
+            - link [ref=f9e117] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/inscripciones
+              - heading "Inscripciones" [level=3] [ref=f9e118]
+              - paragraph [ref=f9e119]: Administración
+            - link [ref=f9e120] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/documentacion
+              - heading "Documentación" [level=3] [ref=f9e121]
+              - paragraph [ref=f9e122]: Administración
+            - link [ref=f9e123] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/calendario
+              - heading "Calendario" [level=3] [ref=f9e124]
+              - paragraph [ref=f9e125]: Gestión académica
+            - link [ref=f9e126] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/cuentas
+              - heading "Cuentas operativas" [level=3] [ref=f9e127]
+              - paragraph [ref=f9e128]: Administración
+            - link [ref=f9e129] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/reportes
+              - heading "Reportes administrativos" [level=3] [ref=f9e130]
+              - paragraph [ref=f9e131]: Reportes
+            - link [ref=f9e132] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/procedencia
+              - heading "Procedencia" [level=3] [ref=f9e133]
+              - paragraph [ref=f9e134]: Administración
+            - link [ref=f9e135] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/vinculacion
+              - heading "Vinculación" [level=3] [ref=f9e136]
+              - paragraph [ref=f9e137]: Administración
+            - link [ref=f9e138] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/cursos
+              - heading "Cursos" [level=3] [ref=f9e139]
+              - paragraph [ref=f9e140]: Gestión académica
+            - link [ref=f9e141] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/paralelos
+              - heading "Paralelos" [level=3] [ref=f9e142]
+              - paragraph [ref=f9e143]: Gestión académica
+            - link [ref=f9e144] [cursor=pointer]:
+              - /url: http://localhost:8000/secretaria/turnos
+              - heading "Turnos" [level=3] [ref=f9e145]
+              - paragraph [ref=f9e146]: Gestión académica

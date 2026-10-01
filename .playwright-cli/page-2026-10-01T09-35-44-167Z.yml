@@ -1,0 +1,104 @@
+- generic [ref=f6e3]:
+  - complementary "Navegación de Director" [ref=f6e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f6e6] [cursor=pointer]:
+      - /url: http://localhost:8000/direccion
+      - img "Logo Franz Tamayo 3" [ref=f6e7]
+      - generic [ref=f6e8]:
+        - generic [ref=f6e9]: Franz Tamayo N°3
+        - generic [ref=f6e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f6e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f6e13]: ☰
+      - generic [ref=f6e14]: Director
+    - navigation [ref=f6e15]:
+      - link "Inicio" [ref=f6e16] [cursor=pointer]:
+        - /url: http://localhost:8000/direccion
+        - generic [aria-hidden] [ref=f6e17]: ⌂
+      - generic [ref=f6e19]:
+        - heading "Consulta y seguimiento" [level=2] [ref=f6e20]
+        - link "Estudiantes" [ref=f6e21] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/estudiantes
+          - generic [aria-hidden] [ref=f6e22]: •
+        - link "Cursos" [ref=f6e24] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/cursos
+          - generic [aria-hidden] [ref=f6e25]: •
+        - link "Rendimiento" [ref=f6e27] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/rendimiento
+          - generic [aria-hidden] [ref=f6e28]: •
+        - link "LMS" [ref=f6e30] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/lms
+          - generic [aria-hidden] [ref=f6e31]: •
+        - link "Docentes" [ref=f6e33] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/docentes
+          - generic [aria-hidden] [ref=f6e34]: •
+        - link "Reportes" [ref=f6e36] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/reportes
+          - generic [aria-hidden] [ref=f6e37]: •
+        - link "Gestión académica" [ref=f6e39] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/gestion
+          - generic [aria-hidden] [ref=f6e40]: •
+        - link "Calendario" [ref=f6e42] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/calendario
+          - generic [aria-hidden] [ref=f6e43]: •
+    - generic [ref=f6e45]:
+      - link "Mi perfil" [ref=f6e46] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f6e47]: ○
+      - button "Cerrar sesión" [ref=f6e50] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f6e51]: ↪
+  - generic [ref=f6e53]:
+    - banner [ref=f6e54]:
+      - generic [ref=f6e56]:
+        - generic [ref=f6e57]: 01/10/2026
+        - generic [ref=f6e61]:
+          - generic [ref=f6e62]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f6e63]
+        - button "Notificaciones" [ref=f6e65] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f6e66] [cursor=pointer]
+        - button [ref=f6e70] [cursor=pointer]:
+          - generic [ref=f6e71]:
+            - img "GERMAN CAREAGA CANTUTA" [ref=f6e72]
+            - generic [ref=f6e73]:
+              - paragraph [ref=f6e74]: GERMAN CAREAGA CANTUTA
+              - paragraph [ref=f6e75]: Director
+    - main [ref=f6e78]:
+      - generic [ref=f6e79]:
+        - generic [ref=f6e80]:
+          - navigation "Ruta de navegación" [ref=f6e81]:
+            - link "Inicio" [ref=f6e82] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion
+            - text: / Aula Virtual institucional
+          - heading "Aula Virtual institucional" [level=1] [ref=f6e83]
+          - paragraph [ref=f6e84]: Consulta institucional de solo lectura. 0 registros encontrados.
+        - region "Filtros de consulta" [ref=f6e85]:
+          - generic [ref=f6e86]:
+            - text: Buscar por código o nombre
+            - searchbox "Buscar por código o nombre" [ref=f6e87]
+          - generic [ref=f6e88]:
+            - text: Gestión
+            - combobox "Gestión" [ref=f6e89]:
+              - option "Todas las autorizadas" [selected]
+              - option "2026"
+          - generic [ref=f6e90]:
+            - text: Curso
+            - combobox "Curso" [ref=f6e91]:
+              - option "Todos los autorizados" [selected]
+              - option "1ro de Secundaria"
+              - option "2do de Secundaria"
+              - option "3ro de Secundaria"
+              - option "4to de Secundaria"
+              - option "5to de Secundaria"
+              - option "6to de Secundaria"
+          - button "Limpiar" [ref=f6e92] [cursor=pointer]
+        - generic "Resultados de la consulta" [ref=f6e93]:
+          - table [ref=f6e94]:
+            - rowgroup [ref=f6e95]:
+              - row [ref=f6e96]:
+                - columnheader "Aula" [ref=f6e97]
+                - columnheader "Asignatura" [ref=f6e98]
+                - columnheader "Curso" [ref=f6e99]
+                - columnheader "Estado" [ref=f6e100]
+                - columnheader "Materiales publicados" [ref=f6e101]
+                - columnheader "Tareas activas" [ref=f6e102]
+            - rowgroup [ref=f6e103]:
+              - row [ref=f6e104]:
+                - cell "No existen registros disponibles." [ref=f6e105]

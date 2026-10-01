@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="C:\laragon\www\savp-reestructuracion\phpunit.xml" tests="165" assertions="287" errors="0" failures="0" skipped="45" time="8.314373">
+    <testsuite name="Unit" tests="101" assertions="235" errors="0" failures="0" skipped="0" time="5.877689">
+      <testsuite name="Tests\Unit\AcademicSecurityTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" tests="13" assertions="18" errors="0" failures="0" skipped="0" time="1.265456">
+        <testcase name="test_hidden_material_is_denied_even_when_student_has_course_access" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="30" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="2" time="0.560207"/>
+        <testcase name="test_teacher_cannot_grade_delivery_from_another_course" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="42" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.092313"/>
+        <testcase name="test_student_cannot_submit_draft_task" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="57" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.052685"/>
+        <testcase name="test_closed_course_cannot_be_graded" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="62" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.050802"/>
+        <testcase name="test_revoked_delivery_permission_denies_grading_before_query" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="75" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.054136"/>
+        <testcase name="test_admin_without_report_permission_cannot_export" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="85" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.067026"/>
+        <testcase name="test_director_with_broad_report_permission_cannot_export_admin_package" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="95" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="2" time="0.050496"/>
+        <testcase name="test_inactive_account_is_denied_by_all_academic_entry_points" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="105" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="4" time="0.063932"/>
+        <testcase name="test_teacher_without_active_profile_cannot_match_a_missing_plan" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="116" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.056765"/>
+        <testcase name="test_regent_cannot_read_unscoped_report_despite_legacy_permission" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="130" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.054646"/>
+        <testcase name="test_inactive_administrator_cannot_assign_regency" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="140" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.050667"/>
+        <testcase name="test_regent_cannot_write_grades_even_with_accidentally_granted_permission" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="146" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.054205"/>
+        <testcase name="test_revoked_secretary_permission_blocks_account_write_before_database_access" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AcademicSecurityTest.php" line="156" class="Tests\Unit\AcademicSecurityTest" classname="Tests.Unit.AcademicSecurityTest" assertions="1" time="0.057576"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\AporteIngenierilClientTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" tests="17" assertions="32" errors="0" failures="0" skipped="0" time="1.144844">
+        <testcase name="test_it_returns_valid_versioned_data_when_service_is_available" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="35" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.246150"/>
+        <testcase name="test_it_uses_safe_fallback_for_503_and_invalid_json" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="43" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.057548"/>
+        <testcase name="test_it_uses_safe_fallback_for_validation_error" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="51" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="1" time="0.056997"/>
+        <testcase name="test_it_uses_safe_fallback_for_timeout" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="57" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="1" time="0.058377"/>
+        <testcase name="test_it_uses_safe_fallback_for_connection_failure" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="63" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.049489"/>
+        <testcase name="test_academic_payload_excludes_personal_identity_fields" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="71" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="5" time="0.071711"/>
+        <testcase name="test_empty_response_is_not_presented_as_evidence" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="81" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="1" time="0.051038"/>
+        <testcase name="test_integration_stays_off_until_explicitly_enabled" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="87" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.047761"/>
+        <testcase name="test_internal_student_identifier_is_replaced_with_a_reference" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="95" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="1" time="0.049366"/>
+        <testcase name="test_json_list_is_an_invalid_specialized_response" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="102" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="1" time="0.055627"/>
+        <testcase name="test_endpoint_is_configurable_without_changing_the_contract" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="108" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.054337"/>
+        <testcase name="test_tutor_uses_the_existing_contract_without_sending_identity" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="116" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.055749"/>
+        <testcase name="test_knowledge_request_uses_official_corpus_filters" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="124" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.052656"/>
+        <testcase name="test_civil_identity_and_invalid_scales_are_rejected_before_network" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="132" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="3" time="0.059526"/>
+        <testcase name="test_unsupported_or_malformed_response_never_becomes_available" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="141" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.068524"/>
+        <testcase name="test_authentication_header_is_sent_only_to_configured_service" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="151" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="1" time="0.054444"/>
+        <testcase name="test_absolute_endpoint_cannot_redirect_credentials_to_another_host" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AporteIngenierilClientTest.php" line="159" class="Tests\Unit\AporteIngenierilClientTest" classname="Tests.Unit.AporteIngenierilClientTest" assertions="2" time="0.055542"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\AuthorizationBoundariesTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" tests="6" assertions="14" errors="0" failures="0" skipped="0" time="0.452786">
+        <testcase name="test_regent_without_assignment_has_no_institutional_scope" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" line="22" class="Tests\Unit\AuthorizationBoundariesTest" classname="Tests.Unit.AuthorizationBoundariesTest" assertions="6" time="0.114760"/>
+        <testcase name="test_student_cannot_read_another_student" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" line="39" class="Tests\Unit\AuthorizationBoundariesTest" classname="Tests.Unit.AuthorizationBoundariesTest" assertions="2" time="0.056786"/>
+        <testcase name="test_inactive_account_cannot_enter_workspace" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" line="54" class="Tests\Unit\AuthorizationBoundariesTest" classname="Tests.Unit.AuthorizationBoundariesTest" assertions="2" time="0.052091"/>
+        <testcase name="test_unlinked_user_cannot_resolve_null_person_profiles" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" line="64" class="Tests\Unit\AuthorizationBoundariesTest" classname="Tests.Unit.AuthorizationBoundariesTest" assertions="2" time="0.058203"/>
+        <testcase name="test_secretary_cannot_call_admin_account_component" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" line="75" class="Tests\Unit\AuthorizationBoundariesTest" classname="Tests.Unit.AuthorizationBoundariesTest" assertions="1" time="0.097686"/>
+        <testcase name="test_revoked_permission_blocks_subsequent_livewire_action" file="C:\laragon\www\savp-reestructuracion\tests\Unit\AuthorizationBoundariesTest.php" line="87" class="Tests\Unit\AuthorizationBoundariesTest" classname="Tests.Unit.AuthorizationBoundariesTest" assertions="1" time="0.073260"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\ExampleTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.009395">
+        <testcase name="test_that_true_is_true" file="C:\laragon\www\savp-reestructuracion\tests\Unit\ExampleTest.php" line="12" class="Tests\Unit\ExampleTest" classname="Tests.Unit.ExampleTest" assertions="1" time="0.009395"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\HistoricalReportAuthorizationTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\HistoricalReportAuthorizationTest.php" tests="4" assertions="11" errors="0" failures="0" skipped="0" time="0.247108">
+        <testcase name="test_secretary_can_read_administrative_pdf_but_not_academic_pdf" file="C:\laragon\www\savp-reestructuracion\tests\Unit\HistoricalReportAuthorizationTest.php" line="29" class="Tests\Unit\HistoricalReportAuthorizationTest" classname="Tests.Unit.HistoricalReportAuthorizationTest" assertions="2" time="0.061075"/>
+        <testcase name="test_broad_permission_never_exposes_sql_zip_or_unknown_family" file="C:\laragon\www\savp-reestructuracion\tests\Unit\HistoricalReportAuthorizationTest.php" line="37" class="Tests\Unit\HistoricalReportAuthorizationTest" classname="Tests.Unit.HistoricalReportAuthorizationTest" assertions="3" time="0.059880"/>
+        <testcase name="test_path_traversal_and_cross_family_path_are_rejected" file="C:\laragon\www\savp-reestructuracion\tests\Unit\HistoricalReportAuthorizationTest.php" line="46" class="Tests\Unit\HistoricalReportAuthorizationTest" classname="Tests.Unit.HistoricalReportAuthorizationTest" assertions="3" time="0.063110"/>
+        <testcase name="test_revoked_permission_and_regency_cannot_read_global_history" file="C:\laragon\www\savp-reestructuracion\tests\Unit\HistoricalReportAuthorizationTest.php" line="54" class="Tests\Unit\HistoricalReportAuthorizationTest" classname="Tests.Unit.HistoricalReportAuthorizationTest" assertions="3" time="0.063043"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\InstitutionalAuthorityServiceTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalAuthorityServiceTest.php" tests="2" assertions="6" errors="0" failures="0" skipped="0" time="0.019362">
+        <testcase name="test_absent_inactive_and_ambiguous_director_are_blocked" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalAuthorityServiceTest.php" line="23" class="Tests\Unit\InstitutionalAuthorityServiceTest" classname="Tests.Unit.InstitutionalAuthorityServiceTest" assertions="4" time="0.014337"/>
+        <testcase name="test_valid_director_uses_real_person_name" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalAuthorityServiceTest.php" line="32" class="Tests\Unit\InstitutionalAuthorityServiceTest" classname="Tests.Unit.InstitutionalAuthorityServiceTest" assertions="2" time="0.005025"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\InstitutionalDocumentAnalyzerTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalDocumentAnalyzerTest.php" tests="1" assertions="6" errors="0" failures="0" skipped="0" time="0.009253">
+        <testcase name="test_unavailable_analyzer_never_invents_document_evidence" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalDocumentAnalyzerTest.php" line="11" class="Tests\Unit\InstitutionalDocumentAnalyzerTest" classname="Tests.Unit.InstitutionalDocumentAnalyzerTest" assertions="6" time="0.009253"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\InstitutionalRoleGovernanceTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" tests="6" assertions="13" errors="0" failures="0" skipped="0" time="0.026322">
+        <testcase name="test_reserved_and_existing_roles_are_rejected" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" line="21" class="Tests\Unit\InstitutionalRoleGovernanceTest" classname="Tests.Unit.InstitutionalRoleGovernanceTest" assertions="3" time="0.006468"/>
+        <testcase name="test_suggests_secretaria_and_regente_from_functions" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" line="28" class="Tests\Unit\InstitutionalRoleGovernanceTest" classname="Tests.Unit.InstitutionalRoleGovernanceTest" assertions="2" time="0.008214"/>
+        <testcase name="test_blocks_critical_permission_and_recommends_smaller_scope" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" line="36" class="Tests\Unit\InstitutionalRoleGovernanceTest" classname="Tests.Unit.InstitutionalRoleGovernanceTest" assertions="3" time="0.003075"/>
+        <testcase name="test_accepts_coherent_request_and_rejects_vague_justification" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" line="45" class="Tests\Unit\InstitutionalRoleGovernanceTest" classname="Tests.Unit.InstitutionalRoleGovernanceTest" assertions="2" time="0.002637"/>
+        <testcase name="test_unsupported_function_requires_review" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" line="53" class="Tests\Unit\InstitutionalRoleGovernanceTest" classname="Tests.Unit.InstitutionalRoleGovernanceTest" assertions="1" time="0.003102"/>
+        <testcase name="test_legacy_permission_and_unrelated_domain_are_blocked" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalRoleGovernanceTest.php" line="59" class="Tests\Unit\InstitutionalRoleGovernanceTest" classname="Tests.Unit.InstitutionalRoleGovernanceTest" assertions="2" time="0.002827"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\InstitutionalScopeContractTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalScopeContractTest.php" tests="5" assertions="18" errors="0" failures="0" skipped="0" time="0.311967">
+        <testcase name="test_regency_sql_correlates_both_year_and_grade_and_active_management" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalScopeContractTest.php" line="26" class="Tests\Unit\InstitutionalScopeContractTest" classname="Tests.Unit.InstitutionalScopeContractTest" assertions="6" time="0.059405"/>
+        <testcase name="test_missing_regency_structure_cannot_fall_back_to_global_scope" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalScopeContractTest.php" line="39" class="Tests\Unit\InstitutionalScopeContractTest" classname="Tests.Unit.InstitutionalScopeContractTest" assertions="1" time="0.051496"/>
+        <testcase name="test_student_course_query_requires_all_four_enrollment_dimensions" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalScopeContractTest.php" line="46" class="Tests\Unit\InstitutionalScopeContractTest" classname="Tests.Unit.InstitutionalScopeContractTest" assertions="7" time="0.073181"/>
+        <testcase name="test_current_teacher_student_links_require_correlated_student_and_enrollment" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalScopeContractTest.php" line="60" class="Tests\Unit\InstitutionalScopeContractTest" classname="Tests.Unit.InstitutionalScopeContractTest" assertions="3" time="0.072522"/>
+        <testcase name="test_no_tasks_do_not_show_fabricated_completion" file="C:\laragon\www\savp-reestructuracion\tests\Unit\InstitutionalScopeContractTest.php" line="71" class="Tests\Unit\InstitutionalScopeContractTest" classname="Tests.Unit.InstitutionalScopeContractTest" assertions="1" time="0.055363"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\KardexBoundaryTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\KardexBoundaryTest.php" tests="4" assertions="9" errors="0" failures="0" skipped="0" time="0.217224">
+        <testcase name="test_missing_contract_returns_explicit_conflict_without_fake_timeline" file="C:\laragon\www\savp-reestructuracion\tests\Unit\KardexBoundaryTest.php" line="18" class="Tests\Unit\KardexBoundaryTest" classname="Tests.Unit.KardexBoundaryTest" assertions="3" time="0.061331"/>
+        <testcase name="test_denied_student_access_never_calls_repository" file="C:\laragon\www\savp-reestructuracion\tests\Unit\KardexBoundaryTest.php" line="32" class="Tests\Unit\KardexBoundaryTest" classname="Tests.Unit.KardexBoundaryTest" assertions="4" time="0.051135"/>
+        <testcase name="test_secretary_cannot_write_even_with_proposed_write_permission" file="C:\laragon\www\savp-reestructuracion\tests\Unit\KardexBoundaryTest.php" line="47" class="Tests\Unit\KardexBoundaryTest" classname="Tests.Unit.KardexBoundaryTest" assertions="1" time="0.049477"/>
+        <testcase name="test_granted_read_permission_does_not_bypass_student_scope" file="C:\laragon\www\savp-reestructuracion\tests\Unit\KardexBoundaryTest.php" line="56" class="Tests\Unit\KardexBoundaryTest" classname="Tests.Unit.KardexBoundaryTest" assertions="1" time="0.055281"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\NotificationBoundaryTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\NotificationBoundaryTest.php" tests="2" assertions="7" errors="0" failures="0" skipped="0" time="0.147503">
+        <testcase name="test_disabled_notifications_do_not_query_storage_or_invent_zero_count" file="C:\laragon\www\savp-reestructuracion\tests\Unit\NotificationBoundaryTest.php" line="22" class="Tests\Unit\NotificationBoundaryTest" classname="Tests.Unit.NotificationBoundaryTest" assertions="3" time="0.079804"/>
+        <testcase name="test_forged_external_or_foreign_record_links_are_rejected" file="C:\laragon\www\savp-reestructuracion\tests\Unit\NotificationBoundaryTest.php" line="31" class="Tests\Unit\NotificationBoundaryTest" classname="Tests.Unit.NotificationBoundaryTest" assertions="4" time="0.067699"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\PreparedPersistenceBoundaryTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PreparedPersistenceBoundaryTest.php" tests="3" assertions="10" errors="0" failures="0" skipped="0" time="0.195512">
+        <testcase name="test_unapproved_persistence_flags_do_not_inspect_a_database" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PreparedPersistenceBoundaryTest.php" line="30" class="Tests\Unit\PreparedPersistenceBoundaryTest" classname="Tests.Unit.PreparedPersistenceBoundaryTest" assertions="5" time="0.078562"/>
+        <testcase name="test_unapproved_goal_write_is_closed_before_profile_or_storage_queries" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PreparedPersistenceBoundaryTest.php" line="41" class="Tests\Unit\PreparedPersistenceBoundaryTest" classname="Tests.Unit.PreparedPersistenceBoundaryTest" assertions="2" time="0.052878"/>
+        <testcase name="test_teacher_cannot_read_or_update_a_personal_student_goal" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PreparedPersistenceBoundaryTest.php" line="55" class="Tests\Unit\PreparedPersistenceBoundaryTest" classname="Tests.Unit.PreparedPersistenceBoundaryTest" assertions="3" time="0.064073"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\PrivateFilePathTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" tests="9" assertions="9" errors="0" failures="0" skipped="0" time="0.024354">
+        <testsuite name="Tests\Unit\PrivateFilePathTest::test_download_path_cannot_escape_the_private_directory" tests="8" assertions="8" errors="0" failures="0" skipped="0" time="0.022299">
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #0" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.005075"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #1" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002746"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #2" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002238"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #3" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002827"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #4" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002154"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #5" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002191"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #6" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.003040"/>
+          <testcase name="test_download_path_cannot_escape_the_private_directory with data set #7" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="12" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002029"/>
+        </testsuite>
+        <testcase name="test_file_under_the_expected_directory_is_valid" file="C:\laragon\www\savp-reestructuracion\tests\Unit\PrivateFilePathTest.php" line="17" class="Tests\Unit\PrivateFilePathTest" classname="Tests.Unit.PrivateFilePathTest" assertions="1" time="0.002054"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\RegencyReportScopeTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RegencyReportScopeTest.php" tests="3" assertions="12" errors="0" failures="0" skipped="0" time="0.182464">
+        <testcase name="test_report_correlates_assignment_and_all_enrollment_dimensions" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RegencyReportScopeTest.php" line="25" class="Tests\Unit\RegencyReportScopeTest" classname="Tests.Unit.RegencyReportScopeTest" assertions="8" time="0.070713"/>
+        <testcase name="test_grade_permission_is_checked_before_schema_and_grade_query" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RegencyReportScopeTest.php" line="45" class="Tests\Unit\RegencyReportScopeTest" classname="Tests.Unit.RegencyReportScopeTest" assertions="3" time="0.059308"/>
+        <testcase name="test_other_actor_cannot_use_regency_report_even_with_broad_permissions" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RegencyReportScopeTest.php" line="58" class="Tests\Unit\RegencyReportScopeTest" classname="Tests.Unit.RegencyReportScopeTest" assertions="1" time="0.052443"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\RoleDashboardResolverTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" tests="10" assertions="11" errors="0" failures="0" skipped="0" time="0.598229">
+        <testsuite name="Tests\Unit\RoleDashboardResolverTest::test_each_actor_resolves_to_an_independent_workspace" tests="6" assertions="6" errors="0" failures="0" skipped="0" time="0.378709">
+          <testcase name="test_each_actor_resolves_to_an_independent_workspace with data set #0" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="17" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.058758"/>
+          <testcase name="test_each_actor_resolves_to_an_independent_workspace with data set #1" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="17" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.078687"/>
+          <testcase name="test_each_actor_resolves_to_an_independent_workspace with data set #2" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="17" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.058690"/>
+          <testcase name="test_each_actor_resolves_to_an_independent_workspace with data set #3" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="17" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.060081"/>
+          <testcase name="test_each_actor_resolves_to_an_independent_workspace with data set #4" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="17" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.067042"/>
+          <testcase name="test_each_actor_resolves_to_an_independent_workspace with data set #5" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="17" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.055453"/>
+        </testsuite>
+        <testcase name="test_user_without_supported_role_has_no_workspace" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="26" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.056929"/>
+        <testcase name="test_multiple_actors_block_resolution_even_with_complementary_roles" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="47" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="2" time="0.057437"/>
+        <testcase name="test_inactive_user_has_no_workspace" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="56" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.052182"/>
+        <testcase name="test_middleware_blocks_a_user_with_two_actors" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleDashboardResolverTest.php" line="62" class="Tests\Unit\RoleDashboardResolverTest" classname="Tests.Unit.RoleDashboardResolverTest" assertions="1" time="0.052972"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\RoleRequestAuthorizationTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleRequestAuthorizationTest.php" tests="4" assertions="4" errors="0" failures="0" skipped="0" time="0.031784">
+        <testcase name="test_non_administrator_is_rejected" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleRequestAuthorizationTest.php" line="38" class="Tests\Unit\RoleRequestAuthorizationTest" classname="Tests.Unit.RoleRequestAuthorizationTest" assertions="1" time="0.017715"/>
+        <testcase name="test_revoked_granular_permission_is_rejected" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleRequestAuthorizationTest.php" line="44" class="Tests\Unit\RoleRequestAuthorizationTest" classname="Tests.Unit.RoleRequestAuthorizationTest" assertions="1" time="0.005567"/>
+        <testcase name="test_missing_module_permission_is_rejected" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleRequestAuthorizationTest.php" line="50" class="Tests\Unit\RoleRequestAuthorizationTest" classname="Tests.Unit.RoleRequestAuthorizationTest" assertions="1" time="0.004369"/>
+        <testcase name="test_valid_authorization_passes" file="C:\laragon\www\savp-reestructuracion\tests\Unit\RoleRequestAuthorizationTest.php" line="56" class="Tests\Unit\RoleRequestAuthorizationTest" classname="Tests.Unit.RoleRequestAuthorizationTest" assertions="1" time="0.004133"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\SubmissionAuthorizationTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\SubmissionAuthorizationTest.php" tests="4" assertions="6" errors="0" failures="0" skipped="0" time="0.232482">
+        <testcase name="test_own_submission_download_requires_current_course_access" file="C:\laragon\www\savp-reestructuracion\tests\Unit\SubmissionAuthorizationTest.php" line="22" class="Tests\Unit\SubmissionAuthorizationTest" classname="Tests.Unit.SubmissionAuthorizationTest" assertions="1" time="0.064147"/>
+        <testcase name="test_enrolled_student_can_download_own_submission" file="C:\laragon\www\savp-reestructuracion\tests\Unit\SubmissionAuthorizationTest.php" line="33" class="Tests\Unit\SubmissionAuthorizationTest" classname="Tests.Unit.SubmissionAuthorizationTest" assertions="1" time="0.057067"/>
+        <testcase name="test_revoked_grading_permission_blocks_grade_but_allows_authorized_return" file="C:\laragon\www\savp-reestructuracion\tests\Unit\SubmissionAuthorizationTest.php" line="44" class="Tests\Unit\SubmissionAuthorizationTest" classname="Tests.Unit.SubmissionAuthorizationTest" assertions="2" time="0.053733"/>
+        <testcase name="test_closed_class_cannot_be_graded_or_returned" file="C:\laragon\www\savp-reestructuracion\tests\Unit\SubmissionAuthorizationTest.php" line="56" class="Tests\Unit\SubmissionAuthorizationTest" classname="Tests.Unit.SubmissionAuthorizationTest" assertions="2" time="0.057534"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\WorkspaceIntegrityTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceIntegrityTest.php" tests="5" assertions="9" errors="0" failures="0" skipped="0" time="0.635496">
+        <testcase name="test_module_search_only_shows_current_actor_routes" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceIntegrityTest.php" line="37" class="Tests\Unit\WorkspaceIntegrityTest" classname="Tests.Unit.WorkspaceIntegrityTest" assertions="3" time="0.354586"/>
+        <testcase name="test_livewire_lms_action_is_reauthorized_after_role_revocation" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceIntegrityTest.php" line="44" class="Tests\Unit\WorkspaceIntegrityTest" classname="Tests.Unit.WorkspaceIntegrityTest" assertions="1" time="0.062560"/>
+        <testcase name="test_two_institutional_actors_cannot_read_academic_data_through_a_service" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceIntegrityTest.php" line="53" class="Tests\Unit\WorkspaceIntegrityTest" classname="Tests.Unit.WorkspaceIntegrityTest" assertions="2" time="0.060855"/>
+        <testcase name="test_teacher_routes_cannot_be_entered_by_director_with_complementary_permissions" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceIntegrityTest.php" line="63" class="Tests\Unit\WorkspaceIntegrityTest" classname="Tests.Unit.WorkspaceIntegrityTest" assertions="1" time="0.059292"/>
+        <testcase name="test_student_course_context_is_locked_in_livewire" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceIntegrityTest.php" line="72" class="Tests\Unit\WorkspaceIntegrityTest" classname="Tests.Unit.WorkspaceIntegrityTest" assertions="2" time="0.098204"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\WorkspaceRoutesTest" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceRoutesTest.php" tests="2" assertions="39" errors="0" failures="0" skipped="0" time="0.126149">
+        <testcase name="test_workspace_links_reference_registered_routes" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceRoutesTest.php" line="10" class="Tests\Unit\WorkspaceRoutesTest" classname="Tests.Unit.WorkspaceRoutesTest" assertions="36" time="0.067272"/>
+        <testcase name="test_account_and_grade_routes_keep_actor_boundaries" file="C:\laragon\www\savp-reestructuracion\tests\Unit\WorkspaceRoutesTest.php" line="23" class="Tests\Unit\WorkspaceRoutesTest" classname="Tests.Unit.WorkspaceRoutesTest" assertions="3" time="0.058876"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="64" assertions="52" errors="0" failures="0" skipped="45" time="2.436684">
+      <testsuite name="Tests\Feature\ApiTokenPermissionsTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ApiTokenPermissionsTest.php" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+        <testcase name="test_api_token_permissions_can_be_updated" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ApiTokenPermissionsTest.php" line="17" class="Tests\Feature\ApiTokenPermissionsTest" classname="Tests.Feature.ApiTokenPermissionsTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\AuthenticationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\AuthenticationTest.php" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.000000">
+        <testcase name="test_login_screen_can_be_rendered" file="C:\laragon\www\savp-reestructuracion\tests\Feature\AuthenticationTest.php" line="13" class="Tests\Feature\AuthenticationTest" classname="Tests.Feature.AuthenticationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_users_can_authenticate_using_the_login_screen" file="C:\laragon\www\savp-reestructuracion\tests\Feature\AuthenticationTest.php" line="20" class="Tests\Feature\AuthenticationTest" classname="Tests.Feature.AuthenticationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_users_can_not_authenticate_with_invalid_password" file="C:\laragon\www\savp-reestructuracion\tests\Feature\AuthenticationTest.php" line="33" class="Tests\Feature\AuthenticationTest" classname="Tests.Feature.AuthenticationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\Authorization\AcademicContextTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" tests="6" assertions="0" errors="0" failures="0" skipped="6" time="0.000000">
+        <testcase name="test_assignment_limit_and_duplicate_are_enforced" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" line="75" class="Tests\Feature\Authorization\AcademicContextTest" classname="Tests.Feature.Authorization.AcademicContextTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_retirement_preserves_record_and_releases_capacity" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" line="83" class="Tests\Feature\Authorization\AcademicContextTest" classname="Tests.Feature.Authorization.AcademicContextTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_regent_cannot_read_same_student_in_another_year" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" line="90" class="Tests\Feature\Authorization\AcademicContextTest" classname="Tests.Feature.Authorization.AcademicContextTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_inactive_regent_cannot_receive_an_assignment" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" line="97" class="Tests\Feature\Authorization\AcademicContextTest" classname="Tests.Feature.Authorization.AcademicContextTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_official_grades_preserve_both_years" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" line="104" class="Tests\Feature\Authorization\AcademicContextTest" classname="Tests.Feature.Authorization.AcademicContextTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_closed_period_requires_reason_for_rectification" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\AcademicContextTest.php" line="115" class="Tests\Feature\Authorization\AcademicContextTest" classname="Tests.Feature.Authorization.AcademicContextTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\Authorization\WorkspaceAuthorizationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" tests="9" assertions="0" errors="0" failures="0" skipped="9" time="0.000000">
+        <testsuite name="Tests\Feature\Authorization\WorkspaceAuthorizationTest::test_dashboard_redirects_each_role_to_its_workspace" tests="6" assertions="0" errors="0" failures="0" skipped="6" time="0.000000">
+          <testcase name="test_dashboard_redirects_each_role_to_its_workspace with data set #0" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="18" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+            <skipped/>
+          </testcase>
+          <testcase name="test_dashboard_redirects_each_role_to_its_workspace with data set #1" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="18" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+            <skipped/>
+          </testcase>
+          <testcase name="test_dashboard_redirects_each_role_to_its_workspace with data set #2" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="18" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+            <skipped/>
+          </testcase>
+          <testcase name="test_dashboard_redirects_each_role_to_its_workspace with data set #3" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="18" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+            <skipped/>
+          </testcase>
+          <testcase name="test_dashboard_redirects_each_role_to_its_workspace with data set #4" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="18" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+            <skipped/>
+          </testcase>
+          <testcase name="test_dashboard_redirects_each_role_to_its_workspace with data set #5" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="18" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+            <skipped/>
+          </testcase>
+        </testsuite>
+        <testcase name="test_student_cannot_enter_administration" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="25" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_director_cannot_use_admin_workspace" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="30" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_secretary_cannot_use_teacher_grade_route" file="C:\laragon\www\savp-reestructuracion\tests\Feature\Authorization\WorkspaceAuthorizationTest.php" line="35" class="Tests\Feature\Authorization\WorkspaceAuthorizationTest" classname="Tests.Feature.Authorization.WorkspaceAuthorizationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\BrowserSessionsTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\BrowserSessionsTest.php" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+        <testcase name="test_other_browser_sessions_can_be_logged_out" file="C:\laragon\www\savp-reestructuracion\tests\Feature\BrowserSessionsTest.php" line="15" class="Tests\Feature\BrowserSessionsTest" classname="Tests.Feature.BrowserSessionsTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\CreateApiTokenTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\CreateApiTokenTest.php" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+        <testcase name="test_api_tokens_can_be_created" file="C:\laragon\www\savp-reestructuracion\tests\Feature\CreateApiTokenTest.php" line="16" class="Tests\Feature\CreateApiTokenTest" classname="Tests.Feature.CreateApiTokenTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\DeleteAccountTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\DeleteAccountTest.php" tests="2" assertions="0" errors="0" failures="0" skipped="2" time="0.000000">
+        <testcase name="test_user_accounts_can_be_deleted" file="C:\laragon\www\savp-reestructuracion\tests\Feature\DeleteAccountTest.php" line="16" class="Tests\Feature\DeleteAccountTest" classname="Tests.Feature.DeleteAccountTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_correct_password_must_be_provided_before_account_can_be_deleted" file="C:\laragon\www\savp-reestructuracion\tests\Feature\DeleteAccountTest.php" line="31" class="Tests\Feature\DeleteAccountTest" classname="Tests.Feature.DeleteAccountTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\DeleteApiTokenTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\DeleteApiTokenTest.php" tests="1" assertions="0" errors="0" failures="0" skipped="1" time="0.000000">
+        <testcase name="test_api_tokens_can_be_deleted" file="C:\laragon\www\savp-reestructuracion\tests\Feature\DeleteApiTokenTest.php" line="17" class="Tests\Feature\DeleteApiTokenTest" classname="Tests.Feature.DeleteApiTokenTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\EmailVerificationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\EmailVerificationTest.php" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.000000">
+        <testcase name="test_email_verification_screen_can_be_rendered" file="C:\laragon\www\savp-reestructuracion\tests\Feature\EmailVerificationTest.php" line="17" class="Tests\Feature\EmailVerificationTest" classname="Tests.Feature.EmailVerificationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_email_can_be_verified" file="C:\laragon\www\savp-reestructuracion\tests\Feature\EmailVerificationTest.php" line="30" class="Tests\Feature\EmailVerificationTest" classname="Tests.Feature.EmailVerificationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_email_can_not_verified_with_invalid_hash" file="C:\laragon\www\savp-reestructuracion\tests\Feature\EmailVerificationTest.php" line="54" class="Tests\Feature\EmailVerificationTest" classname="Tests.Feature.EmailVerificationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\ExampleTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.110781">
+        <testcase name="test_the_application_returns_a_successful_response" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ExampleTest.php" line="13" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="1" time="0.110781"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\PasswordConfirmationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordConfirmationTest.php" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.000000">
+        <testcase name="test_confirm_password_screen_can_be_rendered" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordConfirmationTest.php" line="13" class="Tests\Feature\PasswordConfirmationTest" classname="Tests.Feature.PasswordConfirmationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_password_can_be_confirmed" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordConfirmationTest.php" line="22" class="Tests\Feature\PasswordConfirmationTest" classname="Tests.Feature.PasswordConfirmationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_password_is_not_confirmed_with_invalid_password" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordConfirmationTest.php" line="34" class="Tests\Feature\PasswordConfirmationTest" classname="Tests.Feature.PasswordConfirmationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\PasswordResetTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordResetTest.php" tests="4" assertions="0" errors="0" failures="0" skipped="4" time="0.000000">
+        <testcase name="test_reset_password_link_screen_can_be_rendered" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordResetTest.php" line="16" class="Tests\Feature\PasswordResetTest" classname="Tests.Feature.PasswordResetTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_reset_password_link_can_be_requested" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordResetTest.php" line="27" class="Tests\Feature\PasswordResetTest" classname="Tests.Feature.PasswordResetTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_reset_password_screen_can_be_rendered" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordResetTest.php" line="44" class="Tests\Feature\PasswordResetTest" classname="Tests.Feature.PasswordResetTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_password_can_be_reset_with_valid_token" file="C:\laragon\www\savp-reestructuracion\tests\Feature\PasswordResetTest.php" line="67" class="Tests\Feature\PasswordResetTest" classname="Tests.Feature.PasswordResetTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\ProfileInformationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ProfileInformationTest.php" tests="2" assertions="0" errors="0" failures="0" skipped="2" time="0.000000">
+        <testcase name="test_current_profile_information_is_available" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ProfileInformationTest.php" line="15" class="Tests\Feature\ProfileInformationTest" classname="Tests.Feature.ProfileInformationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_profile_information_can_be_updated" file="C:\laragon\www\savp-reestructuracion\tests\Feature\ProfileInformationTest.php" line="25" class="Tests\Feature\ProfileInformationTest" classname="Tests.Feature.ProfileInformationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\RegistrationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\RegistrationTest.php" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.000000">
+        <testcase name="test_registration_screen_can_be_rendered" file="C:\laragon\www\savp-reestructuracion\tests\Feature\RegistrationTest.php" line="14" class="Tests\Feature\RegistrationTest" classname="Tests.Feature.RegistrationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_registration_screen_cannot_be_rendered_if_support_is_disabled" file="C:\laragon\www\savp-reestructuracion\tests\Feature\RegistrationTest.php" line="25" class="Tests\Feature\RegistrationTest" classname="Tests.Feature.RegistrationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_new_users_can_register" file="C:\laragon\www\savp-reestructuracion\tests\Feature\RegistrationTest.php" line="36" class="Tests\Feature\RegistrationTest" classname="Tests.Feature.RegistrationTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\SpecializedSupportBoundaryTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SpecializedSupportBoundaryTest.php" tests="4" assertions="12" errors="0" failures="0" skipped="0" time="0.321276">
+        <testcase name="test_offline_tutor_displays_fallback_without_an_http_request" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SpecializedSupportBoundaryTest.php" line="33" class="Tests\Feature\SpecializedSupportBoundaryTest" classname="Tests.Feature.SpecializedSupportBoundaryTest" assertions="4" time="0.084834"/>
+        <testcase name="test_empty_sources_query_is_validated_before_request" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SpecializedSupportBoundaryTest.php" line="41" class="Tests\Feature\SpecializedSupportBoundaryTest" classname="Tests.Feature.SpecializedSupportBoundaryTest" assertions="4" time="0.077549"/>
+        <testcase name="test_offline_sources_do_not_invent_evidence" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SpecializedSupportBoundaryTest.php" line="48" class="Tests\Feature\SpecializedSupportBoundaryTest" classname="Tests.Feature.SpecializedSupportBoundaryTest" assertions="3" time="0.078643"/>
+        <testcase name="test_tutor_answer_cannot_be_forged_by_livewire_client" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SpecializedSupportBoundaryTest.php" line="56" class="Tests\Feature\SpecializedSupportBoundaryTest" classname="Tests.Feature.SpecializedSupportBoundaryTest" assertions="1" time="0.080251"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\TeacherReportPdfTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TeacherReportPdfTest.php" tests="2" assertions="12" errors="0" failures="0" skipped="0" time="1.073574">
+        <testcase name="test_scoped_pdf_is_generated_with_private_storage_and_download_headers" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TeacherReportPdfTest.php" line="28" class="Tests\Feature\TeacherReportPdfTest" classname="Tests.Feature.TeacherReportPdfTest" assertions="9" time="0.983293"/>
+        <testcase name="test_foreign_course_cannot_generate_a_pdf" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TeacherReportPdfTest.php" line="48" class="Tests\Feature\TeacherReportPdfTest" classname="Tests.Feature.TeacherReportPdfTest" assertions="3" time="0.090280"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\TwoFactorAuthenticationSettingsTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TwoFactorAuthenticationSettingsTest.php" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.000000">
+        <testcase name="test_two_factor_authentication_can_be_enabled" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TwoFactorAuthenticationSettingsTest.php" line="16" class="Tests\Feature\TwoFactorAuthenticationSettingsTest" classname="Tests.Feature.TwoFactorAuthenticationSettingsTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_recovery_codes_can_be_regenerated" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TwoFactorAuthenticationSettingsTest.php" line="35" class="Tests\Feature\TwoFactorAuthenticationSettingsTest" classname="Tests.Feature.TwoFactorAuthenticationSettingsTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_two_factor_authentication_can_be_disabled" file="C:\laragon\www\savp-reestructuracion\tests\Feature\TwoFactorAuthenticationSettingsTest.php" line="57" class="Tests\Feature\TwoFactorAuthenticationSettingsTest" classname="Tests.Feature.TwoFactorAuthenticationSettingsTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\UpdatePasswordTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\UpdatePasswordTest.php" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.000000">
+        <testcase name="test_password_can_be_updated" file="C:\laragon\www\savp-reestructuracion\tests\Feature\UpdatePasswordTest.php" line="16" class="Tests\Feature\UpdatePasswordTest" classname="Tests.Feature.UpdatePasswordTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_current_password_must_be_correct" file="C:\laragon\www\savp-reestructuracion\tests\Feature\UpdatePasswordTest.php" line="31" class="Tests\Feature\UpdatePasswordTest" classname="Tests.Feature.UpdatePasswordTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+        <testcase name="test_new_passwords_must_match" file="C:\laragon\www\savp-reestructuracion\tests\Feature\UpdatePasswordTest.php" line="47" class="Tests\Feature\UpdatePasswordTest" classname="Tests.Feature.UpdatePasswordTest" assertions="0" time="0.000000">
+          <skipped/>
+        </testcase>
+      </testsuite>
+      <testsuite name="Tests\Feature\WorkspaceHttpBoundaryTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" tests="12" assertions="27" errors="0" failures="0" skipped="0" time="0.931053">
+        <testsuite name="Tests\Feature\WorkspaceHttpBoundaryTest::test_dashboard_redirects_each_actor_and_blocks_another_workspace" tests="6" assertions="18" errors="0" failures="0" skipped="0" time="0.464977">
+          <testcase name="test_dashboard_redirects_each_actor_and_blocks_another_workspace with data set #0" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="38" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="3" time="0.076867"/>
+          <testcase name="test_dashboard_redirects_each_actor_and_blocks_another_workspace with data set #1" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="38" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="3" time="0.071929"/>
+          <testcase name="test_dashboard_redirects_each_actor_and_blocks_another_workspace with data set #2" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="38" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="3" time="0.075893"/>
+          <testcase name="test_dashboard_redirects_each_actor_and_blocks_another_workspace with data set #3" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="38" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="3" time="0.074412"/>
+          <testcase name="test_dashboard_redirects_each_actor_and_blocks_another_workspace with data set #4" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="38" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="3" time="0.093138"/>
+          <testcase name="test_dashboard_redirects_each_actor_and_blocks_another_workspace with data set #5" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="38" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="3" time="0.072739"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\WorkspaceHttpBoundaryTest::test_invalid_identity_has_no_dashboard" tests="3" assertions="3" errors="0" failures="0" skipped="0" time="0.210941">
+          <testcase name="test_invalid_identity_has_no_dashboard with data set #0" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="51" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="1" time="0.070989"/>
+          <testcase name="test_invalid_identity_has_no_dashboard with data set #1" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="51" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="1" time="0.069848"/>
+          <testcase name="test_invalid_identity_has_no_dashboard with data set #2" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="51" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="1" time="0.070104"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\WorkspaceHttpBoundaryTest::test_foreign_course_is_forbidden_even_with_module_permissions" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.149773">
+          <testcase name="test_foreign_course_is_forbidden_even_with_module_permissions with data set #0" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="63" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="2" time="0.070686"/>
+          <testcase name="test_foreign_course_is_forbidden_even_with_module_permissions with data set #1" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="63" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="2" time="0.079086"/>
+        </testsuite>
+        <testcase name="test_guest_is_redirected_to_login" file="C:\laragon\www\savp-reestructuracion\tests\Feature\WorkspaceHttpBoundaryTest.php" line="72" class="Tests\Feature\WorkspaceHttpBoundaryTest" classname="Tests.Feature.WorkspaceHttpBoundaryTest" assertions="2" time="0.105362"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

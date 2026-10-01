@@ -1,0 +1,1 @@
+{"result":"fixed","files":[{"path":"app\\Http\\Controllers\\RegencyReportController.php","fixers":["no_multiline_whitespace_around_double_arrow","method_chaining_indentation"]}]}

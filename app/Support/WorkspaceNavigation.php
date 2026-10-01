@@ -30,7 +30,7 @@ final class WorkspaceNavigation
                 ['LMS institucional', 'admin.consulta', 'cursos.ver.institucional', 'Académico'],
                 ['Periodos', 'admin.periodo-evaluacion', 'Periodo_Evaluacion', 'Gestión académica'],
                 ['Calificaciones', 'admin.calificaciones', 'Calificaciones', 'Académico'],
-                ['Roles y permisos', 'admin.roles-permisos', 'roles-permisos.gestionar', 'Seguridad'],
+                ['Roles y permisos', 'admin.roles-permisos', 'roles-permisos.ver', 'Seguridad'],
                 ['Asignaciones de Regencia', 'admin.asignaciones-regencia', 'regencia.asignaciones.gestionar', 'Seguridad'],
                 ['Reportes académicos', 'admin.reportes-academicos', 'Reportes_Academicos', 'Reportes'],
                 ['Reportes administrativos', 'admin.reportes-administrativos', 'Reportes_Administrativos', 'Reportes'],

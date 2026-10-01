@@ -1,0 +1,103 @@
+- generic [ref=f2e3]:
+  - complementary "Navegación de Estudiante" [ref=f2e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f2e6] [cursor=pointer]:
+      - /url: http://localhost:8000/estudiante
+      - img "Logo Franz Tamayo 3" [ref=f2e7]
+      - generic [ref=f2e8]:
+        - generic [ref=f2e9]: Franz Tamayo N°3
+        - generic [ref=f2e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f2e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f2e13]: ☰
+      - generic [ref=f2e14]: Estudiante
+    - navigation [ref=f2e15]:
+      - link "Inicio" [ref=f2e16] [cursor=pointer]:
+        - /url: http://localhost:8000/estudiante
+        - generic [aria-hidden] [ref=f2e17]: ⌂
+      - generic [ref=f2e19]:
+        - heading "Académico" [level=2] [ref=f2e20]
+        - link "Mis materias" [ref=f2e21] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/materias
+          - generic [aria-hidden] [ref=f2e22]: •
+        - link "Mi progreso" [ref=f2e24] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/progreso
+          - generic [aria-hidden] [ref=f2e25]: •
+        - link "Mi asistencia" [ref=f2e27] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/asistencia
+          - generic [aria-hidden] [ref=f2e28]: •
+        - link "Calendario" [ref=f2e30] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/calendario
+          - generic [aria-hidden] [ref=f2e31]: •
+      - generic [ref=f2e33]:
+        - heading "Orientación" [level=2] [ref=f2e34]
+        - link "Mis intereses" [ref=f2e35] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/intereses
+          - generic [aria-hidden] [ref=f2e36]: •
+        - link "Mi futuro académico" [ref=f2e38] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/futuro
+          - generic [aria-hidden] [ref=f2e39]: •
+        - link "Mi preparación" [ref=f2e41] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/preparacion
+          - generic [aria-hidden] [ref=f2e42]: •
+        - link "Mi plan" [ref=f2e44] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/plan
+          - generic [aria-hidden] [ref=f2e45]: •
+        - link "Fuentes académicas" [ref=f2e47] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/fuentes
+          - generic [aria-hidden] [ref=f2e48]: •
+        - link "Asistente de estudio" [ref=f2e50] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/asistente
+          - generic [aria-hidden] [ref=f2e51]: •
+    - generic [ref=f2e53]:
+      - link "Mi perfil" [ref=f2e54] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f2e55]: ○
+      - button "Cerrar sesión" [ref=f2e58] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f2e59]: ↪
+  - generic [ref=f2e61]:
+    - banner [ref=f2e62]:
+      - generic [ref=f2e64]:
+        - generic [ref=f2e65]: 01/10/2026
+        - generic [ref=f2e69]:
+          - generic [ref=f2e70]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f2e71]
+        - button "Notificaciones" [ref=f2e73] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f2e74] [cursor=pointer]
+        - button [ref=f2e78] [cursor=pointer]:
+          - generic [ref=f2e79]:
+            - img "Mateo Choque Callisaya" [ref=f2e80]
+            - generic [ref=f2e81]:
+              - paragraph [ref=f2e82]: Mateo Choque Callisaya
+              - paragraph [ref=f2e83]: Estudiante
+    - main [ref=f2e86]:
+      - generic [ref=f2e87]:
+        - generic [ref=f2e88]:
+          - paragraph [ref=f2e89]: Experiencia estudiantil
+          - heading "Mi progreso" [level=1] [ref=f2e90]
+          - paragraph [ref=f2e91]: Revisa tu avance con calificaciones, asistencia, materias y entregas registradas.
+        - generic [ref=f2e92]:
+          - article [ref=f2e93]:
+            - paragraph [ref=f2e94]: Materias
+            - paragraph [ref=f2e95]: "0"
+          - article [ref=f2e96]:
+            - paragraph [ref=f2e97]: Tareas entregadas
+            - paragraph [ref=f2e98]: "0"
+          - article [ref=f2e99]:
+            - paragraph [ref=f2e100]: Promedio de tareas
+            - paragraph [ref=f2e101]: Aún sin datos
+          - article [ref=f2e102]:
+            - paragraph [ref=f2e103]: Asistencia general
+            - paragraph [ref=f2e104]: Aún sin datos
+        - generic [ref=f2e105]:
+          - heading "Historial de notas oficiales" [level=2] [ref=f2e106]
+          - paragraph [ref=f2e107]: Las notas oficiales se conservan por gestión y se presentan separadas de las tareas.
+          - table [ref=f2e109]:
+            - rowgroup [ref=f2e110]:
+              - row [ref=f2e111]:
+                - columnheader "Gestión" [ref=f2e112]
+                - columnheader "Curso" [ref=f2e113]
+                - columnheader "Asignatura" [ref=f2e114]
+                - columnheader "Periodo" [ref=f2e115]
+                - columnheader "Nota" [ref=f2e116]
+            - rowgroup [ref=f2e117]:
+              - row [ref=f2e118]:
+                - cell "Aún no tienes notas oficiales registradas." [ref=f2e119]

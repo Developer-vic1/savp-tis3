@@ -1,0 +1,299 @@
+- generic [ref=f8e3]:
+  - complementary "Navegación de Director" [ref=f8e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f8e6] [cursor=pointer]:
+      - /url: http://localhost:8000/direccion
+      - img "Logo Franz Tamayo 3" [ref=f8e7]
+      - generic [ref=f8e8]:
+        - generic [ref=f8e9]: Franz Tamayo N°3
+        - generic [ref=f8e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f8e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f8e13]: ☰
+      - generic [ref=f8e14]: Director
+    - navigation [ref=f8e15]:
+      - link "Inicio" [ref=f8e16] [cursor=pointer]:
+        - /url: http://localhost:8000/direccion
+        - generic [aria-hidden] [ref=f8e17]: ⌂
+      - generic [ref=f8e19]:
+        - heading "Consulta y seguimiento" [level=2] [ref=f8e20]
+        - link "Estudiantes" [ref=f8e21] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/estudiantes
+          - generic [aria-hidden] [ref=f8e22]: •
+        - link "Cursos" [ref=f8e24] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/cursos
+          - generic [aria-hidden] [ref=f8e25]: •
+        - link "Rendimiento" [ref=f8e27] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/rendimiento
+          - generic [aria-hidden] [ref=f8e28]: •
+        - link "LMS" [ref=f8e30] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/lms
+          - generic [aria-hidden] [ref=f8e31]: •
+        - link "Docentes" [ref=f8e33] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/docentes
+          - generic [aria-hidden] [ref=f8e34]: •
+        - link "Reportes" [ref=f8e36] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/reportes
+          - generic [aria-hidden] [ref=f8e37]: •
+        - link "Gestión académica" [ref=f8e39] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/gestion
+          - generic [aria-hidden] [ref=f8e40]: •
+        - link "Calendario" [ref=f8e42] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/calendario
+          - generic [aria-hidden] [ref=f8e43]: •
+    - generic [ref=f8e45]:
+      - link "Mi perfil" [ref=f8e46] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f8e47]: ○
+      - button "Cerrar sesión" [ref=f8e50] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f8e51]: ↪
+  - generic [ref=f8e53]:
+    - banner [ref=f8e54]:
+      - generic [ref=f8e56]:
+        - generic [ref=f8e57]: 01/10/2026
+        - generic [ref=f8e61]:
+          - generic [ref=f8e62]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f8e63]
+        - button "Notificaciones" [ref=f8e65] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f8e66] [cursor=pointer]
+        - button [ref=f8e70] [cursor=pointer]:
+          - generic [ref=f8e71]:
+            - img "GERMAN CAREAGA CANTUTA" [ref=f8e72]
+            - generic [ref=f8e73]:
+              - paragraph [ref=f8e74]: GERMAN CAREAGA CANTUTA
+              - paragraph [ref=f8e75]: Director
+    - main [ref=f8e78]:
+      - generic [ref=f8e79]:
+        - generic [ref=f8e80]:
+          - navigation "Ruta de navegación" [ref=f8e81]:
+            - link "Inicio" [ref=f8e82] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion
+            - text: / Estudiantes
+          - heading "Estudiantes" [level=1] [ref=f8e83]
+          - paragraph [ref=f8e84]: Consulta institucional de solo lectura. 612 registros encontrados.
+        - region "Filtros de consulta" [ref=f8e85]:
+          - generic [ref=f8e86]:
+            - text: Buscar por código o nombre
+            - searchbox "Buscar por código o nombre" [ref=f8e87]
+          - generic [ref=f8e88]:
+            - text: Gestión
+            - combobox "Gestión" [ref=f8e89]:
+              - option "Todas las autorizadas" [selected]
+              - option "2026"
+          - generic [ref=f8e90]:
+            - text: Curso
+            - combobox "Curso" [ref=f8e91]:
+              - option "Todos los autorizados" [selected]
+              - option "1ro de Secundaria"
+              - option "2do de Secundaria"
+              - option "3ro de Secundaria"
+              - option "4to de Secundaria"
+              - option "5to de Secundaria"
+              - option "6to de Secundaria"
+          - button "Limpiar" [ref=f8e92] [cursor=pointer]
+        - generic "Resultados de la consulta" [ref=f8e93]:
+          - table [ref=f8e94]:
+            - rowgroup [ref=f8e95]:
+              - row [ref=f8e96]:
+                - columnheader "Código" [ref=f8e97]
+                - columnheader "Nombre" [ref=f8e98]
+                - columnheader "Apellido" [ref=f8e99]
+                - columnheader "Estado" [ref=f8e100]
+            - rowgroup [ref=f8e101]:
+              - row [ref=f8e102]:
+                - cell [ref=f8e103]:
+                  - text: EST_0612
+                  - link "Ver rendimiento" [ref=f8e104] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0612&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e105] [cursor=pointer]
+                - cell "Mariana" [ref=f8e106]
+                - cell "Nina" [ref=f8e107]
+                - cell "ACTIVO" [ref=f8e108]
+              - row [ref=f8e109]:
+                - cell [ref=f8e110]:
+                  - text: EST_0611
+                  - link "Ver rendimiento" [ref=f8e111] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0611&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e112] [cursor=pointer]
+                - cell "Gabriel" [ref=f8e113]
+                - cell "Rojas" [ref=f8e114]
+                - cell "ACTIVO" [ref=f8e115]
+              - row [ref=f8e116]:
+                - cell [ref=f8e117]:
+                  - text: EST_0610
+                  - link "Ver rendimiento" [ref=f8e118] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0610&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e119] [cursor=pointer]
+                - cell "Luciana" [ref=f8e120]
+                - cell "Apaza" [ref=f8e121]
+                - cell "ACTIVO" [ref=f8e122]
+              - row [ref=f8e123]:
+                - cell [ref=f8e124]:
+                  - text: EST_0609
+                  - link "Ver rendimiento" [ref=f8e125] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0609&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e126] [cursor=pointer]
+                - cell "Nicolás" [ref=f8e127]
+                - cell "Ticona" [ref=f8e128]
+                - cell "ACTIVO" [ref=f8e129]
+              - row [ref=f8e130]:
+                - cell [ref=f8e131]:
+                  - text: EST_0608
+                  - link "Ver rendimiento" [ref=f8e132] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0608&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e133] [cursor=pointer]
+                - cell "Daniela" [ref=f8e134]
+                - cell "Flores" [ref=f8e135]
+                - cell "ACTIVO" [ref=f8e136]
+              - row [ref=f8e137]:
+                - cell [ref=f8e138]:
+                  - text: EST_0607
+                  - link "Ver rendimiento" [ref=f8e139] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0607&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e140] [cursor=pointer]
+                - cell "Bruno" [ref=f8e141]
+                - cell "Choque" [ref=f8e142]
+                - cell "ACTIVO" [ref=f8e143]
+              - row [ref=f8e144]:
+                - cell [ref=f8e145]:
+                  - text: EST_0606
+                  - link "Ver rendimiento" [ref=f8e146] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0606&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e147] [cursor=pointer]
+                - cell "Alejandra" [ref=f8e148]
+                - cell "Yujra" [ref=f8e149]
+                - cell "ACTIVO" [ref=f8e150]
+              - row [ref=f8e151]:
+                - cell [ref=f8e152]:
+                  - text: EST_0605
+                  - link "Ver rendimiento" [ref=f8e153] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0605&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e154] [cursor=pointer]
+                - cell "Santiago" [ref=f8e155]
+                - cell "Callisaya" [ref=f8e156]
+                - cell "ACTIVO" [ref=f8e157]
+              - row [ref=f8e158]:
+                - cell [ref=f8e159]:
+                  - text: EST_0604
+                  - link "Ver rendimiento" [ref=f8e160] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0604&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e161] [cursor=pointer]
+                - cell "Camila" [ref=f8e162]
+                - cell "Huanca" [ref=f8e163]
+                - cell "ACTIVO" [ref=f8e164]
+              - row [ref=f8e165]:
+                - cell [ref=f8e166]:
+                  - text: EST_0603
+                  - link "Ver rendimiento" [ref=f8e167] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0603&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e168] [cursor=pointer]
+                - cell "Diego" [ref=f8e169]
+                - cell "Condori" [ref=f8e170]
+                - cell "ACTIVO" [ref=f8e171]
+              - row [ref=f8e172]:
+                - cell [ref=f8e173]:
+                  - text: EST_0602
+                  - link "Ver rendimiento" [ref=f8e174] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0602&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e175] [cursor=pointer]
+                - cell "Valeria" [ref=f8e176]
+                - cell "Mamani" [ref=f8e177]
+                - cell "ACTIVO" [ref=f8e178]
+              - row [ref=f8e179]:
+                - cell [ref=f8e180]:
+                  - text: EST_0601
+                  - link "Ver rendimiento" [ref=f8e181] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0601&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e182] [cursor=pointer]
+                - cell "Mateo" [ref=f8e183]
+                - cell "Quispe" [ref=f8e184]
+                - cell "ACTIVO" [ref=f8e185]
+              - row [ref=f8e186]:
+                - cell [ref=f8e187]:
+                  - text: EST_0600
+                  - link "Ver rendimiento" [ref=f8e188] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0600&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e189] [cursor=pointer]
+                - cell "Melissa" [ref=f8e190]
+                - cell "Moya" [ref=f8e191]
+                - cell "ACTIVO" [ref=f8e192]
+              - row [ref=f8e193]:
+                - cell [ref=f8e194]:
+                  - text: EST_0599
+                  - link "Ver rendimiento" [ref=f8e195] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0599&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e196] [cursor=pointer]
+                - cell "Samuel" [ref=f8e197]
+                - cell "Mamani" [ref=f8e198]
+                - cell "ACTIVO" [ref=f8e199]
+              - row [ref=f8e200]:
+                - cell [ref=f8e201]:
+                  - text: EST_0598
+                  - link "Ver rendimiento" [ref=f8e202] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0598&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e203] [cursor=pointer]
+                - cell "Noelia" [ref=f8e204]
+                - cell "Limachi" [ref=f8e205]
+                - cell "ACTIVO" [ref=f8e206]
+              - row [ref=f8e207]:
+                - cell [ref=f8e208]:
+                  - text: EST_0597
+                  - link "Ver rendimiento" [ref=f8e209] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0597&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e210] [cursor=pointer]
+                - cell "Adrián" [ref=f8e211]
+                - cell "Ticona" [ref=f8e212]
+                - cell "ACTIVO" [ref=f8e213]
+              - row [ref=f8e214]:
+                - cell [ref=f8e215]:
+                  - text: EST_0596
+                  - link "Ver rendimiento" [ref=f8e216] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0596&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e217] [cursor=pointer]
+                - cell "Renata" [ref=f8e218]
+                - cell "Mamani" [ref=f8e219]
+                - cell "ACTIVO" [ref=f8e220]
+              - row [ref=f8e221]:
+                - cell [ref=f8e222]:
+                  - text: EST_0595
+                  - link "Ver rendimiento" [ref=f8e223] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0595&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e224] [cursor=pointer]
+                - cell "René" [ref=f8e225]
+                - cell "Condori" [ref=f8e226]
+                - cell "ACTIVO" [ref=f8e227]
+              - row [ref=f8e228]:
+                - cell [ref=f8e229]:
+                  - text: EST_0594
+                  - link "Ver rendimiento" [ref=f8e230] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0594&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e231] [cursor=pointer]
+                - cell "Jimena" [ref=f8e232]
+                - cell "Mendoza" [ref=f8e233]
+                - cell "ACTIVO" [ref=f8e234]
+              - row [ref=f8e235]:
+                - cell [ref=f8e236]:
+                  - text: EST_0593
+                  - link "Ver rendimiento" [ref=f8e237] [cursor=pointer]:
+                    - /url: http://localhost:8000/direccion/consultas/rendimiento?estudiante=EST_0593&gestion=&curso=
+                  - button "Ver ficha" [ref=f8e238] [cursor=pointer]
+                - cell "Javier" [ref=f8e239]
+                - cell "Rojas" [ref=f8e240]
+                - cell "ACTIVO" [ref=f8e241]
+        - navigation "Pagination Navigation" [ref=f8e243]:
+          - generic [ref=f8e244]:
+            - paragraph [ref=f8e246]: Mostrando 1 a 20 de 612 resultados
+            - generic [ref=f8e248]:
+              - generic "Anterior" [ref=f8e250]
+              - generic [ref=f8e254]: "1"
+              - button "Go to page 2" [ref=f8e258] [cursor=pointer]: "2"
+              - button "Go to page 3" [ref=f8e260] [cursor=pointer]: "3"
+              - button "Go to page 4" [ref=f8e262] [cursor=pointer]: "4"
+              - button "Go to page 5" [ref=f8e264] [cursor=pointer]: "5"
+              - button "Go to page 6" [ref=f8e266] [cursor=pointer]: "6"
+              - button "Go to page 7" [ref=f8e268] [cursor=pointer]: "7"
+              - button "Go to page 8" [ref=f8e270] [cursor=pointer]: "8"
+              - button "Go to page 9" [ref=f8e272] [cursor=pointer]: "9"
+              - button "Go to page 10" [ref=f8e274] [cursor=pointer]: "10"
+              - generic [ref=f8e275]: ...
+              - button "Go to page 30" [ref=f8e278] [cursor=pointer]: "30"
+              - button "Go to page 31" [ref=f8e280] [cursor=pointer]: "31"
+              - button "Siguiente" [ref=f8e282] [cursor=pointer]

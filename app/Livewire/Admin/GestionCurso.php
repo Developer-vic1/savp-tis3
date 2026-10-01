@@ -17,6 +17,12 @@ class GestionCurso extends Component
 
     protected $paginationTheme = 'tailwind';
 
+    private array $tableExists = [];
+
+    private array $columnsByTable = [];
+
+    private array $columnTypes = [];
+
     /*
     |--------------------------------------------------------------------------
     | FILTROS PRINCIPALES
@@ -3659,17 +3665,29 @@ class GestionCurso extends Component
 
     private function tablaExiste(string $tabla): bool
     {
+        if (array_key_exists($tabla, $this->tableExists)) {
+            return $this->tableExists[$tabla];
+        }
+
         try {
-            return Schema::hasTable($tabla);
+            return $this->tableExists[$tabla] = Schema::hasTable($tabla);
         } catch (\Throwable) {
-            return false;
+            return $this->tableExists[$tabla] = false;
         }
     }
 
     private function columnaExiste(string $tabla, string $columna): bool
     {
+        if (! $this->tablaExiste($tabla)) {
+            return false;
+        }
+
         try {
-            return Schema::hasTable($tabla) && Schema::hasColumn($tabla, $columna);
+            if (! array_key_exists($tabla, $this->columnsByTable)) {
+                $this->columnsByTable[$tabla] = array_map('strtolower', Schema::getColumnListing($tabla));
+            }
+
+            return in_array(strtolower($columna), $this->columnsByTable[$tabla], true);
         } catch (\Throwable) {
             return false;
         }
@@ -3677,14 +3695,19 @@ class GestionCurso extends Component
 
     private function tipoColumna(string $tabla, string $columna): ?string
     {
+        $key = $tabla.'.'.$columna;
+        if (array_key_exists($key, $this->columnTypes)) {
+            return $this->columnTypes[$key];
+        }
+
         try {
             if (! $this->columnaExiste($tabla, $columna)) {
-                return null;
+                return $this->columnTypes[$key] = null;
             }
 
-            return Schema::getColumnType($tabla, $columna);
+            return $this->columnTypes[$key] = Schema::getColumnType($tabla, $columna);
         } catch (\Throwable) {
-            return null;
+            return $this->columnTypes[$key] = null;
         }
     }
 

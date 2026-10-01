@@ -26,13 +26,14 @@
                 @include('aula-virtual.componentes.icon-action-button', [
                     'href' => route('aula-virtual.estudiante.asignaturas'),
                     'icon' => 'entrar',
-                    'label' => 'Mis asignaturas',
+                    'label' => 'Aulas virtuales',
                 ])
             </div>
         </section>
 
         <section class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Mis asignaturas', 'valor' => $metricas['asignaturas'] ?? 0, 'descripcion' => 'Asignaturas inscritas.'])
+            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Inscripciones vigentes', 'valor' => $metricas['inscripciones_activas'] ?? 0, 'descripcion' => 'Registros académicos oficiales.'])
+            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Aulas virtuales', 'valor' => $metricas['asignaturas'] ?? 0, 'descripcion' => 'Clases LMS activas vinculadas a tu inscripción.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Actividades pendientes', 'valor' => $metricas['actividades_pendientes'] ?? 0, 'descripcion' => 'Actividades pendientes.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Tareas entregadas', 'valor' => $metricas['tareas_entregadas'] ?? 0, 'descripcion' => 'Entregas registradas.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Promedio LMS (%)', 'valor' => $metricas['promedio_actual'] ?? 'Sin calificaciones', 'descripcion' => 'Puntajes de tareas normalizados según su máximo.'])
@@ -40,18 +41,33 @@
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Orientación en proceso', 'valor' => $metricas['orientacion_en_proceso'] ?? 0, 'descripcion' => 'Orientación académica-profesional.'])
         </section>
 
+        <section class="ui-panel" aria-label="Inscripciones oficiales">
+            <h2 class="ui-title text-2xl font-black">Inscripciones oficiales</h2>
+            <p class="ui-muted mt-2 text-sm">Esta información proviene de tus inscripciones registradas; es independiente de la creación de aulas virtuales.</p>
+            @forelse($inscripciones ?? collect() as $inscripcion)
+                <div class="mt-4 rounded-xl border p-4" style="border-color: var(--ui-border);">
+                    <strong class="block">{{ $inscripcion->curso?->nom_cur ?? 'Curso no disponible' }}</strong>
+                    <p class="ui-muted mt-1 text-sm">Gestión {{ $inscripcion->gestionAcademica?->ani_gea ?? 'no disponible' }} · Paralelo {{ $inscripcion->paralelo?->nom_par ?? 'no disponible' }} · Turno {{ $inscripcion->turno?->nom_tur ?? 'no disponible' }}</p>
+                </div>
+            @empty
+                <p class="ui-muted mt-4">No hay inscripciones activas registradas para tu cuenta.</p>
+            @endforelse
+        </section>
+
         <section>
             <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <p class="ui-kicker">Cursos asignados</p>
-                    <h2 class="ui-title mt-1 text-2xl font-black">Mis asignaturas</h2>
+                    <p class="ui-kicker">Clases LMS</p>
+                    <h2 class="ui-title mt-1 text-2xl font-black">Aulas virtuales</h2>
                 </div>
             </div>
 
             @if (($cursos ?? collect())->isEmpty())
                 @include('aula-virtual.componentes.empty-state', [
-                    'titulo' => 'Asignaturas inscritas.',
-                    'descripcion' => 'Información académica disponible según inscripción.',
+                    'titulo' => 'Aún no hay aulas virtuales activas.',
+                    'descripcion' => ($inscripciones ?? collect())->isNotEmpty()
+                        ? 'Tu inscripción oficial está registrada, pero todavía no tiene una clase LMS activa vinculada.'
+                        : 'La lista aparecerá cuando exista una inscripción y una clase LMS activa vinculada.',
                 ])
             @else
                 <div class="grid gap-5 lg:grid-cols-3">

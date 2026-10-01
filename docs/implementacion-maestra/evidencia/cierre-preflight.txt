@@ -1,0 +1,302 @@
+COMMAND: git branch --show-current
+feature/REESTRUCTURACION
+EXIT: 0
+COMMAND: git rev-parse HEAD
+2f9d5e8dc5a85983b244f32efcd30b14ebd4c16b
+EXIT: 0
+COMMAND: git status --short --branch
+## feature/REESTRUCTURACION...origin/feature/REESTRUCTURACION
+ M .env.example
+ M app/Http/Controllers/Admin/ReportePdfController.php
+ M app/Http/Controllers/AdminDashboardController.php
+ M app/Http/Controllers/AulaVirtual/AsistenciaController.php
+ M app/Http/Controllers/AulaVirtual/EntregaController.php
+ M app/Http/Controllers/AulaVirtual/MaterialController.php
+ M app/Http/Controllers/AulaVirtual/TareaController.php
+ M app/Http/Controllers/DashboardController.php
+ M app/Http/Controllers/Estudiante/ExperienceController.php
+ M app/Http/Controllers/InstitutionalQueryController.php
+ M app/Http/Controllers/WorkspaceController.php
+ M app/Http/Middleware/EnsureActorRole.php
+ M app/Livewire/Admin/GestionUsuarios.php
+ M app/Livewire/AulaVirtual/Cursos/CursoDetalleDocente.php
+ M app/Livewire/AulaVirtual/Cursos/CursoDetalleEstudiante.php
+ M app/Livewire/AulaVirtual/Materiales/CrearMaterial.php
+ M app/Livewire/AulaVirtual/Materiales/EditarMaterial.php
+ M app/Livewire/AulaVirtual/Orientacion/ExploradorVocacional.php
+ M app/Livewire/AulaVirtual/Tareas/CrearTarea.php
+ M app/Livewire/AulaVirtual/Tareas/EditarTarea.php
+ M app/Livewire/InstitutionalAuthorization.php
+ M app/Policies/AulaVirtualEntregaPolicy.php
+ M app/Policies/AulaVirtualTareaPolicy.php
+ M app/Providers/AppServiceProvider.php
+ M app/Services/AcademicAccessService.php
+ M app/Services/AporteIngenieril/AnalysisService.php
+ M app/Services/AporteIngenieril/AporteIngenierilClient.php
+ M app/Services/AporteIngenieril/KnowledgeService.php
+ M app/Services/AporteIngenieril/TutorService.php
+ M app/Services/AulaVirtual/AsistenciaService.php
+ M app/Services/AulaVirtual/CursoVirtualService.php
+ M app/Services/AulaVirtual/EntregaService.php
+ M app/Services/AulaVirtual/MaterialService.php
+ M app/Services/AulaVirtual/OrientacionService.php
+ M app/Services/AulaVirtual/TareaService.php
+ M app/Services/GradeService.php
+ M app/Services/InstitutionalDashboardService.php
+ M app/Services/OperationalAccountService.php
+ M app/Services/RegencyAccessService.php
+ M app/Services/Reportes/GeneradorSqlAcademicoService.php
+ M app/Services/Reportes/GeneradorZipReportesService.php
+ M app/Services/RoleDashboardResolver.php
+ M app/Services/RolePermissionService.php
+ M app/Services/RoleRequestService.php
+ M config/services.php
+ M resources/js/app.js
+ M resources/views/admin/dashboard-administrador.blade.php
+ M resources/views/aula-virtual/cursos/show-docente.blade.php
+ M resources/views/aula-virtual/cursos/show-estudiante.blade.php
+ M resources/views/aula-virtual/dashboard/docente.blade.php
+ M resources/views/aula-virtual/dashboard/estudiante.blade.php
+ M resources/views/aula-virtual/layouts/app.blade.php
+ M resources/views/aula-virtual/layouts/sidebar.blade.php
+ M resources/views/aula-virtual/tareas/entregar.blade.php
+ M resources/views/components/actor-menu.blade.php
+ M resources/views/estudiante/area.blade.php
+ M resources/views/layouts/app.blade.php
+ M resources/views/layouts/sidebar.blade.php
+ M resources/views/livewire/admin/gestion-usuarios.blade.php
+ M resources/views/livewire/aula-virtual/materiales/crear-material.blade.php
+ M resources/views/livewire/aula-virtual/orientacion/explorador-vocacional.blade.php
+ M resources/views/livewire/aula-virtual/tareas/crear-tarea.blade.php
+ M resources/views/livewire/secretaria/cuentas.blade.php
+ M resources/views/workspaces/consulta.blade.php
+ M resources/views/workspaces/institucional.blade.php
+ M routes/actors.php
+ M routes/aula_virtual.php
+ M tests/TestCase.php
+ M tests/Unit/AcademicSecurityTest.php
+ M tests/Unit/AporteIngenierilClientTest.php
+ M tests/Unit/AuthorizationBoundariesTest.php
+ M tests/Unit/RoleDashboardResolverTest.php
+ M tests/Unit/RoleRequestAuthorizationTest.php
+?? PETER2_REESTRUCTURACION.patch
+?? app/Contracts/
+?? app/Livewire/Shared/
+?? app/Services/AulaVirtual/PublicacionService.php
+?? app/Services/InstitutionalQueryService.php
+?? app/Services/ReportAccessService.php
+?? app/Support/PrivateFilePath.php
+?? app/Support/WorkspaceNavigation.php
+?? docs/
+?? resources/views/livewire/shared/
+?? routes/direccion.php
+?? routes/docente.php
+?? routes/estudiante.php
+?? routes/regencia.php
+?? routes/secretaria.php
+?? tests/Unit/PrivateFilePathTest.php
+?? tests/Unit/WorkspaceIntegrityTest.php
+EXIT: 0
+COMMAND: git diff --check
+EXIT: 0
+COMMAND: git diff --stat
+ .env.example                                       |   1 +
+ .../Controllers/Admin/ReportePdfController.php     | 103 +++---
+ app/Http/Controllers/AdminDashboardController.php  | 345 ++++-----------------
+ .../AulaVirtual/AsistenciaController.php           |   4 +-
+ .../Controllers/AulaVirtual/EntregaController.php  |  14 +-
+ .../Controllers/AulaVirtual/MaterialController.php |  13 +-
+ .../Controllers/AulaVirtual/TareaController.php    |  26 +-
+ app/Http/Controllers/DashboardController.php       |   2 +-
+ .../Estudiante/ExperienceController.php            |  19 +-
+ .../Controllers/InstitutionalQueryController.php   |  75 +----
+ app/Http/Controllers/WorkspaceController.php       |   7 +-
+ app/Http/Middleware/EnsureActorRole.php            |   4 +-
+ app/Livewire/Admin/GestionUsuarios.php             |  92 ++++--
+ .../AulaVirtual/Cursos/CursoDetalleDocente.php     |  11 +-
+ .../AulaVirtual/Cursos/CursoDetalleEstudiante.php  |  11 +-
+ .../AulaVirtual/Materiales/CrearMaterial.php       |  34 ++
+ .../AulaVirtual/Materiales/EditarMaterial.php      |  32 +-
+ .../Orientacion/ExploradorVocacional.php           |  33 +-
+ app/Livewire/AulaVirtual/Tareas/CrearTarea.php     |  49 +++
+ app/Livewire/AulaVirtual/Tareas/EditarTarea.php    |  37 ++-
+ app/Livewire/InstitutionalAuthorization.php        |  30 +-
+ app/Policies/AulaVirtualEntregaPolicy.php          |   8 +-
+ app/Policies/AulaVirtualTareaPolicy.php            |   2 +-
+ app/Providers/AppServiceProvider.php               |   8 +-
+ app/Services/AcademicAccessService.php             |  21 +-
+ app/Services/AporteIngenieril/AnalysisService.php  |   3 +-
+ .../AporteIngenieril/AporteIngenierilClient.php    |  11 +-
+ app/Services/AporteIngenieril/KnowledgeService.php |   3 +-
+ app/Services/AporteIngenieril/TutorService.php     |   3 +-
+ app/Services/AulaVirtual/AsistenciaService.php     |  49 ++-
+ app/Services/AulaVirtual/CursoVirtualService.php   |  77 +++--
+ app/Services/AulaVirtual/EntregaService.php        | 140 ++++++---
+ app/Services/AulaVirtual/MaterialService.php       |  97 +++++-
+ app/Services/AulaVirtual/OrientacionService.php    |  60 ++--
+ app/Services/AulaVirtual/TareaService.php          | 108 ++++++-
+ app/Services/GradeService.php                      |   9 +-
+ app/Services/InstitutionalDashboardService.php     |  80 ++---
+ app/Services/OperationalAccountService.php         |  23 +-
+ app/Services/RegencyAccessService.php              |  19 +-
+ .../Reportes/GeneradorSqlAcademicoService.php      |  44 +--
+ .../Reportes/GeneradorZipReportesService.php       |  72 +++--
+ app/Services/RoleDashboardResolver.php             |  17 +-
+ app/Services/RolePermissionService.php             |  85 ++++-
+ app/Services/RoleRequestService.php                |  34 +-
+ config/services.php                                |   2 +
+ resources/js/app.js                                |  44 ++-
+ .../views/admin/dashboard-administrador.blade.php  |   8 +-
+ .../aula-virtual/cursos/show-docente.blade.php     |  74 +----
+ .../aula-virtual/cursos/show-estudiante.blade.php  |  60 +---
+ .../views/aula-virtual/dashboard/docente.blade.php |   2 +-
+ .../aula-virtual/dashboard/estudiante.blade.php    |   2 +-
+ resources/views/aula-virtual/layouts/app.blade.php |  79 +----
+ .../views/aula-virtual/layouts/sidebar.blade.php   | 168 +---------
+ .../views/aula-virtual/tareas/entregar.blade.php   |  21 +-
+ resources/views/components/actor-menu.blade.php    | 122 ++++----
+ resources/views/estudiante/area.blade.php          |  14 +
+ resources/views/layouts/app.blade.php              |  20 +-
+ resources/views/layouts/sidebar.blade.php          |  18 +-
+ .../livewire/admin/gestion-usuarios.blade.php      |   8 +-
+ .../materiales/crear-material.blade.php            |  16 +-
+ .../orientacion/explorador-vocacional.blade.php    |  34 +-
+ .../aula-virtual/tareas/crear-tarea.blade.php      |  27 +-
+ .../views/livewire/secretaria/cuentas.blade.php    |  88 ++++--
+ resources/views/workspaces/consulta.blade.php      |   9 +-
+ resources/views/workspaces/institucional.blade.php |  10 +-
+ routes/actors.php                                  |  57 +---
+ routes/aula_virtual.php                            |  49 +--
+ tests/TestCase.php                                 |  16 +-
+ tests/Unit/AcademicSecurityTest.php                |  74 ++++-
+ tests/Unit/AporteIngenierilClientTest.php          |  22 ++
+ tests/Unit/AuthorizationBoundariesTest.php         |  33 +-
+ tests/Unit/RoleDashboardResolverTest.php           |  35 ++-
+ tests/Unit/RoleRequestAuthorizationTest.php        |  11 +-
+ 73 files changed, 1645 insertions(+), 1393 deletions(-)
+EXIT: 0
+COMMAND: git worktree list
+C:/laragon/www/savp-tis3                                                   3338356 [feature/incorporacion-prevenciones-integrales]
+C:/laragon/www/savp-reestructuracion                                       2f9d5e8 [feature/REESTRUCTURACION]
+C:/laragon/www/savp-tis3-aporte                                            ae386c7 [backup/peter3-wip-2026-09-30]
+C:/Users/LOQ/.codex/worktrees/61ea/savp-reestructuracion                   e866195 (detached HEAD)
+C:/Users/LOQ/.codex/worktrees/ed79/savp-reestructuracion                   32c0259 (detached HEAD)
+C:/Users/LOQ/.codex/worktrees/reconciliacion-peter2/savp-reestructuracion  3338356 [feature/RECONCILIACION-REESTRUCTURACION]
+EXIT: 0
+COMMAND: php --version
+PHP 8.4.13 (cli) (built: Sep 23 2025 14:36:17) (NTS Visual C++ 2022 x64)
+Copyright (c) The PHP Group
+Zend Engine v4.4.13, Copyright (c) Zend Technologies
+EXIT: 0
+COMMAND: composer --version
+Composer version 2.9.8 2026-05-13 09:28:38
+EXIT: 0
+COMMAND: php artisan --version
+Laravel Framework 13.6.0
+EXIT: 0
+COMMAND: php artisan route:list --except-vendor
+
+  GET|HEAD  / ................................................................................................ welcome
+  GET|HEAD  admin ................................................... admin.dashboard › AdminDashboardController@index
+  GET|HEAD  admin/asignaciones-regencia .................................................. admin.asignaciones-regencia
+  GET|HEAD  admin/bitacora ........................................... admin.bitacora › Admin\BitacoraController@index
+  GET|HEAD  admin/calificaciones ........................... admin.calificaciones › Admin\CalificacionController@index
+  GET|HEAD  admin/especialidades-tecnicas admin.especialidades-tecnicas › Admin\EspecialidadesTecnicasController@index
+  GET|HEAD  admin/gestion-academica ................. admin.gestion-academica › Admin\GestionAcademicaController@index
+  GET|HEAD  admin/gestion-asignaturas ............ admin.gestion-asignaturas › Admin\GestionAsignaturaController@index
+  GET|HEAD  admin/gestion-cursos .......................... admin.gestion-cursos › Admin\GestionCursosController@index
+  GET|HEAD  admin/gestion-docentes ..................... admin.gestion-docentes › Admin\GestionDocenteController@index
+  GET|HEAD  admin/gestion-estudiantes ........... admin.gestion-estudiantes › Admin\GestionEstudiantesController@index
+  GET|HEAD  admin/gestion-inscripciones ....... admin.gestion-inscripciones › Admin\GestionInscripcionController@index
+  GET|HEAD  admin/gestion-paralelos .................. admin.gestion-paralelos › Admin\GestionParaleloController@index
+  GET|HEAD  admin/gestion-personas ..................... admin.gestion-personas › Admin\GestionPersonaController@index
+  GET|HEAD  admin/gestion-turnos ........................... admin.gestion-turnos › Admin\GestionTurnoController@index
+  GET|HEAD  admin/gestion-usuarios ..................... admin.gestion-usuarios › Admin\GestionUsuarioController@index
+  GET|HEAD  admin/institucion-procedencia admin.institucion-procedencia › Admin\InstitucionProcedenciaController@index
+  GET|HEAD  admin/periodo-evaluacion .............. admin.periodo-evaluacion › Admin\PeriodoEvaluacionController@index
+  GET|HEAD  admin/personal-institucional ..... admin.personal-institucional › Admin\GestionPersonalInstitucional@index
+  GET|HEAD  admin/planes-asignatura ................. admin.planes-asignatura › Admin\PlanesAsignaturaController@index
+  GET|HEAD  admin/reportes-academicos ............. admin.reportes-academicos › Admin\ReporteAcademicoController@index
+  GET|HEAD  admin/reportes-administrativos admin.reportes-administrativos › Admin\ReporteAdministrativoController@ind…
+  GET|HEAD  admin/reportes/academico-general/pdf admin.reportes.academico-general.pdf › Admin\ReportePdfController@ac…
+  GET|HEAD  admin/reportes/administrativo/pdf admin.reportes.administrativo.pdf › Admin\ReportePdfController@administ…
+  GET|HEAD  admin/reportes/bitacora/pdf ............ admin.reportes.bitacora.pdf › Admin\ReportePdfController@bitacora
+  GET|HEAD  admin/reportes/calificaciones/pdf admin.reportes.calificaciones.pdf › Admin\ReportePdfController@califica…
+  GET|HEAD  admin/reportes/compatibilidad-carreras/pdf admin.reportes.compatibilidad-carreras.pdf › Admin\ReportePdfC…
+  GET|HEAD  admin/reportes/estudiantes-riesgo/pdf admin.reportes.estudiantes-riesgo.pdf › Admin\ReportePdfController@…
+  GET|HEAD  admin/reportes/institucional-completo/pdf admin.reportes.institucional-completo.pdf › Admin\ReportePdfCon…
+  GET|HEAD  admin/reportes/paquete/zip ............ admin.reportes.paquete.zip › Admin\ReportePdfController@paqueteZip
+  GET|HEAD  admin/reportes/respaldo-academico/sql admin.reportes.respaldo-academico.sql › Admin\ReportePdfController@…
+  GET|HEAD  admin/reportes/vocacional-riasec/pdf admin.reportes.vocacional-riasec.pdf › Admin\ReportePdfController@vo…
+  GET|HEAD  admin/roles-permisos ................................................................ admin.roles-permisos
+  GET|HEAD  admin/roles-permisos/solicitudes/{roleRequest}/documento admin.roles-permisos.documento › Admin\RoleReque…
+  GET|HEAD  admin/tipo-vinculacion-estudiante admin.tipo-vinculacion-estudiante › Admin\TipoVinculacionEstudianteCont…
+  GET|HEAD  api/user ................................................................................ routes/api.php:6
+  GET|HEAD  aula-virtual ............................... aula-virtual.inicio › AulaVirtual\AulaVirtualController@index
+  GET|HEAD  aula-virtual/cursos/{curso}/materiales aula-virtual.materiales.index › AulaVirtual\MaterialController@ind…
+  GET|HEAD  aula-virtual/entregas/archivos/{archivo}/descargar aula-virtual.entregas.archivos.descargar › AulaVirtual…
+  POST      aula-virtual/entregas/{entrega}/calificar aula-virtual.docente.entregas.calificar › AulaVirtual\EntregaCo…
+  POST      aula-virtual/entregas/{entrega}/devolver aula-virtual.docente.entregas.devolver › AulaVirtual\EntregaCont…
+  GET|HEAD  aula-virtual/google/redirect aula-virtual.google.redirect › AulaVirtual\AuthAulaVirtualController@redirec…
+  GET|HEAD  aula-virtual/login ...................... aula-virtual.login › AulaVirtual\AuthAulaVirtualController@login
+  GET|HEAD  aula-virtual/materiales/{material}/descargar aula-virtual.materiales.descargar › AulaVirtual\MaterialCont…
+  POST      aula-virtual/materiales/{material}/ocultar aula-virtual.materiales.ocultar › AulaVirtual\MaterialControll…
+  POST      aula-virtual/materiales/{material}/publicar aula-virtual.materiales.publicar › AulaVirtual\MaterialContro…
+  GET|HEAD  aula-virtual/mi-asistencia aula-virtual.estudiante.asistencia › AulaVirtual\AsistenciaController@miAsiste…
+  GET|HEAD  aula-virtual/mis-asignaturas aula-virtual.estudiante.asignaturas › AulaVirtual\CursoVirtualController@ind…
+  GET|HEAD  aula-virtual/mis-asignaturas/{curso} aula-virtual.estudiante.curso › AulaVirtual\CursoVirtualController@s…
+  GET|HEAD  aula-virtual/mis-cursos .... aula-virtual.docente.cursos › AulaVirtual\CursoVirtualController@indexDocente
+  GET|HEAD  aula-virtual/mis-cursos/{curso} aula-virtual.docente.curso › AulaVirtual\CursoVirtualController@showDocen…
+  POST      aula-virtual/mis-cursos/{curso}/asistencia aula-virtual.docente.asistencia.guardar › AulaVirtual\Asistenc…
+  GET|HEAD  aula-virtual/mis-cursos/{curso}/asistencia/registrar aula-virtual.docente.asistencia.registrar › AulaVirt…
+  POST      aula-virtual/mis-cursos/{curso}/materiales aula-virtual.docente.materiales.store › AulaVirtual\MaterialCo…
+  POST      aula-virtual/mis-cursos/{curso}/tareas aula-virtual.docente.tareas.store › AulaVirtual\TareaController@st…
+  GET|HEAD  aula-virtual/orientacion aula-virtual.estudiante.orientacion › AulaVirtual\OrientacionController@estudian…
+  GET|HEAD  aula-virtual/orientacion/explorador aula-virtual.estudiante.orientacion.explorador › AulaVirtual\Orientac…
+  GET|HEAD  aula-virtual/orientacion/resultados aula-virtual.estudiante.orientacion.resultados › AulaVirtual\Orientac…
+  GET|HEAD  aula-virtual/orientacion/seguimiento aula-virtual.docente.orientacion.seguimiento › AulaVirtual\Orientaci…
+  GET|HEAD  aula-virtual/reportes ..... aula-virtual.docente.reportes › AulaVirtual\ReporteAulaVirtualController@index
+  GET|HEAD  aula-virtual/tareas/archivos/{archivo}/descargar aula-virtual.tareas.archivos.descargar › AulaVirtual\Tar…
+  GET|HEAD  aula-virtual/tareas/{tarea}/entregar aula-virtual.estudiante.tareas.entregar › AulaVirtual\TareaControlle…
+  POST      aula-virtual/tareas/{tarea}/entregas aula-virtual.estudiante.tareas.entregas.store › AulaVirtual\EntregaC…
+  GET|HEAD  aula-virtual/tareas/{tarea}/revisar aula-virtual.docente.tareas.revisar › AulaVirtual\TareaController@rev…
+  GET|HEAD  auth/google/callback ................................ google.callback › Auth\GoogleAuthController@callback
+  GET|HEAD  auth/google/redirect ................................ google.redirect › Auth\GoogleAuthController@redirect
+  GET|HEAD  dashboard ................................................................ dashboard › DashboardController
+  GET|HEAD  direccion ............................................. direccion.dashboard › WorkspaceController@director
+  GET|HEAD  direccion/consultas/{area} ....................... direccion.consulta › InstitutionalQueryController@index
+  GET|HEAD  docente .................................................. docente.dashboard › WorkspaceController@docente
+  ANY       docente/cursos .................................. docente.cursos › Illuminate\Routing › RedirectController
+  GET|HEAD  docente/cursos/{curso} .................... docente.curso › AulaVirtual\CursoVirtualController@showDocente
+  GET|HEAD  docente/cursos/{curso}/calificaciones docente.cursos.calificaciones › Docente\CalificacionCursoController…
+  POST      docente/cursos/{curso}/calificaciones docente.cursos.calificaciones.store › Docente\CalificacionCursoCont…
+  PUT       docente/cursos/{curso}/calificaciones/{calificacion} docente.cursos.calificaciones.update › Docente\Calif…
+  GET|HEAD  estudiante ......................................... estudiante.dashboard › WorkspaceController@estudiante
+  ANY       estudiante/asistencia .................... estudiante.asistencia › Illuminate\Routing › RedirectController
+  ANY       estudiante/intereses ...................... estudiante.intereses › Illuminate\Routing › RedirectController
+  ANY       estudiante/materias ........................ estudiante.materias › Illuminate\Routing › RedirectController
+  GET|HEAD  estudiante/materias/{curso} ....... estudiante.materia › AulaVirtual\CursoVirtualController@showEstudiante
+  GET|HEAD  estudiante/{area} ................................. estudiante.area › Estudiante\ExperienceController@show
+  GET|HEAD  regencia ............................................... regencia.dashboard › WorkspaceController@regencia
+  GET|HEAD  regencia/consultas/{area} ......................... regencia.consulta › InstitutionalQueryController@index
+  GET|HEAD  secretaria ......................................... secretaria.dashboard › WorkspaceController@secretaria
+  GET|HEAD  secretaria/cuentas .................................................................... secretaria.cuentas
+  GET|HEAD  secretaria/cursos ................................ secretaria.cursos › Admin\GestionCursosController@index
+  GET|HEAD  secretaria/estudiantes ................. secretaria.estudiantes › Admin\GestionEstudiantesController@index
+  GET|HEAD  secretaria/gestion-academica ....... secretaria.gestion-academica › Admin\GestionAcademicaController@index
+  GET|HEAD  secretaria/inscripciones ............. secretaria.inscripciones › Admin\GestionInscripcionController@index
+  GET|HEAD  secretaria/paralelos ........................ secretaria.paralelos › Admin\GestionParaleloController@index
+  GET|HEAD  secretaria/personas ........................... secretaria.personas › Admin\GestionPersonaController@index
+  GET|HEAD  secretaria/procedencia ............. secretaria.procedencia › Admin\InstitucionProcedenciaController@index
+  GET|HEAD  secretaria/turnos ................................. secretaria.turnos › Admin\GestionTurnoController@index
+  GET|HEAD  secretaria/vinculacion .......... secretaria.vinculacion › Admin\TipoVinculacionEstudianteController@index
+
+                                                                                                   Showing [94] routes
+
+EXIT: 0
+COMMAND: node --version
+v25.0.0
+EXIT: 0
+COMMAND: npm --version
+11.6.2
+EXIT: 0

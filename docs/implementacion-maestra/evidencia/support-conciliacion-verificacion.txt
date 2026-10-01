@@ -1,0 +1,5 @@
+Original=105
+Matriz=105
+IDsUnicos=105
+DiscrepanciasOrigen=0
+RutasArchivosInexistentes=0

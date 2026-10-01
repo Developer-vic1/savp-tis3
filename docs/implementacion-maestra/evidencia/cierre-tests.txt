@@ -1,0 +1,245 @@
+
+   PASS  Tests\Unit\AcademicSecurityTest
+  ✓ hidden material is denied even when student has course access                                                0.56s  
+  ✓ teacher cannot grade delivery from another course                                                            0.09s  
+  ✓ student cannot submit draft task                                                                             0.05s  
+  ✓ closed course cannot be graded                                                                               0.05s  
+  ✓ revoked delivery permission denies grading before query                                                      0.05s  
+  ✓ admin without report permission cannot export                                                                0.07s  
+  ✓ director with broad report permission cannot export admin package                                            0.05s  
+  ✓ inactive account is denied by all academic entry points                                                      0.06s  
+  ✓ teacher without active profile cannot match a missing plan                                                   0.06s  
+  ✓ regent cannot read unscoped report despite legacy permission                                                 0.05s  
+  ✓ inactive administrator cannot assign regency                                                                 0.05s  
+  ✓ regent cannot write grades even with accidentally granted permission                                         0.05s  
+  ✓ revoked secretary permission blocks account write before database access                                     0.06s  
+
+   PASS  Tests\Unit\AporteIngenierilClientTest
+  ✓ it returns valid versioned data when service is available                                                    0.25s  
+  ✓ it uses safe fallback for 503 and invalid json                                                               0.06s  
+  ✓ it uses safe fallback for validation error                                                                   0.06s  
+  ✓ it uses safe fallback for timeout                                                                            0.06s  
+  ✓ it uses safe fallback for connection failure                                                                 0.05s  
+  ✓ academic payload excludes personal identity fields                                                           0.07s  
+  ✓ empty response is not presented as evidence                                                                  0.05s  
+  ✓ integration stays off until explicitly enabled                                                               0.05s  
+  ✓ internal student identifier is replaced with a reference                                                     0.05s  
+  ✓ json list is an invalid specialized response                                                                 0.06s  
+  ✓ endpoint is configurable without changing the contract                                                       0.05s  
+  ✓ tutor uses the existing contract without sending identity                                                    0.06s  
+  ✓ knowledge request uses official corpus filters                                                               0.05s  
+  ✓ civil identity and invalid scales are rejected before network                                                0.06s  
+  ✓ unsupported or malformed response never becomes available                                                    0.07s  
+  ✓ authentication header is sent only to configured service                                                     0.05s  
+  ✓ absolute endpoint cannot redirect credentials to another host                                                0.06s  
+
+   PASS  Tests\Unit\AuthorizationBoundariesTest
+  ✓ regent without assignment has no institutional scope                                                         0.11s  
+  ✓ student cannot read another student                                                                          0.06s  
+  ✓ inactive account cannot enter workspace                                                                      0.05s  
+  ✓ unlinked user cannot resolve null person profiles                                                            0.06s  
+  ✓ secretary cannot call admin account component                                                                0.10s  
+  ✓ revoked permission blocks subsequent livewire action                                                         0.07s  
+
+   PASS  Tests\Unit\ExampleTest
+  ✓ that true is true                                                                                            0.01s  
+
+   PASS  Tests\Unit\HistoricalReportAuthorizationTest
+  ✓ secretary can read administrative pdf but not academic pdf                                                   0.06s  
+  ✓ broad permission never exposes sql zip or unknown family                                                     0.06s  
+  ✓ path traversal and cross family path are rejected                                                            0.06s  
+  ✓ revoked permission and regency cannot read global history                                                    0.06s  
+
+   PASS  Tests\Unit\InstitutionalAuthorityServiceTest
+  ✓ absent inactive and ambiguous director are blocked                                                           0.01s  
+  ✓ valid director uses real person name                                                                         0.01s  
+
+   PASS  Tests\Unit\InstitutionalDocumentAnalyzerTest
+  ✓ unavailable analyzer never invents document evidence                                                         0.01s  
+
+   PASS  Tests\Unit\InstitutionalRoleGovernanceTest
+  ✓ reserved and existing roles are rejected                                                                     0.01s  
+  ✓ suggests secretaria and regente from functions                                                               0.01s  
+  ✓ blocks critical permission and recommends smaller scope
+  ✓ accepts coherent request and rejects vague justification
+  ✓ unsupported function requires review
+  ✓ legacy permission and unrelated domain are blocked
+
+   PASS  Tests\Unit\InstitutionalScopeContractTest
+  ✓ regency sql correlates both year and grade and active management                                             0.06s  
+  ✓ missing regency structure cannot fall back to global scope                                                   0.05s  
+  ✓ student course query requires all four enrollment dimensions                                                 0.07s  
+  ✓ current teacher student links require correlated student and enrollment                                      0.07s  
+  ✓ no tasks do not show fabricated completion                                                                   0.06s  
+
+   PASS  Tests\Unit\KardexBoundaryTest
+  ✓ missing contract returns explicit conflict without fake timeline                                             0.06s  
+  ✓ denied student access never calls repository                                                                 0.05s  
+  ✓ secretary cannot write even with proposed write permission                                                   0.05s  
+  ✓ granted read permission does not bypass student scope                                                        0.06s  
+
+   PASS  Tests\Unit\NotificationBoundaryTest
+  ✓ disabled notifications do not query storage or invent zero count                                             0.08s  
+  ✓ forged external or foreign record links are rejected                                                         0.07s  
+
+   PASS  Tests\Unit\PreparedPersistenceBoundaryTest
+  ✓ unapproved persistence flags do not inspect a database                                                       0.08s  
+  ✓ unapproved goal write is closed before profile or storage queries                                            0.05s  
+  ✓ teacher cannot read or update a personal student goal                                                        0.06s  
+
+   PASS  Tests\Unit\PrivateFilePathTest
+  ✓ download path cannot escape the private directory with data set #0                                           0.01s  
+  ✓ download path cannot escape the private directory with data set #1
+  ✓ download path cannot escape the private directory with data set #2
+  ✓ download path cannot escape the private directory with data set #3
+  ✓ download path cannot escape the private directory with data set #4
+  ✓ download path cannot escape the private directory with data set #5
+  ✓ download path cannot escape the private directory with data set #6
+  ✓ download path cannot escape the private directory with data set #7
+  ✓ file under the expected directory is valid
+
+   PASS  Tests\Unit\RegencyReportScopeTest
+  ✓ report correlates assignment and all enrollment dimensions                                                   0.07s  
+  ✓ grade permission is checked before schema and grade query                                                    0.06s  
+  ✓ other actor cannot use regency report even with broad permissions                                            0.05s  
+
+   PASS  Tests\Unit\RoleDashboardResolverTest
+  ✓ each actor resolves to an independent workspace with data set #0                                             0.06s  
+  ✓ each actor resolves to an independent workspace with data set #1                                             0.08s  
+  ✓ each actor resolves to an independent workspace with data set #2                                             0.06s  
+  ✓ each actor resolves to an independent workspace with data set #3                                             0.06s  
+  ✓ each actor resolves to an independent workspace with data set #4                                             0.07s  
+  ✓ each actor resolves to an independent workspace with data set #5                                             0.06s  
+  ✓ user without supported role has no workspace                                                                 0.06s  
+  ✓ multiple actors block resolution even with complementary roles                                               0.06s  
+  ✓ inactive user has no workspace                                                                               0.05s  
+  ✓ middleware blocks a user with two actors                                                                     0.05s  
+
+   PASS  Tests\Unit\RoleRequestAuthorizationTest
+  ✓ non administrator is rejected                                                                                0.02s  
+  ✓ revoked granular permission is rejected                                                                      0.01s  
+  ✓ missing module permission is rejected
+  ✓ valid authorization passes
+
+   PASS  Tests\Unit\SubmissionAuthorizationTest
+  ✓ own submission download requires current course access                                                       0.06s  
+  ✓ enrolled student can download own submission                                                                 0.06s  
+  ✓ revoked grading permission blocks grade but allows authorized return                                         0.05s  
+  ✓ closed class cannot be graded or returned                                                                    0.06s  
+
+   PASS  Tests\Unit\WorkspaceIntegrityTest
+  ✓ module search only shows current actor routes                                                                0.35s  
+  ✓ livewire lms action is reauthorized after role revocation                                                    0.06s  
+  ✓ two institutional actors cannot read academic data through a service                                         0.06s  
+  ✓ teacher routes cannot be entered by director with complementary permissions                                  0.06s  
+  ✓ student course context is locked in livewire                                                                 0.10s  
+
+   PASS  Tests\Unit\WorkspaceRoutesTest
+  ✓ workspace links reference registered routes                                                                  0.07s  
+  ✓ account and grade routes keep actor boundaries                                                               0.06s  
+
+   WARN  Tests\Feature\ApiTokenPermissionsTest
+  - api token permissions can be updated → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\AuthenticationTest
+  - login screen can be rendered → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - users can authenticate using the login screen → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - users can not authenticate with invalid password → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\Authorization\AcademicContextTest
+  - assignment limit and duplicate are enforced → Se requiere PDO SQLite ya disponible.
+  - retirement preserves record and releases capacity → Se requiere PDO SQLite ya disponible.
+  - regent cannot read same student in another year → Se requiere PDO SQLite ya disponible.
+  - inactive regent cannot receive an assignment → Se requiere PDO SQLite ya disponible.
+  - official grades preserve both years → Se requiere PDO SQLite ya disponible.
+  - closed period requires reason for rectification → Se requiere PDO SQLite ya disponible.
+
+   WARN  Tests\Feature\Authorization\WorkspaceAuthorizationTest
+  - dashboard redirects each role to its workspace with data set #0 → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - dashboard redirects each role to its workspace with data set #1 → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - dashboard redirects each role to its workspace with data set #2 → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - dashboard redirects each role to its workspace with data set #3 → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - dashboard redirects each role to its workspace with data set #4 → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - dashboard redirects each role to its workspace with data set #5 → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - student cannot enter administration → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - director cannot use admin workspace → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - secretary cannot use teacher grade route → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\BrowserSessionsTest
+  - other browser sessions can be logged out → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\CreateApiTokenTest
+  - api tokens can be created → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\DeleteAccountTest
+  - user accounts can be deleted → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - correct password must be provided before account can be deleted → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\DeleteApiTokenTest
+  - api tokens can be deleted → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\EmailVerificationTest
+  - email verification screen can be rendered → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - email can be verified → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - email can not verified with invalid hash → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   PASS  Tests\Feature\ExampleTest
+  ✓ the application returns a successful response                                                                0.11s  
+
+   WARN  Tests\Feature\PasswordConfirmationTest
+  - confirm password screen can be rendered → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - password can be confirmed → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - password is not confirmed with invalid password → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\PasswordResetTest
+  - reset password link screen can be rendered → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - reset password link can be requested → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - reset password screen can be rendered → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - password can be reset with valid token → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\ProfileInformationTest
+  - current profile information is available → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - profile information can be updated → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\RegistrationTest
+  - registration screen can be rendered → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - registration screen cannot be rendered if support is disabled → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - new users can register → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   PASS  Tests\Feature\SpecializedSupportBoundaryTest
+  ✓ offline tutor displays fallback without an http request                                                      0.08s  
+  ✓ empty sources query is validated before request                                                              0.08s  
+  ✓ offline sources do not invent evidence                                                                       0.08s  
+  ✓ tutor answer cannot be forged by livewire client                                                             0.08s  
+
+   PASS  Tests\Feature\TeacherReportPdfTest
+  ✓ scoped pdf is generated with private storage and download headers                                            0.98s  
+  ✓ foreign course cannot generate a pdf                                                                         0.09s  
+
+   WARN  Tests\Feature\TwoFactorAuthenticationSettingsTest
+  - two factor authentication can be enabled → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - recovery codes can be regenerated → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - two factor authentication can be disabled → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   WARN  Tests\Feature\UpdatePasswordTest
+  - password can be updated → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - current password must be correct → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+  - new passwords must match → No hay PDO SQLite disponible para ejecutar Feature sin tocar PostgreSQL institucional.
+
+   PASS  Tests\Feature\WorkspaceHttpBoundaryTest
+  ✓ dashboard redirects each actor and blocks another workspace with data set #0                                 0.08s  
+  ✓ dashboard redirects each actor and blocks another workspace with data set #1                                 0.07s  
+  ✓ dashboard redirects each actor and blocks another workspace with data set #2                                 0.08s  
+  ✓ dashboard redirects each actor and blocks another workspace with data set #3                                 0.07s  
+  ✓ dashboard redirects each actor and blocks another workspace with data set #4                                 0.09s  
+  ✓ dashboard redirects each actor and blocks another workspace with data set #5                                 0.07s  
+  ✓ invalid identity has no dashboard with data set #0                                                           0.07s  
+  ✓ invalid identity has no dashboard with data set #1                                                           0.07s  
+  ✓ invalid identity has no dashboard with data set #2                                                           0.07s  
+  ✓ foreign course is forbidden even with module permissions with data set #0                                    0.07s  
+  ✓ foreign course is forbidden even with module permissions with data set #1                                    0.08s  
+  ✓ guest is redirected to login                                                                                 0.11s  
+
+  Tests:    45 skipped, 120 passed (287 assertions)
+  Duration: 12.55s
+

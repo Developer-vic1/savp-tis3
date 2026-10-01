@@ -4,12 +4,15 @@ namespace App\Livewire\Admin;
 
 use App\Models\Role;
 use App\Models\RoleRequest;
+use App\Models\User;
 use App\Services\InstitutionalAuthorityService;
 use App\Services\RolePermissionService;
 use App\Services\RoleRequestService;
 use App\Support\PermissionLabel;
+use App\Support\LegacyReadPermission;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
 class RolesPermisos extends Component
@@ -74,7 +77,7 @@ class RolesPermisos extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->user()?->hasRole('Administrador') && auth()->user()?->can('roles-permisos.gestionar'), 403);
+        abort_unless(auth()->user()?->can('roles-permisos.ver'), 403);
         $this->selectedRoleId = Role::query()->where('name', 'Administrador')->value('id')
             ?? Role::query()->orderBy('name')->value('id');
         $this->loadRole();
@@ -232,12 +235,30 @@ class RolesPermisos extends Component
     public function render()
     {
         $viewer = auth()->user();
-        abort_unless($viewer?->hasRole('Administrador') && $viewer?->can('roles-permisos.gestionar'), 403);
+        abort_unless($viewer?->can('roles-permisos.ver'), 403);
         $labels = Permission::query()->where('guard_name', 'web')->pluck('name')->map(fn ($name) => PermissionLabel::describe($name));
         $current = Role::query()->where('guard_name', 'web')->find($this->selectedRoleId)?->permissions()->pluck('name')->all() ?? [];
+        $userCounts = DB::table('model_has_roles')->where('model_type', User::class)
+            ->select('role_id', DB::raw('COUNT(DISTINCT cod_usu) AS total'))
+            ->groupBy('role_id')->pluck('total', 'role_id');
+        $roles = Role::query()->where('guard_name', 'web')->orderBy('name')->get()
+            ->each(fn (Role $role) => $role->setAttribute('users_count', (int) ($userCounts[$role->id] ?? 0)));
+        $selectedRole = $roles->firstWhere('id', $this->selectedRoleId);
+        $roleWindows = collect(config('architecture_windows', []))
+            ->where('actor', $selectedRole?->name)->values();
+        $legacyReadGrants = collect(LegacyReadPermission::FALLBACKS)
+            ->map(fn (array $actors, string $permission) => [
+                'permission' => $permission,
+                'legacy' => $actors[$selectedRole?->name] ?? null,
+            ])
+            ->filter(fn (array $grant) => $grant['legacy'] !== null && in_array($grant['legacy'], $current, true))
+            ->values();
 
         return view('livewire.admin.roles-permisos', [
-            'roles' => Role::query()->where('guard_name', 'web')->withCount('users')->orderBy('name')->get(),
+            'roles' => $roles,
+            'selectedRole' => $selectedRole,
+            'roleWindows' => $roleWindows,
+            'legacyReadGrants' => $legacyReadGrants,
             'permissionGroups' => $this->visiblePermissions()->groupBy(fn ($permission) => PermissionLabel::describe($permission->name)['domain']),
             'domains' => $labels->pluck('domain')->unique()->sort(),
             'actions' => $labels->pluck('action')->unique()->sort(),

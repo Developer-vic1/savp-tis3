@@ -1,0 +1,375 @@
+- generic [ref=f30e3]:
+  - complementary "Navegación de Administrador" [ref=f30e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f30e6] [cursor=pointer]:
+      - /url: http://localhost:8000/admin
+      - img "Logo Franz Tamayo 3" [ref=f30e7]
+      - generic [ref=f30e8]:
+        - generic [ref=f30e9]: Franz Tamayo N°3
+        - generic [ref=f30e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f30e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f30e13]: ☰
+      - generic [ref=f30e14]: Administrador
+    - navigation [ref=f30e15]:
+      - link "Inicio" [ref=f30e16] [cursor=pointer]:
+        - /url: http://localhost:8000/admin
+        - generic [aria-hidden] [ref=f30e17]: ⌂
+      - generic [ref=f30e19]:
+        - heading "Administración" [level=2] [ref=f30e20]
+        - link "Personas" [ref=f30e21] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-personas
+          - generic [aria-hidden] [ref=f30e22]: •
+        - link "Usuarios" [ref=f30e24] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-usuarios
+          - generic [aria-hidden] [ref=f30e25]: •
+        - link "Personal institucional" [ref=f30e27] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/personal-institucional
+          - generic [aria-hidden] [ref=f30e28]: •
+        - link "Estudiantes" [ref=f30e30] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-estudiantes
+          - generic [aria-hidden] [ref=f30e31]: •
+        - link "Docentes" [ref=f30e33] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-docentes
+          - generic [aria-hidden] [ref=f30e34]: •
+      - generic [ref=f30e36]:
+        - heading "Gestión académica" [level=2] [ref=f30e37]
+        - link "Gestión" [ref=f30e38] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-academica
+          - generic [aria-hidden] [ref=f30e39]: •
+        - link "Cursos" [ref=f30e41] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-cursos
+          - generic [aria-hidden] [ref=f30e42]: •
+        - link "Asignaturas" [ref=f30e44] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-asignaturas
+          - generic [aria-hidden] [ref=f30e45]: •
+        - link "Paralelos" [ref=f30e47] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-paralelos
+          - generic [aria-hidden] [ref=f30e48]: •
+        - link "Turnos" [ref=f30e50] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-turnos
+          - generic [aria-hidden] [ref=f30e51]: •
+        - link "Inscripciones" [ref=f30e53] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-inscripciones
+          - generic [aria-hidden] [ref=f30e54]: •
+        - link "Especialidades técnicas" [ref=f30e56] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/especialidades-tecnicas
+          - generic [aria-hidden] [ref=f30e57]: •
+        - link "Planes de asignatura" [ref=f30e59] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/planes-asignatura
+          - generic [aria-hidden] [ref=f30e60]: •
+        - link "Calendario" [ref=f30e62] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/calendario
+          - generic [aria-hidden] [ref=f30e63]: •
+        - link "Periodos" [ref=f30e65] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/periodo-evaluacion
+          - generic [aria-hidden] [ref=f30e66]: •
+      - generic [ref=f30e68]:
+        - heading "Académico" [level=2] [ref=f30e69]
+        - link "LMS institucional" [ref=f30e70] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/lms-supervision
+          - generic [aria-hidden] [ref=f30e71]: •
+        - link "Calificaciones" [ref=f30e73] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/calificaciones
+          - generic [aria-hidden] [ref=f30e74]: •
+      - generic [ref=f30e76]:
+        - heading "Seguridad" [level=2] [ref=f30e77]
+        - link "Roles y permisos" [ref=f30e78] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/roles-permisos
+          - generic [aria-hidden] [ref=f30e79]: •
+        - link "Bitácora" [ref=f30e81] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/bitacora
+          - generic [aria-hidden] [ref=f30e82]: •
+      - generic [ref=f30e84]:
+        - heading "Reportes" [level=2] [ref=f30e85]
+        - link "Reportes académicos" [ref=f30e86] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/reportes-academicos
+          - generic [aria-hidden] [ref=f30e87]: •
+        - link "Reportes administrativos" [ref=f30e89] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/reportes-administrativos
+          - generic [aria-hidden] [ref=f30e90]: •
+    - generic [ref=f30e92]:
+      - link "Mi perfil" [ref=f30e93] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f30e94]: ○
+      - button "Cerrar sesión" [ref=f30e97] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f30e98]: ↪
+  - generic [ref=f30e100]:
+    - banner [ref=f30e101]:
+      - generic [ref=f30e103]:
+        - generic [ref=f30e104]: 01/10/2026
+        - generic [ref=f30e108]:
+          - generic [ref=f30e109]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f30e110]
+        - button "Notificaciones" [ref=f30e112] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f30e113] [cursor=pointer]
+        - button [ref=f30e117] [cursor=pointer]:
+          - generic [ref=f30e118]:
+            - img "Victor Grover Asturizaga Plata" [ref=f30e119]
+            - generic [ref=f30e120]:
+              - paragraph [ref=f30e121]: Victor Grover Asturizaga Plata
+              - paragraph [ref=f30e122]: Administrador
+    - main [ref=f30e125]:
+      - generic [ref=f30e128]:
+        - generic [ref=f30e130]:
+          - generic [ref=f30e131]:
+            - generic [ref=f30e132]: Catálogo académico base
+            - heading "Gestión de Cursos" [level=2] [ref=f30e135]
+            - paragraph [ref=f30e136]: Administra los cursos oficiales de la institución y visualiza su relación con Plan de Asignatura, Plan de Especialidad y la organización semanal de Horarios. Este módulo consulta y articula la información académica sin duplicar datos curriculares.
+            - generic [ref=f30e137]:
+              - button "Registrar curso" [ref=f30e138] [cursor=pointer]
+              - button "Ver cursos" [ref=f30e141] [cursor=pointer]
+              - button "Vista de horarios" [ref=f30e144] [cursor=pointer]
+          - generic [ref=f30e148]:
+            - generic [ref=f30e150]:
+              - paragraph [ref=f30e151]: Gestión activa
+              - heading "Gestión 2026" [level=3] [ref=f30e152]
+              - paragraph [ref=f30e153]: Panel académico institucional
+            - generic [ref=f30e157]:
+              - generic [ref=f30e158]:
+                - paragraph [ref=f30e159]: Cursos
+                - paragraph [ref=f30e160]: "6"
+              - generic [ref=f30e161]:
+                - paragraph [ref=f30e162]: Horarios
+                - paragraph [ref=f30e163]: "6"
+              - generic [ref=f30e164]:
+                - paragraph [ref=f30e165]: Plan asignatura
+                - paragraph [ref=f30e166]: "6"
+              - generic [ref=f30e167]:
+                - paragraph [ref=f30e168]: Especialidad
+                - paragraph [ref=f30e169]: "2"
+        - generic [ref=f30e170]:
+          - article [ref=f30e171]:
+            - generic [ref=f30e173]:
+              - paragraph [ref=f30e174]: Total
+              - heading "6" [level=3] [ref=f30e175]
+            - paragraph [ref=f30e179]: Cursos oficiales registrados.
+          - article [ref=f30e180]:
+            - generic [ref=f30e182]:
+              - paragraph [ref=f30e183]: Activos
+              - heading "6" [level=3] [ref=f30e184]
+            - paragraph [ref=f30e188]: Disponibles para operación.
+          - article [ref=f30e189]:
+            - generic [ref=f30e191]:
+              - paragraph [ref=f30e192]: Plan asignatura
+              - heading "6" [level=3] [ref=f30e193]
+            - paragraph [ref=f30e197]: Cursos con materias.
+          - article [ref=f30e198]:
+            - generic [ref=f30e200]:
+              - paragraph [ref=f30e201]: Especialidad
+              - heading "2" [level=3] [ref=f30e202]
+            - paragraph [ref=f30e206]: Carga técnica asociada.
+          - article [ref=f30e207]:
+            - generic [ref=f30e209]:
+              - paragraph [ref=f30e210]: Horarios
+              - heading "6" [level=3] [ref=f30e211]
+            - paragraph [ref=f30e215]: Cursos organizados.
+          - article [ref=f30e216]:
+            - generic [ref=f30e218]:
+              - paragraph [ref=f30e219]: Pendientes
+              - heading "0" [level=3] [ref=f30e220]
+            - paragraph [ref=f30e224]: Cursos sin horario.
+        - generic [ref=f30e230]:
+          - paragraph [ref=f30e231]: Enfoque correcto del módulo
+          - paragraph [ref=f30e232]: Cursos administra el catálogo académico base. Las materias se leen desde Plan de Asignatura, las especialidades desde Plan de Especialidad y la organización semanal se registra en Horarios. En el detalle de cada curso puedes abrir la matriz institucional y crear una clase pulsando un bloque libre.
+        - generic [ref=f30e234]:
+          - generic [ref=f30e235]:
+            - generic [ref=f30e236]: Buscar curso
+            - textbox "Buscar por curso, nivel o descripción..." [ref=f30e240]
+          - generic [ref=f30e241]:
+            - generic [ref=f30e242]: Estado
+            - combobox [ref=f30e244]:
+              - option "Todos" [selected]
+              - option "Activo"
+              - option "Inactivo"
+          - generic [ref=f30e245]:
+            - generic [ref=f30e246]: Nivel académico
+            - combobox [ref=f30e248]:
+              - option "Todos" [selected]
+              - option "Técnica Tecnológica General"
+              - option "Especialización Técnica"
+          - generic [ref=f30e249]:
+            - generic [ref=f30e250]: Gestión
+            - combobox [ref=f30e252]:
+              - option "Gestión activa" [selected]
+              - option "Gestión 2026"
+          - generic [ref=f30e253]:
+            - generic [ref=f30e254]: Materias
+            - combobox [ref=f30e256]:
+              - option "Todos" [selected]
+              - option "Con"
+              - option "Sin"
+          - generic [ref=f30e257]:
+            - generic [ref=f30e258]: Horario
+            - combobox [ref=f30e260]:
+              - option "Todos" [selected]
+              - option "Con"
+              - option "Sin"
+          - generic [ref=f30e261]:
+            - generic [ref=f30e262]: Limpiar
+            - button [ref=f30e263] [cursor=pointer]
+        - generic [ref=f30e266]:
+          - generic [ref=f30e268]:
+            - generic [ref=f30e269]:
+              - generic [ref=f30e270]:
+                - paragraph [ref=f30e271]: Catálogo institucional
+                - heading "Cursos registrados" [level=3] [ref=f30e272]
+              - generic [ref=f30e273]:
+                - generic [ref=f30e274]: 6 cursos
+                - generic [ref=f30e275]: 6 activos
+                - generic [ref=f30e276]: 0 pendientes de horario
+            - table [ref=f30e278]:
+              - rowgroup [ref=f30e279]:
+                - row [ref=f30e280]:
+                  - columnheader "Curso" [ref=f30e281]
+                  - columnheader "Nivel" [ref=f30e282]
+                  - columnheader "Plan asignatura" [ref=f30e283]
+                  - columnheader "Especialidad" [ref=f30e284]
+                  - columnheader "Horario" [ref=f30e285]
+                  - columnheader "Estudiantes" [ref=f30e286]
+                  - columnheader "Estado" [ref=f30e287]
+                  - columnheader "Acciones" [ref=f30e288]
+              - rowgroup [ref=f30e289]:
+                - row [ref=f30e290]:
+                  - cell "1° 1ro de Secundaria Sin descripción registrada." [ref=f30e291]:
+                    - generic [ref=f30e292]:
+                      - generic [ref=f30e293]: 1°
+                      - generic [ref=f30e294]:
+                        - paragraph [ref=f30e295]: 1ro de Secundaria
+                        - paragraph [ref=f30e296]: Sin descripción registrada.
+                  - cell "Secundaria" [ref=f30e297]
+                  - cell "46 materias" [ref=f30e299]
+                  - cell "No aplica / sin plan" [ref=f30e301]
+                  - cell "20 bloques" [ref=f30e303]
+                  - cell [ref=f30e308]:
+                    - paragraph [ref=f30e309]: "98"
+                    - paragraph [ref=f30e310]: estudiantes
+                  - cell "Activo" [ref=f30e311]
+                  - cell [ref=f30e314]:
+                    - generic [ref=f30e315]:
+                      - button "Ver detalle institucional" [ref=f30e316] [cursor=pointer]
+                      - button "Editar curso" [ref=f30e320] [cursor=pointer]
+                      - button "Abrir módulo de horarios" [ref=f30e323] [cursor=pointer]
+                      - button "Desactivar curso" [ref=f30e326] [cursor=pointer]
+                - row [ref=f30e329]:
+                  - cell "2° 2do de Secundaria Sin descripción registrada." [ref=f30e330]:
+                    - generic [ref=f30e331]:
+                      - generic [ref=f30e332]: 2°
+                      - generic [ref=f30e333]:
+                        - paragraph [ref=f30e334]: 2do de Secundaria
+                        - paragraph [ref=f30e335]: Sin descripción registrada.
+                  - cell "Secundaria" [ref=f30e336]
+                  - cell "49 materias" [ref=f30e338]
+                  - cell "No aplica / sin plan" [ref=f30e340]
+                  - cell "20 bloques" [ref=f30e342]
+                  - cell [ref=f30e347]:
+                    - paragraph [ref=f30e348]: "102"
+                    - paragraph [ref=f30e349]: estudiantes
+                  - cell "Activo" [ref=f30e350]
+                  - cell [ref=f30e353]:
+                    - generic [ref=f30e354]:
+                      - button "Ver detalle institucional" [ref=f30e355] [cursor=pointer]
+                      - button "Editar curso" [ref=f30e359] [cursor=pointer]
+                      - button "Abrir módulo de horarios" [ref=f30e362] [cursor=pointer]
+                      - button "Desactivar curso" [ref=f30e365] [cursor=pointer]
+                - row [ref=f30e368]:
+                  - cell "3° 3ro de Secundaria Sin descripción registrada." [ref=f30e369]:
+                    - generic [ref=f30e370]:
+                      - generic [ref=f30e371]: 3°
+                      - generic [ref=f30e372]:
+                        - paragraph [ref=f30e373]: 3ro de Secundaria
+                        - paragraph [ref=f30e374]: Sin descripción registrada.
+                  - cell "Secundaria" [ref=f30e375]
+                  - cell "55 materias" [ref=f30e377]
+                  - cell "No aplica / sin plan" [ref=f30e379]
+                  - cell "24 bloques" [ref=f30e381]
+                  - cell [ref=f30e386]:
+                    - paragraph [ref=f30e387]: "100"
+                    - paragraph [ref=f30e388]: estudiantes
+                  - cell "Activo" [ref=f30e389]
+                  - cell [ref=f30e392]:
+                    - generic [ref=f30e393]:
+                      - button "Ver detalle institucional" [ref=f30e394] [cursor=pointer]
+                      - button "Editar curso" [ref=f30e398] [cursor=pointer]
+                      - button "Abrir módulo de horarios" [ref=f30e401] [cursor=pointer]
+                      - button "Desactivar curso" [ref=f30e404] [cursor=pointer]
+                - row [ref=f30e407]:
+                  - cell "4° 4to de Secundaria Sin descripción registrada." [ref=f30e408]:
+                    - generic [ref=f30e409]:
+                      - generic [ref=f30e410]: 4°
+                      - generic [ref=f30e411]:
+                        - paragraph [ref=f30e412]: 4to de Secundaria
+                        - paragraph [ref=f30e413]: Sin descripción registrada.
+                  - cell "Secundaria" [ref=f30e414]
+                  - cell "52 materias" [ref=f30e416]
+                  - cell "No aplica / sin plan" [ref=f30e418]
+                  - cell "24 bloques" [ref=f30e420]
+                  - cell [ref=f30e425]:
+                    - paragraph [ref=f30e426]: "102"
+                    - paragraph [ref=f30e427]: estudiantes
+                  - cell "Activo" [ref=f30e428]
+                  - cell [ref=f30e431]:
+                    - generic [ref=f30e432]:
+                      - button "Ver detalle institucional" [ref=f30e433] [cursor=pointer]
+                      - button "Editar curso" [ref=f30e437] [cursor=pointer]
+                      - button "Abrir módulo de horarios" [ref=f30e440] [cursor=pointer]
+                      - button "Desactivar curso" [ref=f30e443] [cursor=pointer]
+                - row [ref=f30e446]:
+                  - cell "5° 5to de Secundaria Sin descripción registrada." [ref=f30e447]:
+                    - generic [ref=f30e448]:
+                      - generic [ref=f30e449]: 5°
+                      - generic [ref=f30e450]:
+                        - paragraph [ref=f30e451]: 5to de Secundaria
+                        - paragraph [ref=f30e452]: Sin descripción registrada.
+                  - cell "Secundaria" [ref=f30e453]
+                  - cell "48 materias" [ref=f30e455]
+                  - cell "36 técnica" [ref=f30e457]
+                  - cell "24 bloques" [ref=f30e459]
+                  - cell [ref=f30e464]:
+                    - paragraph [ref=f30e465]: "98"
+                    - paragraph [ref=f30e466]: estudiantes
+                  - cell "Activo" [ref=f30e467]
+                  - cell [ref=f30e470]:
+                    - generic [ref=f30e471]:
+                      - button "Ver detalle institucional" [ref=f30e472] [cursor=pointer]
+                      - button "Editar curso" [ref=f30e476] [cursor=pointer]
+                      - button "Abrir módulo de horarios" [ref=f30e479] [cursor=pointer]
+                      - button "Desactivar curso" [ref=f30e482] [cursor=pointer]
+                - row [ref=f30e485]:
+                  - cell "6° 6to de Secundaria Sin descripción registrada." [ref=f30e486]:
+                    - generic [ref=f30e487]:
+                      - generic [ref=f30e488]: 6°
+                      - generic [ref=f30e489]:
+                        - paragraph [ref=f30e490]: 6to de Secundaria
+                        - paragraph [ref=f30e491]: Sin descripción registrada.
+                  - cell "Secundaria" [ref=f30e492]
+                  - cell "50 materias" [ref=f30e494]
+                  - cell "32 técnica" [ref=f30e496]
+                  - cell "24 bloques" [ref=f30e498]
+                  - cell [ref=f30e503]:
+                    - paragraph [ref=f30e504]: "100"
+                    - paragraph [ref=f30e505]: estudiantes
+                  - cell "Activo" [ref=f30e506]
+                  - cell [ref=f30e509]:
+                    - generic [ref=f30e510]:
+                      - button "Ver detalle institucional" [ref=f30e511] [cursor=pointer]
+                      - button "Editar curso" [ref=f30e515] [cursor=pointer]
+                      - button "Abrir módulo de horarios" [ref=f30e518] [cursor=pointer]
+                      - button "Desactivar curso" [ref=f30e521] [cursor=pointer]
+            - paragraph [ref=f30e525]: Mostrando 1 - 6 de 6 cursos
+          - complementary [ref=f30e526]:
+            - generic [ref=f30e529]:
+              - paragraph [ref=f30e530]: Cobertura de horarios
+              - heading "Cursos con organización semanal" [level=3] [ref=f30e531]
+            - generic [ref=f30e539]:
+              - paragraph [ref=f30e540]: Estructura académica
+              - heading "Planes por curso" [level=3] [ref=f30e541]
+            - generic [ref=f30e548]:
+              - paragraph [ref=f30e549]: Vista institucional
+              - heading "Horarios por curso" [level=3] [ref=f30e550]
+              - paragraph [ref=f30e551]: Abre el detalle de un curso para consultar su horario por gestión, paralelo y turno. Si un bloque está libre, puedes pulsarlo y registrar una clase directamente.
+              - generic [ref=f30e552]:
+                - generic [ref=f30e553]:
+                  - paragraph [ref=f30e554]: Celda libre
+                  - paragraph [ref=f30e555]: Crear clase
+                - generic [ref=f30e556]:
+                  - paragraph [ref=f30e557]: Celda ocupada
+                  - paragraph [ref=f30e558]: Ver detalle

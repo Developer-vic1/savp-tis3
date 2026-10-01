@@ -1,0 +1,26 @@
+
+SUPPORT                              TIPO              ESTADO                  VENTANAS   CALLERS_PERDIDOS
+-------                              ----              ------                  --------   ----------------
+AsignaturaInteligente                INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V009       
+CursoInteligente                     INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V008       
+EspecialidadTecnicaInteligente       INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V013       
+GestionAcademicaInteligente          INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V007       
+InscripcionAcademica                 INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V012; V047 
+KardexInteligente                    INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V082; V083 
+ParaleloInteligente                  INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V010; V052 
+PeriodoEvaluacionInteligente         INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V015       
+PlanAsignaturaInteligente            INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V014       
+TurnoInteligente                     INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V011       
+CatalogoInteligenteBase              INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE            
+DocenteInteligente                   INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V006       
+InstitucionProcedenciaInteligente    INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V049       
+TipoVinculacionEstudianteInteligente INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V050       
+CalificacionInteligente              INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V017; V079 
+InstitutionalRoleGovernance          INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V003; V020 
+PermissionLabel                      UTILIDAD          CONECTADO_ESTATICAMENTE            
+PersonaInteligente                   INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V002; V045 
+PrivateFilePath                      UTILIDAD          CONECTADO_ESTATICAMENTE V048       
+ReporteAcademicoInteligente          INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V018       
+ReporteAdministrativoInteligente     INTELIGENTE_LOCAL CONECTADO_ESTATICAMENTE V019       
+WorkspaceNavigation                  UTILIDAD          CONECTADO_ESTATICAMENTE            
+

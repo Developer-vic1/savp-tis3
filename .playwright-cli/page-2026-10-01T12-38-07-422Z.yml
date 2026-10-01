@@ -1,0 +1,117 @@
+- generic [ref=f8e3]:
+  - complementary "Navegación de Director" [ref=f8e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f8e6] [cursor=pointer]:
+      - /url: http://localhost:8000/direccion
+      - img "Logo Franz Tamayo 3" [ref=f8e7]
+      - generic [ref=f8e8]:
+        - generic [ref=f8e9]: Franz Tamayo N°3
+        - generic [ref=f8e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f8e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f8e13]: ☰
+      - generic [ref=f8e14]: Director
+    - navigation [ref=f8e15]:
+      - link "Inicio" [ref=f8e16] [cursor=pointer]:
+        - /url: http://localhost:8000/direccion
+        - generic [aria-hidden] [ref=f8e17]: ⌂
+      - generic [ref=f8e19]:
+        - heading "Consulta y seguimiento" [level=2] [ref=f8e20]
+        - link "Estudiantes" [ref=f8e21] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/estudiantes
+          - generic [aria-hidden] [ref=f8e22]: •
+        - link "Cursos" [ref=f8e24] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/cursos
+          - generic [aria-hidden] [ref=f8e25]: •
+        - link "Rendimiento" [ref=f8e27] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/rendimiento
+          - generic [aria-hidden] [ref=f8e28]: •
+        - link "LMS" [ref=f8e30] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/lms
+          - generic [aria-hidden] [ref=f8e31]: •
+        - link "Docentes" [ref=f8e33] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/docentes
+          - generic [aria-hidden] [ref=f8e34]: •
+        - link "Reportes" [ref=f8e36] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/reportes
+          - generic [aria-hidden] [ref=f8e37]: •
+        - link "Gestión académica" [ref=f8e39] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/consultas/gestion
+          - generic [aria-hidden] [ref=f8e40]: •
+        - link "Calendario" [ref=f8e42] [cursor=pointer]:
+          - /url: http://localhost:8000/direccion/calendario
+          - generic [aria-hidden] [ref=f8e43]: •
+    - generic [ref=f8e45]:
+      - link "Mi perfil" [ref=f8e46] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f8e47]: ○
+      - button "Cerrar sesión" [ref=f8e50] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f8e51]: ↪
+  - generic [ref=f8e53]:
+    - banner [ref=f8e54]:
+      - generic [ref=f8e56]:
+        - generic [ref=f8e57]: 01/10/2026
+        - generic [ref=f8e61]:
+          - generic [ref=f8e62]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f8e63]
+        - button "Notificaciones" [ref=f8e65] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f8e66] [cursor=pointer]
+        - button [ref=f8e70] [cursor=pointer]:
+          - generic [ref=f8e71]:
+            - img "GERMAN CAREAGA CANTUTA" [ref=f8e72]
+            - generic [ref=f8e73]:
+              - paragraph [ref=f8e74]: GERMAN CAREAGA CANTUTA
+              - paragraph [ref=f8e75]: Director
+    - main [ref=f8e78]:
+      - generic [ref=f8e79]:
+        - generic [ref=f8e80]:
+          - paragraph [ref=f8e81]: Espacio de trabajo · Director
+          - heading "Supervisión y trabajo institucional" [level=1] [ref=f8e82]
+          - paragraph [ref=f8e83]: Información real con el alcance correspondiente a tu rol. Las acciones no autorizadas no están disponibles en este espacio.
+          - paragraph [ref=f8e84]: "Gestión activa: 2026"
+        - region "Indicadores institucionales" [ref=f8e85]:
+          - article [ref=f8e86]:
+            - paragraph [ref=f8e87]: Estudiantes activos
+            - paragraph [ref=f8e88]: "600"
+          - article [ref=f8e89]:
+            - paragraph [ref=f8e90]: Cursos activos
+            - paragraph [ref=f8e91]: "6"
+          - article [ref=f8e92]:
+            - paragraph [ref=f8e93]: Docentes activos
+            - paragraph [ref=f8e94]: "48"
+          - article [ref=f8e95]:
+            - paragraph [ref=f8e96]: Calificaciones registradas
+            - paragraph [ref=f8e97]: "0"
+        - generic [ref=f8e98]:
+          - heading "Áreas de trabajo" [level=2] [ref=f8e99]
+          - generic [ref=f8e100]:
+            - link [ref=f8e101] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/estudiantes
+              - heading "Estudiantes" [level=3] [ref=f8e102]
+              - paragraph [ref=f8e103]: Consulta y seguimiento
+            - link [ref=f8e104] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/cursos
+              - heading "Cursos" [level=3] [ref=f8e105]
+              - paragraph [ref=f8e106]: Consulta y seguimiento
+            - link [ref=f8e107] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/rendimiento
+              - heading "Rendimiento" [level=3] [ref=f8e108]
+              - paragraph [ref=f8e109]: Consulta y seguimiento
+            - link [ref=f8e110] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/lms
+              - heading "LMS" [level=3] [ref=f8e111]
+              - paragraph [ref=f8e112]: Consulta y seguimiento
+            - link [ref=f8e113] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/docentes
+              - heading "Docentes" [level=3] [ref=f8e114]
+              - paragraph [ref=f8e115]: Consulta y seguimiento
+            - link [ref=f8e116] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/reportes
+              - heading "Reportes" [level=3] [ref=f8e117]
+              - paragraph [ref=f8e118]: Consulta y seguimiento
+            - link [ref=f8e119] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/consultas/gestion
+              - heading "Gestión académica" [level=3] [ref=f8e120]
+              - paragraph [ref=f8e121]: Consulta y seguimiento
+            - link [ref=f8e122] [cursor=pointer]:
+              - /url: http://localhost:8000/direccion/calendario
+              - heading "Calendario" [level=3] [ref=f8e123]
+              - paragraph [ref=f8e124]: Consulta y seguimiento

@@ -1,0 +1,69 @@
+- generic [ref=f28e3]:
+  - complementary "Navegación de Docente" [ref=f28e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f28e6] [cursor=pointer]:
+      - /url: http://localhost:8000/docente
+      - img "Logo Franz Tamayo 3" [ref=f28e7]
+      - generic [ref=f28e8]:
+        - generic [ref=f28e9]: Franz Tamayo N°3
+        - generic [ref=f28e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f28e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f28e13]: ☰
+      - generic [ref=f28e14]: Docente
+    - navigation [ref=f28e15]:
+      - link "Inicio" [ref=f28e16] [cursor=pointer]:
+        - /url: http://localhost:8000/docente
+        - generic [aria-hidden] [ref=f28e17]: ⌂
+      - generic [ref=f28e19]:
+        - heading "Académico" [level=2] [ref=f28e20]
+        - link "Mis cursos" [ref=f28e21] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/cursos
+          - generic [aria-hidden] [ref=f28e22]: •
+        - link "Calendario" [ref=f28e24] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/calendario
+          - generic [aria-hidden] [ref=f28e25]: •
+      - generic [ref=f28e27]:
+        - heading "Seguimiento" [level=2] [ref=f28e28]
+        - link "Orientación" [ref=f28e29] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/orientacion/seguimiento
+          - generic [aria-hidden] [ref=f28e30]: •
+        - link "Reportes" [ref=f28e32] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/reportes
+          - generic [aria-hidden] [ref=f28e33]: •
+    - generic [ref=f28e35]:
+      - link "Mi perfil" [ref=f28e36] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f28e37]: ○
+      - button "Cerrar sesión" [ref=f28e40] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f28e41]: ↪
+  - generic [ref=f28e43]:
+    - banner [ref=f28e44]:
+      - generic [ref=f28e46]:
+        - generic [ref=f28e47]: 01/10/2026
+        - generic [ref=f28e51]:
+          - generic [ref=f28e52]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f28e53]
+        - button "Notificaciones" [ref=f28e55] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f28e56] [cursor=pointer]
+        - button [ref=f28e60] [cursor=pointer]:
+          - generic [ref=f28e61]:
+            - img "DINA RUIZ" [ref=f28e62]
+            - generic [ref=f28e63]:
+              - paragraph [ref=f28e64]: DINA RUIZ
+              - paragraph [ref=f28e65]: Docente
+    - main [ref=f28e68]:
+      - generic [ref=f28e69]:
+        - generic [ref=f28e70]:
+          - paragraph [ref=f28e71]: SAVP-TIS3
+          - heading "Consolidado de mis cursos" [level=2] [ref=f28e72]
+          - paragraph [ref=f28e73]: Estudiantes con inscripción vigente, materiales publicados, tareas publicadas o cerradas y sesiones de asistencia cerradas.
+          - generic [ref=f28e74]:
+            - generic [ref=f28e75]:
+              - text: Curso o asignatura
+              - textbox "Curso o asignatura" [ref=f28e76]
+            - generic [ref=f28e77]:
+              - text: Año de gestión
+              - textbox "Año de gestión" [ref=f28e78]
+            - button "Filtrar" [ref=f28e79] [cursor=pointer]
+        - generic [ref=f28e81]:
+          - heading "Reporte consolidado institucional." [level=3] [ref=f28e85]
+          - paragraph [ref=f28e86]: Los reportes se generarán con cursos asignados y registros académicos disponibles.

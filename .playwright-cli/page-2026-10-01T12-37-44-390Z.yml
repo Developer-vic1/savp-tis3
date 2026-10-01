@@ -1,0 +1,278 @@
+- generic [ref=f7e3]:
+  - complementary "Navegación de Administrador" [ref=f7e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f7e6] [cursor=pointer]:
+      - /url: http://localhost:8000/admin
+      - img "Logo Franz Tamayo 3" [ref=f7e7]
+      - generic [ref=f7e8]:
+        - generic [ref=f7e9]: Franz Tamayo N°3
+        - generic [ref=f7e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f7e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f7e13]: ☰
+      - generic [ref=f7e14]: Administrador
+    - navigation [ref=f7e15]:
+      - link "Inicio" [ref=f7e16] [cursor=pointer]:
+        - /url: http://localhost:8000/admin
+        - generic [aria-hidden] [ref=f7e17]: ⌂
+      - generic [ref=f7e19]:
+        - heading "Administración" [level=2] [ref=f7e20]
+        - link "Personas" [ref=f7e21] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-personas
+          - generic [aria-hidden] [ref=f7e22]: •
+        - link "Usuarios" [ref=f7e24] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-usuarios
+          - generic [aria-hidden] [ref=f7e25]: •
+        - link "Personal institucional" [ref=f7e27] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/personal-institucional
+          - generic [aria-hidden] [ref=f7e28]: •
+        - link "Estudiantes" [ref=f7e30] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-estudiantes
+          - generic [aria-hidden] [ref=f7e31]: •
+        - link "Docentes" [ref=f7e33] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-docentes
+          - generic [aria-hidden] [ref=f7e34]: •
+      - generic [ref=f7e36]:
+        - heading "Gestión académica" [level=2] [ref=f7e37]
+        - link "Gestión" [ref=f7e38] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-academica
+          - generic [aria-hidden] [ref=f7e39]: •
+        - link "Cursos" [ref=f7e41] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-cursos
+          - generic [aria-hidden] [ref=f7e42]: •
+        - link "Asignaturas" [ref=f7e44] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-asignaturas
+          - generic [aria-hidden] [ref=f7e45]: •
+        - link "Paralelos" [ref=f7e47] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-paralelos
+          - generic [aria-hidden] [ref=f7e48]: •
+        - link "Turnos" [ref=f7e50] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-turnos
+          - generic [aria-hidden] [ref=f7e51]: •
+        - link "Inscripciones" [ref=f7e53] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-inscripciones
+          - generic [aria-hidden] [ref=f7e54]: •
+        - link "Especialidades técnicas" [ref=f7e56] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/especialidades-tecnicas
+          - generic [aria-hidden] [ref=f7e57]: •
+        - link "Planes de asignatura" [ref=f7e59] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/planes-asignatura
+          - generic [aria-hidden] [ref=f7e60]: •
+        - link "Calendario" [ref=f7e62] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/calendario
+          - generic [aria-hidden] [ref=f7e63]: •
+        - link "Periodos" [ref=f7e65] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/periodo-evaluacion
+          - generic [aria-hidden] [ref=f7e66]: •
+      - generic [ref=f7e68]:
+        - heading "Académico" [level=2] [ref=f7e69]
+        - link "LMS institucional" [ref=f7e70] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/lms-supervision
+          - generic [aria-hidden] [ref=f7e71]: •
+        - link "Calificaciones" [ref=f7e73] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/calificaciones
+          - generic [aria-hidden] [ref=f7e74]: •
+      - generic [ref=f7e76]:
+        - heading "Seguridad" [level=2] [ref=f7e77]
+        - link "Roles y permisos" [ref=f7e78] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/roles-permisos
+          - generic [aria-hidden] [ref=f7e79]: •
+        - link "Bitácora" [ref=f7e81] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/bitacora
+          - generic [aria-hidden] [ref=f7e82]: •
+      - generic [ref=f7e84]:
+        - heading "Reportes" [level=2] [ref=f7e85]
+        - link "Reportes académicos" [ref=f7e86] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/reportes-academicos
+          - generic [aria-hidden] [ref=f7e87]: •
+        - link "Reportes administrativos" [ref=f7e89] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/reportes-administrativos
+          - generic [aria-hidden] [ref=f7e90]: •
+    - generic [ref=f7e92]:
+      - link "Mi perfil" [ref=f7e93] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f7e94]: ○
+      - button "Cerrar sesión" [ref=f7e97] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f7e98]: ↪
+  - generic [ref=f7e100]:
+    - banner [ref=f7e101]:
+      - generic [ref=f7e103]:
+        - generic [ref=f7e104]: 01/10/2026
+        - generic [ref=f7e108]:
+          - generic [ref=f7e109]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f7e110]
+        - button "Notificaciones" [ref=f7e112] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f7e113] [cursor=pointer]
+        - button [ref=f7e117] [cursor=pointer]:
+          - generic [ref=f7e118]:
+            - img "Victor Grover Asturizaga Plata" [ref=f7e119]
+            - generic [ref=f7e120]:
+              - paragraph [ref=f7e121]: Victor Grover Asturizaga Plata
+              - paragraph [ref=f7e122]: Administrador
+    - main [ref=f7e125]:
+      - generic [ref=f7e126]:
+        - generic [ref=f7e128]:
+          - generic [ref=f7e129]:
+            - paragraph [ref=f7e132]: Panel administrativo
+            - heading "Buena tarde, Victor Grover Asturizaga Plata" [level=2] [ref=f7e133]
+            - paragraph [ref=f7e134]: Revisa indicadores, alertas y estado académico-administrativo de la plataforma.
+          - generic [ref=f7e135]:
+            - generic [ref=f7e136]:
+              - paragraph [ref=f7e140]: Rol
+              - paragraph [ref=f7e141]: Administrador
+            - generic [ref=f7e142]:
+              - paragraph [ref=f7e146]: Gestión actual
+              - paragraph [ref=f7e147]: "2026"
+            - generic [ref=f7e148]:
+              - paragraph [ref=f7e152]: Periodos habilitados
+              - paragraph [ref=f7e153]: Primer Trimestre, Segundo Trimestre, Tercer Trimestre
+        - generic [ref=f7e154]:
+          - article [ref=f7e155]:
+            - paragraph [ref=f7e157]: Usuarios
+            - paragraph [ref=f7e161]: "668"
+            - paragraph [ref=f7e162]: Cuentas registradas.
+            - link "Abrir Usuarios" [ref=f7e165] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/gestion-usuarios
+          - article [ref=f7e166]:
+            - paragraph [ref=f7e168]: Estudiantes
+            - paragraph [ref=f7e173]: "612"
+            - paragraph [ref=f7e174]: Perfiles estudiantiles activos.
+            - link "Abrir Estudiantes" [ref=f7e177] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/gestion-estudiantes
+          - article [ref=f7e178]:
+            - paragraph [ref=f7e180]: Docentes
+            - paragraph [ref=f7e184]: "48"
+            - paragraph [ref=f7e185]: Perfiles docentes activos.
+            - link "Abrir Docentes" [ref=f7e188] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/gestion-docentes
+          - article [ref=f7e189]:
+            - paragraph [ref=f7e191]: Inscripciones
+            - paragraph [ref=f7e195]: "600"
+            - paragraph [ref=f7e196]: Inscripciones activas en la gestión activa única.
+            - link "Abrir Inscripciones" [ref=f7e199] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/gestion-inscripciones
+          - article [ref=f7e200]:
+            - paragraph [ref=f7e202]: Especialidades
+            - paragraph [ref=f7e206]: "11"
+            - paragraph [ref=f7e207]: Especialidades habilitadas.
+            - link "Abrir Especialidades" [ref=f7e210] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/especialidades-tecnicas
+          - article [ref=f7e211]:
+            - paragraph [ref=f7e213]: Periodos
+            - paragraph [ref=f7e217]: "3"
+            - paragraph [ref=f7e218]: Periodos habilitados en el catálogo.
+            - link "Abrir Periodos" [ref=f7e221] [cursor=pointer]:
+              - /url: http://localhost:8000/admin/periodo-evaluacion
+        - generic [ref=f7e222]:
+          - generic [ref=f7e224]:
+            - paragraph [ref=f7e225]: Distribución de usuarios
+            - heading "Usuarios por rol" [level=3] [ref=f7e226]
+            - paragraph [ref=f7e227]: Predomina el acceso estudiantil dentro de la plataforma institucional.
+          - generic [ref=f7e231]:
+            - paragraph [ref=f7e232]: Distribución académica
+            - heading "Estudiantes por especialidad" [level=3] [ref=f7e233]
+            - paragraph [ref=f7e234]: Distribución actual de estudiantes por especialidad técnica.
+          - generic [ref=f7e238]:
+            - paragraph [ref=f7e239]: Inscripciones
+            - heading "Distribución por curso" [level=3] [ref=f7e240]
+            - paragraph [ref=f7e241]: Carga de inscripciones según el nivel académico actual.
+        - generic [ref=f7e244]:
+          - generic [ref=f7e245]:
+            - paragraph [ref=f7e246]: Actividad reciente
+            - heading "Últimos movimientos del sistema" [level=3] [ref=f7e247]
+            - generic [ref=f7e248]:
+              - generic [ref=f7e250]:
+                - generic [ref=f7e251]: •
+                - generic [ref=f7e253]:
+                  - generic [ref=f7e254]:
+                    - paragraph [ref=f7e255]: login_google_exitoso
+                    - generic [ref=f7e256]: hace 2 semanas
+                  - paragraph [ref=f7e257]: Acción registrada sobre users
+              - generic [ref=f7e259]:
+                - generic [ref=f7e260]: •
+                - generic [ref=f7e262]:
+                  - generic [ref=f7e263]:
+                    - paragraph [ref=f7e264]: login_google_exitoso
+                    - generic [ref=f7e265]: hace 2 semanas
+                  - paragraph [ref=f7e266]: Acción registrada sobre users
+              - generic [ref=f7e268]:
+                - generic [ref=f7e269]: •
+                - generic [ref=f7e271]:
+                  - generic [ref=f7e272]:
+                    - paragraph [ref=f7e273]: "Se aplicó la sugerencia de curso para Luciana Apaza Huanca: 5to de Secundaria."
+                    - generic [ref=f7e274]: hace 2 semanas
+                  - paragraph [ref=f7e275]: Acción registrada sobre inscripcion_estudiante
+              - generic [ref=f7e277]:
+                - generic [ref=f7e278]: •
+                - generic [ref=f7e280]:
+                  - generic [ref=f7e281]:
+                    - paragraph [ref=f7e282]: Se registró una actualización en el módulo de inscripciones para Nicolás Ticona Condori.
+                    - generic [ref=f7e283]: hace 2 semanas
+                  - paragraph [ref=f7e284]: Acción registrada sobre documento_inscripcion_estudiante
+              - generic [ref=f7e286]:
+                - generic [ref=f7e287]: •
+                - generic [ref=f7e289]:
+                  - generic [ref=f7e290]:
+                    - paragraph [ref=f7e291]: "Se aplicó la sugerencia de curso para Nicolás Ticona Condori: 5to de Secundaria."
+                    - generic [ref=f7e292]: hace 2 semanas
+                  - paragraph [ref=f7e293]: Acción registrada sobre inscripcion_estudiante
+              - generic [ref=f7e295]:
+                - generic [ref=f7e296]: •
+                - generic [ref=f7e298]:
+                  - generic [ref=f7e299]:
+                    - paragraph [ref=f7e300]: CALENDARIO_EVENTO_CONFIRMADO
+                    - generic [ref=f7e301]: hace 2 semanas
+                  - paragraph [ref=f7e302]: Acción registrada sobre calendario_evento
+          - generic [ref=f7e303]:
+            - generic [ref=f7e304]:
+              - paragraph [ref=f7e305]: Alertas y pendientes
+              - heading "Elementos que requieren revisión" [level=3] [ref=f7e306]
+              - generic [ref=f7e307]:
+                - generic [ref=f7e309]:
+                  - generic [ref=f7e310]:
+                    - paragraph [ref=f7e311]: Cuentas sin actor institucional
+                    - paragraph [ref=f7e312]: Incluye cuentas que solo tienen roles complementarios.
+                  - generic [ref=f7e313]: "5"
+                - generic [ref=f7e315]:
+                  - generic [ref=f7e316]:
+                    - paragraph [ref=f7e317]: Docentes sin plan en la gestión activa
+                    - paragraph [ref=f7e318]: Perfiles activos sin un plan asignado en esta gestión; requiere revisión humana.
+                  - generic [ref=f7e319]: "8"
+            - generic [ref=f7e320]:
+              - generic [ref=f7e322]:
+                - paragraph [ref=f7e323]: Estado actual
+                - heading "2026" [level=3] [ref=f7e324]
+              - generic [ref=f7e328]:
+                - generic [ref=f7e329]:
+                  - generic [ref=f7e330]: Periodo activo
+                  - generic [ref=f7e331]: Primer Trimestre, Segundo Trimestre, Tercer Trimestre
+                - generic [ref=f7e332]:
+                  - generic [ref=f7e333]: Estado del sistema
+                  - generic [ref=f7e334]: Sesión activa
+                - generic [ref=f7e335]:
+                  - generic [ref=f7e336]: Fecha de control
+                  - generic [ref=f7e337]: 01/10/2026
+        - generic [ref=f7e338]:
+          - generic [ref=f7e339]:
+            - paragraph [ref=f7e340]: Estructura académica
+            - heading "Resumen estructural del sistema" [level=3] [ref=f7e341]
+            - paragraph [ref=f7e342]: Estado general de la configuración académica e institucional cargada en la plataforma.
+          - generic [ref=f7e343]:
+            - generic [ref=f7e344]:
+              - generic [ref=f7e345]:
+                - paragraph [ref=f7e346]: Cursos
+                - generic [ref=f7e347]: Configurado
+              - paragraph [ref=f7e348]: "6"
+            - generic [ref=f7e349]:
+              - generic [ref=f7e350]:
+                - paragraph [ref=f7e351]: Paralelos
+                - generic [ref=f7e352]: Configurado
+              - paragraph [ref=f7e353]: "4"
+            - generic [ref=f7e354]:
+              - generic [ref=f7e355]:
+                - paragraph [ref=f7e356]: Turnos
+                - generic [ref=f7e357]: Configurado
+              - paragraph [ref=f7e358]: "2"
+            - generic [ref=f7e359]:
+              - generic [ref=f7e360]:
+                - paragraph [ref=f7e361]: Asignaturas
+                - generic [ref=f7e362]: Configurado
+              - paragraph [ref=f7e363]: "14"

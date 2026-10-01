@@ -1,0 +1,10 @@
+Source files verified: 43
+Changed hashes: 0
+Copied catalog identical: True
+Original rows: 105
+Conciliation rows: 105
+Original fields discrepancies: 0
+Missing literal current paths: 0
+Peter2 metadata files verified: 7
+Peter2 size/date discrepancies: 0
+Peter2 initial hashes not recorded; no hash comparison claimed

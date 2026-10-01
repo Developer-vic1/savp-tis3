@@ -37,6 +37,7 @@ use App\Policies\ReporteGeneradoPolicy;
 use App\Policies\UserPolicy;
 use App\Services\AporteIngenieril\AporteIngenierilClient;
 use App\Services\Kardex\ScopedKardexRepository;
+use App\Support\LegacyReadPermission;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -59,6 +60,18 @@ class AppServiceProvider extends ServiceProvider
     {
         Livewire::componentHook(InstitutionalAuthorization::class);
         $this->loadMigrationsFrom(database_path('migrations/aula_virtual'));
+
+        // El catálogo histórico permite consultar la matriz aunque los permisos
+        // de gobernanza nuevos todavía no se hayan aplicado a la base de datos.
+        Gate::define('roles-permisos.ver', fn (User $user): bool =>
+            $user->est_usu === 'ACTIVO'
+            && $user->hasRole('Administrador')
+            && ($user->can('roles-permisos.gestionar') || $user->can('Gestion_Roles_Permisos'))
+        );
+
+        foreach (array_keys(LegacyReadPermission::FALLBACKS) as $permission) {
+            Gate::define($permission, fn (User $user): bool => app(LegacyReadPermission::class)->allows($user, $permission));
+        }
 
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Persona::class, PersonaPolicy::class);

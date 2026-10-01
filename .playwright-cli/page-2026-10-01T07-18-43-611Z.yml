@@ -1,0 +1,620 @@
+- generic [ref=f6e3]:
+  - complementary "Navegación de Administrador" [ref=f6e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f6e6] [cursor=pointer]:
+      - /url: http://localhost:8000/admin
+      - img "Logo Franz Tamayo 3" [ref=f6e7]
+      - generic [ref=f6e8]:
+        - generic [ref=f6e9]: Franz Tamayo N°3
+        - generic [ref=f6e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f6e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f6e13]: ☰
+      - generic [ref=f6e14]: Administrador
+    - navigation [ref=f6e15]:
+      - link "Inicio" [ref=f6e16] [cursor=pointer]:
+        - /url: http://localhost:8000/admin
+        - generic [aria-hidden] [ref=f6e17]: ⌂
+      - generic [ref=f6e19]:
+        - heading "Administración" [level=2] [ref=f6e20]
+        - link "Personas" [ref=f6e21] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-personas
+          - generic [aria-hidden] [ref=f6e22]: •
+        - link "Usuarios" [ref=f6e24] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-usuarios
+          - generic [aria-hidden] [ref=f6e25]: •
+        - link "Personal institucional" [ref=f6e27] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/personal-institucional
+          - generic [aria-hidden] [ref=f6e28]: •
+        - link "Estudiantes" [ref=f6e30] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-estudiantes
+          - generic [aria-hidden] [ref=f6e31]: •
+        - link "Docentes" [ref=f6e33] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-docentes
+          - generic [aria-hidden] [ref=f6e34]: •
+      - generic [ref=f6e36]:
+        - heading "Gestión académica" [level=2] [ref=f6e37]
+        - link "Gestión" [ref=f6e38] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-academica
+          - generic [aria-hidden] [ref=f6e39]: •
+        - link "Cursos" [ref=f6e41] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-cursos
+          - generic [aria-hidden] [ref=f6e42]: •
+        - link "Asignaturas" [ref=f6e44] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-asignaturas
+          - generic [aria-hidden] [ref=f6e45]: •
+        - link "Paralelos" [ref=f6e47] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-paralelos
+          - generic [aria-hidden] [ref=f6e48]: •
+        - link "Turnos" [ref=f6e50] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-turnos
+          - generic [aria-hidden] [ref=f6e51]: •
+        - link "Inscripciones" [ref=f6e53] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/gestion-inscripciones
+          - generic [aria-hidden] [ref=f6e54]: •
+        - link "Especialidades técnicas" [ref=f6e56] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/especialidades-tecnicas
+          - generic [aria-hidden] [ref=f6e57]: •
+        - link "Planes de asignatura" [ref=f6e59] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/planes-asignatura
+          - generic [aria-hidden] [ref=f6e60]: •
+        - link "Calendario" [ref=f6e62] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/calendario
+          - generic [aria-hidden] [ref=f6e63]: •
+        - link "Periodos" [ref=f6e65] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/periodo-evaluacion
+          - generic [aria-hidden] [ref=f6e66]: •
+      - generic [ref=f6e68]:
+        - heading "Académico" [level=2] [ref=f6e69]
+        - link "Calificaciones" [ref=f6e70] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/calificaciones
+          - generic [aria-hidden] [ref=f6e71]: •
+      - generic [ref=f6e73]:
+        - heading "Seguridad" [level=2] [ref=f6e74]
+        - link "Roles y permisos" [ref=f6e75] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/roles-permisos
+          - generic [aria-hidden] [ref=f6e76]: •
+        - link "Bitácora" [ref=f6e78] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/bitacora
+          - generic [aria-hidden] [ref=f6e79]: •
+      - generic [ref=f6e81]:
+        - heading "Reportes" [level=2] [ref=f6e82]
+        - link "Reportes académicos" [ref=f6e83] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/reportes-academicos
+          - generic [aria-hidden] [ref=f6e84]: •
+        - link "Reportes administrativos" [ref=f6e86] [cursor=pointer]:
+          - /url: http://localhost:8000/admin/reportes-administrativos
+          - generic [aria-hidden] [ref=f6e87]: •
+    - generic [ref=f6e89]:
+      - link "Mi perfil" [ref=f6e90] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f6e91]: ○
+      - button "Cerrar sesión" [ref=f6e94] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f6e95]: ↪
+  - generic [ref=f6e97]:
+    - banner [ref=f6e98]:
+      - generic [ref=f6e100]:
+        - generic [ref=f6e101]: 01/10/2026
+        - generic [ref=f6e105]:
+          - generic [ref=f6e106]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f6e107]
+        - button "Notificaciones" [ref=f6e109] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f6e110] [cursor=pointer]
+        - button [ref=f6e114] [cursor=pointer]:
+          - generic [ref=f6e115]:
+            - img "Victor Grover Asturizaga Plata" [ref=f6e116]
+            - generic [ref=f6e117]:
+              - paragraph [ref=f6e118]: Victor Grover Asturizaga Plata
+              - paragraph [ref=f6e119]: Administrador
+    - main [ref=f6e122]:
+      - generic [ref=f6e123]:
+        - generic [ref=f6e124]:
+          - paragraph [ref=f6e125]: Seguridad
+          - heading "Roles y permisos" [level=1] [ref=f6e126]
+          - paragraph [ref=f6e127]: Gobernanza de acceso institucional. Toda solicitud de rol requiere evidencia y revisión independiente.
+        - region "Jerarquía de acceso" [ref=f6e128]:
+          - heading "Jerarquía de acceso" [level=2] [ref=f6e129]
+          - paragraph [ref=f6e130]: Para entrar en un workspace, la cuenta activa debe tener un único actor institucional. El rol reúne permisos; cada permiso habilita módulos o acciones. Los seis actores son funciones distintas, no una cadena de herencia de permisos.
+          - list [ref=f6e131]:
+            - listitem [ref=f6e132]: 1. Cuenta activa
+            - listitem [ref=f6e133]: 2. Rol institucional
+            - listitem [ref=f6e134]: 3. Permisos asignados
+            - listitem [ref=f6e135]: 4. Módulos y acciones
+          - status [ref=f6e136]: Consulta disponible con el permiso histórico. La edición de permisos requiere la autorización nueva y permanece deshabilitada.
+        - generic [ref=f6e137]:
+          - complementary "Roles disponibles" [ref=f6e138]:
+            - heading "Roles" [level=2] [ref=f6e139]
+            - generic [ref=f6e140]:
+              - button "Administrador 1" [ref=f6e141] [cursor=pointer]:
+                - generic [ref=f6e142]: Administrador
+                - generic [ref=f6e143]: "1"
+              - button "Director 1" [ref=f6e144] [cursor=pointer]:
+                - generic [ref=f6e145]: Director
+                - generic [ref=f6e146]: "1"
+              - button "Docente 48" [ref=f6e147] [cursor=pointer]:
+                - generic [ref=f6e148]: Docente
+                - generic [ref=f6e149]: "48"
+              - button "Estudiante 612" [ref=f6e150] [cursor=pointer]:
+                - generic [ref=f6e151]: Estudiante
+                - generic [ref=f6e152]: "612"
+              - button "Regente 0" [ref=f6e153] [cursor=pointer]:
+                - generic [ref=f6e154]: Regente
+                - generic [ref=f6e155]: "0"
+              - button "Secretaria 1" [ref=f6e156] [cursor=pointer]:
+                - generic [ref=f6e157]: Secretaria
+                - generic [ref=f6e158]: "1"
+          - generic [ref=f6e159]:
+            - generic [ref=f6e160]:
+              - generic [ref=f6e161]:
+                - generic [ref=f6e162]: Buscar permisos
+                - searchbox "Buscar permisos" [ref=f6e163]
+              - button "Guardar cambios" [disabled] [ref=f6e164]
+            - generic [ref=f6e165]:
+              - generic [ref=f6e166]:
+                - text: Dominio
+                - combobox "Dominio" [ref=f6e167]:
+                  - option "Todos" [selected]
+                  - option "Acceso Aula Virtual"
+                  - option "Actividades Aula"
+                  - option "Asignaturas"
+                  - option "Asistencia Aula"
+                  - option "Aula Virtual Admin"
+                  - option "Aula Virtual Docente"
+                  - option "Aula Virtual Estudiante"
+                  - option "Bitacora"
+                  - option "Calendario Aula"
+                  - option "Calificaciones"
+                  - option "Calificaciones Aula"
+                  - option "Cuestionarios Aula"
+                  - option "Cursos"
+                  - option "Docentes"
+                  - option "Entregas Aula"
+                  - option "Especialidades Tecnicas"
+                  - option "Estudiantes"
+                  - option "Estudiantes Curso"
+                  - option "Gestion Academica"
+                  - option "Gestion Roles Permisos"
+                  - option "Gestion Usuarios"
+                  - option "Inscripciones"
+                  - option "Institucion Procedencia"
+                  - option "Materiales Aula"
+                  - option "Mi Perfil"
+                  - option "Mis Archivos"
+                  - option "Mis Asignaturas"
+                  - option "Mis Cursos"
+                  - option "Notificaciones Aula"
+                  - option "Orientacion Academica Profesional"
+                  - option "Panel Administrador"
+                  - option "Panel Director"
+                  - option "Panel Docente"
+                  - option "Panel Estudiante"
+                  - option "Panel Regente"
+                  - option "Panel Secretaria"
+                  - option "Paralelos"
+                  - option "Perfil Academico"
+                  - option "Periodo Evaluacion"
+                  - option "Personal Institucional"
+                  - option "Planes Asignatura"
+                  - option "Registro Personas"
+                  - option "Reportes Academicos"
+                  - option "Reportes Administrativos"
+                  - option "Reportes Aula"
+                  - option "Seguridad Cuenta"
+                  - option "Tareas Aula"
+                  - option "Tipo Vinculacion Estudiante"
+                  - option "Turnos"
+              - generic [ref=f6e168]:
+                - text: Acción
+                - combobox "Acción" [ref=f6e169]:
+                  - option "Todos" [selected]
+                  - option "acceder"
+              - generic [ref=f6e170]:
+                - text: Alcance
+                - combobox "Alcance" [ref=f6e171]:
+                  - option "Todos" [selected]
+              - generic [ref=f6e172]:
+                - text: Estado
+                - combobox "Estado" [ref=f6e173]:
+                  - option "Todos" [selected]
+                  - option "Seleccionados"
+                  - option "Sin seleccionar"
+            - generic [ref=f6e174]:
+              - button "Seleccionar visibles" [disabled] [ref=f6e175]
+              - button "Deseleccionar visibles" [disabled] [ref=f6e176]
+            - group [ref=f6e177]:
+              - 'generic "Cambios pendientes: 0 agregados · 0 retirados" [ref=f6e178]'
+            - generic [ref=f6e179]:
+              - group "Acceso Aula Virtual" [ref=f6e180]:
+                - generic [ref=f6e183] [cursor=pointer]:
+                  - 'checkbox "Acceder acceso aula virtual Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e184]'
+                  - generic [ref=f6e185]:
+                    - strong [ref=f6e186]: Acceder acceso aula virtual
+                    - generic [ref=f6e187]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e188]:
+                      - generic "Identificador técnico" [ref=f6e189]
+              - group "Actividades Aula" [ref=f6e190]:
+                - generic [ref=f6e193] [cursor=pointer]:
+                  - 'checkbox "Acceder actividades aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e194]'
+                  - generic [ref=f6e195]:
+                    - strong [ref=f6e196]: Acceder actividades aula
+                    - generic [ref=f6e197]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e198]:
+                      - generic "Identificador técnico" [ref=f6e199]
+              - group "Asignaturas" [ref=f6e200]:
+                - generic [ref=f6e203] [cursor=pointer]:
+                  - 'checkbox "Acceder asignaturas Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e204]'
+                  - generic [ref=f6e205]:
+                    - strong [ref=f6e206]: Acceder asignaturas
+                    - generic [ref=f6e207]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e208]:
+                      - generic "Identificador técnico" [ref=f6e209]
+              - group "Asistencia Aula" [ref=f6e210]:
+                - generic [ref=f6e213] [cursor=pointer]:
+                  - 'checkbox "Acceder asistencia aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e214]'
+                  - generic [ref=f6e215]:
+                    - strong [ref=f6e216]: Acceder asistencia aula
+                    - generic [ref=f6e217]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e218]:
+                      - generic "Identificador técnico" [ref=f6e219]
+              - group "Aula Virtual Admin" [ref=f6e220]:
+                - generic [ref=f6e223] [cursor=pointer]:
+                  - 'checkbox "Acceder aula virtual admin Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e224]'
+                  - generic [ref=f6e225]:
+                    - strong [ref=f6e226]: Acceder aula virtual admin
+                    - generic [ref=f6e227]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e228]:
+                      - generic "Identificador técnico" [ref=f6e229]
+              - group "Aula Virtual Docente" [ref=f6e230]:
+                - generic [ref=f6e233] [cursor=pointer]:
+                  - 'checkbox "Acceder aula virtual docente Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e234]'
+                  - generic [ref=f6e235]:
+                    - strong [ref=f6e236]: Acceder aula virtual docente
+                    - generic [ref=f6e237]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e238]:
+                      - generic "Identificador técnico" [ref=f6e239]
+              - group "Aula Virtual Estudiante" [ref=f6e240]:
+                - generic [ref=f6e243] [cursor=pointer]:
+                  - 'checkbox "Acceder aula virtual estudiante Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e244]'
+                  - generic [ref=f6e245]:
+                    - strong [ref=f6e246]: Acceder aula virtual estudiante
+                    - generic [ref=f6e247]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e248]:
+                      - generic "Identificador técnico" [ref=f6e249]
+              - group "Bitacora" [ref=f6e250]:
+                - generic [ref=f6e253] [cursor=pointer]:
+                  - 'checkbox "Acceder bitacora Alcance: Compatibilidad con módulo existente Permiso sensible Identificador técnico" [checked] [disabled] [ref=f6e254]'
+                  - generic [ref=f6e255]:
+                    - strong [ref=f6e256]: Acceder bitacora
+                    - generic [ref=f6e257]: "Alcance: Compatibilidad con módulo existente"
+                    - generic [ref=f6e258]: Permiso sensible
+                    - group [ref=f6e259]:
+                      - generic "Identificador técnico" [ref=f6e260]
+              - group "Calendario Aula" [ref=f6e261]:
+                - generic [ref=f6e264] [cursor=pointer]:
+                  - 'checkbox "Acceder calendario aula Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e265]'
+                  - generic [ref=f6e266]:
+                    - strong [ref=f6e267]: Acceder calendario aula
+                    - generic [ref=f6e268]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e269]:
+                      - generic "Identificador técnico" [ref=f6e270]
+              - group "Calificaciones" [ref=f6e271]:
+                - generic [ref=f6e274] [cursor=pointer]:
+                  - 'checkbox "Acceder calificaciones Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e275]'
+                  - generic [ref=f6e276]:
+                    - strong [ref=f6e277]: Acceder calificaciones
+                    - generic [ref=f6e278]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e279]:
+                      - generic "Identificador técnico" [ref=f6e280]
+              - group "Calificaciones Aula" [ref=f6e281]:
+                - generic [ref=f6e284] [cursor=pointer]:
+                  - 'checkbox "Acceder calificaciones aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e285]'
+                  - generic [ref=f6e286]:
+                    - strong [ref=f6e287]: Acceder calificaciones aula
+                    - generic [ref=f6e288]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e289]:
+                      - generic "Identificador técnico" [ref=f6e290]
+              - group "Cuestionarios Aula" [ref=f6e291]:
+                - generic [ref=f6e294] [cursor=pointer]:
+                  - 'checkbox "Acceder cuestionarios aula Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e295]'
+                  - generic [ref=f6e296]:
+                    - strong [ref=f6e297]: Acceder cuestionarios aula
+                    - generic [ref=f6e298]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e299]:
+                      - generic "Identificador técnico" [ref=f6e300]
+              - group "Cursos" [ref=f6e301]:
+                - generic [ref=f6e304] [cursor=pointer]:
+                  - 'checkbox "Acceder cursos Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e305]'
+                  - generic [ref=f6e306]:
+                    - strong [ref=f6e307]: Acceder cursos
+                    - generic [ref=f6e308]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e309]:
+                      - generic "Identificador técnico" [ref=f6e310]
+              - group "Docentes" [ref=f6e311]:
+                - generic [ref=f6e314] [cursor=pointer]:
+                  - 'checkbox "Acceder docentes Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e315]'
+                  - generic [ref=f6e316]:
+                    - strong [ref=f6e317]: Acceder docentes
+                    - generic [ref=f6e318]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e319]:
+                      - generic "Identificador técnico" [ref=f6e320]
+              - group "Entregas Aula" [ref=f6e321]:
+                - generic [ref=f6e324] [cursor=pointer]:
+                  - 'checkbox "Acceder entregas aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e325]'
+                  - generic [ref=f6e326]:
+                    - strong [ref=f6e327]: Acceder entregas aula
+                    - generic [ref=f6e328]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e329]:
+                      - generic "Identificador técnico" [ref=f6e330]
+              - group "Especialidades Tecnicas" [ref=f6e331]:
+                - generic [ref=f6e334] [cursor=pointer]:
+                  - 'checkbox "Acceder especialidades tecnicas Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e335]'
+                  - generic [ref=f6e336]:
+                    - strong [ref=f6e337]: Acceder especialidades tecnicas
+                    - generic [ref=f6e338]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e339]:
+                      - generic "Identificador técnico" [ref=f6e340]
+              - group "Estudiantes" [ref=f6e341]:
+                - generic [ref=f6e344] [cursor=pointer]:
+                  - 'checkbox "Acceder estudiantes Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e345]'
+                  - generic [ref=f6e346]:
+                    - strong [ref=f6e347]: Acceder estudiantes
+                    - generic [ref=f6e348]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e349]:
+                      - generic "Identificador técnico" [ref=f6e350]
+              - group "Estudiantes Curso" [ref=f6e351]:
+                - generic [ref=f6e354] [cursor=pointer]:
+                  - 'checkbox "Acceder estudiantes curso Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e355]'
+                  - generic [ref=f6e356]:
+                    - strong [ref=f6e357]: Acceder estudiantes curso
+                    - generic [ref=f6e358]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e359]:
+                      - generic "Identificador técnico" [ref=f6e360]
+              - group "Gestion Academica" [ref=f6e361]:
+                - generic [ref=f6e364] [cursor=pointer]:
+                  - 'checkbox "Acceder gestion academica Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e365]'
+                  - generic [ref=f6e366]:
+                    - strong [ref=f6e367]: Acceder gestion academica
+                    - generic [ref=f6e368]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e369]:
+                      - generic "Identificador técnico" [ref=f6e370]
+              - group "Gestion Roles Permisos" [ref=f6e371]:
+                - generic [ref=f6e374] [cursor=pointer]:
+                  - 'checkbox "Acceder gestion roles permisos Alcance: Compatibilidad con módulo existente Permiso sensible Identificador técnico" [checked] [disabled] [ref=f6e375]'
+                  - generic [ref=f6e376]:
+                    - strong [ref=f6e377]: Acceder gestion roles permisos
+                    - generic [ref=f6e378]: "Alcance: Compatibilidad con módulo existente"
+                    - generic [ref=f6e379]: Permiso sensible
+                    - group [ref=f6e380]:
+                      - generic "Identificador técnico" [ref=f6e381]
+              - group "Gestion Usuarios" [ref=f6e382]:
+                - generic [ref=f6e385] [cursor=pointer]:
+                  - 'checkbox "Acceder gestion usuarios Alcance: Compatibilidad con módulo existente Permiso sensible Identificador técnico" [checked] [disabled] [ref=f6e386]'
+                  - generic [ref=f6e387]:
+                    - strong [ref=f6e388]: Acceder gestion usuarios
+                    - generic [ref=f6e389]: "Alcance: Compatibilidad con módulo existente"
+                    - generic [ref=f6e390]: Permiso sensible
+                    - group [ref=f6e391]:
+                      - generic "Identificador técnico" [ref=f6e392]
+              - group "Inscripciones" [ref=f6e393]:
+                - generic [ref=f6e396] [cursor=pointer]:
+                  - 'checkbox "Acceder inscripciones Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e397]'
+                  - generic [ref=f6e398]:
+                    - strong [ref=f6e399]: Acceder inscripciones
+                    - generic [ref=f6e400]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e401]:
+                      - generic "Identificador técnico" [ref=f6e402]
+              - group "Institucion Procedencia" [ref=f6e403]:
+                - generic [ref=f6e406] [cursor=pointer]:
+                  - 'checkbox "Acceder institucion procedencia Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e407]'
+                  - generic [ref=f6e408]:
+                    - strong [ref=f6e409]: Acceder institucion procedencia
+                    - generic [ref=f6e410]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e411]:
+                      - generic "Identificador técnico" [ref=f6e412]
+              - group "Materiales Aula" [ref=f6e413]:
+                - generic [ref=f6e416] [cursor=pointer]:
+                  - 'checkbox "Acceder materiales aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e417]'
+                  - generic [ref=f6e418]:
+                    - strong [ref=f6e419]: Acceder materiales aula
+                    - generic [ref=f6e420]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e421]:
+                      - generic "Identificador técnico" [ref=f6e422]
+              - group "Mi Perfil" [ref=f6e423]:
+                - generic [ref=f6e426] [cursor=pointer]:
+                  - 'checkbox "Acceder mi perfil Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e427]'
+                  - generic [ref=f6e428]:
+                    - strong [ref=f6e429]: Acceder mi perfil
+                    - generic [ref=f6e430]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e431]:
+                      - generic "Identificador técnico" [ref=f6e432]
+              - group "Mis Archivos" [ref=f6e433]:
+                - generic [ref=f6e436] [cursor=pointer]:
+                  - 'checkbox "Acceder mis archivos Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e437]'
+                  - generic [ref=f6e438]:
+                    - strong [ref=f6e439]: Acceder mis archivos
+                    - generic [ref=f6e440]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e441]:
+                      - generic "Identificador técnico" [ref=f6e442]
+              - group "Mis Asignaturas" [ref=f6e443]:
+                - generic [ref=f6e446] [cursor=pointer]:
+                  - 'checkbox "Acceder mis asignaturas Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e447]'
+                  - generic [ref=f6e448]:
+                    - strong [ref=f6e449]: Acceder mis asignaturas
+                    - generic [ref=f6e450]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e451]:
+                      - generic "Identificador técnico" [ref=f6e452]
+              - group "Mis Cursos" [ref=f6e453]:
+                - generic [ref=f6e456] [cursor=pointer]:
+                  - 'checkbox "Acceder mis cursos Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e457]'
+                  - generic [ref=f6e458]:
+                    - strong [ref=f6e459]: Acceder mis cursos
+                    - generic [ref=f6e460]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e461]:
+                      - generic "Identificador técnico" [ref=f6e462]
+              - group "Notificaciones Aula" [ref=f6e463]:
+                - generic [ref=f6e466] [cursor=pointer]:
+                  - 'checkbox "Acceder notificaciones aula Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e467]'
+                  - generic [ref=f6e468]:
+                    - strong [ref=f6e469]: Acceder notificaciones aula
+                    - generic [ref=f6e470]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e471]:
+                      - generic "Identificador técnico" [ref=f6e472]
+              - group "Orientacion Academica Profesional" [ref=f6e473]:
+                - generic [ref=f6e476] [cursor=pointer]:
+                  - 'checkbox "Acceder orientacion academica profesional Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e477]'
+                  - generic [ref=f6e478]:
+                    - strong [ref=f6e479]: Acceder orientacion academica profesional
+                    - generic [ref=f6e480]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e481]:
+                      - generic "Identificador técnico" [ref=f6e482]
+              - group "Panel Administrador" [ref=f6e483]:
+                - generic [ref=f6e486] [cursor=pointer]:
+                  - 'checkbox "Acceder panel administrador Alcance: Compatibilidad con módulo existente Permiso sensible Identificador técnico" [checked] [disabled] [ref=f6e487]'
+                  - generic [ref=f6e488]:
+                    - strong [ref=f6e489]: Acceder panel administrador
+                    - generic [ref=f6e490]: "Alcance: Compatibilidad con módulo existente"
+                    - generic [ref=f6e491]: Permiso sensible
+                    - group [ref=f6e492]:
+                      - generic "Identificador técnico" [ref=f6e493]
+              - group "Panel Director" [ref=f6e494]:
+                - generic [ref=f6e497] [cursor=pointer]:
+                  - 'checkbox "Acceder panel director Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e498]'
+                  - generic [ref=f6e499]:
+                    - strong [ref=f6e500]: Acceder panel director
+                    - generic [ref=f6e501]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e502]:
+                      - generic "Identificador técnico" [ref=f6e503]
+              - group "Panel Docente" [ref=f6e504]:
+                - generic [ref=f6e507] [cursor=pointer]:
+                  - 'checkbox "Acceder panel docente Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e508]'
+                  - generic [ref=f6e509]:
+                    - strong [ref=f6e510]: Acceder panel docente
+                    - generic [ref=f6e511]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e512]:
+                      - generic "Identificador técnico" [ref=f6e513]
+              - group "Panel Estudiante" [ref=f6e514]:
+                - generic [ref=f6e517] [cursor=pointer]:
+                  - 'checkbox "Acceder panel estudiante Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e518]'
+                  - generic [ref=f6e519]:
+                    - strong [ref=f6e520]: Acceder panel estudiante
+                    - generic [ref=f6e521]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e522]:
+                      - generic "Identificador técnico" [ref=f6e523]
+              - group "Panel Regente" [ref=f6e524]:
+                - generic [ref=f6e527] [cursor=pointer]:
+                  - 'checkbox "Acceder panel regente Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e528]'
+                  - generic [ref=f6e529]:
+                    - strong [ref=f6e530]: Acceder panel regente
+                    - generic [ref=f6e531]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e532]:
+                      - generic "Identificador técnico" [ref=f6e533]
+              - group "Panel Secretaria" [ref=f6e534]:
+                - generic [ref=f6e537] [cursor=pointer]:
+                  - 'checkbox "Acceder panel secretaria Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e538]'
+                  - generic [ref=f6e539]:
+                    - strong [ref=f6e540]: Acceder panel secretaria
+                    - generic [ref=f6e541]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e542]:
+                      - generic "Identificador técnico" [ref=f6e543]
+              - group "Paralelos" [ref=f6e544]:
+                - generic [ref=f6e547] [cursor=pointer]:
+                  - 'checkbox "Acceder paralelos Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e548]'
+                  - generic [ref=f6e549]:
+                    - strong [ref=f6e550]: Acceder paralelos
+                    - generic [ref=f6e551]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e552]:
+                      - generic "Identificador técnico" [ref=f6e553]
+              - group "Perfil Academico" [ref=f6e554]:
+                - generic [ref=f6e557] [cursor=pointer]:
+                  - 'checkbox "Acceder perfil academico Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e558]'
+                  - generic [ref=f6e559]:
+                    - strong [ref=f6e560]: Acceder perfil academico
+                    - generic [ref=f6e561]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e562]:
+                      - generic "Identificador técnico" [ref=f6e563]
+              - group "Periodo Evaluacion" [ref=f6e564]:
+                - generic [ref=f6e567] [cursor=pointer]:
+                  - 'checkbox "Acceder periodo evaluacion Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e568]'
+                  - generic [ref=f6e569]:
+                    - strong [ref=f6e570]: Acceder periodo evaluacion
+                    - generic [ref=f6e571]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e572]:
+                      - generic "Identificador técnico" [ref=f6e573]
+              - group "Personal Institucional" [ref=f6e574]:
+                - generic [ref=f6e577] [cursor=pointer]:
+                  - 'checkbox "Acceder personal institucional Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e578]'
+                  - generic [ref=f6e579]:
+                    - strong [ref=f6e580]: Acceder personal institucional
+                    - generic [ref=f6e581]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e582]:
+                      - generic "Identificador técnico" [ref=f6e583]
+              - group "Planes Asignatura" [ref=f6e584]:
+                - generic [ref=f6e587] [cursor=pointer]:
+                  - 'checkbox "Acceder planes asignatura Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e588]'
+                  - generic [ref=f6e589]:
+                    - strong [ref=f6e590]: Acceder planes asignatura
+                    - generic [ref=f6e591]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e592]:
+                      - generic "Identificador técnico" [ref=f6e593]
+              - group "Registro Personas" [ref=f6e594]:
+                - generic [ref=f6e597] [cursor=pointer]:
+                  - 'checkbox "Acceder registro personas Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e598]'
+                  - generic [ref=f6e599]:
+                    - strong [ref=f6e600]: Acceder registro personas
+                    - generic [ref=f6e601]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e602]:
+                      - generic "Identificador técnico" [ref=f6e603]
+              - group "Reportes Academicos" [ref=f6e604]:
+                - generic [ref=f6e607] [cursor=pointer]:
+                  - 'checkbox "Acceder reportes academicos Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e608]'
+                  - generic [ref=f6e609]:
+                    - strong [ref=f6e610]: Acceder reportes academicos
+                    - generic [ref=f6e611]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e612]:
+                      - generic "Identificador técnico" [ref=f6e613]
+              - group "Reportes Administrativos" [ref=f6e614]:
+                - generic [ref=f6e617] [cursor=pointer]:
+                  - 'checkbox "Acceder reportes administrativos Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e618]'
+                  - generic [ref=f6e619]:
+                    - strong [ref=f6e620]: Acceder reportes administrativos
+                    - generic [ref=f6e621]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e622]:
+                      - generic "Identificador técnico" [ref=f6e623]
+              - group "Reportes Aula" [ref=f6e624]:
+                - generic [ref=f6e627] [cursor=pointer]:
+                  - 'checkbox "Acceder reportes aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e628]'
+                  - generic [ref=f6e629]:
+                    - strong [ref=f6e630]: Acceder reportes aula
+                    - generic [ref=f6e631]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e632]:
+                      - generic "Identificador técnico" [ref=f6e633]
+              - group "Seguridad Cuenta" [ref=f6e634]:
+                - generic [ref=f6e637] [cursor=pointer]:
+                  - 'checkbox "Acceder seguridad cuenta Alcance: Compatibilidad con módulo existente Identificador técnico" [disabled] [ref=f6e638]'
+                  - generic [ref=f6e639]:
+                    - strong [ref=f6e640]: Acceder seguridad cuenta
+                    - generic [ref=f6e641]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e642]:
+                      - generic "Identificador técnico" [ref=f6e643]
+              - group "Tareas Aula" [ref=f6e644]:
+                - generic [ref=f6e647] [cursor=pointer]:
+                  - 'checkbox "Acceder tareas aula Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e648]'
+                  - generic [ref=f6e649]:
+                    - strong [ref=f6e650]: Acceder tareas aula
+                    - generic [ref=f6e651]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e652]:
+                      - generic "Identificador técnico" [ref=f6e653]
+              - group "Tipo Vinculacion Estudiante" [ref=f6e654]:
+                - generic [ref=f6e657] [cursor=pointer]:
+                  - 'checkbox "Acceder tipo vinculacion estudiante Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e658]'
+                  - generic [ref=f6e659]:
+                    - strong [ref=f6e660]: Acceder tipo vinculacion estudiante
+                    - generic [ref=f6e661]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e662]:
+                      - generic "Identificador técnico" [ref=f6e663]
+              - group "Turnos" [ref=f6e664]:
+                - generic [ref=f6e667] [cursor=pointer]:
+                  - 'checkbox "Acceder turnos Alcance: Compatibilidad con módulo existente Identificador técnico" [checked] [disabled] [ref=f6e668]'
+                  - generic [ref=f6e669]:
+                    - strong [ref=f6e670]: Acceder turnos
+                    - generic [ref=f6e671]: "Alcance: Compatibilidad con módulo existente"
+                    - group [ref=f6e672]:
+                      - generic "Identificador técnico" [ref=f6e673]

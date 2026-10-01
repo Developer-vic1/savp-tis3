@@ -1,0 +1,10 @@
+HEAD=2f9d5e8dc5a85983b244f32efcd30b14ebd4c16b
+Rama=feature/REESTRUCTURACION
+ARCHITECTURE original=43 altered=0
+PREVIOUS MIGRATIONS files=52 altered=0
+PROTECTED resources/views/livewire/aula-virtual/orientacion/explorador-vocacional.blade.php equal=True
+PROTECTED resources/views/livewire/secretaria/cuentas.blade.php equal=True
+PROTECTED PETER2_REESTRUCTURACION.patch equal=True
+ENV CSS LOCKFILES SEEDERS changed=0
+Staged=0 Deleted=0
+POSTGRESQL_ACCESS=NO; MIGRATIONS_EXECUTED=NO; SEEDERS_EXECUTED=NO; SCHEMA_MODIFIED=NO; COMMIT=NO; PUSH=NO

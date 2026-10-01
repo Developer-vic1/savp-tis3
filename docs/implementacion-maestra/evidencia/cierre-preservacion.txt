@@ -1,0 +1,15 @@
+{
+  "branch": "feature/REESTRUCTURACION",
+  "HEAD": "2f9d5e8dc5a85983b244f32efcd30b14ebd4c16b",
+  "modified": 104,
+  "new": 162,
+  "deleted": 0,
+  "staged": 0
+}
+ARCHITECTURE original=43 altered=0
+PREVIOUS MIGRATIONS files=52 altered=0
+PROTECTED resources/views/livewire/aula-virtual/orientacion/explorador-vocacional.blade.php equal=True
+PROTECTED resources/views/livewire/secretaria/cuentas.blade.php equal=True
+PROTECTED PETER2_REESTRUCTURACION.patch equal=True
+ENV CSS LOCKFILES SEEDERS changed=0
+POSTGRESQL_INSTITUTIONAL_ACCESS=NO; TESTING_PG_EXISTS=NO; MIGRATIONS_EXECUTED=NO; SEEDERS_EXECUTED=NO; SCHEMA_MODIFIED=NO; COMMIT=NO; PUSH=NO

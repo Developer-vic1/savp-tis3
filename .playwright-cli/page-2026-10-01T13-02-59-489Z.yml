@@ -1,0 +1,115 @@
+- generic [ref=f31e3]:
+  - complementary "Navegación de Docente" [ref=f31e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f31e6] [cursor=pointer]:
+      - /url: http://localhost:8000/docente
+      - img "Logo Franz Tamayo 3" [ref=f31e7]
+      - generic [ref=f31e8]:
+        - generic [ref=f31e9]: Franz Tamayo N°3
+        - generic [ref=f31e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f31e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f31e13]: ☰
+      - generic [ref=f31e14]: Docente
+    - navigation [ref=f31e15]:
+      - link "Inicio" [ref=f31e16] [cursor=pointer]:
+        - /url: http://localhost:8000/docente
+        - generic [aria-hidden] [ref=f31e17]: ⌂
+      - generic [ref=f31e19]:
+        - heading "Académico" [level=2] [ref=f31e20]
+        - link "Mis cursos" [ref=f31e21] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/cursos
+          - generic [aria-hidden] [ref=f31e22]: •
+        - link "Calendario" [ref=f31e24] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/calendario
+          - generic [aria-hidden] [ref=f31e25]: •
+      - generic [ref=f31e27]:
+        - heading "Seguimiento" [level=2] [ref=f31e28]
+        - link "Orientación" [ref=f31e29] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/orientacion/seguimiento
+          - generic [aria-hidden] [ref=f31e30]: •
+        - link "Reportes" [ref=f31e32] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/reportes
+          - generic [aria-hidden] [ref=f31e33]: •
+    - generic [ref=f31e35]:
+      - link "Mi perfil" [ref=f31e36] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f31e37]: ○
+      - button "Cerrar sesión" [ref=f31e40] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f31e41]: ↪
+  - generic [ref=f31e43]:
+    - banner [ref=f31e44]:
+      - generic [ref=f31e46]:
+        - generic [ref=f31e47]: 01/10/2026
+        - generic [ref=f31e51]:
+          - generic [ref=f31e52]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f31e53]
+        - button "Notificaciones" [ref=f31e55] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f31e56] [cursor=pointer]
+        - button [ref=f31e60] [cursor=pointer]:
+          - generic [ref=f31e61]:
+            - img "DINA RUIZ" [ref=f31e62]
+            - generic [ref=f31e63]:
+              - paragraph [ref=f31e64]: DINA RUIZ
+              - paragraph [ref=f31e65]: Docente
+    - main [ref=f31e68]:
+      - generic [ref=f31e69]:
+        - generic [ref=f31e71]:
+          - generic [ref=f31e72]:
+            - generic [ref=f31e73]: Publicado
+            - heading "Bienvenido/a, DINA RUIZ" [level=2] [ref=f31e74]
+            - paragraph [ref=f31e75]: Cursos asignados, seguimiento académico, asistencia y orientación académica-profesional.
+          - link "Mis cursos" [ref=f31e76] [cursor=pointer]:
+            - /url: http://localhost:8000/aula-virtual/mis-cursos
+        - generic [ref=f31e80]:
+          - article [ref=f31e81]:
+            - generic [ref=f31e83]:
+              - paragraph [ref=f31e84]: Cursos asignados
+              - paragraph [ref=f31e85]: "0"
+            - paragraph [ref=f31e86]: Cursos asignados.
+          - article [ref=f31e87]:
+            - generic [ref=f31e89]:
+              - paragraph [ref=f31e90]: Estudiantes asignados
+              - paragraph [ref=f31e91]: "0"
+            - paragraph [ref=f31e92]: Participantes inscritos.
+          - article [ref=f31e93]:
+            - generic [ref=f31e95]:
+              - paragraph [ref=f31e96]: Tareas activas
+              - paragraph [ref=f31e97]: "0"
+            - paragraph [ref=f31e98]: Actividades publicadas.
+          - article [ref=f31e99]:
+            - generic [ref=f31e101]:
+              - paragraph [ref=f31e102]: Entregas por revisar
+              - paragraph [ref=f31e103]: "0"
+            - paragraph [ref=f31e104]: Bandeja de revisión.
+          - article [ref=f31e105]:
+            - generic [ref=f31e107]:
+              - paragraph [ref=f31e108]: Sesiones de asistencia abiertas
+              - paragraph [ref=f31e109]: "0"
+            - paragraph [ref=f31e110]: Sesiones registradas que siguen abiertas.
+          - article [ref=f31e111]:
+            - generic [ref=f31e113]:
+              - paragraph [ref=f31e114]: Seguimiento orientación
+              - paragraph [ref=f31e115]: "0"
+            - paragraph [ref=f31e116]: Acompañamiento académico-profesional.
+        - generic [ref=f31e117]:
+          - generic [ref=f31e118]:
+            - generic [ref=f31e119]:
+              - paragraph [ref=f31e120]: Mis cursos
+              - heading "Cursos asignados" [level=2] [ref=f31e121]
+            - generic [ref=f31e122]:
+              - link "Reportes" [ref=f31e123] [cursor=pointer]:
+                - /url: http://localhost:8000/aula-virtual/reportes
+              - link "Orientación" [ref=f31e127] [cursor=pointer]:
+                - /url: http://localhost:8000/aula-virtual/orientacion/seguimiento
+          - generic [ref=f31e131]:
+            - heading "Cursos asignados." [level=3] [ref=f31e135]
+            - paragraph [ref=f31e136]: Los cursos asignados aparecerán según la planificación académica vigente.
+        - generic [ref=f31e137]:
+          - article [ref=f31e138]:
+            - heading "Crear material" [level=3] [ref=f31e139]
+            - paragraph [ref=f31e140]: Selecciona un curso asignado para ejecutar esta acción.
+          - article [ref=f31e141]:
+            - heading "Crear tarea" [level=3] [ref=f31e142]
+            - paragraph [ref=f31e143]: Selecciona un curso asignado para ejecutar esta acción.
+          - article [ref=f31e144]:
+            - heading "Registrar asistencia" [level=3] [ref=f31e145]
+            - paragraph [ref=f31e146]: Selecciona un curso asignado para ejecutar esta acción.

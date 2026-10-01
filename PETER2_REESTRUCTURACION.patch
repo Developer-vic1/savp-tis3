@@ -1,0 +1,2698 @@
+diff --git a/.env.example b/.env.example
+index c0660ea..5a21d57 100644
+--- a/.env.example
++++ b/.env.example
+@@ -63,3 +63,9 @@ AWS_BUCKET=
+ AWS_USE_PATH_STYLE_ENDPOINT=false
+ 
+ VITE_APP_NAME="${APP_NAME}"
++
++# Integración opcional con el aporte ingenieril (Peter 3)
++PETER3_API_URL=
++PETER3_CONNECT_TIMEOUT=3
++PETER3_TIMEOUT=10
++PETER3_API_VERSION=v1
+diff --git a/app/Http/Controllers/Auth/GoogleAuthController.php b/app/Http/Controllers/Auth/GoogleAuthController.php
+index c7433a2..75e93ba 100644
+--- a/app/Http/Controllers/Auth/GoogleAuthController.php
++++ b/app/Http/Controllers/Auth/GoogleAuthController.php
+@@ -5,6 +5,7 @@
+ use App\Http\Controllers\Controller;
+ use App\Models\User;
+ use App\Services\BitacoraService;
++use App\Services\RoleDashboardResolver;
+ use Illuminate\Support\Facades\Auth;
+ use Illuminate\Support\Facades\Route;
+ use Laravel\Socialite\Facades\Socialite;
+@@ -140,14 +141,9 @@ public function callback()
+                 return redirect()->route('aula-virtual.inicio');
+             }
+ 
+-            if ($user->hasRole('Administrador') && Route::has('admin.dashboard')) {
+-                return redirect()->route('admin.dashboard');
+-            } elseif ($user->hasRole('Director') && Route::has('director.dashboard')) {
+-                return redirect()->route('director.dashboard');
+-            } elseif ($user->hasRole('Docente') && Route::has('docente.dashboard')) {
+-                return redirect()->route('docente.dashboard');
+-            } elseif ($user->hasRole('Estudiante') && Route::has('estudiante.aula-virtual')) {
+-                return redirect()->route('estudiante.aula-virtual');
++            $workspace = app(RoleDashboardResolver::class)->routeFor($user);
++            if ($workspace && Route::has($workspace)) {
++                return redirect()->route($workspace);
+             }
+ 
+             return redirect()->route('dashboard');
+diff --git a/app/Livewire/Admin/GestionUsuarios.php b/app/Livewire/Admin/GestionUsuarios.php
+index a62ff3c..08b5d6e 100644
+--- a/app/Livewire/Admin/GestionUsuarios.php
++++ b/app/Livewire/Admin/GestionUsuarios.php
+@@ -44,6 +44,11 @@ class GestionUsuarios extends Component
+ 
+     protected $paginationTheme = 'tailwind';
+ 
++    public function mount(): void
++    {
++        abort_unless(Auth::user()?->hasRole('Administrador'), 403);
++    }
++
+     /*
+     |--------------------------------------------------------------------------
+     | Filtros y tabla
+@@ -456,6 +461,12 @@ public function guardarEdicionUsuario(): void
+             $rolAnterior = $usuario->roles->first()?->name;
+             $rolNuevo = $this->formEditar['role'];
+ 
++            if ($rolAnterior === 'Administrador' && $rolNuevo !== 'Administrador' && $this->esUltimoAdministrador($usuario)) {
++                DB::rollBack();
++                $this->addError('formEditar.role', 'No puedes retirar el rol al último Administrador activo.');
++                return;
++            }
++
+             $data = [
+                 'email' => $this->limpiarCorreo($this->formEditar['email']),
+                 'est_usu' => $this->formEditar['est_usu'],
+@@ -795,6 +806,19 @@ private function generarCodigoUsuario(): string
+         return 'USU_' . str_pad((string) $nuevo, 4, '0', STR_PAD_LEFT);
+     }
+ 
++    private function esUltimoAdministrador(User $usuario): bool
++    {
++        if (! $usuario->hasRole('Administrador')) {
++            return false;
++        }
++
++        return User::query()
++            ->where('cod_usu', '!=', $usuario->cod_usu)
++            ->where('est_usu', 'ACTIVO')
++            ->whereHas('roles', fn ($query) => $query->where('name', 'Administrador'))
++            ->doesntExist();
++    }
++
+     /*
+     |--------------------------------------------------------------------------
+     | Acciones individuales
+@@ -828,6 +852,11 @@ public function desactivarUsuario(string $codUsu): void
+                 return;
+             }
+ 
++            if ($this->esUltimoAdministrador($usuario)) {
++                $this->dispatch('error-general', mensaje: 'No puedes desactivar al último Administrador activo.');
++                return;
++            }
++
+             $valoresAnteriores = $this->resumenUsuario($usuario);
+ 
+             $usuario->update([
+diff --git a/app/Providers/AppServiceProvider.php b/app/Providers/AppServiceProvider.php
+index daa4c0d..c48849b 100644
+--- a/app/Providers/AppServiceProvider.php
++++ b/app/Providers/AppServiceProvider.php
+@@ -2,6 +2,31 @@
+ 
+ namespace App\Providers;
+ 
++use App\Models\AulaVirtual\AsistenciaClase;
++use App\Models\AulaVirtual\ClaseVirtual;
++use App\Models\AulaVirtual\EntregaTarea;
++use App\Models\AulaVirtual\MaterialClase;
++use App\Models\AulaVirtual\OrientacionResultado;
++use App\Models\AulaVirtual\Tarea;
++use App\Models\Calificacion;
++use App\Models\Curso;
++use App\Models\Estudiante;
++use App\Models\InscripcionEstudiante;
++use App\Models\ReporteGenerado;
++use App\Models\User;
++use App\Policies\AulaVirtualAsistenciaPolicy;
++use App\Policies\AulaVirtualCursoPolicy;
++use App\Policies\AulaVirtualEntregaPolicy;
++use App\Policies\AulaVirtualMaterialPolicy;
++use App\Policies\AulaVirtualTareaPolicy;
++use App\Policies\CalificacionPolicy;
++use App\Policies\CursoPolicy;
++use App\Policies\EstudiantePolicy;
++use App\Policies\InscripcionEstudiantePolicy;
++use App\Policies\OrientacionResultadoPolicy;
++use App\Policies\ReporteGeneradoPolicy;
++use App\Policies\UserPolicy;
++use Illuminate\Support\Facades\Gate;
+ use Illuminate\Support\ServiceProvider;
+ 
+ class AppServiceProvider extends ServiceProvider
+@@ -20,5 +45,18 @@ public function register(): void
+     public function boot(): void
+     {
+         $this->loadMigrationsFrom(database_path('migrations/aula_virtual'));
++
++        Gate::policy(User::class, UserPolicy::class);
++        Gate::policy(Estudiante::class, EstudiantePolicy::class);
++        Gate::policy(Curso::class, CursoPolicy::class);
++        Gate::policy(InscripcionEstudiante::class, InscripcionEstudiantePolicy::class);
++        Gate::policy(Calificacion::class, CalificacionPolicy::class);
++        Gate::policy(ReporteGenerado::class, ReporteGeneradoPolicy::class);
++        Gate::policy(ClaseVirtual::class, AulaVirtualCursoPolicy::class);
++        Gate::policy(AsistenciaClase::class, AulaVirtualAsistenciaPolicy::class);
++        Gate::policy(MaterialClase::class, AulaVirtualMaterialPolicy::class);
++        Gate::policy(Tarea::class, AulaVirtualTareaPolicy::class);
++        Gate::policy(EntregaTarea::class, AulaVirtualEntregaPolicy::class);
++        Gate::policy(OrientacionResultado::class, OrientacionResultadoPolicy::class);
+     }
+ }
+diff --git a/app/Services/AulaVirtual/AsistenciaService.php b/app/Services/AulaVirtual/AsistenciaService.php
+index 6fd883a..6987080 100644
+--- a/app/Services/AulaVirtual/AsistenciaService.php
++++ b/app/Services/AulaVirtual/AsistenciaService.php
+@@ -4,50 +4,89 @@
+ 
+ use App\Models\AulaVirtual\AsistenciaClase;
+ use App\Models\AulaVirtual\AsistenciaEstudiante;
++use App\Models\AulaVirtual\ClaseVirtual;
+ use App\Models\AulaVirtual\EstadoAsistencia;
+ use App\Models\Docente;
+ use App\Models\User;
++use App\Services\BitacoraService;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Validation\ValidationException;
+ 
+ class AsistenciaService
+ {
+     public function guardar(array $datos, Docente $docente, User $usuario): AsistenciaClase
+     {
+-        $asistencia = AsistenciaClase::firstOrCreate(
+-            [
+-                'cod_cla' => $datos['cod_cla'],
+-                'cod_doc' => $docente->cod_doc,
+-                'fec_asi_cla' => $datos['fec_asi_cla'],
+-                'cod_hbl' => $datos['cod_hbl'] ?? null,
+-            ],
+-            [
+-                'cod_usu_reg' => $usuario->cod_usu,
+-                'tip_asi_cla' => $datos['tip_asi_cla'] ?? 'CLASE',
+-                'tit_asi_cla' => $datos['tit_asi_cla'] ?? 'Registro de asistencia',
+-                'obs_asi_cla' => $datos['obs_asi_cla'] ?? null,
+-                'est_asi_cla' => 'ABIERTA',
+-            ]
+-        );
+-
+-        foreach (($datos['asistencias'] ?? []) as $codEst => $registro) {
+-            $estado = EstadoAsistencia::where('cod_est_asi', $registro['cod_est_asi'] ?? null)->first();
+-
+-            if (! $estado) {
+-                continue;
+-            }
++        $clase = ClaseVirtual::query()
++            ->with('estudiantes')
++            ->where('cod_cla', $datos['cod_cla'])
++            ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $docente->cod_doc))
++            ->firstOrFail();
++
++        $allowedStudents = $clase->estudiantes
++            ->where('est_cla_est', 'ACTIVO')
++            ->pluck('cod_est')
++            ->all();
++        $foreignStudents = array_diff(array_keys($datos['asistencias'] ?? []), $allowedStudents);
++
++        if ($foreignStudents !== []) {
++            throw ValidationException::withMessages([
++                'asistencias' => 'La solicitud contiene estudiantes que no pertenecen al curso.',
++            ]);
++        }
+ 
+-            AsistenciaEstudiante::updateOrCreate(
+-                ['cod_asi_cla' => $asistencia->cod_asi_cla, 'cod_est' => $codEst],
++        return DB::transaction(function () use ($datos, $docente, $usuario) {
++            $asistencia = AsistenciaClase::firstOrCreate(
++                [
++                    'cod_cla' => $datos['cod_cla'],
++                    'cod_doc' => $docente->cod_doc,
++                    'fec_asi_cla' => $datos['fec_asi_cla'],
++                    'cod_hbl' => $datos['cod_hbl'] ?? null,
++                ],
+                 [
+-                    'cod_est_asi' => $estado->cod_est_asi,
+                     'cod_usu_reg' => $usuario->cod_usu,
+-                    'min_retraso' => max(0, (int) ($registro['min_retraso'] ?? 0)),
+-                    'obs_asi_est' => $registro['obs_asi_est'] ?? null,
+-                    'fec_reg_asi_est' => now(),
+-                    'est_asi_est' => 'REGISTRADO',
++                    'tip_asi_cla' => $datos['tip_asi_cla'] ?? 'CLASE',
++                    'tit_asi_cla' => $datos['tit_asi_cla'] ?? 'Registro de asistencia',
++                    'obs_asi_cla' => $datos['obs_asi_cla'] ?? null,
++                    'est_asi_cla' => 'ABIERTA',
+                 ]
+             );
+-        }
+ 
+-        return $asistencia;
++            foreach (($datos['asistencias'] ?? []) as $codEst => $registro) {
++                $estado = EstadoAsistencia::query()
++                    ->where('cod_est_asi', $registro['cod_est_asi'] ?? null)
++                    ->where('est_est_asi', 'ACTIVO')
++                    ->first();
++
++                if (! $estado) {
++                    throw ValidationException::withMessages([
++                        'asistencias' => 'Uno de los estados de asistencia no es válido.',
++                    ]);
++                }
++
++                AsistenciaEstudiante::updateOrCreate(
++                    ['cod_asi_cla' => $asistencia->cod_asi_cla, 'cod_est' => $codEst],
++                    [
++                        'cod_est_asi' => $estado->cod_est_asi,
++                        'cod_usu_reg' => $usuario->cod_usu,
++                        'min_retraso' => max(0, (int) ($registro['min_retraso'] ?? 0)),
++                        'obs_asi_est' => $registro['obs_asi_est'] ?? null,
++                        'fec_reg_asi_est' => now(),
++                        'est_asi_est' => 'REGISTRADO',
++                    ]
++                );
++            }
++
++            BitacoraService::registrar(
++                accion: 'REGISTRAR_ASISTENCIA_CURSO',
++                tabla: 'asistencia_clase',
++                registro: $asistencia->cod_asi_cla,
++                modulo: 'Aula Virtual',
++                nombreRegistro: $datos['cod_cla'],
++                descripcion: 'Se registró asistencia validando la pertenencia de cada estudiante al curso.',
++                valoresNuevos: ['estudiantes' => count($datos['asistencias'] ?? [])]
++            );
++
++            return $asistencia;
++        });
+     }
+ }
+diff --git a/bootstrap/app.php b/bootstrap/app.php
+index c3928c5..df924be 100644
+--- a/bootstrap/app.php
++++ b/bootstrap/app.php
+@@ -1,5 +1,6 @@
+ <?php
+ 
++use App\Http\Middleware\EnsureActorRole;
+ use Illuminate\Foundation\Application;
+ use Illuminate\Foundation\Configuration\Exceptions;
+ use Illuminate\Foundation\Configuration\Middleware;
+@@ -12,7 +13,9 @@
+         health: '/up',
+     )
+     ->withMiddleware(function (Middleware $middleware): void {
+-        //
++        $middleware->alias([
++            'actor' => EnsureActorRole::class,
++        ]);
+     })
+     ->withExceptions(function (Exceptions $exceptions): void {
+         //
+diff --git a/config/services.php b/config/services.php
+index 82bdbe8..eabb065 100644
+--- a/config/services.php
++++ b/config/services.php
+@@ -41,4 +41,11 @@
+         'redirect' => env('GOOGLE_REDIRECT_URI'),
+     ],
+ 
++    'peter3' => [
++        'url' => env('PETER3_API_URL'),
++        'connect_timeout' => (int) env('PETER3_CONNECT_TIMEOUT', 3),
++        'timeout' => (int) env('PETER3_TIMEOUT', 10),
++        'version' => env('PETER3_API_VERSION', 'v1'),
++    ],
++
+ ];
+diff --git a/database/seeders/AulaVirtualPermissionSeeder.php b/database/seeders/AulaVirtualPermissionSeeder.php
+index a834cfe..399faae 100644
+--- a/database/seeders/AulaVirtualPermissionSeeder.php
++++ b/database/seeders/AulaVirtualPermissionSeeder.php
+@@ -46,6 +46,10 @@ public function run(): void
+             'Notificaciones_Aula',
+             'Orientacion_Academica_Profesional',
+             'Seguridad_Cuenta',
++            'aula.entregas.gestionar.propias',
++            'asistencia.ver.propia',
++            'orientacion.realizar',
++            'orientacion.ver.propia',
+         ];
+ 
+         $permisosDocente = [
+@@ -65,6 +69,11 @@ public function run(): void
+             'Reportes_Aula',
+             'Orientacion_Academica_Profesional',
+             'Seguridad_Cuenta',
++            'aula.materiales.gestionar.curso',
++            'aula.tareas.gestionar.curso',
++            'aula.entregas.revisar.curso',
++            'asistencia.gestionar.curso',
++            'calificaciones.gestionar.curso',
+         ];
+ 
+         $permisosAdministrativos = [
+@@ -81,6 +90,8 @@ public function run(): void
+             'Reportes_Aula',
+             'Orientacion_Academica_Profesional',
+             'Gestion_Roles_Permisos',
++            'roles-permisos.gestionar',
++            'orientacion.configurar',
+         ];
+ 
+         $todosLosPermisos = array_unique([
+diff --git a/database/seeders/RolSeeder.php b/database/seeders/RolSeeder.php
+index 8a88beb..6cf6d00 100644
+--- a/database/seeders/RolSeeder.php
++++ b/database/seeders/RolSeeder.php
+@@ -192,6 +192,73 @@ public function run(): void
+             $permiso->syncRoles($roles);
+         }
+ 
++        /*
++        |--------------------------------------------------------------------------
++        | PERMISOS POR ACCIÓN Y ALCANCE
++        |--------------------------------------------------------------------------
++        | Conviven con los permisos legados durante la transición. No se eliminan
++        | nombres antiguos para no interrumpir rutas y componentes existentes.
++        */
++        $permisosPorAccion = [
++            'usuarios.ver.global' => [$admin],
++            'usuarios.ver.institucional' => [$secretaria],
++            'usuarios.crear' => [$admin, $secretaria],
++            'usuarios.editar' => [$admin, $secretaria],
++            'usuarios.activar' => [$admin, $secretaria],
++            'usuarios.desactivar' => [$admin, $secretaria],
++            'usuarios.reset_password' => [$admin, $secretaria],
++            'usuarios.asignar_roles' => [$admin],
++            'roles-permisos.gestionar' => [$admin],
++
++            'personas.ver.institucional' => [$admin, $director, $secretaria],
++            'personas.gestionar.institucional' => [$admin, $secretaria],
++            'estudiantes.ver.global' => [$admin],
++            'estudiantes.ver.institucional' => [$director, $secretaria, $regente],
++            'estudiantes.ver.curso' => [$docente],
++            'estudiantes.ver.propio' => [$estudiante],
++            'estudiantes.gestionar.institucional' => [$admin, $secretaria],
++
++            'cursos.ver.global' => [$admin],
++            'cursos.ver.institucional' => [$director, $secretaria, $regente],
++            'cursos.ver.asignados' => [$docente],
++            'cursos.ver.propios' => [$estudiante],
++            'cursos.gestionar.global' => [$admin],
++            'inscripciones.ver.institucional' => [$admin, $director, $secretaria, $regente],
++            'inscripciones.ver.curso' => [$docente],
++            'inscripciones.ver.propias' => [$estudiante],
++            'inscripciones.gestionar.institucional' => [$admin, $secretaria],
++
++            'calificaciones.ver.global' => [$admin],
++            'calificaciones.ver.institucional' => [$director, $regente],
++            'calificaciones.ver.curso' => [$docente],
++            'calificaciones.ver.propias' => [$estudiante],
++            'calificaciones.gestionar.global' => [$admin],
++            'calificaciones.gestionar.curso' => [$docente],
++            'asistencia.ver.institucional' => [$admin, $director, $regente],
++            'asistencia.ver.curso' => [$docente],
++            'asistencia.ver.propia' => [$estudiante],
++            'asistencia.gestionar.curso' => [$docente],
++
++            'aula.materiales.gestionar.curso' => [$docente],
++            'aula.tareas.gestionar.curso' => [$docente],
++            'aula.entregas.gestionar.propias' => [$estudiante],
++            'aula.entregas.revisar.curso' => [$docente],
++            'orientacion.realizar' => [$estudiante],
++            'orientacion.ver.propia' => [$estudiante],
++            'orientacion.ver.curso' => [$docente],
++            'orientacion.ver.institucional' => [$admin, $director, $regente],
++            'orientacion.configurar' => [$admin],
++            'reportes.ver.institucional' => [$admin, $director, $secretaria, $regente],
++            'reportes.exportar.institucional' => [$admin, $director],
++            'bitacora.ver.global' => [$admin],
++            'integraciones.peter3.usar' => [$admin, $director, $docente, $estudiante],
++        ];
++
++        foreach ($permisosPorAccion as $nombre => $roles) {
++            $permiso = Permission::firstOrCreate(['name' => $nombre, 'guard_name' => 'web']);
++            $permiso->syncRoles($roles);
++        }
++
+         /*
+         |--------------------------------------------------------------------------
+         | Limpiar caché nuevamente
+diff --git a/resources/views/aula-virtual/cursos/show-docente.blade.php b/resources/views/aula-virtual/cursos/show-docente.blade.php
+index 229c59f..2f0e5ba 100644
+--- a/resources/views/aula-virtual/cursos/show-docente.blade.php
++++ b/resources/views/aula-virtual/cursos/show-docente.blade.php
+@@ -15,6 +15,7 @@
+                 <div class="flex flex-wrap gap-2">
+                     @include('aula-virtual.componentes.icon-action-button', ['href' => route('aula-virtual.docente.asistencia.registrar', $curso->cod_cla), 'icon' => 'asistencia', 'label' => 'Asistencia', 'variant' => 'secondary'])
+                     @include('aula-virtual.componentes.icon-action-button', ['href' => route('aula-virtual.materiales.index', $curso->cod_cla), 'icon' => 'crear-material', 'label' => 'Materiales'])
++                    @include('aula-virtual.componentes.icon-action-button', ['href' => route('docente.cursos.calificaciones', $curso->cod_cla), 'icon' => 'revisar', 'label' => 'Calificaciones', 'variant' => 'secondary'])
+                 </div>
+             </div>
+         </section>
+diff --git a/resources/views/aula-virtual/layouts/sidebar.blade.php b/resources/views/aula-virtual/layouts/sidebar.blade.php
+index 15ffccf..120a519 100644
+--- a/resources/views/aula-virtual/layouts/sidebar.blade.php
++++ b/resources/views/aula-virtual/layouts/sidebar.blade.php
+@@ -5,12 +5,15 @@
+         : ($user?->can('Aula_Virtual_Estudiante') || $user?->hasRole('Estudiante') ? 'Estudiante' : 'Aula Virtual');
+ 
+     $linksEstudiante = [
+-        ['perm' => 'Mis_Asignaturas', 'label' => 'Mis asignaturas', 'route' => 'aula-virtual.estudiante.asignaturas'],
+-        ['perm' => 'Tareas_Aula', 'label' => 'Actividades pendientes', 'route' => 'aula-virtual.inicio'],
+-        ['perm' => 'Materiales_Aula', 'label' => 'Materiales', 'route' => 'aula-virtual.estudiante.asignaturas'],
+-        ['perm' => 'Calificaciones_Aula', 'label' => 'Calificaciones', 'route' => 'aula-virtual.estudiante.asignaturas'],
+-        ['perm' => 'Asistencia_Aula', 'label' => 'Mi asistencia', 'route' => 'aula-virtual.estudiante.asistencia'],
+-        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Orientacion academica-profesional', 'route' => 'aula-virtual.estudiante.orientacion'],
++        ['perm' => 'Mis_Asignaturas', 'label' => 'Mis materias', 'route' => 'aula-virtual.estudiante.asignaturas'],
++        ['perm' => 'Calificaciones_Aula', 'label' => 'Mi progreso', 'route' => 'estudiante.area', 'params' => ['area' => 'progreso']],
++        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Mis intereses', 'route' => 'estudiante.intereses'],
++        ['perm' => 'Orientacion_Academica_Profesional', 'label' => 'Mi futuro académico', 'route' => 'estudiante.area', 'params' => ['area' => 'futuro']],
++        ['perm' => 'Perfil_Academico', 'label' => 'Mi preparación', 'route' => 'estudiante.area', 'params' => ['area' => 'preparacion']],
++        ['perm' => 'Perfil_Academico', 'label' => 'Mi plan', 'route' => 'estudiante.area', 'params' => ['area' => 'plan']],
++        ['perm' => 'Materiales_Aula', 'label' => 'Fuentes académicas', 'route' => 'estudiante.area', 'params' => ['area' => 'fuentes']],
++        ['perm' => 'Perfil_Academico', 'label' => 'Asistente de estudio', 'route' => 'estudiante.area', 'params' => ['area' => 'asistente']],
++        ['perm' => 'Seguridad_Cuenta', 'label' => 'Mi perfil', 'route' => 'profile.show'],
+     ];
+ 
+     $linksDocente = [
+@@ -102,7 +105,7 @@ class="group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold
+                 <div class="space-y-1">
+                     @foreach ($linksEstudiante as $link)
+                         @can($link['perm'])
+-                            <a href="{{ Route::has($link['route']) ? route($link['route']) : route('aula-virtual.inicio') }}"
++                            <a href="{{ Route::has($link['route']) ? route($link['route'], $link['params'] ?? []) : route('aula-virtual.inicio') }}"
+                                 class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
+                                 style="color: var(--ui-muted);"
+                                 onmouseover="this.style.color='var(--ui-primary)'"
+diff --git a/resources/views/components/menu.blade.php b/resources/views/components/menu.blade.php
+index 57b7a53..0d069ca 100644
+--- a/resources/views/components/menu.blade.php
++++ b/resources/views/components/menu.blade.php
+@@ -161,6 +161,17 @@ class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transiti
+                             </a>
+                     @endcan
+ 
++                    @role('Administrador')
++                        <a href="{{ route('admin.roles-permisos') }}"
++                            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
++                            style="{{ request()->routeIs('admin.roles-permisos') ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-muted);' }}">
++                            <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
++                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3 4.5 6v5.25c0 4.64 3.2 8.71 7.5 9.75 4.3-1.04 7.5-5.11 7.5-9.75V6L12 3Zm0 5.25v4.5m0 3h.008v.008H12v-.008Z" />
++                            </svg>
++                            <span x-show="sidebarOpen" x-cloak>Roles y permisos</span>
++                        </a>
++                    @endrole
++
+                     @can('Personal_Institucional')
+                             <a href="{{ route('admin.personal-institucional') }}"
+                                 class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition" style="{{ request()->routeIs('admin.personal-institucional')
+diff --git a/resources/views/layouts/sidebar.blade.php b/resources/views/layouts/sidebar.blade.php
+index 341e58a..583ba74 100644
+--- a/resources/views/layouts/sidebar.blade.php
++++ b/resources/views/layouts/sidebar.blade.php
+@@ -9,5 +9,9 @@
+ --}}
+ 
+ <aside class="hidden lg:block" aria-label="Barra lateral principal del sistema">
+-    <x-menu />
+-</aside>
+\ No newline at end of file
++    @if (Auth::user()?->hasRole('Administrador'))
++        <x-menu />
++    @else
++        @include('components.actor-menu')
++    @endif
++</aside>
+diff --git a/routes/web.php b/routes/web.php
+index edc0f51..0fafb47 100644
+--- a/routes/web.php
++++ b/routes/web.php
+@@ -1,184 +1,24 @@
+ <?php
+ 
+-use App\Http\Controllers\AdminDashboardController;
+-use App\Http\Controllers\Admin\GestionEstudiantesController;
+-use App\Http\Controllers\Admin\GestionPersonaController;
+-use App\Http\Controllers\Admin\GestionPersonalInstitucional;
+-use App\Http\Controllers\Admin\GestionUsuarioController;
+-use App\Http\Controllers\Admin\BitacoraController;
+-use App\Http\Controllers\Admin\GestionAcademicaController;
+-use App\Http\Controllers\Admin\GestionCursosController;
+-use App\Http\Controllers\Admin\GestionAsignaturaController;
+-use App\Http\Controllers\Admin\GestionParaleloController;
+-use App\Http\Controllers\Admin\GestionTurnoController;
+-use App\Http\Controllers\Admin\GestionInscripcionController;
+-use App\Http\Controllers\Admin\EspecialidadesTecnicasController;
+-use App\Http\Controllers\Admin\PeriodoEvaluacionController;
+-use App\Http\Controllers\Admin\PlanesAsignaturaController;
+-use App\Http\Controllers\Admin\GestionDocenteController;
+-use App\Http\Controllers\Admin\InstitucionProcedenciaController;
+-use App\Http\Controllers\Admin\TipoVinculacionEstudianteController;
+-use App\Http\Controllers\Admin\CalificacionController;
+-use App\Http\Controllers\Admin\ReporteAcademicoController;
+-use App\Http\Controllers\Admin\ReporteAdministrativoController;
+-use App\Http\Controllers\Admin\ReportePdfController;
+ use App\Http\Controllers\Auth\GoogleAuthController;
+-use Illuminate\Support\Facades\Auth;
++use App\Http\Controllers\DashboardController;
+ use Illuminate\Support\Facades\Route;
+ 
+-Route::get('/', function () {
+-    return view('welcome');
+-})->name('welcome');
++Route::view('/', 'welcome')->name('welcome');
+ 
+ Route::middleware('guest')->group(function () {
+-    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])
+-        ->name('google.redirect');
+-
+-    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])
+-        ->name('google.callback');
++    Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
++    Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
+ });
+ 
+ require __DIR__.'/aula_virtual.php';
+-/*
+-|--------------------------------------------------------------------------
+-| Dashboard principal
+-|--------------------------------------------------------------------------
+-*/
+-Route::middleware([
+-    'auth:sanctum',
+-    config('jetstream.auth_session'),
+-    'verified',
+-])->get('/dashboard', function () {
+-    $user = Auth::user();
+ 
+-    if ($user->canAny([
+-        'Panel_Administrador',
+-        'Panel_Director',
+-        'Panel_Docente',
+-        'Panel_Estudiante',
+-        'Panel_Secretaria',
+-        'Panel_Regente',
+-    ])) {
+-        return app(AdminDashboardController::class)->index();
+-    }
+-
+-    abort(403, 'No tienes un panel asignado.');
+-})->name('dashboard');
+-
+-/*
+-|--------------------------------------------------------------------------
+-| Rutas de administración
+-|--------------------------------------------------------------------------
+-*/
+ Route::middleware([
+     'auth:sanctum',
+     config('jetstream.auth_session'),
+     'verified',
+-])->prefix('admin')->name('admin.')->group(function () {
+-
+-    Route::get('/gestion-usuarios', [GestionUsuarioController::class, 'index'])
+-        ->name('gestion-usuarios')
+-        ->middleware('can:Gestion_Usuarios');
+-
+-    Route::get('/gestion-personas', [GestionPersonaController::class, 'index'])
+-        ->name('gestion-personas')
+-        ->middleware('can:Registro_Personas');
+-
+-    Route::get('/personal-institucional', [GestionPersonalInstitucional::class, 'index'])
+-        ->name('personal-institucional')
+-        ->middleware('can:Personal_Institucional');
+-
+-    Route::get('/gestion-estudiantes', [GestionEstudiantesController::class, 'index'])
+-        ->name('gestion-estudiantes')
+-        ->middleware('can:Estudiantes');
+-
+-    Route::get('/bitacora', [BitacoraController::class, 'index'])
+-        ->name('bitacora')
+-        ->middleware('can:Bitacora');
+-
+-    Route::get('/gestion-academica', [GestionAcademicaController::class, 'index'])
+-        ->name('gestion-academica')
+-        ->middleware('can:Gestion_Academica');
+-
+-    Route::get('/gestion-cursos', [GestionCursosController::class, 'index'])
+-        ->name('gestion-cursos')
+-        ->middleware('can:Cursos');
+-
+-    Route::get('/gestion-asignaturas', [GestionAsignaturaController::class, 'index'])
+-        ->name('gestion-asignaturas')
+-        ->middleware('can:Asignaturas');
+-
+-    Route::get('/gestion-paralelos', [GestionParaleloController::class, 'index'])
+-        ->name('gestion-paralelos')
+-        ->middleware('can:Paralelos');
+-
+-    Route::get('/gestion-turnos', [GestionTurnoController::class, 'index'])
+-        ->name('gestion-turnos')
+-        ->middleware('can:Turnos');
+-
+-    Route::get('/gestion-inscripciones', [GestionInscripcionController::class, 'index'])
+-        ->name('gestion-inscripciones')
+-        ->middleware('can:Inscripciones');
+-
+-    Route::get('/especialidades-tecnicas', [EspecialidadesTecnicasController::class, 'index'])
+-        ->name('especialidades-tecnicas')
+-        ->middleware('can:Especialidades_Tecnicas');
+-
+-    Route::get('/periodo-evaluacion', [PeriodoEvaluacionController::class, 'index'])
+-        ->name('periodo-evaluacion')
+-        ->middleware('can:Periodo_Evaluacion');
+-
+-    Route::get('/planes-asignatura', [PlanesAsignaturaController::class, 'index'])
+-        ->name('planes-asignatura')
+-        ->middleware('can:Planes_Asignatura');
+-
+-    Route::get('/gestion-docentes', [GestionDocenteController::class, 'index'])
+-        ->name('gestion-docentes')
+-        ->middleware('can:Docentes');
+-
+-    Route::get('/institucion-procedencia', [InstitucionProcedenciaController::class, 'index'])
+-        ->name('institucion-procedencia')
+-        ->middleware('can:Institucion_Procedencia');
+-
+-    Route::get('/tipo-vinculacion-estudiante', [TipoVinculacionEstudianteController::class, 'index'])
+-        ->name('tipo-vinculacion-estudiante')
+-        ->middleware('can:Tipo_Vinculacion_Estudiante');
+-
+-    Route::get('/calificaciones', [CalificacionController::class, 'index'])
+-        ->name('calificaciones')
+-        ->middleware('can:Calificaciones');
+-
+-    Route::get('/reportes-academicos', [ReporteAcademicoController::class, 'index'])
+-        ->name('reportes-academicos')
+-        ->middleware('can:Reportes_Academicos');
+-
+-    Route::get('/reportes-administrativos', [ReporteAdministrativoController::class, 'index'])
+-        ->name('reportes-administrativos')
+-        ->middleware('can:Reportes_Administrativos');
+-
+-    // ──────────────────────────────────────────────────────────────────────
+-    // MÓDULO DE REPORTES PDF / SQL / ZIP
+-    // ──────────────────────────────────────────────────────────────────────
+-    Route::prefix('reportes')->name('reportes.')->middleware('can:Gestion_Academica')->group(function () {
+-
+-        // Reportes académicos
+-        Route::get('/academico-general/pdf',    [ReportePdfController::class, 'academicoGeneral'])->name('academico-general.pdf');
+-        Route::get('/calificaciones/pdf',        [ReportePdfController::class, 'calificaciones'])->name('calificaciones.pdf');
+-        Route::get('/estudiantes-riesgo/pdf',    [ReportePdfController::class, 'estudiantesRiesgo'])->name('estudiantes-riesgo.pdf');
+-
+-        // Reportes administrativos
+-        Route::get('/administrativo/pdf',        [ReportePdfController::class, 'administrativo'])->name('administrativo.pdf');
+-        Route::get('/bitacora/pdf',              [ReportePdfController::class, 'bitacora'])->name('bitacora.pdf');
+-
+-        // Reportes vocacionales
+-        Route::get('/vocacional-riasec/pdf',     [ReportePdfController::class, 'vocacionalRiasec'])->name('vocacional-riasec.pdf');
+-        Route::get('/compatibilidad-carreras/pdf', [ReportePdfController::class, 'compatibilidadCarreras'])->name('compatibilidad-carreras.pdf');
+-
+-        // Reporte institucional completo
+-        Route::get('/institucional-completo/pdf', [ReportePdfController::class, 'institucionalCompleto'])->name('institucional-completo.pdf');
+-
+-        // Respaldo SQL y paquete ZIP
+-        Route::get('/respaldo-academico/sql',    [ReportePdfController::class, 'respaldoSql'])->name('respaldo-academico.sql');
+-        Route::get('/paquete/zip',               [ReportePdfController::class, 'paqueteZip'])->name('paquete.zip');
+-    });
++])->group(function () {
++    Route::get('/dashboard', DashboardController::class)->name('dashboard');
++    require __DIR__.'/admin.php';
++    require __DIR__.'/actors.php';
+ });
+diff --git a/PETER2_AUDITORIA_REESTRUCTURACION.md b/PETER2_AUDITORIA_REESTRUCTURACION.md
+new file mode 100644
+index 0000000..6adf3b3
+--- /dev/null
++++ b/PETER2_AUDITORIA_REESTRUCTURACION.md
+@@ -0,0 +1,357 @@
++# PETER 2 — AUDITORÍA DE REESTRUCTURACIÓN SAVP-TIS3
++
++Fecha de auditoría: 2026-09-28  
++Estado de la puerta: **FREEZE FUNCIONAL ACTIVO**  
++Alcance ejecutado: Fase A únicamente (inspección, evidencia, pruebas seguras y documentación).
++
++## 1. Base Git
++
++| Elemento | Evidencia |
++|---|---|
++| Repositorio | `Developer-vic1/savp-tis3` |
++| Worktree auditado | `C:\laragon\www\savp-reestructuracion` |
++| Rama | `feature/REESTRUCTURACION` |
++| Base declarada | `integration/savp-consolidado` |
++| HEAD | `a5fb7eac5efafa0ac9530cc41b77852869a740ae` |
++| Base SHA | `a5fb7eac5efafa0ac9530cc41b77852869a740ae` |
++| Commit/push | No realizados |
++| Rama posterior | `feature/incorporacion-prevenciones-integrales`, no integrada ni modificada |
++
++La rama parte exactamente de la base solicitada. Todo el trabajo auditado permanece sin stage y sin commit.
++
++## 2. Estado de cambios
++
++Antes de crear este informe existían:
++
++- 14 archivos rastreados modificados.
++- 36 archivos nuevos no rastreados.
++- 0 archivos eliminados.
++- `vendor/`, `node_modules/` y `public/build/` ignorados.
++
++No existen diferencias en `resources/css/app.css` ni `resources/js/app.js`.
++
++## 3. Archivos modificados
++
++- `.env.example`
++- `app/Http/Controllers/Auth/GoogleAuthController.php`
++- `app/Livewire/Admin/GestionUsuarios.php`
++- `app/Providers/AppServiceProvider.php`
++- `app/Services/AulaVirtual/AsistenciaService.php`
++- `bootstrap/app.php`
++- `config/services.php`
++- `database/seeders/AulaVirtualPermissionSeeder.php`
++- `database/seeders/RolSeeder.php`
++- `resources/views/aula-virtual/cursos/show-docente.blade.php`
++- `resources/views/aula-virtual/layouts/sidebar.blade.php`
++- `resources/views/components/menu.blade.php`
++- `resources/views/layouts/sidebar.blade.php`
++- `routes/web.php`
++
++## 4. Archivos nuevos
++
++### Núcleo y routing
++
++- `app/Http/Controllers/DashboardController.php`
++- `app/Http/Controllers/WorkspaceController.php`
++- `app/Http/Middleware/EnsureActorRole.php`
++- `app/Services/RoleDashboardResolver.php`
++- `routes/admin.php`
++- `routes/actors.php`
++
++### Administración y seguridad
++
++- `app/Livewire/Admin/RolesPermisos.php`
++- `app/Services/RolePermissionService.php`
++- `app/Services/AcademicAccessService.php`
++- `app/Services/InstitutionalDashboardService.php`
++- `app/Services/GradeService.php`
++
++### Controllers funcionales
++
++- `app/Http/Controllers/Docente/CalificacionCursoController.php`
++- `app/Http/Controllers/Estudiante/ExperienceController.php`
++
++### Policies
++
++- `app/Policies/UserPolicy.php`
++- `app/Policies/EstudiantePolicy.php`
++- `app/Policies/CursoPolicy.php`
++- `app/Policies/InscripcionEstudiantePolicy.php`
++- `app/Policies/CalificacionPolicy.php`
++- `app/Policies/ReporteGeneradoPolicy.php`
++- `app/Policies/OrientacionResultadoPolicy.php`
++- `app/Policies/AulaVirtualMaterialPolicy.php`
++
++### Peter 3
++
++- `app/Services/AporteIngenieril/AporteIngenierilClient.php`
++- `app/Services/AporteIngenieril/AnalysisService.php`
++- `app/Services/AporteIngenieril/KnowledgeService.php`
++- `app/Services/AporteIngenieril/TutorService.php`
++- `app/Services/AporteIngenieril/DTO/AcademicAnalysisData.php`
++- `app/Services/AporteIngenieril/DTO/AporteResponse.php`
++
++### Vistas
++
++- `resources/views/admin/roles-permisos.blade.php`
++- `resources/views/livewire/admin/roles-permisos.blade.php`
++- `resources/views/components/actor-menu.blade.php`
++- `resources/views/workspaces/institucional.blade.php`
++- `resources/views/docente/calificaciones.blade.php`
++- `resources/views/estudiante/area.blade.php`
++
++### Pruebas
++
++- `tests/Unit/AporteIngenierilClientTest.php`
++- `tests/Unit/RoleDashboardResolverTest.php`
++- `tests/Feature/Authorization/WorkspaceAuthorizationTest.php`
++
++## 5. Matriz routing
++
++| URI/grupo | Método | Actor | Middleware principal | Permiso | Controller/Livewire | Policy/scope |
++|---|---|---|---|---|---|---|
++| `/dashboard` | GET | Todos autenticados | `auth:sanctum`, sesión, `verified` | Resolución por rol | `DashboardController` | `RoleDashboardResolver` |
++| `/admin` | GET | Administrador | `actor:Administrador` | Rol | `AdminDashboardController` | Métricas globales |
++| `/admin/roles-permisos` | GET/Livewire | Administrador | `actor:Administrador` | Validación backend de rol | `RolesPermisos` | `RolePermissionService` |
++| `/admin/*` | GET | Administrador | actor + `can:<legado>` | Permisos legados | Controllers Admin | Variable según módulo |
++| `/direccion` | GET | Director | `actor:Director` | Rol | `WorkspaceController@director` | Scope institucional agregado |
++| `/secretaria` | GET | Secretaría | `actor:Secretaria` | Rol | `WorkspaceController@secretaria` | Scope institucional agregado |
++| `/secretaria/personas` | GET/Livewire | Secretaría | actor + `can:Registro_Personas` | Legado | `GestionPersonaController` | No hay Policy uniforme en todos los métodos Livewire |
++| `/secretaria/estudiantes` | GET/Livewire | Secretaría | actor + `can:Estudiantes` | Legado | `GestionEstudiantesController` | Riesgo de autorización por acción incompleta |
++| `/secretaria/inscripciones` | GET/Livewire | Secretaría | actor + `can:Inscripciones` | Legado | `GestionInscripcionController` | Riesgo de autorización por acción incompleta |
++| `/secretaria/gestion-academica`, cursos, paralelos, turnos | GET/Livewire | Secretaría | actor + permiso legado | Legado | Controllers Admin reutilizados | Alcance por módulo, no granular por acción |
++| `/regencia` | GET | Regente | `actor:Regente` | Rol | `WorkspaceController@regencia` | Scope institucional todavía no formalizado |
++| `/docente` | GET | Docente | `actor:Docente` | Rol | `WorkspaceController@docente` | `CursoVirtualService` |
++| `/docente/cursos/{curso}/calificaciones` | GET | Docente | `actor:Docente` | Asignación real | `CalificacionCursoController@index` | `GradeService`, curso docente |
++| `/docente/cursos/{curso}/calificaciones/{calificacion}` | PUT | Docente | actor | `calificaciones.gestionar.curso` o legado | `CalificacionCursoController@update` | Curso + asignatura + estudiante + permiso |
++| `/estudiante` | GET | Estudiante | `actor:Estudiante` | Rol | `WorkspaceController@estudiante` | `CursoVirtualService` propio |
++| `/estudiante/{area}` | GET | Estudiante | `actor:Estudiante` | Rol | `ExperienceController` | Datos propios del dashboard |
++| `/aula-virtual/*` | GET/POST | Docente/Estudiante | auth + verified + `Acceso_Aula_Virtual` | Permisos Aula | Controllers Aula Virtual | Policies/services existentes |
++
++Resultado de `route:list`: **83 rutas cargadas sin error**.
++
++## 6. Matriz RBAC
++
++| Rol | Workspace | Alcance implementado | Escrituras permitidas | Estado |
++|---|---|---|---|---|
++| Administrador | `/admin` | Global | Módulos administrativos, roles/permisos | FUNCIONAL, no completamente validado |
++| Director | `/direccion` | Institucional agregado | Ninguna nueva | PARCIAL |
++| Secretaría | `/secretaria` | Institucional operativo | Personas, estudiantes, inscripciones y estructura mediante módulos existentes | PARCIAL; permisos por acción pendientes |
++| Regente | `/regencia` | Institucional provisional | Ninguna nueva | PARCIAL; requiere decisión institucional |
++| Docente | `/docente` + Aula Virtual | Cursos/asignaciones | Asistencia, Aula Virtual y notas autorizadas | FUNCIONAL, pruebas cruzadas pendientes |
++| Estudiante | `/estudiante` + Aula Virtual | Propio | Entregas y orientación propia según Aula | FUNCIONAL/PARCIAL |
++
++Compatibilidad: los permisos legados permanecen. Los permisos `dominio.accion.alcance` están definidos en seeders, pero no aplicados a base de datos.
++
++## 7. Policies
++
++Policies registradas explícitamente en `AppServiceProvider`:
++
++- `UserPolicy`
++- `EstudiantePolicy`
++- `CursoPolicy`
++- `InscripcionEstudiantePolicy`
++- `CalificacionPolicy`
++- `ReporteGeneradoPolicy`
++- `OrientacionResultadoPolicy`
++- `AulaVirtualCursoPolicy`
++- `AulaVirtualAsistenciaPolicy`
++- `AulaVirtualMaterialPolicy`
++- `AulaVirtualTareaPolicy`
++- `AulaVirtualEntregaPolicy`
++
++Hallazgo alto: varias operaciones Livewire administrativas históricas no invocan una Policy o `authorize()` en cada método sensible. La ruta limita la entrada, pero una acción Livewire debe volver a autorizar porque sus propiedades públicas no son confiables.
++
++## 8. Services
++
++### Nuevos y con responsabilidad real
++
++- `RoleDashboardResolver`: resuelve actor → workspace.
++- `InstitutionalDashboardService`: métricas reales por actor institucional.
++- `AcademicAccessService`: pertenencia propia, curso, institucional o global.
++- `GradeService`: consulta y modificación docente con validación relacional y bitácora.
++- `RolePermissionService`: sincronización Spatie, transacción, protección crítica y bitácora.
++- `AporteIngenierilClient`: único punto HTTP Peter 3.
++- `AnalysisService`, `KnowledgeService`, `TutorService`: casos de uso externos.
++
++### Reutilizados
++
++- `BitacoraService`
++- `CursoVirtualService`
++- `AsistenciaService`
++- Servicios existentes de materiales, tareas, entregas, orientación y reportes.
++
++## 9. Docente
++
++Evidencia funcional:
++
++- Los cursos salen de `CursoVirtualService::cursosDocente()` y la asignación `PlanAsignatura`.
++- `GradeService::gradesForTeacherCourse()` limita asignatura y estudiantes a la clase docente.
++- `GradeService::update()` revalida permiso, docente, asignatura y estudiante inscrito.
++- `AsistenciaService::guardar()` rechaza IDs de estudiantes externos antes de escribir.
++- Materiales, tareas, entregas y descargas conservan comprobaciones de curso.
++
++Pendiente alto: ejecutar pruebas de autorización cruzada Docente A/Docente B en una base testing aislada.
++
++## 10. Estudiante
++
++Evidencia funcional:
++
++- Cursos, entregas, calificaciones de tareas y asistencia se consultan desde el estudiante asociado al usuario.
++- Las descargas de entregas comprueban propiedad o curso docente.
++- La navegación utiliza terminología educativa y no expone nombres técnicos.
++- Progreso muestra solamente métricas calculadas.
++- Las áreas futuras muestran explícitamente que todavía no existe información suficiente.
++
++Pendiente alto: prueba ejecutable Estudiante A ≠ Estudiante B y revisión completa de cada descarga/material.
++
++## 11. Peter 3
++
++Implementado:
++
++- Configuración externa en `config/services.php` y `.env.example`.
++- Timeouts de conexión y respuesta.
++- Fallback de dominio en español.
++- DTO de solicitud que excluye nombre, CI, correo, teléfono y dirección.
++- Manejo de 422, 503, conexión, timeout y JSON inválido.
++
++Pendiente alto de integración:
++
++- No existe contrato definitivo confirmado por Peter 3.
++- No existe mapper de respuesta específico por endpoint; actualmente `AporteResponse` conserva el arreglo externo.
++- No hay consumo productivo conectado a UI.
++- Debe revisarse que `report($exception)` no incluya payload académico innecesario en logs.
++
++## 12. Seeders
++
++Modificados, no ejecutados:
++
++- `database/seeders/RolSeeder.php`
++- `database/seeders/AulaVirtualPermissionSeeder.php`
++
++Agregan permisos granulares para usuarios, personas, estudiantes, cursos, inscripciones, calificaciones, asistencia, Aula Virtual, orientación, reportes, bitácora e integraciones.
++
++Riesgo alto: el código conserva compatibilidad con permisos legados porque los permisos nuevos todavía no están aplicados. Peter 1 debe reconciliar esta matriz con la rama posterior antes de autorizar cualquier seed.
++
++## 13. Pruebas
++
++### Ejecutadas y aprobadas
++
++- PHPUnit unitario: **13 tests, 18 assertions, OK**.
++- Casos Peter 3: disponible, 422, 503, timeout, conexión y JSON inválido.
++- Privacidad del DTO.
++- Resolver de los seis workspaces.
++- `php artisan route:list --except-vendor`: correcto.
++- `php artisan view:cache`: correcto.
++- `npm run build`: correcto.
++- `composer validate --no-check-publish`: correcto.
++- `php -l`: correcto en archivos cambiados.
++- `git diff --check`: correcto.
++
++### Preparadas pero no ejecutables en este entorno
++
++- `WorkspaceAuthorizationTest`: 9 casos funcionales de resolución y acceso cruzado.
++- Motivo: PHP no posee el driver `pdo_sqlite`.
++- La ejecución falló antes de crear tablas o ejecutar un test funcional.
++- No se cambió a PostgreSQL porque no existe garantía de una base testing aislada.
++
++## 14. Pendientes por severidad
++
++### CRÍTICO
++
++No se demostró un crítico explotable mediante las pruebas ejecutadas. Esto no equivale a cobertura completa.
++
++### ALTO
++
++| Tipo | Hallazgo | Evidencia/archivo |
++|---|---|---|
++| RIESGO | Métodos Livewire administrativos históricos no reautorizan uniformemente cada acción sensible | `app/Livewire/Admin/*` |
++| RIESGO | Pruebas funcionales RBAC/IDOR no ejecutadas | Falta `pdo_sqlite`; `WorkspaceAuthorizationTest` |
++| RIESGO | Secretaría reutiliza componentes Admin con permisos de módulo, no acción granular aplicada | `routes/actors.php`, componentes Admin |
++| DECISIÓN INSTITUCIONAL | Alcance exacto de Regencia no está formalizado | `AcademicAccessService`, workspace Regente |
++| INTEGRACIÓN PETER 3 | Falta contrato y mapper de respuestas | `app/Services/AporteIngenieril/*` |
++
++### MEDIO
++
++| Tipo | Hallazgo | Evidencia/archivo |
++|---|---|---|
++| DEUDA TÉCNICA | Director y Regente tienen dashboard, pero no módulos detallados de lectura | `WorkspaceController`, vista institucional |
++| DEUDA TÉCNICA | Módulo Roles/Permisos no muestra preview Agregados/Eliminados ni selección completa por grupo | Livewire/vista RolesPermisos |
++| DEUDA TÉCNICA | Nombres técnicos de permisos todavía aparecen en la matriz | Vista RolesPermisos |
++| RIESGO | Reportes/exportaciones históricas deben auditarse contra el mismo scope de pantalla | Controllers de reportes |
++| LIMITACIÓN DE ENTORNO | No se validó UX en navegador real ni viewport móvil | Sin sesión browser durante freeze |
++
++### BAJO
++
++| Tipo | Hallazgo | Evidencia/archivo |
++|---|---|---|
++| UX | Algunos enlaces institucionales apuntan a secciones informativas sin detalle | `actor-menu.blade.php` |
++| UX | Falta breadcrumb compartido uniforme | Workspaces nuevos |
++| DEUDA TÉCNICA | La estadística de inscripciones usa estados heredados que deben contrastarse con datos reales | Dashboard services existentes |
++
++## 15. Pendientes clasificados por naturaleza
++
++- **BUG:** ninguno confirmado como crítico durante esta Fase A.
++- **RIESGO:** autorización Livewire por método, cobertura IDOR, reportes/exportaciones.
++- **DEUDA TÉCNICA:** UX avanzada de permisos, breadcrumbs, módulos detallados Director/Regente.
++- **DECISIÓN INSTITUCIONAL:** alcance Regente y aplicación de permisos.
++- **INTEGRACIÓN PETER 3:** contrato, mapper y conexión real.
++- **LIMITACIÓN DE ENTORNO:** ausencia de PDO SQLite y pruebas de navegador.
++
++## 16. Matriz de calidad por rol
++
++Escala: NO INICIADO / PARCIAL / FUNCIONAL / VALIDADO / COMPLETO.
++
++| Rol | Funcionalidad | Autorización | Scope | UX | Responsive/dark | Validaciones | Bitácora | Tests |
++|---|---|---|---|---|---|---|---|---|
++| Administrador | FUNCIONAL | FUNCIONAL | FUNCIONAL | FUNCIONAL | Compila; no validado visualmente | FUNCIONAL | FUNCIONAL | PARCIAL |
++| Director | PARCIAL | FUNCIONAL en ruta | PARCIAL | PARCIAL | Compila; no validado visualmente | PARCIAL | N/A lectura | PARCIAL |
++| Secretaría | FUNCIONAL/PARCIAL | PARCIAL | PARCIAL | FUNCIONAL heredada | Compila; no validado visualmente | FUNCIONAL heredada | FUNCIONAL heredada | PARCIAL |
++| Regente | PARCIAL | FUNCIONAL en ruta | PARCIAL | PARCIAL | Compila; no validado visualmente | PARCIAL | N/A lectura | PARCIAL |
++| Docente | FUNCIONAL | FUNCIONAL | FUNCIONAL | FUNCIONAL | Compila; no validado visualmente | FUNCIONAL | FUNCIONAL | PARCIAL |
++| Estudiante | FUNCIONAL/PARCIAL | FUNCIONAL | FUNCIONAL | FUNCIONAL/PARCIAL | Compila; no validado visualmente | FUNCIONAL heredada | Variable | PARCIAL |
++
++Ningún rol se marca COMPLETO porque faltan pruebas funcionales y validación visual.
++
++## 17. Decisiones propias auditadas
++
++| Decisión | Motivo | Alternativa descartada | Riesgo | Reversible |
++|---|---|---|---|---|
++| Separar rutas Admin/actores | Reducir `web.php` y aislar workspaces | Mantener closure monolítico | Reconciliación con rama posterior | Sí |
++| Middleware `actor` propio | No depender de alias Spatie ausente en bootstrap | Usar solamente `@can` | Doble modelo rol/permiso | Sí |
++| Mantener permisos legados | Evitar ruptura antes del seed | Reemplazo inmediato | Matriz híbrida temporal | Sí |
++| Reutilizar Aula Virtual | Evitar duplicación Docente/Estudiante | Nuevos módulos paralelos | Acoplamiento a modelos Aula | Sí |
++| Bloquear GestiónUsuarios a Admin | Evitar escalamiento antes de diseñar cuentas limitadas | Exponer a Secretaría | Secretaría queda incompleta | Sí |
++| Preparar Peter 3 con DTO/client | Desacoplar HTTP | Llamadas dispersas | Contrato aún provisional | Sí |
++| Estados vacíos honestos | No inventar resultados | Métricas/recomendaciones simuladas | UX incompleta hasta integración | Sí |
++
++## 18. Auditoría visual crítica
++
++- `git diff -- resources/css/app.css`: vacío.
++- `git diff -- resources/js/app.js`: vacío.
++- No se cambiaron colores, variables, paleta, animaciones ni sistema de tema.
++- Blade compila y Tailwind/Vite construye.
++- La verificación visual manual en navegador, móvil y dark mode queda pendiente por limitación de esta Fase A.
++
++## 19. Base de datos
++
++Durante el desarrollo y esta auditoría:
++
++- No se ejecutaron migrations sobre ninguna base real.
++- No se ejecutaron seeders.
++- No se ejecutaron INSERT/UPDATE/DELETE manuales.
++- La prueba funcional intentó exclusivamente `sqlite :memory:` y falló por ausencia del driver antes de crear estructura.
++
++## 20. Conclusión de auditoría
++
++La reestructuración establece una base coherente de routing por actor, autorización por registros, reutilización de Aula Virtual, roles/permisos y preparación Peter 3. Su estado real es **FUNCIONAL/PARCIAL**, no COMPLETO.
++
++Antes del perfeccionamiento se requiere:
++
++1. Levantamiento explícito del freeze por Peter 1.
++2. Reconciliación con la rama posterior.
++3. Base testing aislada o PDO SQLite.
++4. Resolver riesgos altos de Livewire/IDOR antes de ampliar UX o módulos.
++5. Definir alcance de Regente y contrato Peter 3.
++
++Hasta entonces no corresponde ampliar funcionalidad, ejecutar seeders ni modificar PostgreSQL.
+diff --git a/app/Http/Controllers/DashboardController.php b/app/Http/Controllers/DashboardController.php
+new file mode 100644
+index 0000000..f70cefe
+--- /dev/null
++++ b/app/Http/Controllers/DashboardController.php
+@@ -0,0 +1,19 @@
++<?php
++
++namespace App\Http\Controllers;
++
++use App\Services\RoleDashboardResolver;
++use Illuminate\Http\RedirectResponse;
++use Illuminate\Http\Request;
++
++class DashboardController extends Controller
++{
++    public function __invoke(Request $request, RoleDashboardResolver $resolver): RedirectResponse
++    {
++        $route = $resolver->routeFor($request->user());
++
++        abort_if(! $route, 403, 'No tienes un espacio de trabajo asignado.');
++
++        return redirect()->route($route);
++    }
++}
+diff --git a/app/Http/Controllers/Docente/CalificacionCursoController.php b/app/Http/Controllers/Docente/CalificacionCursoController.php
+new file mode 100644
+index 0000000..8d0f070
+--- /dev/null
++++ b/app/Http/Controllers/Docente/CalificacionCursoController.php
+@@ -0,0 +1,30 @@
++<?php
++
++namespace App\Http\Controllers\Docente;
++
++use App\Http\Controllers\Controller;
++use App\Models\Calificacion;
++use App\Services\GradeService;
++use Illuminate\Http\Request;
++
++class CalificacionCursoController extends Controller
++{
++    public function index(Request $request, string $curso, GradeService $grades)
++    {
++        return view('docente.calificaciones', $grades->gradesForTeacherCourse($request->user(), $curso));
++    }
++
++    public function update(Request $request, string $curso, Calificacion $calificacion, GradeService $grades)
++    {
++        $data = $request->validate([
++            'not_cal' => ['required', 'numeric', 'min:0', 'max:100'],
++            'obs_cal' => ['nullable', 'string', 'max:255'],
++        ]);
++
++        $courseData = $grades->gradesForTeacherCourse($request->user(), $curso);
++        abort_unless($courseData['grades']->contains('cod_cal', $calificacion->cod_cal), 403);
++        $grades->update($request->user(), $calificacion, (float) $data['not_cal'], $data['obs_cal'] ?? null);
++
++        return back()->with('status', 'Calificación actualizada correctamente.');
++    }
++}
+diff --git a/app/Http/Controllers/Estudiante/ExperienceController.php b/app/Http/Controllers/Estudiante/ExperienceController.php
+new file mode 100644
+index 0000000..aaf0d04
+--- /dev/null
++++ b/app/Http/Controllers/Estudiante/ExperienceController.php
+@@ -0,0 +1,29 @@
++<?php
++
++namespace App\Http\Controllers\Estudiante;
++
++use App\Http\Controllers\Controller;
++use App\Services\AulaVirtual\CursoVirtualService;
++use Illuminate\Http\Request;
++
++class ExperienceController extends Controller
++{
++    private const AREAS = [
++        'progreso' => ['title' => 'Mi progreso', 'description' => 'Revisa tu avance con calificaciones, asistencia, materias y entregas registradas.'],
++        'futuro' => ['title' => 'Mi futuro académico', 'description' => 'Explora opciones académicas sin convertirlas en decisiones deterministas.'],
++        'preparacion' => ['title' => 'Mi preparación', 'description' => 'Identifica fortalezas actuales y áreas que puedes reforzar.'],
++        'plan' => ['title' => 'Mi plan', 'description' => 'Organiza tus próximos pasos con la información académica disponible.'],
++        'fuentes' => ['title' => 'Fuentes académicas', 'description' => 'Consulta recursos vinculados a tus materias y objetivos.'],
++        'asistente' => ['title' => 'Asistente de estudio', 'description' => 'Espacio preparado para recibir apoyo académico contextual.'],
++    ];
++
++    public function show(Request $request, string $area, CursoVirtualService $courses)
++    {
++        abort_unless(isset(self::AREAS[$area]), 404);
++
++        return view('estudiante.area', self::AREAS[$area] + [
++            'area' => $area,
++            'academic' => $courses->dashboardEstudiante($request->user()),
++        ]);
++    }
++}
+diff --git a/app/Http/Controllers/WorkspaceController.php b/app/Http/Controllers/WorkspaceController.php
+new file mode 100644
+index 0000000..2769194
+--- /dev/null
++++ b/app/Http/Controllers/WorkspaceController.php
+@@ -0,0 +1,61 @@
++<?php
++
++namespace App\Http\Controllers;
++
++use App\Services\AulaVirtual\CursoVirtualService;
++use App\Services\InstitutionalDashboardService;
++use Illuminate\Http\Request;
++
++class WorkspaceController extends Controller
++{
++    public function director(Request $request, InstitutionalDashboardService $dashboard)
++    {
++        return view('workspaces.institucional', $this->data($request, 'Director', $dashboard, [
++            ['label' => 'Comunidad educativa', 'description' => 'Consulta institucional de estudiantes y docentes.'],
++            ['label' => 'Gestión académica', 'description' => 'Seguimiento de cursos, asignaturas e inscripciones.'],
++            ['label' => 'Rendimiento', 'description' => 'Lectura institucional de calificaciones registradas.'],
++            ['label' => 'Asistencia y orientación', 'description' => 'Seguimiento agregado, sin modificar registros.'],
++            ['label' => 'Reportes', 'description' => 'Información institucional autorizada.'],
++        ]));
++    }
++
++    public function secretaria(Request $request, InstitutionalDashboardService $dashboard)
++    {
++        return view('workspaces.institucional', $this->data($request, 'Secretaria', $dashboard, [
++            ['label' => 'Personas', 'description' => 'Identidad institucional y búsqueda previa al registro.'],
++            ['label' => 'Estudiantes', 'description' => 'Perfiles estudiantiles y datos operativos.'],
++            ['label' => 'Inscripciones', 'description' => 'Curso, paralelo, turno y especialidad.'],
++            ['label' => 'Cuentas', 'description' => 'Operación de cuentas sin asignar privilegios críticos.'],
++            ['label' => 'Reportes administrativos', 'description' => 'Consulta operativa autorizada.'],
++        ]));
++    }
++
++    public function regencia(Request $request, InstitutionalDashboardService $dashboard)
++    {
++        return view('workspaces.institucional', $this->data($request, 'Regente', $dashboard, [
++            ['label' => 'Cursos y estudiantes', 'description' => 'Consulta de grupos e inscripciones activas.'],
++            ['label' => 'Asistencia', 'description' => 'Seguimiento de asistencia según alcance autorizado.'],
++            ['label' => 'Estado académico', 'description' => 'Lectura de calificaciones, sin permisos de edición.'],
++            ['label' => 'Reportes', 'description' => 'Información para seguimiento institucional.'],
++        ]));
++    }
++
++    public function docente(Request $request, CursoVirtualService $cursos)
++    {
++        return view('aula-virtual.dashboard.docente', $cursos->dashboardDocente($request->user()));
++    }
++
++    public function estudiante(Request $request, CursoVirtualService $cursos)
++    {
++        return view('aula-virtual.dashboard.estudiante', $cursos->dashboardEstudiante($request->user()));
++    }
++
++    private function data(Request $request, string $actor, InstitutionalDashboardService $dashboard, array $modules): array
++    {
++        return $dashboard->for($actor) + [
++            'actor' => $actor,
++            'user' => $request->user(),
++            'modules' => $modules,
++        ];
++    }
++}
+diff --git a/app/Http/Middleware/EnsureActorRole.php b/app/Http/Middleware/EnsureActorRole.php
+new file mode 100644
+index 0000000..7092c52
+--- /dev/null
++++ b/app/Http/Middleware/EnsureActorRole.php
+@@ -0,0 +1,19 @@
++<?php
++
++namespace App\Http\Middleware;
++
++use Closure;
++use Illuminate\Http\Request;
++use Symfony\Component\HttpFoundation\Response;
++
++class EnsureActorRole
++{
++    public function handle(Request $request, Closure $next, string ...$roles): Response
++    {
++        $user = $request->user();
++
++        abort_if(! $user || ! $user->hasAnyRole($roles), 403, 'No tienes autorización para acceder a este espacio de trabajo.');
++
++        return $next($request);
++    }
++}
+diff --git a/app/Livewire/Admin/RolesPermisos.php b/app/Livewire/Admin/RolesPermisos.php
+new file mode 100644
+index 0000000..e6107fd
+--- /dev/null
++++ b/app/Livewire/Admin/RolesPermisos.php
+@@ -0,0 +1,62 @@
++<?php
++
++namespace App\Livewire\Admin;
++
++use App\Services\RolePermissionService;
++use Livewire\Component;
++use Spatie\Permission\Models\Permission;
++use Spatie\Permission\Models\Role;
++
++class RolesPermisos extends Component
++{
++    public ?int $selectedRoleId = null;
++
++    public array $selectedPermissions = [];
++
++    public string $search = '';
++
++    public function mount(): void
++    {
++        abort_unless(auth()->user()?->hasRole('Administrador'), 403);
++        $this->selectedRoleId = Role::query()->where('name', 'Administrador')->value('id')
++            ?? Role::query()->orderBy('name')->value('id');
++        $this->loadRole();
++    }
++
++    public function updatedSelectedRoleId(): void
++    {
++        $this->loadRole();
++    }
++
++    public function loadRole(): void
++    {
++        $role = Role::query()->find($this->selectedRoleId);
++        $this->selectedPermissions = $role?->permissions()->pluck('name')->all() ?? [];
++    }
++
++    public function save(RolePermissionService $service): void
++    {
++        abort_unless(auth()->user()?->hasRole('Administrador'), 403);
++
++        $role = Role::query()->findOrFail($this->selectedRoleId);
++        $service->sync($role, $this->selectedPermissions, auth()->user());
++
++        $this->dispatch('swal:success', title: 'Permisos actualizados', text: 'La matriz del rol fue guardada y registrada en bitácora.');
++    }
++
++    public function render()
++    {
++        $permissions = Permission::query()
++            ->when($this->search !== '', fn ($query) => $query->where('name', 'ilike', '%'.$this->search.'%'))
++            ->orderBy('name')
++            ->get()
++            ->groupBy(fn (Permission $permission) => str_contains($permission->name, '.')
++                ? str($permission->name)->before('.')->upper()->toString()
++                : 'COMPATIBILIDAD / LEGADOS');
++
++        return view('livewire.admin.roles-permisos', [
++            'roles' => Role::query()->withCount('users')->orderBy('name')->get(),
++            'permissionGroups' => $permissions,
++        ]);
++    }
++}
+diff --git a/app/Policies/AulaVirtualMaterialPolicy.php b/app/Policies/AulaVirtualMaterialPolicy.php
+new file mode 100644
+index 0000000..edaf1fc
+--- /dev/null
++++ b/app/Policies/AulaVirtualMaterialPolicy.php
+@@ -0,0 +1,23 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\AulaVirtual\MaterialClase;
++use App\Models\User;
++use App\Services\AulaVirtual\CursoVirtualService;
++
++class AulaVirtualMaterialPolicy
++{
++    public function view(User $user, MaterialClase $material): bool
++    {
++        $courses = app(CursoVirtualService::class);
++
++        return (bool) ($courses->cursoParaEstudiante($user, $material->cod_cla)
++            ?? $courses->cursoParaDocente($user, $material->cod_cla));
++    }
++
++    public function update(User $user, MaterialClase $material): bool
++    {
++        return (bool) app(CursoVirtualService::class)->cursoParaDocente($user, $material->cod_cla);
++    }
++}
+diff --git a/app/Policies/CalificacionPolicy.php b/app/Policies/CalificacionPolicy.php
+new file mode 100644
+index 0000000..d5b6763
+--- /dev/null
++++ b/app/Policies/CalificacionPolicy.php
+@@ -0,0 +1,21 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\Calificacion;
++use App\Models\User;
++use App\Services\AcademicAccessService;
++
++class CalificacionPolicy
++{
++    public function view(User $user, Calificacion $grade): bool
++    {
++        return $grade->estudiante
++            && app(AcademicAccessService::class)->canViewStudent($user, $grade->estudiante);
++    }
++
++    public function update(User $user, Calificacion $grade): bool
++    {
++        return app(AcademicAccessService::class)->canManageGrade($user, $grade->cod_est, $grade->cod_asi);
++    }
++}
+diff --git a/app/Policies/CursoPolicy.php b/app/Policies/CursoPolicy.php
+new file mode 100644
+index 0000000..3e4efa4
+--- /dev/null
++++ b/app/Policies/CursoPolicy.php
+@@ -0,0 +1,20 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\Curso;
++use App\Models\User;
++use App\Services\AcademicAccessService;
++
++class CursoPolicy
++{
++    public function view(User $user, Curso $course): bool
++    {
++        return app(AcademicAccessService::class)->canViewCourse($user, $course);
++    }
++
++    public function update(User $user, Curso $course): bool
++    {
++        return $user->hasRole('Administrador');
++    }
++}
+diff --git a/app/Policies/EstudiantePolicy.php b/app/Policies/EstudiantePolicy.php
+new file mode 100644
+index 0000000..740c2b9
+--- /dev/null
++++ b/app/Policies/EstudiantePolicy.php
+@@ -0,0 +1,20 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\Estudiante;
++use App\Models\User;
++use App\Services\AcademicAccessService;
++
++class EstudiantePolicy
++{
++    public function view(User $user, Estudiante $student): bool
++    {
++        return app(AcademicAccessService::class)->canViewStudent($user, $student);
++    }
++
++    public function update(User $user, Estudiante $student): bool
++    {
++        return $user->hasAnyRole(['Administrador', 'Secretaria']);
++    }
++}
+diff --git a/app/Policies/InscripcionEstudiantePolicy.php b/app/Policies/InscripcionEstudiantePolicy.php
+new file mode 100644
+index 0000000..1d30a02
+--- /dev/null
++++ b/app/Policies/InscripcionEstudiantePolicy.php
+@@ -0,0 +1,21 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\InscripcionEstudiante;
++use App\Models\User;
++use App\Services\AcademicAccessService;
++
++class InscripcionEstudiantePolicy
++{
++    public function view(User $user, InscripcionEstudiante $enrollment): bool
++    {
++        return $enrollment->estudiante
++            && app(AcademicAccessService::class)->canViewStudent($user, $enrollment->estudiante);
++    }
++
++    public function update(User $user, InscripcionEstudiante $enrollment): bool
++    {
++        return $user->hasAnyRole(['Administrador', 'Secretaria']);
++    }
++}
+diff --git a/app/Policies/OrientacionResultadoPolicy.php b/app/Policies/OrientacionResultadoPolicy.php
+new file mode 100644
+index 0000000..75fea1e
+--- /dev/null
++++ b/app/Policies/OrientacionResultadoPolicy.php
+@@ -0,0 +1,21 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\AulaVirtual\OrientacionResultado;
++use App\Models\User;
++use App\Services\AcademicAccessService;
++
++class OrientacionResultadoPolicy
++{
++    public function view(User $user, OrientacionResultado $result): bool
++    {
++        return $result->estudiante
++            && app(AcademicAccessService::class)->canViewStudent($user, $result->estudiante);
++    }
++
++    public function update(User $user, OrientacionResultado $result): bool
++    {
++        return $user->hasRole('Administrador') && $user->can('orientacion.configurar');
++    }
++}
+diff --git a/app/Policies/ReporteGeneradoPolicy.php b/app/Policies/ReporteGeneradoPolicy.php
+new file mode 100644
+index 0000000..e54310c
+--- /dev/null
++++ b/app/Policies/ReporteGeneradoPolicy.php
+@@ -0,0 +1,20 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\ReporteGenerado;
++use App\Models\User;
++
++class ReporteGeneradoPolicy
++{
++    public function view(User $user, ReporteGenerado $report): bool
++    {
++        return $user->hasAnyRole(['Administrador', 'Director'])
++            || $user->canAny(['reportes.ver.institucional', 'Reportes_Academicos', 'Reportes_Administrativos']);
++    }
++
++    public function delete(User $user, ReporteGenerado $report): bool
++    {
++        return $user->hasRole('Administrador');
++    }
++}
+diff --git a/app/Policies/UserPolicy.php b/app/Policies/UserPolicy.php
+new file mode 100644
+index 0000000..12dfe10
+--- /dev/null
++++ b/app/Policies/UserPolicy.php
+@@ -0,0 +1,30 @@
++<?php
++
++namespace App\Policies;
++
++use App\Models\User;
++
++class UserPolicy
++{
++    public function view(User $actor, User $target): bool
++    {
++        return $actor->cod_usu === $target->cod_usu
++            || $actor->hasRole('Administrador')
++            || ($actor->hasRole('Secretaria') && ! $target->hasRole('Administrador'));
++    }
++
++    public function update(User $actor, User $target): bool
++    {
++        return $actor->cod_usu === $target->cod_usu || $actor->hasRole('Administrador');
++    }
++
++    public function assignRoles(User $actor, User $target): bool
++    {
++        return $actor->hasRole('Administrador') && $actor->cod_usu !== $target->cod_usu;
++    }
++
++    public function deactivate(User $actor, User $target): bool
++    {
++        return $actor->hasRole('Administrador') && $actor->cod_usu !== $target->cod_usu;
++    }
++}
+diff --git a/app/Services/AcademicAccessService.php b/app/Services/AcademicAccessService.php
+new file mode 100644
+index 0000000..3fb0a21
+--- /dev/null
++++ b/app/Services/AcademicAccessService.php
+@@ -0,0 +1,79 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\AulaVirtual\ClaseVirtual;
++use App\Models\Curso;
++use App\Models\Estudiante;
++use App\Models\PlanAsignatura;
++use App\Models\User;
++use App\Services\AulaVirtual\CursoVirtualService;
++
++class AcademicAccessService
++{
++    public function __construct(private readonly CursoVirtualService $virtualCourses) {}
++
++    public function studentFor(User $user): ?Estudiante
++    {
++        return $this->virtualCourses->estudianteDeUsuario($user);
++    }
++
++    public function canViewStudent(User $user, Estudiante $student): bool
++    {
++        if ($user->hasAnyRole(['Administrador', 'Director', 'Secretaria', 'Regente'])) {
++            return true;
++        }
++
++        if ($user->hasRole('Estudiante')) {
++            return $this->studentFor($user)?->cod_est === $student->cod_est;
++        }
++
++        $teacher = $this->virtualCourses->docenteDeUsuario($user);
++
++        return $teacher && ClaseVirtual::query()
++            ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $teacher->cod_doc))
++            ->whereHas('estudiantes', fn ($query) => $query->where('cod_est', $student->cod_est)->where('est_cla_est', 'ACTIVO'))
++            ->exists();
++    }
++
++    public function canViewCourse(User $user, Curso $course): bool
++    {
++        if ($user->hasAnyRole(['Administrador', 'Director', 'Secretaria', 'Regente'])) {
++            return true;
++        }
++
++        if ($user->hasRole('Docente')) {
++            $teacher = $this->virtualCourses->docenteDeUsuario($user);
++
++            return $teacher && PlanAsignatura::query()->where('cod_doc', $teacher->cod_doc)->where('cod_cur', $course->cod_cur)->exists();
++        }
++
++        $student = $this->studentFor($user);
++
++        return $student && $student->inscripciones()->where('cod_cur', $course->cod_cur)->where('est_ins', 'ACTIVO')->exists();
++    }
++
++    public function canManageGrade(User $user, string $studentId, string $subjectId): bool
++    {
++        if ($user->hasRole('Administrador')) {
++            return true;
++        }
++
++        $teacher = $this->virtualCourses->docenteDeUsuario($user);
++        if (! $teacher) {
++            return false;
++        }
++
++        return PlanAsignatura::query()
++            ->where('cod_doc', $teacher->cod_doc)
++            ->where('cod_asi', $subjectId)
++            ->whereExists(function ($query) use ($studentId) {
++                $query->selectRaw('1')
++                    ->from('inscripcion_estudiante')
++                    ->whereColumn('inscripcion_estudiante.cod_cur', 'plan_asignatura.cod_cur')
++                    ->where('inscripcion_estudiante.cod_est', $studentId)
++                    ->where('inscripcion_estudiante.est_ins', 'ACTIVO');
++            })
++            ->exists();
++    }
++}
+diff --git a/app/Services/AporteIngenieril/AnalysisService.php b/app/Services/AporteIngenieril/AnalysisService.php
+new file mode 100644
+index 0000000..a476843
+--- /dev/null
++++ b/app/Services/AporteIngenieril/AnalysisService.php
+@@ -0,0 +1,16 @@
++<?php
++
++namespace App\Services\AporteIngenieril;
++
++use App\Services\AporteIngenieril\DTO\AcademicAnalysisData;
++use App\Services\AporteIngenieril\DTO\AporteResponse;
++
++class AnalysisService
++{
++    public function __construct(private readonly AporteIngenierilClient $client) {}
++
++    public function analyze(AcademicAnalysisData $data): AporteResponse
++    {
++        return $this->client->analysis($data->toPayload());
++    }
++}
+diff --git a/app/Services/AporteIngenieril/AporteIngenierilClient.php b/app/Services/AporteIngenieril/AporteIngenierilClient.php
+new file mode 100644
+index 0000000..b70b643
+--- /dev/null
++++ b/app/Services/AporteIngenieril/AporteIngenierilClient.php
+@@ -0,0 +1,59 @@
++<?php
++
++namespace App\Services\AporteIngenieril;
++
++use App\Services\AporteIngenieril\DTO\AporteResponse;
++use Illuminate\Http\Client\Factory;
++use Throwable;
++
++class AporteIngenierilClient
++{
++    public function __construct(private readonly Factory $http) {}
++
++    public function health(): AporteResponse
++    {
++        return $this->request('get', '/health');
++    }
++
++    public function analysis(array $payload): AporteResponse
++    {
++        return $this->request('post', '/api/'.config('services.peter3.version', 'v1').'/analysis', $payload);
++    }
++
++    public function knowledge(array $payload): AporteResponse
++    {
++        return $this->request('post', '/api/'.config('services.peter3.version', 'v1').'/knowledge/search', $payload);
++    }
++
++    public function tutor(array $payload): AporteResponse
++    {
++        return $this->request('post', '/api/'.config('services.peter3.version', 'v1').'/tutor/query', $payload);
++    }
++
++    private function request(string $method, string $path, array $payload = []): AporteResponse
++    {
++        $baseUrl = trim((string) config('services.peter3.url'));
++        if ($baseUrl === '') {
++            return AporteResponse::unavailable();
++        }
++
++        try {
++            $request = $this->http
++                ->baseUrl(rtrim($baseUrl, '/'))
++                ->acceptJson()
++                ->connectTimeout((int) config('services.peter3.connect_timeout', 3))
++                ->timeout((int) config('services.peter3.timeout', 10));
++            $response = $method === 'get' ? $request->get($path) : $request->post($path, $payload);
++
++            if (! $response->successful() || ! is_array($response->json())) {
++                return AporteResponse::unavailable();
++            }
++
++            return new AporteResponse(true, $response->json(), 'Información académica disponible.');
++        } catch (Throwable $exception) {
++            report($exception);
++
++            return AporteResponse::unavailable();
++        }
++    }
++}
+diff --git a/app/Services/AporteIngenieril/DTO/AcademicAnalysisData.php b/app/Services/AporteIngenieril/DTO/AcademicAnalysisData.php
+new file mode 100644
+index 0000000..21a7619
+--- /dev/null
++++ b/app/Services/AporteIngenieril/DTO/AcademicAnalysisData.php
+@@ -0,0 +1,29 @@
++<?php
++
++namespace App\Services\AporteIngenieril\DTO;
++
++final readonly class AcademicAnalysisData
++{
++    public function __construct(
++        public string $studentId,
++        public ?string $period,
++        public array $subjects,
++        public array $grades,
++        public array $attendance,
++        public array $interests = [],
++        public ?string $specialty = null,
++    ) {}
++
++    public function toPayload(): array
++    {
++        return array_filter([
++            'student_id' => $this->studentId,
++            'periodo' => $this->period,
++            'materias' => $this->subjects,
++            'notas' => $this->grades,
++            'asistencia' => $this->attendance,
++            'intereses' => $this->interests,
++            'especialidad' => $this->specialty,
++        ], fn ($value) => $value !== null);
++    }
++}
+diff --git a/app/Services/AporteIngenieril/DTO/AporteResponse.php b/app/Services/AporteIngenieril/DTO/AporteResponse.php
+new file mode 100644
+index 0000000..4a453b2
+--- /dev/null
++++ b/app/Services/AporteIngenieril/DTO/AporteResponse.php
+@@ -0,0 +1,17 @@
++<?php
++
++namespace App\Services\AporteIngenieril\DTO;
++
++final readonly class AporteResponse
++{
++    public function __construct(
++        public bool $available,
++        public array $data = [],
++        public string $message = 'El análisis académico no está disponible temporalmente.',
++    ) {}
++
++    public static function unavailable(): self
++    {
++        return new self(false);
++    }
++}
+diff --git a/app/Services/AporteIngenieril/KnowledgeService.php b/app/Services/AporteIngenieril/KnowledgeService.php
+new file mode 100644
+index 0000000..a2ccd00
+--- /dev/null
++++ b/app/Services/AporteIngenieril/KnowledgeService.php
+@@ -0,0 +1,15 @@
++<?php
++
++namespace App\Services\AporteIngenieril;
++
++use App\Services\AporteIngenieril\DTO\AporteResponse;
++
++class KnowledgeService
++{
++    public function __construct(private readonly AporteIngenierilClient $client) {}
++
++    public function search(string $query, array $academicContext = []): AporteResponse
++    {
++        return $this->client->knowledge(['consulta' => $query, 'contexto_academico' => $academicContext]);
++    }
++}
+diff --git a/app/Services/AporteIngenieril/TutorService.php b/app/Services/AporteIngenieril/TutorService.php
+new file mode 100644
+index 0000000..2f9a028
+--- /dev/null
++++ b/app/Services/AporteIngenieril/TutorService.php
+@@ -0,0 +1,19 @@
++<?php
++
++namespace App\Services\AporteIngenieril;
++
++use App\Services\AporteIngenieril\DTO\AporteResponse;
++
++class TutorService
++{
++    public function __construct(private readonly AporteIngenierilClient $client) {}
++
++    public function ask(string $studentId, string $question, array $academicContext = []): AporteResponse
++    {
++        return $this->client->tutor([
++            'student_id' => $studentId,
++            'pregunta' => $question,
++            'contexto_academico' => $academicContext,
++        ]);
++    }
++}
+diff --git a/app/Services/GradeService.php b/app/Services/GradeService.php
+new file mode 100644
+index 0000000..12b9616
+--- /dev/null
++++ b/app/Services/GradeService.php
+@@ -0,0 +1,53 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\Calificacion;
++use App\Models\User;
++use App\Services\AulaVirtual\CursoVirtualService;
++use Illuminate\Support\Facades\DB;
++
++class GradeService
++{
++    public function __construct(
++        private readonly CursoVirtualService $courses,
++        private readonly AcademicAccessService $access,
++    ) {}
++
++    public function gradesForTeacherCourse(User $user, string $courseId): array
++    {
++        $course = $this->courses->cursoParaDocente($user, $courseId);
++        abort_if(! $course, 403);
++
++        $studentIds = $course->estudiantes->where('est_cla_est', 'ACTIVO')->pluck('cod_est');
++        $grades = Calificacion::query()
++            ->with('estudiante.persona', 'asignatura', 'periodoEvaluacion')
++            ->where('cod_asi', $course->planAsignatura->cod_asi)
++            ->whereIn('cod_est', $studentIds)
++            ->orderBy('cod_est')
++            ->get();
++
++        return ['course' => $course, 'grades' => $grades];
++    }
++
++    public function update(User $user, Calificacion $grade, float $value, ?string $observation): void
++    {
++        abort_unless($user->canAny(['calificaciones.gestionar.curso', 'Calificaciones']), 403);
++        abort_unless($this->access->canManageGrade($user, $grade->cod_est, $grade->cod_asi), 403);
++
++        DB::transaction(function () use ($user, $grade, $value, $observation): void {
++            $before = ['nota' => $grade->not_cal, 'observacion' => $grade->obs_cal];
++            $grade->update(['not_cal' => $value, 'obs_cal' => $observation]);
++
++            BitacoraService::registrar(
++                accion: 'ACTUALIZAR_CALIFICACION_DOCENTE',
++                tabla: 'calificacion',
++                registro: $grade->cod_cal,
++                modulo: 'Calificaciones Docente',
++                descripcion: 'Se actualizó una calificación desde el curso asignado al docente.',
++                valoresAnteriores: $before,
++                valoresNuevos: ['nota' => $value, 'observacion' => $observation, 'actor' => $user->cod_usu]
++            );
++        });
++    }
++}
+diff --git a/app/Services/InstitutionalDashboardService.php b/app/Services/InstitutionalDashboardService.php
+new file mode 100644
+index 0000000..61d8594
+--- /dev/null
++++ b/app/Services/InstitutionalDashboardService.php
+@@ -0,0 +1,46 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\Calificacion;
++use App\Models\Curso;
++use App\Models\Docente;
++use App\Models\Estudiante;
++use App\Models\GestionAcademica;
++use App\Models\InscripcionEstudiante;
++use App\Models\Persona;
++use App\Models\User;
++
++class InstitutionalDashboardService
++{
++    public function for(string $actor): array
++    {
++        $common = [
++            'estudiantes_activos' => Estudiante::query()->where('est_est', 'ACTIVO')->count(),
++            'cursos_activos' => Curso::query()->where('est_cur', 'ACTIVO')->count(),
++            'inscripciones_activas' => InscripcionEstudiante::query()->where('est_ins', 'ACTIVO')->count(),
++        ];
++
++        $metrics = match ($actor) {
++            'Director' => $common + [
++                'docentes_activos' => Docente::query()->where('est_doc', 'ACTIVO')->count(),
++                'calificaciones_registradas' => Calificacion::query()->count(),
++            ],
++            'Secretaria' => $common + [
++                'personas_registradas' => Persona::query()->count(),
++                'cuentas_activas' => User::query()->where('est_usu', 'ACTIVO')->count(),
++            ],
++            'Regente' => $common + [
++                'calificaciones_registradas' => Calificacion::query()->count(),
++            ],
++            default => $common,
++        };
++
++        $gestion = GestionAcademica::query()->orderByDesc('created_at')->first();
++
++        return [
++            'metrics' => $metrics,
++            'gestion' => $gestion?->ani_gea ?? $gestion?->nom_gea ?? null,
++        ];
++    }
++}
+diff --git a/app/Services/RoleDashboardResolver.php b/app/Services/RoleDashboardResolver.php
+new file mode 100644
+index 0000000..726c269
+--- /dev/null
++++ b/app/Services/RoleDashboardResolver.php
+@@ -0,0 +1,28 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\User;
++
++class RoleDashboardResolver
++{
++    private const ROUTES = [
++        'Administrador' => 'admin.dashboard',
++        'Director' => 'direccion.dashboard',
++        'Secretaria' => 'secretaria.dashboard',
++        'Regente' => 'regencia.dashboard',
++        'Docente' => 'docente.dashboard',
++        'Estudiante' => 'estudiante.dashboard',
++    ];
++
++    public function routeFor(User $user): ?string
++    {
++        foreach (self::ROUTES as $role => $route) {
++            if ($user->hasRole($role)) {
++                return $route;
++            }
++        }
++
++        return null;
++    }
++}
+diff --git a/app/Services/RolePermissionService.php b/app/Services/RolePermissionService.php
+new file mode 100644
+index 0000000..a508945
+--- /dev/null
++++ b/app/Services/RolePermissionService.php
+@@ -0,0 +1,68 @@
++<?php
++
++namespace App\Services;
++
++use App\Models\User;
++use Illuminate\Auth\Access\AuthorizationException;
++use Illuminate\Support\Facades\DB;
++use Illuminate\Validation\ValidationException;
++use Spatie\Permission\Models\Permission;
++use Spatie\Permission\Models\Role;
++use Spatie\Permission\PermissionRegistrar;
++
++class RolePermissionService
++{
++    private const ADMIN_CRITICAL = [
++        'Panel_Administrador',
++        'roles-permisos.gestionar',
++        'usuarios.asignar_roles',
++    ];
++
++    public function sync(Role $role, array $permissionNames, User $actor): void
++    {
++        if (! $actor->hasRole('Administrador')) {
++            throw new AuthorizationException('No tienes autorización para administrar roles y permisos.');
++        }
++
++        $valid = Permission::query()
++            ->where('guard_name', 'web')
++            ->whereIn('name', array_values(array_unique($permissionNames)))
++            ->pluck('name')
++            ->all();
++
++        if (count($valid) !== count(array_unique($permissionNames))) {
++            throw ValidationException::withMessages([
++                'permissions' => 'La selección contiene permisos inexistentes o no autorizados.',
++            ]);
++        }
++
++        if ($role->name === 'Administrador') {
++            $existingCritical = Permission::query()->whereIn('name', self::ADMIN_CRITICAL)->pluck('name')->all();
++            $missing = array_diff($existingCritical, $valid);
++
++            if ($missing !== []) {
++                throw ValidationException::withMessages([
++                    'permissions' => 'El rol Administrador debe conservar sus permisos críticos.',
++                ]);
++            }
++        }
++
++        $before = $role->permissions()->pluck('name')->sort()->values()->all();
++
++        DB::transaction(function () use ($role, $valid, $actor, $before): void {
++            $role->syncPermissions($valid);
++            app(PermissionRegistrar::class)->forgetCachedPermissions();
++
++            BitacoraService::registrar(
++                accion: 'ACTUALIZAR_PERMISOS_ROL',
++                tabla: 'roles',
++                registro: (string) $role->getKey(),
++                modulo: 'Roles y Permisos',
++                nombreRegistro: $role->name,
++                descripcion: 'Se actualizaron los permisos del rol por un Administrador autorizado.',
++                valoresAnteriores: ['permisos' => $before, 'actor' => $actor->cod_usu],
++                valoresNuevos: ['permisos' => collect($valid)->sort()->values()->all()]
++            );
++        });
++    }
++}
+diff --git a/resources/views/admin/roles-permisos.blade.php b/resources/views/admin/roles-permisos.blade.php
+new file mode 100644
+index 0000000..2077f2e
+--- /dev/null
++++ b/resources/views/admin/roles-permisos.blade.php
+@@ -0,0 +1,7 @@
++@extends('layouts.app')
++
++@section('title', 'Roles y permisos')
++
++@section('content')
++    <livewire:admin.roles-permisos />
++@endsection
+diff --git a/resources/views/components/actor-menu.blade.php b/resources/views/components/actor-menu.blade.php
+new file mode 100644
+index 0000000..ccf6fdd
+--- /dev/null
++++ b/resources/views/components/actor-menu.blade.php
+@@ -0,0 +1,69 @@
++@php
++    $role = Auth::user()?->getRoleNames()->first() ?? 'Usuario';
++    $dashboard = match ($role) {
++        'Director' => 'direccion.dashboard',
++        'Secretaria' => 'secretaria.dashboard',
++        'Regente' => 'regencia.dashboard',
++        default => 'dashboard',
++    };
++    $sections = match ($role) {
++        'Director' => [
++            ['label' => 'Comunidad educativa'], ['label' => 'Gestión académica'], ['label' => 'Seguimiento'],
++            ['label' => 'Rendimiento'], ['label' => 'Asistencia'], ['label' => 'Orientación'], ['label' => 'Reportes'],
++        ],
++        'Secretaria' => [
++            ['label' => 'Personas', 'route' => 'secretaria.personas'],
++            ['label' => 'Estudiantes', 'route' => 'secretaria.estudiantes'],
++            ['label' => 'Inscripciones', 'route' => 'secretaria.inscripciones'],
++            ['label' => 'Gestión académica', 'route' => 'secretaria.gestion-academica'],
++            ['label' => 'Cursos', 'route' => 'secretaria.cursos'],
++            ['label' => 'Paralelos', 'route' => 'secretaria.paralelos'],
++            ['label' => 'Turnos', 'route' => 'secretaria.turnos'],
++        ],
++        'Regente' => [
++            ['label' => 'Cursos'], ['label' => 'Estudiantes'], ['label' => 'Asistencia'],
++            ['label' => 'Seguimiento'], ['label' => 'Estado académico'], ['label' => 'Reportes'],
++        ],
++        default => [],
++    };
++@endphp
++
++<div class="fixed left-0 top-0 z-40 flex h-screen flex-col border-r shadow-md transition-all duration-300"
++    :class="sidebarOpen ? 'w-72' : 'w-20'"
++    style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
++    <div class="border-b p-4" style="border-color: var(--ui-border);">
++        <a href="{{ route($dashboard) }}" class="flex items-center gap-3">
++            <img src="{{ asset('image/LOGO FT3 A.jpg') }}" alt="Logo Franz Tamayo" class="h-11 w-11 rounded-2xl object-contain">
++            <span x-show="sidebarOpen" x-cloak class="font-black">SAVP – TIS 3</span>
++        </a>
++    </div>
++    <div class="px-4 pt-4">
++        <div class="rounded-2xl p-4 text-white" style="background: var(--ui-primary);">
++            <p x-show="sidebarOpen" x-cloak class="text-xs uppercase tracking-widest opacity-80">Espacio actual</p>
++            <p class="mt-1 font-black">{{ $role }}</p>
++        </div>
++    </div>
++    <nav class="ui-scrollbar flex-1 space-y-1 overflow-y-auto px-3 py-4">
++        <a href="{{ route($dashboard) }}" class="flex items-center gap-3 rounded-2xl px-3 py-3 font-semibold"
++            style="background: var(--ui-primary-soft); color: var(--ui-primary);">
++            <span aria-hidden="true">⌂</span><span x-show="sidebarOpen" x-cloak>Inicio</span>
++        </a>
++        @foreach ($sections as $section)
++            <a href="{{ isset($section['route']) ? route($section['route']) : route($dashboard).'#'.str($section['label'])->slug() }}"
++                class="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm transition hover:bg-[var(--ui-surface-muted)]"
++                style="color: var(--ui-text-soft);">
++                <span aria-hidden="true">•</span><span x-show="sidebarOpen" x-cloak>{{ $section['label'] }}</span>
++            </a>
++        @endforeach
++    </nav>
++    <div class="border-t p-3" style="border-color: var(--ui-border);">
++        <a href="{{ route('profile.show') }}" class="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold" style="color: var(--ui-text-soft);">
++            <span aria-hidden="true">○</span><span x-show="sidebarOpen" x-cloak>Mi perfil</span>
++        </a>
++        <form method="POST" action="{{ route('logout') }}">@csrf
++            <button class="mt-1 flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold" style="color: var(--ui-danger);">
++                <span aria-hidden="true">↪</span><span x-show="sidebarOpen" x-cloak>Cerrar sesión</span>
++            </button>
++        </form>
++    </div>
++</div>
+diff --git a/resources/views/docente/calificaciones.blade.php b/resources/views/docente/calificaciones.blade.php
+new file mode 100644
+index 0000000..caa42be
+--- /dev/null
++++ b/resources/views/docente/calificaciones.blade.php
+@@ -0,0 +1,44 @@
++@extends('aula-virtual.layouts.app')
++
++@section('title', 'Calificaciones del curso')
++
++@section('content')
++    <div class="space-y-6">
++        <section class="ui-card rounded-[2rem] p-6 shadow-sm">
++            <p class="text-sm font-semibold uppercase tracking-widest" style="color: var(--ui-primary);">Mis cursos</p>
++            <h1 class="ui-title mt-2 text-3xl font-black">{{ $course->nom_cla }}</h1>
++            <p class="ui-muted mt-2">Calificaciones de {{ $course->planAsignatura?->asignatura?->nom_asi ?? 'la asignatura' }}. Solo se muestran estudiantes del curso asignado.</p>
++        </section>
++
++        <section class="ui-card overflow-hidden rounded-[2rem] shadow-sm">
++            <div class="overflow-x-auto">
++                <table class="min-w-full text-sm">
++                    <thead style="background: var(--ui-surface-muted); color: var(--ui-text-soft);">
++                        <tr><th class="px-5 py-4 text-left">Estudiante</th><th class="px-5 py-4 text-left">Periodo</th><th class="px-5 py-4 text-left">Nota</th><th class="px-5 py-4 text-left">Observación</th><th class="px-5 py-4">Acción</th></tr>
++                    </thead>
++                    <tbody class="divide-y" style="--tw-divide-opacity: 1; border-color: var(--ui-border);">
++                        @forelse ($grades as $grade)
++                            <tr>
++                                <form method="POST" action="{{ route('docente.cursos.calificaciones.update', [$course->cod_cla, $grade]) }}">@csrf @method('PUT')
++                                    <td class="px-5 py-4" style="color: var(--ui-text);">{{ trim(($grade->estudiante?->persona?->nom_per ?? '').' '.($grade->estudiante?->persona?->ape_pat_per ?? '')) ?: $grade->cod_est }}</td>
++                                    <td class="px-5 py-4 ui-muted">{{ $grade->periodoEvaluacion?->nom_pev ?? $grade->cod_pev }}</td>
++                                    @canany(['calificaciones.gestionar.curso', 'Calificaciones'])
++                                        <td class="px-5 py-4"><input name="not_cal" value="{{ $grade->not_cal }}" type="number" min="0" max="100" step="0.01" class="w-24 rounded-xl border" style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);"></td>
++                                        <td class="px-5 py-4"><input name="obs_cal" value="{{ $grade->obs_cal }}" maxlength="255" class="w-full min-w-56 rounded-xl border" style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);"></td>
++                                        <td class="px-5 py-4 text-center"><button class="rounded-xl px-4 py-2 font-semibold text-white" style="background: var(--ui-primary);">Guardar</button></td>
++                                    @else
++                                        <td class="px-5 py-4">{{ $grade->not_cal }}</td>
++                                        <td class="px-5 py-4 ui-muted">{{ $grade->obs_cal ?: 'Sin observación' }}</td>
++                                        <td class="px-5 py-4 text-center ui-muted">Solo lectura</td>
++                                    @endcanany
++                                </form>
++                            </tr>
++                        @empty
++                            <tr><td colspan="5" class="ui-muted px-5 py-12 text-center">No hay calificaciones registradas todavía.</td></tr>
++                        @endforelse
++                    </tbody>
++                </table>
++            </div>
++        </section>
++    </div>
++@endsection
+diff --git a/resources/views/estudiante/area.blade.php b/resources/views/estudiante/area.blade.php
+new file mode 100644
+index 0000000..26061e7
+--- /dev/null
++++ b/resources/views/estudiante/area.blade.php
+@@ -0,0 +1,36 @@
++@extends('aula-virtual.layouts.app')
++
++@section('title', $title.' | SAVP-TIS3')
++@section('page-title', $title)
++
++@section('content')
++    <div class="space-y-6">
++        <section class="ui-panel">
++            <p class="ui-kicker">Experiencia estudiantil</p>
++            <h1 class="ui-title mt-2 text-3xl font-black">{{ $title }}</h1>
++            <p class="ui-subtitle mt-3 max-w-3xl">{{ $description }}</p>
++        </section>
++
++        @if ($area === 'progreso')
++            <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
++                @foreach ([
++                    'Materias' => $academic['metricas']['asignaturas'],
++                    'Tareas entregadas' => $academic['metricas']['tareas_entregadas'],
++                    'Promedio actual' => $academic['metricas']['promedio_actual'],
++                    'Asistencia general' => $academic['metricas']['asistencia_general'] === null ? null : $academic['metricas']['asistencia_general'].'%',
++                ] as $label => $value)
++                    <article class="ui-panel">
++                        <p class="ui-muted text-sm">{{ $label }}</p>
++                        <p class="mt-2 text-2xl font-black">{{ $value ?? 'Aún sin datos' }}</p>
++                    </article>
++                @endforeach
++            </section>
++        @else
++            <section class="ui-panel text-center">
++                <h2 class="ui-title text-xl font-black">Aún no hay información suficiente</h2>
++                <p class="ui-muted mx-auto mt-3 max-w-2xl">Este espacio ya está preparado para presentar información académica real cuando existan datos o cuando se conecte el aporte ingenieril autorizado.</p>
++                <a href="{{ route('aula-virtual.estudiante.asignaturas') }}" class="ui-btn-primary mt-5 inline-flex">Volver a mis materias</a>
++            </section>
++        @endif
++    </div>
++@endsection
+diff --git a/resources/views/livewire/admin/roles-permisos.blade.php b/resources/views/livewire/admin/roles-permisos.blade.php
+new file mode 100644
+index 0000000..449a590
+--- /dev/null
++++ b/resources/views/livewire/admin/roles-permisos.blade.php
+@@ -0,0 +1,60 @@
++<div class="space-y-6">
++    <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-8">
++        <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-primary);">Seguridad</p>
++        <h1 class="ui-title mt-2 text-3xl font-black">Roles y permisos</h1>
++        <p class="ui-muted mt-3 max-w-3xl">Administra la matriz Spatie existente. Los permisos críticos del rol Administrador no pueden retirarse.</p>
++    </section>
++
++    <div class="grid gap-6 xl:grid-cols-[320px_1fr]">
++        <aside class="ui-card card-shadow rounded-[2rem] p-5" aria-label="Roles disponibles">
++            <h2 class="font-bold" style="color: var(--ui-text);">Roles</h2>
++            <div class="mt-4 space-y-2">
++                @foreach ($roles as $role)
++                    <button type="button" wire:click="$set('selectedRoleId', {{ $role->id }})"
++                        class="flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition"
++                        style="border-color: var(--ui-border); {{ $selectedRoleId === $role->id ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-text-soft);' }}">
++                        <span class="font-semibold">{{ $role->name }}</span>
++                        <span class="rounded-full px-2 py-1 text-xs" style="background: var(--ui-surface-muted);">{{ $role->users_count }}</span>
++                    </button>
++                @endforeach
++            </div>
++        </aside>
++
++        <section class="ui-card card-shadow rounded-[2rem] p-5 sm:p-7">
++            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
++                <label class="block w-full max-w-xl">
++                    <span class="sr-only">Buscar permisos</span>
++                    <input wire:model.live.debounce.250ms="search" type="search" placeholder="Buscar permiso..."
++                        class="w-full rounded-2xl border px-4 py-3" style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
++                </label>
++                <button type="button" wire:click="save" wire:loading.attr="disabled"
++                    class="rounded-2xl px-5 py-3 font-semibold text-white disabled:opacity-60" style="background: var(--ui-primary);">
++                    Guardar cambios
++                </button>
++            </div>
++
++            @error('permissions')
++                <p class="mt-4 rounded-2xl px-4 py-3 text-sm" style="background: var(--ui-danger-soft); color: var(--ui-danger);">{{ $message }}</p>
++            @enderror
++
++            <div class="mt-6 space-y-6">
++                @forelse ($permissionGroups as $group => $permissions)
++                    <fieldset>
++                        <legend class="text-sm font-black tracking-wide" style="color: var(--ui-text);">{{ $group }}</legend>
++                        <div class="mt-3 grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
++                            @foreach ($permissions as $permission)
++                                <label class="flex cursor-pointer items-start gap-3 rounded-2xl border p-3" style="border-color: var(--ui-border);">
++                                    <input type="checkbox" wire:model="selectedPermissions" value="{{ $permission->name }}"
++                                        class="mt-1 rounded" style="color: var(--ui-primary);">
++                                    <span class="break-all text-sm" style="color: var(--ui-text-soft);">{{ $permission->name }}</span>
++                                </label>
++                            @endforeach
++                        </div>
++                    </fieldset>
++                @empty
++                    <p class="ui-muted py-10 text-center">No hay permisos que coincidan con la búsqueda.</p>
++                @endforelse
++            </div>
++        </section>
++    </div>
++</div>
+diff --git a/resources/views/workspaces/institucional.blade.php b/resources/views/workspaces/institucional.blade.php
+new file mode 100644
+index 0000000..ef72e33
+--- /dev/null
++++ b/resources/views/workspaces/institucional.blade.php
+@@ -0,0 +1,51 @@
++@extends('layouts.app')
++
++@section('title', 'Inicio '.$actor)
++
++@section('content')
++    @php
++        $labels = [
++            'estudiantes_activos' => 'Estudiantes activos',
++            'cursos_activos' => 'Cursos activos',
++            'inscripciones_activas' => 'Inscripciones activas',
++            'docentes_activos' => 'Docentes activos',
++            'calificaciones_registradas' => 'Calificaciones registradas',
++            'personas_registradas' => 'Personas registradas',
++            'cuentas_activas' => 'Cuentas activas',
++        ];
++    @endphp
++
++    <div class="space-y-6">
++        <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-8">
++            <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-primary);">
++                Espacio de trabajo · {{ $actor }}
++            </p>
++            <h1 class="ui-title mt-3 text-3xl font-black">Supervisión y trabajo institucional</h1>
++            <p class="ui-muted mt-3 max-w-3xl">
++                Información real con el alcance correspondiente a tu rol. Las acciones no autorizadas no están disponibles en este espacio.
++            </p>
++            <p class="ui-muted mt-2 text-sm">Gestión vigente: {{ $gestion ?: 'Aún no definida' }}</p>
++        </section>
++
++        <section aria-label="Indicadores institucionales" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
++            @foreach ($metrics as $key => $value)
++                <article class="ui-card card-shadow rounded-3xl p-5">
++                    <p class="text-sm font-medium" style="color: var(--ui-muted);">{{ $labels[$key] ?? str($key)->replace('_', ' ')->title() }}</p>
++                    <p class="mt-2 text-3xl font-black" style="color: var(--ui-text);">{{ $value }}</p>
++                </article>
++            @endforeach
++        </section>
++
++        <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-8">
++            <h2 class="ui-title text-xl font-black">Áreas de trabajo</h2>
++            <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
++                @foreach ($modules as $module)
++                    <article id="{{ str($module['label'])->slug() }}" class="ui-card-soft scroll-mt-28 rounded-2xl p-5">
++                        <h3 class="font-bold" style="color: var(--ui-text);">{{ $module['label'] }}</h3>
++                        <p class="ui-muted mt-2 text-sm leading-6">{{ $module['description'] }}</p>
++                    </article>
++                @endforeach
++            </div>
++        </section>
++    </div>
++@endsection
+diff --git a/routes/actors.php b/routes/actors.php
+new file mode 100644
+index 0000000..1617b9a
+--- /dev/null
++++ b/routes/actors.php
+@@ -0,0 +1,49 @@
++<?php
++
++use App\Http\Controllers\Admin\GestionAcademicaController;
++use App\Http\Controllers\Admin\GestionCursosController;
++use App\Http\Controllers\Admin\GestionEstudiantesController;
++use App\Http\Controllers\Admin\GestionInscripcionController;
++use App\Http\Controllers\Admin\GestionParaleloController;
++use App\Http\Controllers\Admin\GestionPersonaController;
++use App\Http\Controllers\Admin\GestionTurnoController;
++use App\Http\Controllers\Docente\CalificacionCursoController;
++use App\Http\Controllers\Estudiante\ExperienceController;
++use App\Http\Controllers\WorkspaceController;
++use Illuminate\Support\Facades\Route;
++
++Route::prefix('direccion')->name('direccion.')->middleware('actor:Director')->group(function () {
++    Route::get('/', [WorkspaceController::class, 'director'])->name('dashboard');
++});
++
++Route::prefix('secretaria')->name('secretaria.')->middleware('actor:Secretaria')->group(function () {
++    Route::get('/', [WorkspaceController::class, 'secretaria'])->name('dashboard');
++    Route::get('/personas', [GestionPersonaController::class, 'index'])->middleware('can:Registro_Personas')->name('personas');
++    Route::get('/estudiantes', [GestionEstudiantesController::class, 'index'])->middleware('can:Estudiantes')->name('estudiantes');
++    Route::get('/inscripciones', [GestionInscripcionController::class, 'index'])->middleware('can:Inscripciones')->name('inscripciones');
++    Route::get('/gestion-academica', [GestionAcademicaController::class, 'index'])->middleware('can:Gestion_Academica')->name('gestion-academica');
++    Route::get('/cursos', [GestionCursosController::class, 'index'])->middleware('can:Cursos')->name('cursos');
++    Route::get('/paralelos', [GestionParaleloController::class, 'index'])->middleware('can:Paralelos')->name('paralelos');
++    Route::get('/turnos', [GestionTurnoController::class, 'index'])->middleware('can:Turnos')->name('turnos');
++});
++
++Route::prefix('regencia')->name('regencia.')->middleware('actor:Regente')->group(function () {
++    Route::get('/', [WorkspaceController::class, 'regencia'])->name('dashboard');
++});
++
++Route::prefix('docente')->name('docente.')->middleware('actor:Docente')->group(function () {
++    Route::get('/', [WorkspaceController::class, 'docente'])->name('dashboard');
++    Route::redirect('/cursos', '/aula-virtual/mis-cursos')->name('cursos');
++    Route::get('/cursos/{curso}/calificaciones', [CalificacionCursoController::class, 'index'])->name('cursos.calificaciones');
++    Route::put('/cursos/{curso}/calificaciones/{calificacion}', [CalificacionCursoController::class, 'update'])->name('cursos.calificaciones.update');
++});
++
++Route::prefix('estudiante')->name('estudiante.')->middleware('actor:Estudiante')->group(function () {
++    Route::get('/', [WorkspaceController::class, 'estudiante'])->name('dashboard');
++    Route::redirect('/materias', '/aula-virtual/mis-asignaturas')->name('materias');
++    Route::redirect('/asistencia', '/aula-virtual/mi-asistencia')->name('asistencia');
++    Route::redirect('/intereses', '/aula-virtual/orientacion')->name('intereses');
++    Route::get('/{area}', [ExperienceController::class, 'show'])
++        ->whereIn('area', ['progreso', 'futuro', 'preparacion', 'plan', 'fuentes', 'asistente'])
++        ->name('area');
++});
+diff --git a/routes/admin.php b/routes/admin.php
+new file mode 100644
+index 0000000..d423d8f
+--- /dev/null
++++ b/routes/admin.php
+@@ -0,0 +1,70 @@
++<?php
++
++use App\Http\Controllers\Admin\BitacoraController;
++use App\Http\Controllers\Admin\CalificacionController;
++use App\Http\Controllers\Admin\EspecialidadesTecnicasController;
++use App\Http\Controllers\Admin\GestionAcademicaController;
++use App\Http\Controllers\Admin\GestionAsignaturaController;
++use App\Http\Controllers\Admin\GestionCursosController;
++use App\Http\Controllers\Admin\GestionDocenteController;
++use App\Http\Controllers\Admin\GestionEstudiantesController;
++use App\Http\Controllers\Admin\GestionInscripcionController;
++use App\Http\Controllers\Admin\GestionParaleloController;
++use App\Http\Controllers\Admin\GestionPersonaController;
++use App\Http\Controllers\Admin\GestionPersonalInstitucional;
++use App\Http\Controllers\Admin\GestionTurnoController;
++use App\Http\Controllers\Admin\GestionUsuarioController;
++use App\Http\Controllers\Admin\InstitucionProcedenciaController;
++use App\Http\Controllers\Admin\PeriodoEvaluacionController;
++use App\Http\Controllers\Admin\PlanesAsignaturaController;
++use App\Http\Controllers\Admin\ReporteAcademicoController;
++use App\Http\Controllers\Admin\ReporteAdministrativoController;
++use App\Http\Controllers\Admin\ReportePdfController;
++use App\Http\Controllers\Admin\TipoVinculacionEstudianteController;
++use App\Http\Controllers\AdminDashboardController;
++use Illuminate\Support\Facades\Route;
++
++Route::prefix('admin')->name('admin.')->middleware('actor:Administrador')->group(function () {
++    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
++    Route::view('/roles-permisos', 'admin.roles-permisos')->name('roles-permisos');
++
++    $modules = [
++        ['gestion-usuarios', GestionUsuarioController::class, 'gestion-usuarios', 'Gestion_Usuarios'],
++        ['gestion-personas', GestionPersonaController::class, 'gestion-personas', 'Registro_Personas'],
++        ['personal-institucional', GestionPersonalInstitucional::class, 'personal-institucional', 'Personal_Institucional'],
++        ['gestion-estudiantes', GestionEstudiantesController::class, 'gestion-estudiantes', 'Estudiantes'],
++        ['bitacora', BitacoraController::class, 'bitacora', 'Bitacora'],
++        ['gestion-academica', GestionAcademicaController::class, 'gestion-academica', 'Gestion_Academica'],
++        ['gestion-cursos', GestionCursosController::class, 'gestion-cursos', 'Cursos'],
++        ['gestion-asignaturas', GestionAsignaturaController::class, 'gestion-asignaturas', 'Asignaturas'],
++        ['gestion-paralelos', GestionParaleloController::class, 'gestion-paralelos', 'Paralelos'],
++        ['gestion-turnos', GestionTurnoController::class, 'gestion-turnos', 'Turnos'],
++        ['gestion-inscripciones', GestionInscripcionController::class, 'gestion-inscripciones', 'Inscripciones'],
++        ['especialidades-tecnicas', EspecialidadesTecnicasController::class, 'especialidades-tecnicas', 'Especialidades_Tecnicas'],
++        ['periodo-evaluacion', PeriodoEvaluacionController::class, 'periodo-evaluacion', 'Periodo_Evaluacion'],
++        ['planes-asignatura', PlanesAsignaturaController::class, 'planes-asignatura', 'Planes_Asignatura'],
++        ['gestion-docentes', GestionDocenteController::class, 'gestion-docentes', 'Docentes'],
++        ['institucion-procedencia', InstitucionProcedenciaController::class, 'institucion-procedencia', 'Institucion_Procedencia'],
++        ['tipo-vinculacion-estudiante', TipoVinculacionEstudianteController::class, 'tipo-vinculacion-estudiante', 'Tipo_Vinculacion_Estudiante'],
++        ['calificaciones', CalificacionController::class, 'calificaciones', 'Calificaciones'],
++        ['reportes-academicos', ReporteAcademicoController::class, 'reportes-academicos', 'Reportes_Academicos'],
++        ['reportes-administrativos', ReporteAdministrativoController::class, 'reportes-administrativos', 'Reportes_Administrativos'],
++    ];
++
++    foreach ($modules as [$uri, $controller, $name, $permission]) {
++        Route::get('/'.$uri, [$controller, 'index'])->name($name)->middleware('can:'.$permission);
++    }
++
++    Route::prefix('reportes')->name('reportes.')->middleware('can:Gestion_Academica')->group(function () {
++        Route::get('/academico-general/pdf', [ReportePdfController::class, 'academicoGeneral'])->name('academico-general.pdf');
++        Route::get('/calificaciones/pdf', [ReportePdfController::class, 'calificaciones'])->name('calificaciones.pdf');
++        Route::get('/estudiantes-riesgo/pdf', [ReportePdfController::class, 'estudiantesRiesgo'])->name('estudiantes-riesgo.pdf');
++        Route::get('/administrativo/pdf', [ReportePdfController::class, 'administrativo'])->name('administrativo.pdf');
++        Route::get('/bitacora/pdf', [ReportePdfController::class, 'bitacora'])->name('bitacora.pdf');
++        Route::get('/vocacional-riasec/pdf', [ReportePdfController::class, 'vocacionalRiasec'])->name('vocacional-riasec.pdf');
++        Route::get('/compatibilidad-carreras/pdf', [ReportePdfController::class, 'compatibilidadCarreras'])->name('compatibilidad-carreras.pdf');
++        Route::get('/institucional-completo/pdf', [ReportePdfController::class, 'institucionalCompleto'])->name('institucional-completo.pdf');
++        Route::get('/respaldo-academico/sql', [ReportePdfController::class, 'respaldoSql'])->name('respaldo-academico.sql');
++        Route::get('/paquete/zip', [ReportePdfController::class, 'paqueteZip'])->name('paquete.zip');
++    });
++});
+diff --git a/tests/Feature/Authorization/WorkspaceAuthorizationTest.php b/tests/Feature/Authorization/WorkspaceAuthorizationTest.php
+new file mode 100644
+index 0000000..41484c9
+--- /dev/null
++++ b/tests/Feature/Authorization/WorkspaceAuthorizationTest.php
+@@ -0,0 +1,76 @@
++<?php
++
++namespace Tests\Feature\Authorization;
++
++use App\Models\Persona;
++use App\Models\User;
++use Illuminate\Foundation\Testing\RefreshDatabase;
++use Illuminate\Support\Facades\Hash;
++use PHPUnit\Framework\Attributes\DataProvider;
++use Spatie\Permission\Models\Role;
++use Tests\TestCase;
++
++class WorkspaceAuthorizationTest extends TestCase
++{
++    use RefreshDatabase;
++
++    #[DataProvider('workspaceRoles')]
++    public function test_dashboard_redirects_each_role_to_its_workspace(string $role, string $route): void
++    {
++        $user = $this->userWithRole($role);
++
++        $this->actingAs($user)->get('/dashboard')->assertRedirect(route($route));
++    }
++
++    public function test_student_cannot_enter_administration(): void
++    {
++        $this->actingAs($this->userWithRole('Estudiante'))->get('/admin')->assertForbidden();
++    }
++
++    public function test_director_cannot_use_admin_workspace(): void
++    {
++        $this->actingAs($this->userWithRole('Director'))->get('/admin')->assertForbidden();
++    }
++
++    public function test_secretary_cannot_use_teacher_grade_route(): void
++    {
++        $this->actingAs($this->userWithRole('Secretaria'))
++            ->get('/docente/cursos/CLA_X/calificaciones')
++            ->assertForbidden();
++    }
++
++    private function userWithRole(string $role): User
++    {
++        $number = str_pad((string) (Persona::query()->count() + 1), 4, '0', STR_PAD_LEFT);
++        $person = Persona::query()->create([
++            'cod_per' => 'PER_'.$number,
++            'nom_per' => $role,
++            'ape_pat_per' => 'Prueba',
++            'ci_per' => '9'.$number,
++            'est_per' => true,
++        ]);
++        $user = User::query()->create([
++            'cod_usu' => 'USU_'.$number,
++            'cod_per' => $person->cod_per,
++            'email' => strtolower($role).$number.'@example.test',
++            'email_verified_at' => now(),
++            'password' => Hash::make('Testing#123'),
++            'est_usu' => 'ACTIVO',
++        ]);
++        $user->assignRole(Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']));
++
++        return $user;
++    }
++
++    public static function workspaceRoles(): array
++    {
++        return [
++            ['Administrador', 'admin.dashboard'],
++            ['Director', 'direccion.dashboard'],
++            ['Secretaria', 'secretaria.dashboard'],
++            ['Regente', 'regencia.dashboard'],
++            ['Docente', 'docente.dashboard'],
++            ['Estudiante', 'estudiante.dashboard'],
++        ];
++    }
++}
+diff --git a/tests/Unit/AporteIngenierilClientTest.php b/tests/Unit/AporteIngenierilClientTest.php
+new file mode 100644
+index 0000000..dc57fa4
+--- /dev/null
++++ b/tests/Unit/AporteIngenierilClientTest.php
+@@ -0,0 +1,71 @@
++<?php
++
++namespace Tests\Unit;
++
++use App\Services\AporteIngenieril\AporteIngenierilClient;
++use App\Services\AporteIngenieril\DTO\AcademicAnalysisData;
++use Illuminate\Http\Client\ConnectionException;
++use Illuminate\Support\Facades\Http;
++use Tests\TestCase;
++
++class AporteIngenierilClientTest extends TestCase
++{
++    protected function setUp(): void
++    {
++        parent::setUp();
++        config()->set('services.peter3.url', 'https://peter3.test');
++        config()->set('services.peter3.version', 'v1');
++    }
++
++    public function test_it_returns_data_when_service_is_available(): void
++    {
++        Http::fake(['peter3.test/*' => Http::response(['estado' => 'ok'])]);
++
++        $result = app(AporteIngenierilClient::class)->analysis(['student_id' => 'EST_0001']);
++
++        $this->assertTrue($result->available);
++        $this->assertSame('ok', $result->data['estado']);
++    }
++
++    public function test_it_uses_safe_fallback_for_503_and_invalid_json(): void
++    {
++        Http::fakeSequence()->push([], 503)->push('no-json', 200);
++        $client = app(AporteIngenierilClient::class);
++
++        $this->assertFalse($client->analysis([])->available);
++        $this->assertFalse($client->analysis([])->available);
++    }
++
++    public function test_it_uses_safe_fallback_for_validation_error(): void
++    {
++        Http::fake(['peter3.test/*' => Http::response(['detail' => 'invalid'], 422)]);
++
++        $this->assertFalse(app(AporteIngenierilClient::class)->analysis([])->available);
++    }
++
++    public function test_it_uses_safe_fallback_for_timeout(): void
++    {
++        Http::fake(fn () => throw new ConnectionException('operation timed out'));
++
++        $this->assertFalse(app(AporteIngenierilClient::class)->analysis([])->available);
++    }
++
++    public function test_it_uses_safe_fallback_for_connection_failure(): void
++    {
++        Http::fake(fn () => throw new ConnectionException('connection refused'));
++
++        $result = app(AporteIngenierilClient::class)->health();
++
++        $this->assertFalse($result->available);
++        $this->assertSame('El análisis académico no está disponible temporalmente.', $result->message);
++    }
++
++    public function test_academic_payload_excludes_personal_identity_fields(): void
++    {
++        $payload = (new AcademicAnalysisData('EST_0001', '2026', [], [], []))->toPayload();
++
++        $this->assertArrayNotHasKey('email', $payload);
++        $this->assertArrayNotHasKey('nombre', $payload);
++        $this->assertArrayNotHasKey('ci', $payload);
++    }
++}
+diff --git a/tests/Unit/RoleDashboardResolverTest.php b/tests/Unit/RoleDashboardResolverTest.php
+new file mode 100644
+index 0000000..fa19f95
+--- /dev/null
++++ b/tests/Unit/RoleDashboardResolverTest.php
+@@ -0,0 +1,41 @@
++<?php
++
++namespace Tests\Unit;
++
++use App\Models\User;
++use App\Services\RoleDashboardResolver;
++use Mockery;
++use PHPUnit\Framework\Attributes\DataProvider;
++use Tests\TestCase;
++
++class RoleDashboardResolverTest extends TestCase
++{
++    #[DataProvider('roles')]
++    public function test_each_actor_resolves_to_an_independent_workspace(string $role, string $route): void
++    {
++        $user = Mockery::mock(User::class);
++        $user->shouldReceive('hasRole')->andReturnUsing(fn (string $candidate) => $candidate === $role);
++
++        $this->assertSame($route, app(RoleDashboardResolver::class)->routeFor($user));
++    }
++
++    public function test_user_without_supported_role_has_no_workspace(): void
++    {
++        $user = Mockery::mock(User::class);
++        $user->shouldReceive('hasRole')->andReturnFalse();
++
++        $this->assertNull(app(RoleDashboardResolver::class)->routeFor($user));
++    }
++
++    public static function roles(): array
++    {
++        return [
++            ['Administrador', 'admin.dashboard'],
++            ['Director', 'direccion.dashboard'],
++            ['Secretaria', 'secretaria.dashboard'],
++            ['Regente', 'regencia.dashboard'],
++            ['Docente', 'docente.dashboard'],
++            ['Estudiante', 'estudiante.dashboard'],
++        ];
++    }
++}

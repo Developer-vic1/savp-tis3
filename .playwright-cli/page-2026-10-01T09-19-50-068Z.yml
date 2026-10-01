@@ -1,0 +1,106 @@
+- generic [ref=f6e3]:
+  - complementary "Navegación de Estudiante" [ref=f6e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f6e6] [cursor=pointer]:
+      - /url: http://localhost:8000/estudiante
+      - img "Logo Franz Tamayo 3" [ref=f6e7]
+      - generic [ref=f6e8]:
+        - generic [ref=f6e9]: Franz Tamayo N°3
+        - generic [ref=f6e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f6e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f6e13]: ☰
+      - generic [ref=f6e14]: Estudiante
+    - navigation [ref=f6e15]:
+      - link "Inicio" [ref=f6e16] [cursor=pointer]:
+        - /url: http://localhost:8000/estudiante
+        - generic [aria-hidden] [ref=f6e17]: ⌂
+      - generic [ref=f6e19]:
+        - heading "Académico" [level=2] [ref=f6e20]
+        - link "Mis materias" [ref=f6e21] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/materias
+          - generic [aria-hidden] [ref=f6e22]: •
+        - link "Mi progreso" [ref=f6e24] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/progreso
+          - generic [aria-hidden] [ref=f6e25]: •
+        - link "Mi asistencia" [ref=f6e27] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/asistencia
+          - generic [aria-hidden] [ref=f6e28]: •
+        - link "Calendario" [ref=f6e30] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/calendario
+          - generic [aria-hidden] [ref=f6e31]: •
+      - generic [ref=f6e33]:
+        - heading "Orientación" [level=2] [ref=f6e34]
+        - link "Mis intereses" [ref=f6e35] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/intereses
+          - generic [aria-hidden] [ref=f6e36]: •
+        - link "Mi futuro académico" [ref=f6e38] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/futuro
+          - generic [aria-hidden] [ref=f6e39]: •
+        - link "Mi preparación" [ref=f6e41] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/preparacion
+          - generic [aria-hidden] [ref=f6e42]: •
+        - link "Mi plan" [ref=f6e44] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/plan
+          - generic [aria-hidden] [ref=f6e45]: •
+        - link "Fuentes académicas" [ref=f6e47] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/fuentes
+          - generic [aria-hidden] [ref=f6e48]: •
+        - link "Asistente de estudio" [ref=f6e50] [cursor=pointer]:
+          - /url: http://localhost:8000/estudiante/asistente
+          - generic [aria-hidden] [ref=f6e51]: •
+    - generic [ref=f6e53]:
+      - link "Mi perfil" [ref=f6e54] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f6e55]: ○
+      - button "Cerrar sesión" [ref=f6e58] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f6e59]: ↪
+  - generic [ref=f6e61]:
+    - banner [ref=f6e62]:
+      - generic [ref=f6e64]:
+        - generic [ref=f6e65]: 01/10/2026
+        - generic [ref=f6e69]:
+          - generic [ref=f6e70]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f6e71]
+        - button "Notificaciones" [ref=f6e73] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f6e74] [cursor=pointer]
+        - button [ref=f6e78] [cursor=pointer]:
+          - generic [ref=f6e79]:
+            - img "Mateo Choque Callisaya" [ref=f6e80]
+            - generic [ref=f6e81]:
+              - paragraph [ref=f6e82]: Mateo Choque Callisaya
+              - paragraph [ref=f6e83]: Estudiante
+    - main [ref=f6e86]:
+      - generic [ref=f6e87]:
+        - generic [ref=f6e88]:
+          - paragraph [ref=f6e89]: Explorador académico-vocacional
+          - heading "Resumen" [level=2] [ref=f6e90]
+          - paragraph [ref=f6e91]: Este resultado es orientativo y debe complementarse con tu rendimiento académico, tu formación técnica y el acompañamiento docente.
+        - generic [ref=f6e92]:
+          - article [ref=f6e93]:
+            - generic [ref=f6e95]:
+              - paragraph [ref=f6e96]: Estado
+              - paragraph [ref=f6e97]: Pendiente
+          - article [ref=f6e98]:
+            - generic [ref=f6e100]:
+              - paragraph [ref=f6e101]: Avance
+              - paragraph [ref=f6e102]: 0%
+          - article [ref=f6e103]:
+            - generic [ref=f6e105]:
+              - paragraph [ref=f6e106]: Perfil
+              - paragraph [ref=f6e107]: En proceso
+          - article [ref=f6e108]:
+            - generic [ref=f6e110]:
+              - paragraph [ref=f6e111]: Compatibilidad
+              - paragraph [ref=f6e112]: Disponible al finalizar
+        - generic [ref=f6e113]:
+          - generic [ref=f6e114]:
+            - generic [ref=f6e115]:
+              - heading "Dimensiones de orientación" [level=3] [ref=f6e116]
+              - paragraph [ref=f6e117]: Resultados visibles del explorador académico-vocacional.
+            - button "Explorador académico-vocacional" [ref=f6e119] [cursor=pointer]
+          - generic [ref=f6e122]:
+            - generic [ref=f6e123]: Técnico-práctico
+            - generic [ref=f6e124]: Analítico-científico
+            - generic [ref=f6e125]: Creativo-expresivo
+            - generic [ref=f6e126]: Social-comunitario
+            - generic [ref=f6e127]: Liderazgo-emprendimiento
+            - generic [ref=f6e128]: Organizativo-administrativo

@@ -1,0 +1,75 @@
+- generic [ref=f29e3]:
+  - complementary "Navegación de Docente" [ref=f29e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f29e6] [cursor=pointer]:
+      - /url: http://localhost:8000/docente
+      - img "Logo Franz Tamayo 3" [ref=f29e7]
+      - generic [ref=f29e8]:
+        - generic [ref=f29e9]: Franz Tamayo N°3
+        - generic [ref=f29e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f29e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f29e13]: ☰
+      - generic [ref=f29e14]: Docente
+    - navigation [ref=f29e15]:
+      - link "Inicio" [ref=f29e16] [cursor=pointer]:
+        - /url: http://localhost:8000/docente
+        - generic [aria-hidden] [ref=f29e17]: ⌂
+      - generic [ref=f29e19]:
+        - heading "Académico" [level=2] [ref=f29e20]
+        - link "Mis cursos" [ref=f29e21] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/cursos
+          - generic [aria-hidden] [ref=f29e22]: •
+        - link "Calendario" [ref=f29e24] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/calendario
+          - generic [aria-hidden] [ref=f29e25]: •
+      - generic [ref=f29e27]:
+        - heading "Seguimiento" [level=2] [ref=f29e28]
+        - link "Orientación" [ref=f29e29] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/orientacion/seguimiento
+          - generic [aria-hidden] [ref=f29e30]: •
+        - link "Reportes" [ref=f29e32] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/reportes
+          - generic [aria-hidden] [ref=f29e33]: •
+    - generic [ref=f29e35]:
+      - link "Mi perfil" [ref=f29e36] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f29e37]: ○
+      - button "Cerrar sesión" [ref=f29e40] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f29e41]: ↪
+  - generic [ref=f29e43]:
+    - banner [ref=f29e44]:
+      - generic [ref=f29e46]:
+        - generic [ref=f29e47]: 01/10/2026
+        - generic [ref=f29e51]:
+          - generic [ref=f29e52]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f29e53]
+        - button "Notificaciones" [ref=f29e55] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f29e56] [cursor=pointer]
+        - button [ref=f29e60] [cursor=pointer]:
+          - generic [ref=f29e61]:
+            - img "DINA RUIZ" [ref=f29e62]
+            - generic [ref=f29e63]:
+              - paragraph [ref=f29e64]: DINA RUIZ
+              - paragraph [ref=f29e65]: Docente
+    - main [ref=f29e68]:
+      - generic [ref=f29e69]:
+        - generic [ref=f29e70]:
+          - paragraph [ref=f29e71]: Orientación académica-profesional
+          - heading "Seguimiento docente" [level=2] [ref=f29e72]
+          - paragraph [ref=f29e73]: Actividades registradas en la gestión de un curso asignado y con inscripción vigente. Esta consulta no modifica respuestas ni genera compatibilidades profesionales.
+          - generic [ref=f29e74]:
+            - generic [ref=f29e75]:
+              - text: Estudiante
+              - textbox "Estudiante" [ref=f29e76]
+            - generic [ref=f29e77]:
+              - text: Estado
+              - combobox "Estado" [ref=f29e78]:
+                - option "Todos" [selected]
+                - option "pendiente"
+                - option "en proceso"
+                - option "finalizado"
+                - option "revisado"
+                - option "requiere seguimiento"
+            - button "Filtrar" [ref=f29e79] [cursor=pointer]
+        - generic [ref=f29e80]:
+          - heading "Seguimiento de orientación." [level=3] [ref=f29e84]
+          - paragraph [ref=f29e85]: Los estudiantes de cursos asignados aparecerán para acompañamiento docente.

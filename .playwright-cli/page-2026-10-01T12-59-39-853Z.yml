@@ -1,0 +1,71 @@
+- generic [ref=f27e3]:
+  - complementary "Navegación de Docente" [ref=f27e4]:
+    - link "Logo Franz Tamayo 3 Franz Tamayo N°3 SAVP – TIS 3" [ref=f27e6] [cursor=pointer]:
+      - /url: http://localhost:8000/docente
+      - img "Logo Franz Tamayo 3" [ref=f27e7]
+      - generic [ref=f27e8]:
+        - generic [ref=f27e9]: Franz Tamayo N°3
+        - generic [ref=f27e10]: SAVP – TIS 3
+    - button "Expandir o contraer menú" [expanded] [ref=f27e12] [cursor=pointer]:
+      - generic [aria-hidden] [ref=f27e13]: ☰
+      - generic [ref=f27e14]: Docente
+    - navigation [ref=f27e15]:
+      - link "Inicio" [ref=f27e16] [cursor=pointer]:
+        - /url: http://localhost:8000/docente
+        - generic [aria-hidden] [ref=f27e17]: ⌂
+      - generic [ref=f27e19]:
+        - heading "Académico" [level=2] [ref=f27e20]
+        - link "Mis cursos" [ref=f27e21] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/cursos
+          - generic [aria-hidden] [ref=f27e22]: •
+        - link "Calendario" [ref=f27e24] [cursor=pointer]:
+          - /url: http://localhost:8000/docente/calendario
+          - generic [aria-hidden] [ref=f27e25]: •
+      - generic [ref=f27e27]:
+        - heading "Seguimiento" [level=2] [ref=f27e28]
+        - link "Orientación" [ref=f27e29] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/orientacion/seguimiento
+          - generic [aria-hidden] [ref=f27e30]: •
+        - link "Reportes" [ref=f27e32] [cursor=pointer]:
+          - /url: http://localhost:8000/aula-virtual/reportes
+          - generic [aria-hidden] [ref=f27e33]: •
+    - generic [ref=f27e35]:
+      - link "Mi perfil" [ref=f27e36] [cursor=pointer]:
+        - /url: http://localhost:8000/user/profile
+        - generic [aria-hidden] [ref=f27e37]: ○
+      - button "Cerrar sesión" [ref=f27e40] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f27e41]: ↪
+  - generic [ref=f27e43]:
+    - banner [ref=f27e44]:
+      - generic [ref=f27e46]:
+        - generic [ref=f27e47]: 01/10/2026
+        - generic [ref=f27e51]:
+          - generic [ref=f27e52]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f27e53]
+        - button "Notificaciones" [ref=f27e55] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f27e56] [cursor=pointer]
+        - button [ref=f27e60] [cursor=pointer]:
+          - generic [ref=f27e61]:
+            - img "DINA RUIZ" [ref=f27e62]
+            - generic [ref=f27e63]:
+              - paragraph [ref=f27e64]: DINA RUIZ
+              - paragraph [ref=f27e65]: Docente
+    - main [ref=f27e68]:
+      - generic [ref=f27e69]:
+        - generic [ref=f27e70]:
+          - navigation "Ruta de navegación" [ref=f27e71]:
+            - link "Inicio" [ref=f27e72] [cursor=pointer]:
+              - /url: http://localhost:8000/docente
+            - text: / Mis cursos
+          - heading "Mis cursos" [level=1] [ref=f27e73]
+          - generic [ref=f27e74]:
+            - generic [ref=f27e75]:
+              - text: Curso o asignatura
+              - searchbox "Curso o asignatura" [ref=f27e76]
+            - generic [ref=f27e77]:
+              - text: Año de gestión
+              - textbox "Año de gestión" [ref=f27e78]:
+                - /placeholder: Todas las gestiones autorizadas
+        - generic [ref=f27e80]:
+          - heading "No tienes cursos asignados." [level=2] [ref=f27e81]
+          - paragraph [ref=f27e82]: Consulta con la institución para revisar tus asignaciones.

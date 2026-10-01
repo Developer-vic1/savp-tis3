@@ -1,0 +1,552 @@
+database/migrations\0001_01_01_000000_create_persona_table.php:14:        Schema::create('persona', function (Blueprint $table) {
+database/migrations\0001_01_01_000000_create_persona_table.php:21:            $table->string('ci_per', 20)->unique(); // Carnet de identidad (solo números)
+database/migrations\0001_01_01_000000_create_persona_table.php:28:            $table->string('ema_per', 150)->nullable()->unique(); // Correo electrónico
+database/migrations\0001_01_01_000000_create_persona_table.php:43:        Schema::dropIfExists('persona');
+database/migrations\0001_01_01_000001_create_cache_table.php:14:        Schema::create('cache', function (Blueprint $table) {
+database/migrations\0001_01_01_000001_create_cache_table.php:17:            $table->bigInteger('expiration')->index();
+database/migrations\0001_01_01_000001_create_cache_table.php:20:        Schema::create('cache_locks', function (Blueprint $table) {
+database/migrations\0001_01_01_000001_create_cache_table.php:23:            $table->bigInteger('expiration')->index();
+database/migrations\0001_01_01_000001_create_cache_table.php:32:        Schema::dropIfExists('cache');
+database/migrations\0001_01_01_000001_create_cache_table.php:33:        Schema::dropIfExists('cache_locks');
+database/migrations\0001_01_01_000001_create_users_table.php:14:        Schema::create('users', function (Blueprint $table) {
+database/migrations\0001_01_01_000001_create_users_table.php:19:            $table->string('cod_per', 20)->unique();
+database/migrations\0001_01_01_000001_create_users_table.php:20:            $table->foreign('cod_per')
+database/migrations\0001_01_01_000001_create_users_table.php:21:                ->references('cod_per')
+database/migrations\0001_01_01_000001_create_users_table.php:26:            $table->string('email')->unique();
+database/migrations\0001_01_01_000001_create_users_table.php:44:        Schema::create('password_reset_tokens', function (Blueprint $table) {
+database/migrations\0001_01_01_000001_create_users_table.php:51:        Schema::create('sessions', function (Blueprint $table) {
+database/migrations\0001_01_01_000001_create_users_table.php:53:            $table->string('user_id', 20)->nullable()->index();
+database/migrations\0001_01_01_000001_create_users_table.php:57:            $table->integer('last_activity')->index();
+database/migrations\0001_01_01_000001_create_users_table.php:61:        Schema::create('user_status_logs', function (Blueprint $table) {
+database/migrations\0001_01_01_000001_create_users_table.php:69:            $table->foreign('cod_usu')
+database/migrations\0001_01_01_000001_create_users_table.php:70:                ->references('cod_usu')
+database/migrations\0001_01_01_000001_create_users_table.php:74:            $table->foreign('cod_usu_admin')
+database/migrations\0001_01_01_000001_create_users_table.php:75:                ->references('cod_usu')
+database/migrations\0001_01_01_000001_create_users_table.php:86:        Schema::dropIfExists('user_status_logs');
+database/migrations\0001_01_01_000001_create_users_table.php:87:        Schema::dropIfExists('sessions');
+database/migrations\0001_01_01_000001_create_users_table.php:88:        Schema::dropIfExists('password_reset_tokens');
+database/migrations\0001_01_01_000001_create_users_table.php:89:        Schema::dropIfExists('users');
+database/migrations\0001_01_01_000002_create_jobs_table.php:14:        Schema::create('jobs', function (Blueprint $table) {
+database/migrations\0001_01_01_000002_create_jobs_table.php:16:            $table->string('queue')->index();
+database/migrations\0001_01_01_000002_create_jobs_table.php:24:        Schema::create('job_batches', function (Blueprint $table) {
+database/migrations\0001_01_01_000002_create_jobs_table.php:37:        Schema::create('failed_jobs', function (Blueprint $table) {
+database/migrations\0001_01_01_000002_create_jobs_table.php:39:            $table->string('uuid')->unique();
+database/migrations\0001_01_01_000002_create_jobs_table.php:53:        Schema::dropIfExists('jobs');
+database/migrations\0001_01_01_000002_create_jobs_table.php:54:        Schema::dropIfExists('job_batches');
+database/migrations\0001_01_01_000002_create_jobs_table.php:55:        Schema::dropIfExists('failed_jobs');
+database/migrations\2026_04_09_025251_add_two_factor_columns_to_users_table.php:14:        Schema::table('users', function (Blueprint $table) {
+database/migrations\2026_04_09_025251_add_two_factor_columns_to_users_table.php:34:        Schema::table('users', function (Blueprint $table) {
+database/migrations\2026_04_09_025251_add_two_factor_columns_to_users_table.php:35:            $table->dropColumn([
+database/migrations\2026_04_09_025308_create_personal_access_tokens_table.php:14:        Schema::create('personal_access_tokens', function (Blueprint $table) {
+database/migrations\2026_04_09_025308_create_personal_access_tokens_table.php:18:            $table->string('token', 64)->unique();
+database/migrations\2026_04_09_025308_create_personal_access_tokens_table.php:21:            $table->timestamp('expires_at')->nullable()->index();
+database/migrations\2026_04_09_025308_create_personal_access_tokens_table.php:31:        Schema::dropIfExists('personal_access_tokens');
+database/migrations\2026_04_09_025343_create_permission_tables.php:26:        Schema::create($tableNames['permissions'], static function (Blueprint $table) {
+database/migrations\2026_04_09_025343_create_permission_tables.php:32:            $table->unique(['name', 'guard_name']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:38:        Schema::create($tableNames['roles'], static function (Blueprint $table) use ($teams, $columnNames) {
+database/migrations\2026_04_09_025343_create_permission_tables.php:42:                $table->index($columnNames['team_foreign_key'], 'roles_team_foreign_key_index');
+database/migrations\2026_04_09_025343_create_permission_tables.php:48:                $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:50:                $table->unique(['name', 'guard_name']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:54:        Schema::create($tableNames['model_has_permissions'], static function (Blueprint $table) use ($tableNames, $columnNames, $pivotPermission, $teams) {
+database/migrations\2026_04_09_025343_create_permission_tables.php:61:            $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_permissions_model_id_model_type_index');
+database/migrations\2026_04_09_025343_create_permission_tables.php:63:            $table->foreign($pivotPermission)
+database/migrations\2026_04_09_025343_create_permission_tables.php:64:                ->references('id')
+database/migrations\2026_04_09_025343_create_permission_tables.php:70:                $table->index($columnNames['team_foreign_key'], 'model_has_permissions_team_foreign_key_index');
+database/migrations\2026_04_09_025343_create_permission_tables.php:87:        Schema::create($tableNames['model_has_roles'], static function (Blueprint $table) use ($tableNames, $columnNames, $pivotRole, $teams) {
+database/migrations\2026_04_09_025343_create_permission_tables.php:92:            $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_roles_model_id_model_type_index');
+database/migrations\2026_04_09_025343_create_permission_tables.php:94:            $table->foreign($pivotRole)
+database/migrations\2026_04_09_025343_create_permission_tables.php:95:                ->references('id') // role id
+database/migrations\2026_04_09_025343_create_permission_tables.php:100:                $table->index($columnNames['team_foreign_key'], 'model_has_roles_team_foreign_key_index');
+database/migrations\2026_04_09_025343_create_permission_tables.php:114:        Schema::create($tableNames['role_has_permissions'], static function (Blueprint $table) use ($tableNames, $pivotRole, $pivotPermission) {
+database/migrations\2026_04_09_025343_create_permission_tables.php:118:            $table->foreign($pivotPermission)
+database/migrations\2026_04_09_025343_create_permission_tables.php:119:                ->references('id') // permission id
+database/migrations\2026_04_09_025343_create_permission_tables.php:123:            $table->foreign($pivotRole)
+database/migrations\2026_04_09_025343_create_permission_tables.php:124:                ->references('id') // role id
+database/migrations\2026_04_09_025343_create_permission_tables.php:143:        throw_if(empty($tableNames), 'Error: config/permission.php not found and defaults could not be merged. Please publish the package configuration before proceeding, or drop the tables manually.');
+database/migrations\2026_04_09_025343_create_permission_tables.php:145:        Schema::dropIfExists($tableNames['role_has_permissions']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:146:        Schema::dropIfExists($tableNames['model_has_roles']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:147:        Schema::dropIfExists($tableNames['model_has_permissions']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:148:        Schema::dropIfExists($tableNames['roles']);
+database/migrations\2026_04_09_025343_create_permission_tables.php:149:        Schema::dropIfExists($tableNames['permissions']);
+database/migrations\2026_04_09_033042_create_personal_institucional_table.php:11:        Schema::create('personal_institucional', function (Blueprint $table) {
+database/migrations\2026_04_09_033042_create_personal_institucional_table.php:16:            $table->foreign('cod_per')
+database/migrations\2026_04_09_033042_create_personal_institucional_table.php:17:                  ->references('cod_per')
+database/migrations\2026_04_09_033042_create_personal_institucional_table.php:31:        Schema::dropIfExists('personal_institucional');
+database/migrations\2026_04_09_033043_create_institucion_procedencia_table.php:11:        Schema::create('institucion_procedencia', function (Blueprint $table) {
+database/migrations\2026_04_09_033043_create_institucion_procedencia_table.php:27:        Schema::dropIfExists('institucion_procedencia');
+database/migrations\2026_04_09_033043_create_secretaria_general_table.php:11:        Schema::create('secretaria_general', function (Blueprint $table) {
+database/migrations\2026_04_09_033043_create_secretaria_general_table.php:16:            $table->foreign('cod_pin')
+database/migrations\2026_04_09_033043_create_secretaria_general_table.php:17:                  ->references('cod_pin')
+database/migrations\2026_04_09_033043_create_secretaria_general_table.php:29:        Schema::dropIfExists('secretaria_general');
+database/migrations\2026_04_09_033043_create_tipo_vinculacion_estudiante_table.php:11:        Schema::create('tipo_vinculacion_estudiante', function (Blueprint $table) {
+database/migrations\2026_04_09_033043_create_tipo_vinculacion_estudiante_table.php:27:        Schema::dropIfExists('tipo_vinculacion_estudiante');
+database/migrations\2026_04_09_033044_create_gestion_academica_table.php:11:        Schema::create('gestion_academica', function (Blueprint $table) {
+database/migrations\2026_04_09_033044_create_gestion_academica_table.php:28:        Schema::dropIfExists('gestion_academica');
+database/migrations\2026_04_09_033045_create_curso_table.php:11:        Schema::create('curso', function (Blueprint $table) {
+database/migrations\2026_04_09_033045_create_curso_table.php:26:        Schema::dropIfExists('curso');
+database/migrations\2026_04_09_033045_create_paralelo_table.php:11:        Schema::create('paralelo', function (Blueprint $table) {
+database/migrations\2026_04_09_033045_create_paralelo_table.php:21:        Schema::dropIfExists('paralelo');
+database/migrations\2026_04_09_033045_create_turno_table.php:11:        Schema::create('turno', function (Blueprint $table) {
+database/migrations\2026_04_09_033045_create_turno_table.php:28:        Schema::dropIfExists('turno');
+database/migrations\2026_04_09_033046_create_asignatura_table.php:11:        Schema::create('asignatura', function (Blueprint $table) {
+database/migrations\2026_04_09_033046_create_asignatura_table.php:28:        Schema::dropIfExists('asignatura');
+database/migrations\2026_04_09_033046_create_especialidad_tecnica_table.php:11:        Schema::create('especialidad_tecnica', function (Blueprint $table) {
+database/migrations\2026_04_09_033046_create_especialidad_tecnica_table.php:26:        Schema::dropIfExists('especialidad_tecnica');
+database/migrations\2026_04_09_033047_create_periodo_evaluacion_table.php:11:        Schema::create('periodo_evaluacion', function (Blueprint $table) {
+database/migrations\2026_04_09_033047_create_periodo_evaluacion_table.php:27:        Schema::dropIfExists('periodo_evaluacion');
+database/migrations\2026_04_09_033048_create_bitacora_table.php:14:        Schema::create('bitacora', function (Blueprint $table) {
+database/migrations\2026_04_09_033048_create_bitacora_table.php:34:            $table->foreign('cod_usu')
+database/migrations\2026_04_09_033048_create_bitacora_table.php:35:                ->references('cod_usu')
+database/migrations\2026_04_09_033048_create_bitacora_table.php:150:        Schema::dropIfExists('bitacora');
+database/migrations\2026_04_09_033050_create_docente_table.php:11:        Schema::create('docente', function (Blueprint $table) {
+database/migrations\2026_04_09_033050_create_docente_table.php:16:            $table->foreign('cod_pin')
+database/migrations\2026_04_09_033050_create_docente_table.php:17:                  ->references('cod_pin')
+database/migrations\2026_04_09_033050_create_docente_table.php:33:        Schema::dropIfExists('docente');
+database/migrations\2026_04_09_033060_create_estudiante_table.php:11:        Schema::create('estudiante', function (Blueprint $table) {
+database/migrations\2026_04_09_033060_create_estudiante_table.php:17:            $table->string('rud_est', 20)->unique();
+database/migrations\2026_04_09_033060_create_estudiante_table.php:21:            $table->foreign('cod_per')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:22:                  ->references('cod_per')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:28:            $table->foreign('cod_tve')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:29:                  ->references('cod_tve')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:34:            $table->foreign('cod_ipe')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:35:                  ->references('cod_ipe')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:40:            $table->foreign('cod_esp')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:41:                  ->references('cod_esp')
+database/migrations\2026_04_09_033060_create_estudiante_table.php:53:        Schema::dropIfExists('estudiante');
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:11:        Schema::create('plan_asignatura', function (Blueprint $table) {
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:16:            $table->foreign('cod_asi')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:17:                  ->references('cod_asi')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:21:            $table->foreign('cod_doc')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:22:                  ->references('cod_doc')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:26:            $table->foreign('cod_cur')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:27:                  ->references('cod_cur')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:31:            $table->foreign('cod_par')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:32:                  ->references('cod_par')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:36:            $table->foreign('cod_tur')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:37:                  ->references('cod_tur')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:41:            $table->foreign('cod_gea')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:42:                  ->references('cod_gea')
+database/migrations\2026_04_09_033070_create_plan_asignatura_table.php:55:        Schema::dropIfExists('plan_asignatura');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:12:        Schema::create('inscripcion_estudiante', function (Blueprint $table) {
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:50:            $table->unique(
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:55:            $table->index('cod_est', 'inscripcion_cod_est_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:56:            $table->index('cod_gea', 'inscripcion_cod_gea_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:57:            $table->index('cod_cur', 'inscripcion_cod_cur_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:58:            $table->index('cod_par', 'inscripcion_cod_par_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:59:            $table->index('cod_tur', 'inscripcion_cod_tur_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:60:            $table->index('cod_esp_tec', 'inscripcion_cod_esp_tec_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:61:            $table->index('tip_ins', 'inscripcion_tip_ins_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:62:            $table->index('con_ins', 'inscripcion_con_ins_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:63:            $table->index('est_ins', 'inscripcion_est_ins_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:64:            $table->index('fei_ins', 'inscripcion_fei_ins_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:65:            $table->index('sie_ins', 'inscripcion_sie_ins_index');
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:68:        Schema::table('inscripcion_estudiante', function (Blueprint $table) {
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:69:            $table->foreign('cod_est', 'inscripcion_cod_est_foreign')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:70:                ->references('cod_est')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:75:            $table->foreign('cod_gea', 'inscripcion_cod_gea_foreign')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:76:                ->references('cod_gea')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:81:            $table->foreign('cod_cur', 'inscripcion_cod_cur_foreign')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:82:                ->references('cod_cur')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:87:            $table->foreign('cod_par', 'inscripcion_cod_par_foreign')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:88:                ->references('cod_par')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:93:            $table->foreign('cod_tur', 'inscripcion_cod_tur_foreign')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:94:                ->references('cod_tur')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:99:            $table->foreign('cod_esp_tec', 'inscripcion_cod_esp_tec_foreign')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:100:                ->references('cod_esp')
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:108:            ADD CONSTRAINT inscripcion_tip_check
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:109:            CHECK (tip_ins IN (
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:122:            ADD CONSTRAINT inscripcion_con_check
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:123:            CHECK (con_ins IN (
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:135:            ADD CONSTRAINT inscripcion_est_check
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:136:            CHECK (est_ins IN (
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:149:            ADD CONSTRAINT inscripcion_esp_tec_est_check
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:150:            CHECK (est_esp_tec_ins IN (
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:161:            ADD CONSTRAINT inscripcion_fechas_estado_check
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:162:            CHECK (
+database/migrations\2026_04_09_033080_create_inscripcion_estudiante_table.php:174:        Schema::dropIfExists('inscripcion_estudiante');
+database/migrations\2026_04_09_033090_create_calificacion_table.php:11:        Schema::create('calificacion', function (Blueprint $table) {
+database/migrations\2026_04_09_033090_create_calificacion_table.php:16:            $table->foreign('cod_est')
+database/migrations\2026_04_09_033090_create_calificacion_table.php:17:                  ->references('cod_est')
+database/migrations\2026_04_09_033090_create_calificacion_table.php:22:            $table->foreign('cod_asi')
+database/migrations\2026_04_09_033090_create_calificacion_table.php:23:                  ->references('cod_asi')
+database/migrations\2026_04_09_033090_create_calificacion_table.php:27:            $table->foreign('cod_pev')
+database/migrations\2026_04_09_033090_create_calificacion_table.php:28:                  ->references('cod_pev')
+database/migrations\2026_04_09_033090_create_calificacion_table.php:43:        Schema::dropIfExists('calificacion');
+database/migrations\2026_04_26_183020_create_regente_table.php:14:        Schema::create('regente', function (Blueprint $table) {
+database/migrations\2026_04_26_183020_create_regente_table.php:19:            $table->foreign('cod_pin')
+database/migrations\2026_04_26_183020_create_regente_table.php:20:                  ->references('cod_pin')
+database/migrations\2026_04_26_183020_create_regente_table.php:35:        Schema::dropIfExists('regente');
+database/migrations\2026_04_26_183034_create_director_table.php:14:        Schema::create('director', function (Blueprint $table) {
+database/migrations\2026_04_26_183034_create_director_table.php:19:            $table->foreign('cod_pin')
+database/migrations\2026_04_26_183034_create_director_table.php:20:                  ->references('cod_pin')
+database/migrations\2026_04_26_183034_create_director_table.php:35:        Schema::dropIfExists('director');
+database/migrations\2026_04_26_183048_create_administrador_table.php:14:        Schema::create('administrador', function (Blueprint $table) {
+database/migrations\2026_04_26_183048_create_administrador_table.php:18:            $table->foreign('cod_pin')
+database/migrations\2026_04_26_183048_create_administrador_table.php:19:                  ->references('cod_pin')
+database/migrations\2026_04_26_183048_create_administrador_table.php:34:        Schema::dropIfExists('administrador');
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:11:        Schema::create('plan_especialidad', function (Blueprint $table) {
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:16:            $table->foreign('cod_esp')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:17:                ->references('cod_esp')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:23:            $table->foreign('cod_doc')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:24:                ->references('cod_doc')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:30:            $table->foreign('cod_cur')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:31:                ->references('cod_cur')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:37:            $table->foreign('cod_par')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:38:                ->references('cod_par')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:44:            $table->foreign('cod_tur')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:45:                ->references('cod_tur')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:51:            $table->foreign('cod_gea')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:52:                ->references('cod_gea')
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:63:            $table->unique([
+database/migrations\2026_05_01_233339_create_plan_especialidad_table.php:76:        Schema::dropIfExists('plan_especialidad');
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:14:        Schema::create('plantilla_horaria', function (Blueprint $table) {
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:34:            $table->foreign('cod_tur')
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:35:                ->references('cod_tur')
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:40:            $table->unique(
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:45:            $table->index('cod_tur', 'plantilla_horaria_cod_tur_index');
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:46:            $table->index('tip_pho', 'plantilla_horaria_tip_pho_index');
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:47:            $table->index('act_pho', 'plantilla_horaria_act_pho_index');
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:48:            $table->index('est_pho', 'plantilla_horaria_est_pho_index');
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:49:            $table->index(['fec_ini_pho', 'fec_fin_pho'], 'plantilla_horaria_fechas_index');
+database/migrations\2026_05_04_000000_create_plantilla_horaria_table.php:58:        Schema::dropIfExists('plantilla_horaria');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:46:        Schema::create('horario', function (Blueprint $table) {
+database/migrations\2026_05_05_201751_create_horarios_tables.php:60:            $table->unique(
+database/migrations\2026_05_05_201751_create_horarios_tables.php:65:            $table->index('cod_gea', 'horario_cod_gea_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:66:            $table->index('cod_cur', 'horario_cod_cur_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:67:            $table->index('cod_par', 'horario_cod_par_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:68:            $table->index('cod_pho', 'horario_cod_pho_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:69:            $table->index('est_hor', 'horario_est_hor_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:77:        Schema::table('horario', function (Blueprint $table) {
+database/migrations\2026_05_05_201751_create_horarios_tables.php:79:                $table->foreign('cod_gea', 'horario_cod_gea_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:80:                    ->references('cod_gea')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:87:                $table->foreign('cod_cur', 'horario_cod_cur_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:88:                    ->references('cod_cur')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:95:                $table->foreign('cod_par', 'horario_cod_par_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:96:                    ->references('cod_par')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:103:                $table->foreign('cod_pho', 'horario_cod_pho_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:104:                    ->references('cod_pho')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:123:        Schema::create('horario_bloque', function (Blueprint $table) {
+database/migrations\2026_05_05_201751_create_horarios_tables.php:140:            $table->unique(
+database/migrations\2026_05_05_201751_create_horarios_tables.php:145:            $table->unique(
+database/migrations\2026_05_05_201751_create_horarios_tables.php:150:            $table->index('cod_pho', 'horario_bloque_cod_pho_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:151:            $table->index('num_hbl', 'horario_bloque_num_hbl_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:152:            $table->index('tip_hbl', 'horario_bloque_tip_hbl_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:153:            $table->index('est_hbl', 'horario_bloque_est_hbl_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:161:        Schema::table('horario_bloque', function (Blueprint $table) {
+database/migrations\2026_05_05_201751_create_horarios_tables.php:163:                $table->foreign('cod_pho', 'horario_bloque_cod_pho_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:164:                    ->references('cod_pho')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:189:        Schema::create('horario_detalle', function (Blueprint $table) {
+database/migrations\2026_05_05_201751_create_horarios_tables.php:207:            $table->unique(
+database/migrations\2026_05_05_201751_create_horarios_tables.php:212:            $table->index('cod_hor', 'horario_detalle_cod_hor_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:213:            $table->index('cod_hbl', 'horario_detalle_cod_hbl_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:214:            $table->index('dia_hde', 'horario_detalle_dia_hde_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:215:            $table->index('cod_pas', 'horario_detalle_cod_pas_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:216:            $table->index('cod_pes', 'horario_detalle_cod_pes_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:217:            $table->index('est_hde', 'horario_detalle_est_hde_index');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:225:        Schema::table('horario_detalle', function (Blueprint $table) {
+database/migrations\2026_05_05_201751_create_horarios_tables.php:227:                $table->foreign('cod_hor', 'horario_detalle_cod_hor_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:228:                    ->references('cod_hor')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:235:                $table->foreign('cod_hbl', 'horario_detalle_cod_hbl_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:236:                    ->references('cod_hbl')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:243:                $table->foreign('cod_pas', 'horario_detalle_cod_pas_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:244:                    ->references('cod_pas')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:251:                $table->foreign('cod_pes', 'horario_detalle_cod_pes_foreign')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:252:                    ->references('cod_pes')
+database/migrations\2026_05_05_201751_create_horarios_tables.php:261:        | CHECK CONSTRAINTS PARA POSTGRESQL
+database/migrations\2026_05_05_201751_create_horarios_tables.php:266:            ADD CONSTRAINT horario_estado_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:267:            CHECK (est_hor IN ('ACTIVO', 'INACTIVO', 'PLANIFICADO', 'ARCHIVADO'))
+database/migrations\2026_05_05_201751_create_horarios_tables.php:272:            ADD CONSTRAINT horario_bloque_horas_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:273:            CHECK (hor_fin_hbl > hor_ini_hbl)
+database/migrations\2026_05_05_201751_create_horarios_tables.php:278:            ADD CONSTRAINT horario_bloque_tipo_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:279:            CHECK (tip_hbl IN ('CLASE', 'RECREO', 'DESCANSO', 'FORMACION', 'SALIDA', 'OTRO'))
+database/migrations\2026_05_05_201751_create_horarios_tables.php:284:            ADD CONSTRAINT horario_bloque_estado_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:285:            CHECK (est_hbl IN ('ACTIVO', 'INACTIVO'))
+database/migrations\2026_05_05_201751_create_horarios_tables.php:290:            ADD CONSTRAINT horario_detalle_dia_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:291:            CHECK (dia_hde IN ('LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES'))
+database/migrations\2026_05_05_201751_create_horarios_tables.php:296:            ADD CONSTRAINT horario_detalle_estado_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:297:            CHECK (est_hde IN ('ACTIVO', 'INACTIVO', 'SUSPENDIDO'))
+database/migrations\2026_05_05_201751_create_horarios_tables.php:302:            ADD CONSTRAINT horario_detalle_plan_check
+database/migrations\2026_05_05_201751_create_horarios_tables.php:303:            CHECK (
+database/migrations\2026_05_05_201751_create_horarios_tables.php:313:        Schema::dropIfExists('horario_detalle');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:314:        Schema::dropIfExists('horario_bloque');
+database/migrations\2026_05_05_201751_create_horarios_tables.php:315:        Schema::dropIfExists('horario');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:12:        Schema::create('documento_inscripcion_estudiante', function (Blueprint $table) {
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:34:            $table->foreign('cod_ins')
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:35:                ->references('cod_ins')
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:40:            $table->index('cod_ins', 'idx_documento_inscripcion_cod_ins');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:41:            $table->index('tip_die', 'idx_documento_inscripcion_tip_die');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:42:            $table->index('est_die', 'idx_documento_inscripcion_est_die');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:43:            $table->index('obl_die', 'idx_documento_inscripcion_obl_die');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:44:            $table->index('fec_lim_die', 'idx_documento_inscripcion_fec_lim_die');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:45:            $table->index('fec_pre_die', 'idx_documento_inscripcion_fec_pre_die');
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:50:            ADD CONSTRAINT documento_inscripcion_tip_check
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:51:            CHECK (tip_die IN (
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:67:            ADD CONSTRAINT documento_inscripcion_est_check
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:68:            CHECK (est_die IN (
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:81:            ADD CONSTRAINT documento_inscripcion_for_check
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:82:            CHECK (
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:90:            ADD CONSTRAINT documento_inscripcion_fechas_check
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:91:            CHECK (
+database/migrations\2026_05_19_001028_create_documento_inscripcion_estudiante_table.php:102:        Schema::dropIfExists('documento_inscripcion_estudiante');
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:12:        Schema::create('respaldo_gestion_academica', function (Blueprint $table) {
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:31:            $table->foreign('cod_gea')
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:32:                ->references('cod_gea')
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:37:            $table->index('cod_gea', 'respaldo_gestion_cod_gea_index');
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:38:            $table->index('tip_rga', 'respaldo_gestion_tip_rga_index');
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:39:            $table->index('for_rga', 'respaldo_gestion_for_rga_index');
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:40:            $table->index('est_rga', 'respaldo_gestion_est_rga_index');
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:41:            $table->index('fec_rga', 'respaldo_gestion_fec_rga_index');
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:46:            ADD CONSTRAINT respaldo_gestion_tip_check
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:47:            CHECK (tip_rga IN ('PRELIMINAR', 'CIERRE', 'AUDITORIA', 'RECUPERACION'))
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:52:            ADD CONSTRAINT respaldo_gestion_for_check
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:53:            CHECK (for_rga IN ('ZIP', 'PDF', 'XLSX', 'JSON'))
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:58:            ADD CONSTRAINT respaldo_gestion_est_check
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:59:            CHECK (est_rga IN ('GENERADO', 'VALIDADO', 'OBSERVADO', 'ARCHIVADO', 'ANULADO'))
+database/migrations\2026_05_24_051142_create_respaldo_gestion_academicas_table.php:65:        Schema::dropIfExists('respaldo_gestion_academica');
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:14:        Schema::table('users', function (Blueprint $table) {
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:16:                $table->string('google_id')->nullable()->unique()->after('cod_usu');
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:38:        Schema::table('users', function (Blueprint $table) {
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:40:                $table->dropColumn('google_id');
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:44:                $table->dropColumn('avatar');
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:48:                $table->dropColumn('auth_provider');
+database/migrations\2026_06_02_022909_add_google_auth_fields_to_users_table.php:52:                $table->dropColumn('last_login_at');
+database/migrations\2026_06_20_101359_create_reportes_generados_table.php:11:        Schema::create('reportes_generados', function (Blueprint $table) {
+database/migrations\2026_06_20_101359_create_reportes_generados_table.php:13:            $table->string('codigo', 40)->unique();
+database/migrations\2026_06_20_101359_create_reportes_generados_table.php:25:            $table->index('tipo_reporte');
+database/migrations\2026_06_20_101359_create_reportes_generados_table.php:26:            $table->index('formato');
+database/migrations\2026_06_20_101359_create_reportes_generados_table.php:27:            $table->index('created_at');
+database/migrations\2026_06_20_101359_create_reportes_generados_table.php:33:        Schema::dropIfExists('reportes_generados');
+database/migrations\2026_06_20_120000_normalize_google_auth_provider_default.php:16:        Schema::table('users', function (Blueprint $table) {
+database/migrations\2026_06_20_120000_normalize_google_auth_provider_default.php:31:        Schema::table('users', function (Blueprint $table) {
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:12:            Schema::create('orientacion_actividades', function (Blueprint $table) {
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:23:                $table->foreign('cod_est')->references('cod_est')->on('estudiante')->restrictOnDelete()->cascadeOnUpdate();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:24:                $table->foreign('cod_gea')->references('cod_gea')->on('gestion_academica')->nullOnDelete()->cascadeOnUpdate();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:25:                $table->foreign('revisado_por')->references('cod_usu')->on('users')->nullOnDelete()->cascadeOnUpdate();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:26:                $table->index(['cod_est', 'estado']);
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:31:            Schema::create('orientacion_preguntas', function (Blueprint $table) {
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:33:                $table->string('codigo', 40)->unique();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:41:                $table->index(['visible', 'orden']);
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:42:                $table->index('dimension');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:47:            Schema::create('orientacion_respuestas', function (Blueprint $table) {
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:49:                $table->foreignId('orientacion_actividad_id')->constrained('orientacion_actividades')->cascadeOnDelete();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:50:                $table->foreignId('orientacion_pregunta_id')->constrained('orientacion_preguntas')->restrictOnDelete();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:55:                $table->foreign('cod_est')->references('cod_est')->on('estudiante')->restrictOnDelete()->cascadeOnUpdate();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:56:                $table->unique(['orientacion_actividad_id', 'orientacion_pregunta_id'], 'uq_orientacion_respuesta_pregunta');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:57:                $table->index(['cod_est', 'orientacion_actividad_id']);
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:62:            Schema::create('orientacion_resultados', function (Blueprint $table) {
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:64:                $table->foreignId('orientacion_actividad_id')->constrained('orientacion_actividades')->cascadeOnDelete();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:78:                $table->foreign('cod_est')->references('cod_est')->on('estudiante')->restrictOnDelete()->cascadeOnUpdate();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:79:                $table->unique('orientacion_actividad_id', 'uq_orientacion_resultado_actividad');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:80:                $table->index(['cod_est', 'estado']);
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:85:            Schema::create('orientacion_carreras_sugeridas', function (Blueprint $table) {
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:87:                $table->foreignId('orientacion_resultado_id')->constrained('orientacion_resultados')->cascadeOnDelete();
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:97:                $table->index(['orientacion_resultado_id', 'orden']);
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:104:        Schema::dropIfExists('orientacion_carreras_sugeridas');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:105:        Schema::dropIfExists('orientacion_resultados');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:106:        Schema::dropIfExists('orientacion_respuestas');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:107:        Schema::dropIfExists('orientacion_preguntas');
+database/migrations\2026_06_20_130000_create_aula_virtual_orientacion_tables.php:108:        Schema::dropIfExists('orientacion_actividades');
+database/migrations\2026_06_20_144115_add_unique_constraint_to_entrega_tarea_table.php:63:        Schema::table('entrega_tarea', function (Blueprint $table) {
+database/migrations\2026_06_20_144115_add_unique_constraint_to_entrega_tarea_table.php:64:            $table->unique(['cod_tar', 'cod_est'], 'uq_entrega_tarea_estudiante');
+database/migrations\2026_06_20_144115_add_unique_constraint_to_entrega_tarea_table.php:73:        Schema::table('entrega_tarea', function (Blueprint $table) {
+database/migrations\2026_06_20_144115_add_unique_constraint_to_entrega_tarea_table.php:74:            $table->dropUnique('uq_entrega_tarea_estudiante');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:11:        Schema::create('regente_asignaciones', function (Blueprint $table) {
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:18:            $table->foreign('cod_reg')->references('cod_reg')->on('regente')->restrictOnDelete();
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:19:            $table->foreign('cod_gea')->references('cod_gea')->on('gestion_academica')->restrictOnDelete();
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:20:            $table->foreign('cod_cur')->references('cod_cur')->on('curso')->restrictOnDelete();
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:21:            $table->unique(['cod_reg', 'cod_gea', 'cod_cur'], 'regente_gestion_grado_unique');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:22:            $table->index(['cod_gea', 'cod_cur', 'activa'], 'regente_gestion_grado_activa_index');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:25:        Schema::table('calificacion', function (Blueprint $table) {
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:28:            $table->index('cod_pas', 'calificacion_plan_index');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:29:            $table->foreign('cod_pas')->references('cod_pas')->on('plan_asignatura')->restrictOnDelete();
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:30:            $table->unique(['cod_est', 'cod_pas', 'cod_pev'], 'calificacion_estudiante_plan_periodo_unique');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:36:        Schema::table('calificacion', function (Blueprint $table) {
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:37:            $table->dropUnique('calificacion_estudiante_plan_periodo_unique');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:38:            $table->dropForeign(['cod_pas']);
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:39:            $table->dropIndex('calificacion_plan_index');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:40:            $table->dropColumn('cod_pas');
+database/migrations\2026_09_28_000001_add_reestructuracion_academic_context.php:42:        Schema::dropIfExists('regente_asignaciones');
+database/migrations\2026_09_28_000001_create_role_requests_table.php:10:        Schema::create('role_requests', function (Blueprint $table) {
+database/migrations\2026_09_28_000001_create_role_requests_table.php:27:            $table->char('document_hash', 64)->index();
+database/migrations\2026_09_28_000001_create_role_requests_table.php:34:            $table->foreign('requested_by')->references('cod_usu')->on('users');
+database/migrations\2026_09_28_000001_create_role_requests_table.php:35:            $table->foreign('reviewed_by')->references('cod_usu')->on('users');
+database/migrations\2026_09_28_000001_create_role_requests_table.php:36:            $table->foreign('director_id')->references('cod_dir')->on('director');
+database/migrations\2026_09_28_000001_create_role_requests_table.php:40:    public function down(): void { Schema::dropIfExists('role_requests'); }
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:11:        Schema::create('clase_virtual', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:30:            $table->foreign('cod_pas')
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:31:                ->references('cod_pas')
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:36:            $table->index('cod_pas');
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:37:            $table->index('est_cla');
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:38:            $table->index(['cod_pas', 'est_cla']);
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:39:            $table->index(['fec_ini_cla', 'fec_fin_cla']);
+database/migrations\aula_virtual\2026_05_17_083823_create_clase_virtual_table.php:45:        Schema::dropIfExists('clase_virtual');
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:11:        Schema::create('clase_estudiante', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:34:            $table->foreign('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:35:                ->references('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:40:            $table->foreign('cod_est')
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:41:                ->references('cod_est')
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:46:            $table->unique(['cod_cla', 'cod_est'], 'uq_clase_estudiante_unico');
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:48:            $table->index('cod_cla');
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:49:            $table->index('cod_est');
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:50:            $table->index('est_cla_est');
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:51:            $table->index('ult_acc_cla_est');
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:52:            $table->index(['cod_cla', 'est_cla_est']);
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:53:            $table->index(['cod_est', 'est_cla_est']);
+database/migrations\aula_virtual\2026_05_17_083824_create_clase_estudiante_table.php:59:        Schema::dropIfExists('clase_estudiante');
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:11:        Schema::create('publicacion_clase', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:39:            $table->foreign('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:40:                ->references('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:45:            $table->foreign('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:46:                ->references('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:51:            $table->index('cod_cla');
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:52:            $table->index('cod_usu');
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:53:            $table->index('tip_pub');
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:54:            $table->index('est_pub');
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:55:            $table->index('fec_pub');
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:56:            $table->index(['cod_cla', 'est_pub']);
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:57:            $table->index(['cod_cla', 'tip_pub']);
+database/migrations\aula_virtual\2026_05_17_083825_create_publicacion_clase_table.php:63:        Schema::dropIfExists('publicacion_clase');
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:11:        Schema::create('material_clase', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:42:            $table->foreign('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:43:                ->references('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:48:            $table->foreign('cod_pub')
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:49:                ->references('cod_pub')
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:54:            $table->foreign('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:55:                ->references('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:60:            $table->index('cod_cla');
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:61:            $table->index('cod_pub');
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:62:            $table->index('cod_usu');
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:63:            $table->index('tip_mat');
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:64:            $table->index('est_mat');
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:65:            $table->index(['cod_cla', 'est_mat']);
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:66:            $table->index(['cod_cla', 'tip_mat']);
+database/migrations\aula_virtual\2026_05_17_083826_create_material_clase_table.php:72:        Schema::dropIfExists('material_clase');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:11:        Schema::create('tarea', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:44:            $table->foreign('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:45:                ->references('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:50:            $table->foreign('cod_doc')
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:51:                ->references('cod_doc')
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:56:            $table->index('cod_cla');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:57:            $table->index('cod_doc');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:58:            $table->index('tip_tar');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:59:            $table->index('est_tar');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:60:            $table->index('fec_pub_tar');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:61:            $table->index('fec_lim_tar');
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:62:            $table->index(['cod_cla', 'est_tar']);
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:63:            $table->index(['cod_cla', 'tip_tar']);
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:64:            $table->index(['cod_doc', 'est_tar']);
+database/migrations\aula_virtual\2026_05_17_083827_create_tarea_table.php:70:        Schema::dropIfExists('tarea');
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:11:        Schema::create('tarea_material', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:40:            $table->foreign('cod_tar')
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:41:                ->references('cod_tar')
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:46:            $table->index('cod_tar');
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:47:            $table->index('tip_tar_mat');
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:48:            $table->index('est_tar_mat');
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:49:            $table->index(['cod_tar', 'est_tar_mat']);
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:50:            $table->index(['cod_tar', 'tip_tar_mat']);
+database/migrations\aula_virtual\2026_05_17_083828_create_tarea_material_table.php:56:        Schema::dropIfExists('tarea_material');
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:11:        Schema::create('entrega_tarea', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:33:            $table->foreign('cod_tar')
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:34:                ->references('cod_tar')
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:39:            $table->foreign('cod_est')
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:40:                ->references('cod_est')
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:45:            $table->index('cod_tar');
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:46:            $table->index('cod_est');
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:47:            $table->index('fec_ent');
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:48:            $table->index('est_ent');
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:49:            $table->index(['cod_tar', 'cod_est']);
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:50:            $table->index(['cod_tar', 'est_ent']);
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:51:            $table->index(['cod_est', 'est_ent']);
+database/migrations\aula_virtual\2026_05_17_083829_create_entrega_tarea_table.php:57:        Schema::dropIfExists('entrega_tarea');
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:11:        Schema::create('entrega_archivo', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:28:            $table->foreign('cod_ent')
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:29:                ->references('cod_ent')
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:34:            $table->index('cod_ent');
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:35:            $table->index('mime_arc');
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:36:            $table->index('est_arc');
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:37:            $table->index(['cod_ent', 'est_arc']);
+database/migrations\aula_virtual\2026_05_17_083830_create_entrega_archivo_table.php:43:        Schema::dropIfExists('entrega_archivo');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:11:        Schema::create('calificacion_tarea', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:34:            $table->foreign('cod_ent')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:35:                ->references('cod_ent')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:40:            $table->foreign('cod_tar')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:41:                ->references('cod_tar')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:46:            $table->foreign('cod_est')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:47:                ->references('cod_est')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:52:            $table->foreign('cod_doc')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:53:                ->references('cod_doc')
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:58:            $table->unique('cod_ent', 'uq_calificacion_por_entrega');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:60:            $table->index('cod_tar');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:61:            $table->index('cod_est');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:62:            $table->index('cod_doc');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:63:            $table->index('fec_cal');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:64:            $table->index('est_cal');
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:65:            $table->index(['cod_tar', 'cod_est']);
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:66:            $table->index(['cod_doc', 'est_cal']);
+database/migrations\aula_virtual\2026_05_17_083831_create_calificacion_tarea_table.php:72:        Schema::dropIfExists('calificacion_tarea');
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:11:        Schema::create('estado_asistencia', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:32:            $table->unique('nom_est_asi', 'uq_estado_asistencia_nombre');
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:33:            $table->unique('abr_est_asi', 'uq_estado_asistencia_abreviatura');
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:35:            $table->index('est_est_asi');
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:36:            $table->index('afecta_asistencia');
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:37:            $table->index('requiere_observacion');
+database/migrations\aula_virtual\2026_05_17_083832_create_estado_asistencia_table.php:43:        Schema::dropIfExists('estado_asistencia');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:11:        Schema::create('asistencia_clase', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:50:            $table->foreign('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:51:                ->references('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:56:            $table->foreign('cod_doc')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:57:                ->references('cod_doc')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:62:            $table->foreign('cod_hbl')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:63:                ->references('cod_hbl')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:68:            $table->foreign('cod_usu_reg')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:69:                ->references('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:74:            $table->index('cod_cla');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:75:            $table->index('cod_doc');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:76:            $table->index('cod_hbl');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:77:            $table->index('cod_usu_reg');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:78:            $table->index('fec_asi_cla');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:79:            $table->index('tip_asi_cla');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:80:            $table->index('ori_asi_cla');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:81:            $table->index('est_asi_cla');
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:82:            $table->index(['cod_cla', 'fec_asi_cla']);
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:83:            $table->index(['cod_cla', 'est_asi_cla']);
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:84:            $table->index(['cod_doc', 'fec_asi_cla']);
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:86:            $table->unique(
+database/migrations\aula_virtual\2026_05_17_083833_create_asistencia_clase_table.php:95:        Schema::dropIfExists('asistencia_clase');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:11:        Schema::create('asistencia_estudiante', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:32:            $table->foreign('cod_asi_cla')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:33:                ->references('cod_asi_cla')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:38:            $table->foreign('cod_est')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:39:                ->references('cod_est')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:44:            $table->foreign('cod_est_asi')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:45:                ->references('cod_est_asi')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:50:            $table->foreign('cod_usu_reg')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:51:                ->references('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:56:            $table->unique(['cod_asi_cla', 'cod_est'], 'uq_asistencia_estudiante_unico');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:58:            $table->index('cod_asi_cla');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:59:            $table->index('cod_est');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:60:            $table->index('cod_est_asi');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:61:            $table->index('cod_usu_reg');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:62:            $table->index('fec_reg_asi_est');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:63:            $table->index('est_asi_est');
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:64:            $table->index(['cod_asi_cla', 'est_asi_est']);
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:65:            $table->index(['cod_est', 'est_asi_est']);
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:66:            $table->index(['cod_est_asi', 'est_asi_est']);
+database/migrations\aula_virtual\2026_05_17_083834_create_asistencia_estudiante_table.php:72:        Schema::dropIfExists('asistencia_estudiante');
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:11:        Schema::create('actividad_clase', function (Blueprint $table) {
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:41:            $table->foreign('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:42:                ->references('cod_cla')
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:47:            $table->foreign('cod_est')
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:48:                ->references('cod_est')
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:53:            $table->foreign('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:54:                ->references('cod_usu')
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:59:            $table->index('cod_cla');
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:60:            $table->index('cod_est');
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:61:            $table->index('cod_usu');
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:62:            $table->index('tip_act');
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:63:            $table->index('fec_act');
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:64:            $table->index(['cod_cla', 'tip_act']);
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:65:            $table->index(['cod_cla', 'fec_act']);
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:66:            $table->index(['cod_est', 'fec_act']);
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:67:            $table->index(['ref_tab', 'ref_cod']);
+database/migrations\aula_virtual\2026_05_17_083835_create_actividad_clase_table.php:73:        Schema::dropIfExists('actividad_clase');

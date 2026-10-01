@@ -1,0 +1,2 @@
+Compiled Blade PHP files: 240
+Failures: 0

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="9" assertions="32" errors="0" failures="0" skipped="0" time="1.318488">
+    <testsuite name="Tests\Feature\SupportLivewireIntegrationTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" tests="6" assertions="19" errors="0" failures="0" skipped="0" time="1.130278">
+      <testcase name="test_real_livewire_hook_shows_and_removes_future_date_blocker" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" line="46" class="Tests\Feature\SupportLivewireIntegrationTest" classname="Tests.Feature.SupportLivewireIntegrationTest" assertions="4" time="0.782738"/>
+      <testcase name="test_duplicate_block_prevents_save_before_validation_or_transaction" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" line="59" class="Tests\Feature\SupportLivewireIntegrationTest" classname="Tests.Feature.SupportLivewireIntegrationTest" assertions="4" time="0.071336"/>
+      <testcase name="test_suggestions_allow_continuation_without_claiming_persistence" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" line="70" class="Tests\Feature\SupportLivewireIntegrationTest" classname="Tests.Feature.SupportLivewireIntegrationTest" assertions="5" time="0.076661"/>
+      <testcase name="test_edit_preserves_non_duplicate_blockers_and_uses_server_identity" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" line="84" class="Tests\Feature\SupportLivewireIntegrationTest" classname="Tests.Feature.SupportLivewireIntegrationTest" assertions="3" time="0.074908"/>
+      <testcase name="test_student_cannot_run_admin_persona_assistance" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" line="96" class="Tests\Feature\SupportLivewireIntegrationTest" classname="Tests.Feature.SupportLivewireIntegrationTest" assertions="1" time="0.065534"/>
+      <testcase name="test_revoked_module_permission_denies_support_before_queries" file="C:\laragon\www\savp-reestructuracion\tests\Feature\SupportLivewireIntegrationTest.php" line="103" class="Tests\Feature\SupportLivewireIntegrationTest" classname="Tests.Feature.SupportLivewireIntegrationTest" assertions="2" time="0.059101"/>
+    </testsuite>
+    <testsuite name="Tests\Feature\KardexPreventiveDraftTest" file="C:\laragon\www\savp-reestructuracion\tests\Feature\KardexPreventiveDraftTest.php" tests="3" assertions="13" errors="0" failures="0" skipped="0" time="0.188210">
+      <testcase name="test_teacher_preview_preserves_warnings_and_never_persists" file="C:\laragon\www\savp-reestructuracion\tests\Feature\KardexPreventiveDraftTest.php" line="25" class="Tests\Feature\KardexPreventiveDraftTest" classname="Tests.Feature.KardexPreventiveDraftTest" assertions="7" time="0.092609"/>
+      <testcase name="test_regent_cannot_use_teacher_draft_even_with_write_permission" file="C:\laragon\www\savp-reestructuracion\tests\Feature\KardexPreventiveDraftTest.php" line="40" class="Tests\Feature\KardexPreventiveDraftTest" classname="Tests.Feature.KardexPreventiveDraftTest" assertions="1" time="0.054878"/>
+      <testcase name="test_related_event_warns_without_assigning_sanction_or_blocking" file="C:\laragon\www\savp-reestructuracion\tests\Feature\KardexPreventiveDraftTest.php" line="46" class="Tests\Feature\KardexPreventiveDraftTest" classname="Tests.Feature.KardexPreventiveDraftTest" assertions="5" time="0.040722"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

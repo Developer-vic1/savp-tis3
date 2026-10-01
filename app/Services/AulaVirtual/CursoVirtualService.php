@@ -158,6 +158,11 @@ class CursoVirtualService
     {
         $cursos = $this->cursosEstudiante($user);
         $estudiante = $this->estudianteDeUsuario($user);
+        $inscripciones = $estudiante
+            ? $estudiante->inscripciones()->where('est_ins', 'ACTIVA')
+                ->with(['gestionAcademica', 'curso', 'paralelo', 'turno'])
+                ->orderByDesc('fei_ins')->get()
+            : new Collection;
         $codClases = $cursos->pluck('cod_cla');
 
         $tareas = Tarea::query()
@@ -209,6 +214,7 @@ class CursoVirtualService
 
         return [
             'cursos' => $cursos,
+            'inscripciones' => $inscripciones,
             'tareas' => $tareas,
             'entregas' => $entregas,
             'pendientes' => $pendientes,
@@ -216,6 +222,7 @@ class CursoVirtualService
             'asistencia' => $asistencia,
             'metricas' => [
                 'asignaturas' => $cursos->count(),
+                'inscripciones_activas' => $inscripciones->count(),
                 'actividades_pendientes' => $pendientes->count(),
                 'tareas_entregadas' => $entregas->unique('cod_tar')->filter(fn (EntregaTarea $entrega) => in_array($entrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO']))->count(),
                 'promedio_actual' => $promedio,
