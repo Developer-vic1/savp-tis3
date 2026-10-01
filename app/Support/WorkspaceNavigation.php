@@ -8,6 +8,101 @@ use Illuminate\Support\Facades\Route;
 
 final class WorkspaceNavigation
 {
+    private const ITEM_ICONS = [
+        'Personas' => 'ph-identification-card',
+        'Usuarios' => 'ph-users-three',
+        'Personal institucional' => 'ph-buildings',
+        'Estudiantes' => 'ph-student',
+        'Docentes' => 'ph-chalkboard-teacher',
+        'Gestión' => 'ph-graduation-cap',
+        'Gestión académica' => 'ph-graduation-cap',
+        'Cursos' => 'ph-squares-four',
+        'Asignaturas' => 'ph-books',
+        'Paralelos' => 'ph-git-branch',
+        'Turnos' => 'ph-clock',
+        'Inscripciones' => 'ph-notebook',
+        'Especialidades técnicas' => 'ph-wrench',
+        'Planes de asignatura' => 'ph-notepad',
+        'Calendario' => 'ph-calendar-dots',
+        'LMS institucional' => 'ph-book-open',
+        'LMS' => 'ph-book-open',
+        'Periodos' => 'ph-calendar-check',
+        'Calificaciones' => 'ph-exam',
+        'Roles y permisos' => 'ph-shield-check',
+        'Asignaciones de Regencia' => 'ph-tree-structure',
+        'Reportes académicos' => 'ph-chart-bar',
+        'Reportes administrativos' => 'ph-chart-line-up',
+        'Reportes de mis grados' => 'ph-chart-bar',
+        'Reportes' => 'ph-chart-bar',
+        'Bitácora' => 'ph-scroll',
+        'Documentación' => 'ph-file-text',
+        'Cuentas operativas' => 'ph-user-focus',
+        'Procedencia' => 'ph-buildings',
+        'Vinculación' => 'ph-arrows-left-right',
+        'Rendimiento' => 'ph-chart-line-up',
+        'Asistencia' => 'ph-calendar-check',
+        'Orientación' => 'ph-compass',
+        'Mis grados' => 'ph-squares-four',
+        'Mis cursos' => 'ph-book-open',
+        'Mis materias' => 'ph-books',
+        'Mi progreso' => 'ph-chart-line-up',
+        'Mi asistencia' => 'ph-calendar-check',
+        'Mis intereses' => 'ph-compass',
+        'Mi futuro académico' => 'ph-path',
+        'Mi preparación' => 'ph-brain',
+        'Mi plan' => 'ph-target',
+        'Fuentes académicas' => 'ph-books',
+        'Asistente de estudio' => 'ph-sparkle',
+    ];
+
+    private const GROUP_ICONS = [
+        'Administración' => 'ph-gear-six',
+        'Gestión académica' => 'ph-graduation-cap',
+        'Académico' => 'ph-book-open',
+        'Seguridad' => 'ph-shield-check',
+        'Reportes' => 'ph-chart-bar',
+        'Orientación' => 'ph-compass',
+        'Seguimiento' => 'ph-pulse',
+        'Consulta y seguimiento' => 'ph-magnifying-glass',
+    ];
+
+    private const ACTIVE_ALIASES = [
+        'docente.cursos' => ['aula-virtual.docente.cursos', 'aula-virtual.docente.curso', 'docente.curso', 'docente.cursos.calificaciones'],
+        'estudiante.materias' => ['aula-virtual.estudiante.asignaturas', 'aula-virtual.estudiante.curso', 'estudiante.materia'],
+        'estudiante.asistencia' => ['aula-virtual.estudiante.asistencia'],
+        'estudiante.intereses' => ['aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados'],
+    ];
+
+    public static function groupIcon(string $group): string
+    {
+        return self::GROUP_ICONS[$group] ?? 'ph-squares-four';
+    }
+
+    public static function groupTone(string $group): string
+    {
+        return match ($group) {
+            'Académico', 'Gestión académica', 'Seguimiento', 'Seguridad' => 'teal',
+            'Orientación', 'Reportes', 'Consulta y seguimiento' => 'sky',
+            default => 'emerald',
+        };
+    }
+
+    public function isActive(array $link): bool
+    {
+        $route = request()->route()?->getName();
+        if (! in_array($route, [$link['route'], ...(self::ACTIVE_ALIASES[$link['route']] ?? [])], true)) {
+            return false;
+        }
+
+        foreach ($link['params'] as $key => $value) {
+            if (request()->route($key) !== $value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function for(User $user): array
     {
         $actor = app(RoleDashboardResolver::class)->roleFor($user);
@@ -79,7 +174,9 @@ final class WorkspaceNavigation
                 continue;
             }
             $params = $item[4] ?? [];
-            $links[] = compact('label', 'route', 'permission', 'group', 'params');
+            $icon = self::ITEM_ICONS[$label] ?? 'ph-squares-four';
+            $tone = self::groupTone($group);
+            $links[] = compact('label', 'route', 'permission', 'group', 'params', 'icon', 'tone');
         }
 
         return $links;

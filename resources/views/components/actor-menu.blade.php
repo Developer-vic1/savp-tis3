@@ -1,63 +1,170 @@
 @php
     $user = auth()->user();
     $resolver = app(\App\Services\RoleDashboardResolver::class);
+    $navigation = app(\App\Support\WorkspaceNavigation::class);
     $role = $user ? $resolver->roleFor($user) : null;
     $dashboard = $user ? $resolver->routeFor($user) : null;
-    $links = $user ? collect(app(\App\Support\WorkspaceNavigation::class)->for($user))->groupBy('group') : collect();
+    $links = $user ? collect($navigation->for($user))->groupBy('group') : collect();
+    $activeGroup = $links->keys()->first(fn ($group) => $links[$group]->contains(fn ($section) => $navigation->isActive($section)));
+    $activeGroup ??= $links->keys()->first();
+    $homeActive = $dashboard && (request()->routeIs($dashboard)
+        || (in_array($role, ['Docente', 'Estudiante'], true) && request()->routeIs('aula-virtual.inicio')));
 @endphp
-<div x-show="mobileSidebar" x-cloak class="fixed inset-0 z-40 bg-slate-950/50 backdrop-blur-sm lg:hidden"
+
+<div x-show="mobileSidebar" x-cloak x-transition.opacity.duration.200ms
+    class="fixed inset-0 z-40 bg-slate-950/55 backdrop-blur-sm lg:hidden"
     @click="mobileSidebar = false" aria-hidden="true"></div>
+
 <aside id="workspace-sidebar" aria-label="Navegación de {{ $role ?? 'SAVP' }}"
-    class="fixed left-0 top-0 z-50 flex h-screen flex-col border-r shadow-md transition-all duration-300"
-    :class="[sidebarOpen ? 'lg:w-72' : 'lg:w-20', mobileSidebar ? 'translate-x-0 w-72' : '-translate-x-full w-72 lg:translate-x-0']"
-    style="background: color-mix(in srgb, var(--ui-surface) 94%, transparent); border-color: var(--ui-border); color: var(--ui-text);">
-    <header class="flex items-center justify-between border-b p-4" style="border-color: var(--ui-border);">
-        <a href="{{ $dashboard ? route($dashboard) : route('dashboard') }}" class="flex min-w-0 items-center gap-3">
-            <img src="{{ asset('image/LOGO FT3 A.jpg') }}" alt="Logo Franz Tamayo 3" class="h-11 w-11 shrink-0 rounded-2xl object-contain">
+    x-data="{
+        openGroup: @js($activeGroup),
+        tooltip: '',
+        tooltipY: 0,
+        showTip(label, event) {
+            const bounds = event.currentTarget.getBoundingClientRect();
+            this.tooltip = label;
+            this.tooltipY = bounds.top + bounds.height / 2;
+        }
+    }"
+    x-init="(() => {
+        try {
+            const saved = localStorage.getItem('savp-sidebar-open');
+            if (saved !== null) sidebarOpen = saved === 'true';
+        } catch (error) {}
+        $watch('sidebarOpen', value => {
+            tooltip = '';
+            try { localStorage.setItem('savp-sidebar-open', String(value)); } catch (error) {}
+        });
+    })()"
+    class="savp-sidebar fixed left-0 top-0 z-50 flex h-screen flex-col transition-[width,transform] duration-200"
+    :class="[sidebarOpen ? 'lg:w-72' : 'lg:w-20', mobileSidebar ? 'translate-x-0 w-72' : '-translate-x-full w-72 lg:translate-x-0']">
+
+    <header class="savp-sidebar-brand">
+        <a href="{{ $dashboard ? route($dashboard) : route('dashboard') }}"
+            class="savp-sidebar-brand-link" title="Inicio SAVP-TIS3"
+            @click="mobileSidebar = false"
+            @mouseenter="showTip('Inicio SAVP-TIS3', $event)" @mouseleave="tooltip = ''"
+            @focus="showTip('Inicio SAVP-TIS3', $event)" @blur="tooltip = ''">
+            <span class="savp-sidebar-logo">
+                <img src="{{ asset('image/LOGO FT3 A.jpg') }}" alt="Logo de la Unidad Educativa Franz Tamayo N°3">
+            </span>
             <span x-show="sidebarOpen || mobileSidebar" x-cloak class="min-w-0">
-                <span class="block truncate text-sm font-black">Franz Tamayo N°3</span>
-                <span class="ui-muted block text-xs">SAVP – TIS 3</span>
+                <span class="savp-sidebar-brand-name">Franz Tamayo N°3</span>
+                <span class="savp-sidebar-brand-subtitle">SAVP · TIS 3</span>
             </span>
         </a>
-        <button type="button" class="ui-icon-btn lg:hidden" @click="mobileSidebar = false" aria-label="Cerrar menú">×</button>
-    </header>
-    <div class="p-3">
-        <button type="button" class="ui-btn-secondary hidden w-full lg:flex" @click="sidebarOpen = !sidebarOpen"
-            :aria-expanded="sidebarOpen" aria-controls="workspace-sidebar" aria-label="Expandir o contraer menú">
-            <span aria-hidden="true">☰</span><span x-show="sidebarOpen" x-cloak class="ml-2">{{ $role }}</span>
+        <button type="button" class="savp-sidebar-toggle hidden lg:inline-flex"
+            @click="sidebarOpen = !sidebarOpen; tooltip = ''"
+            :aria-expanded="sidebarOpen"
+            :aria-label="sidebarOpen ? 'Contraer menú' : 'Expandir menú'"
+            :title="sidebarOpen ? 'Contraer menú' : 'Expandir menú'"
+            aria-controls="workspace-sidebar">
+            <i class="ph-duotone ph-sidebar-simple" aria-hidden="true"></i>
         </button>
-        <p x-show="mobileSidebar" x-cloak class="font-bold lg:hidden">{{ $role }}</p>
+        <button type="button" class="savp-sidebar-mobile-close lg:hidden"
+            @click="mobileSidebar = false" aria-label="Cerrar menú" title="Cerrar menú">
+            <i class="ph-duotone ph-x" aria-hidden="true"></i>
+        </button>
+    </header>
+
+    <div class="savp-sidebar-actor">
+        <span class="savp-sidebar-actor-icon"><i class="ph-duotone ph-shield-check" aria-hidden="true"></i></span>
+        <span x-show="sidebarOpen || mobileSidebar" x-cloak class="min-w-0">
+            <span class="savp-sidebar-actor-name">{{ $role ?? 'SAVP-TIS3' }}</span>
+            <span class="savp-sidebar-actor-caption">Espacio de trabajo institucional</span>
+        </span>
     </div>
-    <nav class="ui-scrollbar flex-1 space-y-3 overflow-y-auto px-3 pb-4">
+
+    <nav class="savp-sidebar-nav ui-scrollbar flex-1 overflow-y-auto overflow-x-hidden" aria-label="Módulos autorizados">
         @if ($dashboard)
-            <a href="{{ route($dashboard) }}" @click="mobileSidebar = false" title="Inicio"
-                class="flex items-center gap-3 rounded-xl px-3 py-3 font-semibold hover:bg-[var(--ui-primary-soft)]">
-                <span aria-hidden="true">⌂</span><span x-show="sidebarOpen || mobileSidebar" x-cloak>Inicio</span>
+            <div class="savp-sidebar-nav-label" x-show="sidebarOpen || mobileSidebar" x-cloak>Principal</div>
+            <a href="{{ route($dashboard) }}"
+                class="savp-sidebar-link savp-sidebar-tone-emerald {{ $homeActive ? 'is-active' : '' }}"
+                title="Inicio" @if ($homeActive) aria-current="page" @endif
+                @click="mobileSidebar = false"
+                @mouseenter="showTip('Inicio', $event)" @mouseleave="tooltip = ''"
+                @focus="showTip('Inicio', $event)" @blur="tooltip = ''">
+                <span class="savp-sidebar-link-icon"><i class="ph-duotone ph-house" aria-hidden="true"></i></span>
+                <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-link-label">Inicio</span>
             </a>
         @endif
+
         @foreach ($links as $group => $sections)
-            <section>
-                <h2 x-show="sidebarOpen || mobileSidebar" x-cloak class="ui-muted px-3 py-2 text-xs font-semibold uppercase">{{ $group }}</h2>
-                @foreach ($sections as $section)
-                    @php($active = request()->routeIs($section['route']) && collect($section['params'])->every(fn ($value, $key) => request()->route($key) === $value))
-                    <a href="{{ route($section['route'], $section['params']) }}" @click="mobileSidebar = false"
-                        title="{{ $section['label'] }}" @if($active) aria-current="page" @endif
-                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition hover:bg-[var(--ui-primary-soft)]"
-                        style="{{ $active ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-text-soft);' }}">
-                        <span aria-hidden="true">•</span><span x-show="sidebarOpen || mobileSidebar" x-cloak>{{ $section['label'] }}</span>
-                    </a>
-                @endforeach
+            @php
+                $groupIcon = \App\Support\WorkspaceNavigation::groupIcon($group);
+                $groupTone = \App\Support\WorkspaceNavigation::groupTone($group);
+            @endphp
+            <section class="savp-sidebar-section" aria-label="{{ $group }}">
+                <button type="button" id="workspace-group-button-{{ $loop->index }}"
+                    class="savp-sidebar-group savp-sidebar-tone-{{ $groupTone }}"
+                    title="{{ $group }}" aria-label="Grupo {{ $group }}"
+                    aria-controls="workspace-group-{{ $loop->index }}"
+                    :aria-expanded="(sidebarOpen || mobileSidebar) && openGroup === @js($group)"
+                    @click="
+                        if (!sidebarOpen && !mobileSidebar) {
+                            sidebarOpen = true;
+                            openGroup = @js($group);
+                        } else {
+                            openGroup = openGroup === @js($group) ? null : @js($group);
+                        }
+                        tooltip = '';
+                    "
+                    @mouseenter="showTip(@js($group), $event)" @mouseleave="tooltip = ''"
+                    @focus="showTip(@js($group), $event)" @blur="tooltip = ''">
+                    <span class="savp-sidebar-group-icon"><i class="ph-duotone {{ $groupIcon }}" aria-hidden="true"></i></span>
+                    <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-group-label">{{ $group }}</span>
+                    <i x-show="sidebarOpen || mobileSidebar" x-cloak
+                        class="ph-duotone ph-caret-down savp-sidebar-group-caret"
+                        :class="{ 'rotate-180': openGroup === @js($group) }" aria-hidden="true"></i>
+                </button>
+                <div id="workspace-group-{{ $loop->index }}" role="group"
+                    aria-labelledby="workspace-group-button-{{ $loop->index }}"
+                    x-show="(sidebarOpen || mobileSidebar) && openGroup === @js($group)" x-cloak
+                    x-transition:enter="transition duration-200 ease-out"
+                    x-transition:enter-start="opacity-0 -translate-y-1"
+                    x-transition:enter-end="opacity-100 translate-y-0"
+                    x-transition:leave="transition duration-150 ease-in"
+                    x-transition:leave-start="opacity-100 translate-y-0"
+                    x-transition:leave-end="opacity-0 -translate-y-1"
+                    class="savp-sidebar-group-items">
+                    @foreach ($sections as $section)
+                        @php($active = $navigation->isActive($section))
+                        <a href="{{ route($section['route'], $section['params']) }}"
+                            class="savp-sidebar-link savp-sidebar-child savp-sidebar-tone-{{ $section['tone'] }} {{ $active ? 'is-active' : '' }}"
+                            title="{{ $section['label'] }}"
+                            @if ($active) aria-current="page" @endif
+                            @click="mobileSidebar = false">
+                            <span class="savp-sidebar-link-icon"><i class="ph-duotone {{ $section['icon'] }}" aria-hidden="true"></i></span>
+                            <span class="savp-sidebar-link-label">{{ $section['label'] }}</span>
+                        </a>
+                    @endforeach
+                </div>
             </section>
         @endforeach
     </nav>
-    <footer class="border-t p-3" style="border-color: var(--ui-border);">
-        <a href="{{ route('profile.show') }}" title="Mi perfil" class="flex items-center gap-3 rounded-xl px-3 py-3 text-sm">
-            <span aria-hidden="true">○</span><span x-show="sidebarOpen || mobileSidebar" x-cloak>Mi perfil</span>
+
+    <footer class="savp-sidebar-footer">
+        <a href="{{ route('profile.show') }}" class="savp-sidebar-link savp-sidebar-tone-sky {{ request()->routeIs('profile.show') ? 'is-active' : '' }}"
+            title="Mi perfil" @if (request()->routeIs('profile.show')) aria-current="page" @endif
+            @click="mobileSidebar = false"
+            @mouseenter="showTip('Mi perfil', $event)" @mouseleave="tooltip = ''"
+            @focus="showTip('Mi perfil', $event)" @blur="tooltip = ''">
+            <span class="savp-sidebar-link-icon"><i class="ph-duotone ph-user-circle" aria-hidden="true"></i></span>
+            <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-link-label">Mi perfil</span>
         </a>
-        <form method="POST" action="{{ route('logout') }}">@csrf
-            <button type="submit" title="Cerrar sesión" class="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm" style="color: var(--ui-danger);">
-                <span aria-hidden="true">↪</span><span x-show="sidebarOpen || mobileSidebar" x-cloak>Cerrar sesión</span>
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="savp-sidebar-link savp-sidebar-logout"
+                title="Cerrar sesión" aria-label="Cerrar sesión"
+                @mouseenter="showTip('Cerrar sesión', $event)" @mouseleave="tooltip = ''"
+                @focus="showTip('Cerrar sesión', $event)" @blur="tooltip = ''">
+                <span class="savp-sidebar-link-icon"><i class="ph-duotone ph-sign-out" aria-hidden="true"></i></span>
+                <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-link-label">Cerrar sesión</span>
             </button>
         </form>
     </footer>
+
+    <div x-show="!sidebarOpen && !mobileSidebar && tooltip" x-cloak
+        class="savp-sidebar-tooltip hidden lg:block" :style="'top: ' + tooltipY + 'px'"
+        x-text="tooltip" aria-hidden="true"></div>
 </aside>

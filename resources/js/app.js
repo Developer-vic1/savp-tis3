@@ -1,4 +1,5 @@
 import './bootstrap';
+import '@phosphor-icons/web/duotone';
 
 import Swal from 'sweetalert2';
 import Chart from 'chart.js/auto';

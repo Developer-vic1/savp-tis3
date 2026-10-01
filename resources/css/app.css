@@ -195,6 +195,210 @@
     }
 }
 
+/* Navegación canónica por actor: comparte tokens de tema con el resto del sistema. */
+@layer components {
+    .savp-sidebar {
+        color: var(--ui-text);
+        background: color-mix(in srgb, var(--ui-surface) 96%, var(--ui-primary-soft));
+        border-right: 1px solid var(--ui-border);
+        box-shadow: var(--ui-shadow-md);
+        backdrop-filter: blur(16px);
+    }
+
+    .savp-sidebar-tone-emerald { --savp-sidebar-accent: var(--ui-primary); }
+    .savp-sidebar-tone-teal { --savp-sidebar-accent: color-mix(in srgb, var(--ui-primary) 72%, var(--ui-info)); }
+    .savp-sidebar-tone-sky { --savp-sidebar-accent: var(--ui-info); }
+
+    .savp-sidebar-brand {
+        position: relative;
+        display: flex;
+        min-height: 5.1rem;
+        align-items: center;
+        gap: .5rem;
+        padding: .9rem .75rem;
+        border-bottom: 1px solid var(--ui-border);
+    }
+
+    .savp-sidebar-brand-link {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: .65rem;
+        color: var(--ui-text);
+    }
+
+    .savp-sidebar-logo {
+        display: grid;
+        width: 2.7rem;
+        height: 2.7rem;
+        flex: none;
+        place-items: center;
+        overflow: hidden;
+        border: 1px solid var(--ui-primary-border);
+        border-radius: .9rem;
+        background: var(--ui-surface);
+        box-shadow: var(--ui-shadow-sm);
+    }
+
+    .savp-sidebar-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .savp-sidebar-brand-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .85rem; font-weight: 800; }
+    .savp-sidebar-brand-subtitle { display: block; margin-top: .1rem; color: var(--ui-muted); font-size: .69rem; font-weight: 700; letter-spacing: .08em; }
+
+    .savp-sidebar-toggle {
+        position: absolute;
+        top: 1.75rem;
+        right: -.85rem;
+        z-index: 2;
+        width: 1.75rem;
+        height: 1.75rem;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--ui-border);
+        border-radius: 999px;
+        background: var(--ui-surface);
+        color: var(--ui-primary);
+        box-shadow: var(--ui-shadow-sm);
+        transition: transform 180ms ease, background-color 180ms ease;
+    }
+
+    .savp-sidebar-toggle:hover { transform: scale(1.08); background: var(--ui-primary-soft); }
+    .savp-sidebar-mobile-close { margin-left: auto; padding: .5rem; color: var(--ui-text-soft); font-size: 1.25rem; }
+
+    .savp-sidebar-actor {
+        display: flex;
+        min-height: 3.6rem;
+        align-items: center;
+        gap: .65rem;
+        margin: .75rem .65rem .9rem;
+        padding: .55rem;
+        border: 1px solid color-mix(in srgb, var(--ui-primary-border) 75%, var(--ui-info-border));
+        border-radius: 1rem;
+        background: linear-gradient(120deg, var(--ui-primary-soft), var(--ui-info-soft));
+    }
+
+    .savp-sidebar-actor-icon {
+        display: grid;
+        width: 2.3rem;
+        height: 2.3rem;
+        flex: none;
+        place-items: center;
+        border-radius: .75rem;
+        background: var(--ui-surface);
+        color: var(--ui-primary);
+        font-size: 1.2rem;
+    }
+
+    .savp-sidebar-actor-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .79rem; font-weight: 800; }
+    .savp-sidebar-actor-caption { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: .1rem; color: var(--ui-muted); font-size: .65rem; }
+
+    .savp-sidebar-nav { padding: .2rem .55rem 1rem; }
+    .savp-sidebar-nav-label { margin: .25rem .55rem .4rem; color: var(--ui-muted); font-size: .63rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .savp-sidebar-section { margin-top: .6rem; }
+
+    .savp-sidebar-link,
+    .savp-sidebar-group {
+        position: relative;
+        display: flex;
+        width: 100%;
+        min-height: 2.75rem;
+        align-items: center;
+        gap: .55rem;
+        padding: .3rem .42rem;
+        border: 1px solid transparent;
+        border-radius: .85rem;
+        color: var(--ui-text-soft);
+        text-align: left;
+        transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease, transform 180ms ease;
+    }
+
+    .savp-sidebar-link:hover,
+    .savp-sidebar-group:hover { background: var(--ui-surface-muted); color: var(--ui-text); }
+
+    .savp-sidebar-link-icon,
+    .savp-sidebar-group-icon {
+        display: grid;
+        width: 2.2rem;
+        height: 2.2rem;
+        flex: none;
+        place-items: center;
+        border-radius: .68rem;
+        background: color-mix(in srgb, var(--savp-sidebar-accent) 12%, var(--ui-surface));
+        color: var(--savp-sidebar-accent);
+        font-size: 1.18rem;
+        transition: transform 180ms ease, background-color 180ms ease;
+    }
+
+    .savp-sidebar-link:hover .savp-sidebar-link-icon,
+    .savp-sidebar-group:hover .savp-sidebar-group-icon { transform: scale(1.05); background: color-mix(in srgb, var(--savp-sidebar-accent) 19%, var(--ui-surface)); }
+
+    .savp-sidebar-link-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; font-weight: 600; }
+    .savp-sidebar-group-label { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .7rem; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    .savp-sidebar-group-caret { margin-left: auto; color: var(--ui-muted); font-size: .85rem; transition: transform 180ms ease; }
+    .savp-sidebar-group-items { margin: .2rem 0 .3rem .95rem; padding-left: .45rem; border-left: 1px solid var(--ui-border); }
+    .savp-sidebar-child { min-height: 2.55rem; }
+    .savp-sidebar-child .savp-sidebar-link-icon { width: 1.95rem; height: 1.95rem; font-size: 1.05rem; }
+
+    .savp-sidebar-link.is-active {
+        border-color: var(--ui-primary-border);
+        background: var(--ui-primary-soft);
+        color: var(--ui-primary);
+        font-weight: 800;
+    }
+
+    .savp-sidebar-link.is-active::before {
+        position: absolute;
+        top: .52rem;
+        bottom: .52rem;
+        left: -.45rem;
+        width: 3px;
+        border-radius: 999px;
+        background: var(--ui-primary);
+        content: '';
+    }
+
+    .savp-sidebar-group:hover .ph-gear-six { transform: rotate(12deg); }
+    .savp-sidebar-group:hover .ph-graduation-cap { transform: translateY(-2px); }
+    .savp-sidebar-group:hover .ph-compass { transform: rotate(12deg); }
+    .savp-sidebar-group:hover .ph-chart-bar,
+    .savp-sidebar-group:hover .ph-pulse { transform: translateY(-1px); }
+    .savp-sidebar-group .ph-duotone { transition: transform 180ms ease; }
+
+    .savp-sidebar-footer { padding: .65rem .55rem; border-top: 1px solid var(--ui-border); }
+    .savp-sidebar-footer form { margin-top: .18rem; }
+    .savp-sidebar-logout { color: var(--ui-danger); }
+    .savp-sidebar-logout .savp-sidebar-link-icon { background: var(--ui-danger-soft); color: var(--ui-danger); }
+    .savp-sidebar-logout:hover { background: var(--ui-danger-soft); color: var(--ui-danger); }
+    .savp-sidebar-logout:hover .ph-sign-out { transform: translateX(2px); }
+    .savp-sidebar-logout .ph-sign-out { transition: transform 180ms ease; }
+
+    .savp-sidebar-tooltip {
+        position: fixed;
+        left: 5.45rem;
+        z-index: 70;
+        transform: translateY(-50%);
+        max-width: 15rem;
+        padding: .45rem .7rem;
+        border: 1px solid var(--ui-border);
+        border-radius: .65rem;
+        background: var(--ui-surface);
+        color: var(--ui-text);
+        box-shadow: var(--ui-shadow-md);
+        font-size: .75rem;
+        font-weight: 700;
+        white-space: nowrap;
+        pointer-events: none;
+    }
+
+    .savp-sidebar a:focus-visible,
+    .savp-sidebar button:focus-visible { outline: 2px solid var(--ui-primary); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+        .savp-sidebar *,
+        .savp-sidebar *::before,
+        .savp-sidebar *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+}
+
 /*
 |--------------------------------------------------------------------------
 | CLASES REUTILIZABLES UI
