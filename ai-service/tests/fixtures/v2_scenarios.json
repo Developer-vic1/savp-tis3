@@ -1,0 +1,21 @@
+{
+  "fixture_catalog_version": "1.0.0",
+  "classification": "SYNTHETIC_TEST_FIXTURE",
+  "scenarios": [
+    {"id": "complete_profile", "base": "data/fixtures/complete_profile.json"},
+    {"id": "insufficient_profile", "base": "data/fixtures/insufficient_profile.json"},
+    {"id": "partial_without_riasec", "base": "data/fixtures/partial_without_riasec.json"},
+    {"id": "high_affinity_low_preparation_legacy", "base": "data/fixtures/high_affinity_low_preparation.json"},
+    {"id": "v2_no_academic", "mutation": "remove:academic"},
+    {"id": "v2_no_riasec", "mutation": "remove:vocational"},
+    {"id": "v2_no_bth", "mutation": "remove:technical"},
+    {"id": "v2_no_declared_interest", "mutation": "remove:declared_interests"},
+    {"id": "v2_single_period", "mutation": "keep_period_order:1"},
+    {"id": "v2_mixed_grading_scales", "mutation": "equivalent_scales:20,100"},
+    {"id": "v2_riasec_tie", "mutation": "riasec:I=S"},
+    {"id": "v2_flat_riasec", "mutation": "riasec:all_equal"},
+    {"id": "v2_missing_areas", "mutation": "academic.area:null"},
+    {"id": "v2_multiple_university_offerings", "mutation": "catalog:all_active_offerings"},
+    {"id": "v2_insufficient_bridge_evidence", "mutation": "bridge_status:INSUFFICIENT_EVIDENCE"}
+  ]
+}

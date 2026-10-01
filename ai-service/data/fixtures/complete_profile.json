@@ -1,0 +1,54 @@
+{
+  "fixture_type": "SYNTHETIC",
+  "seed": 20260928,
+  "schema_version": "1.0",
+  "student_id": "SYN-COMPLETE-001",
+  "academic_period": "2026-T2",
+  "course": "6to Secundaria",
+  "academic": {
+    "records": [
+      {"subject": "Matemática", "area": "Ciencia y Tecnología", "score": 68, "period": "T1", "period_order": 1},
+      {"subject": "Matemática", "area": "Ciencia y Tecnología", "score": 74, "period": "T2", "period_order": 2},
+      {"subject": "Lenguaje", "area": "Comunicación y Lenguajes", "score": 82, "period": "T1", "period_order": 1},
+      {"subject": "Lenguaje", "area": "Comunicación y Lenguajes", "score": 84, "period": "T2", "period_order": 2}
+    ]
+  },
+  "attendance": {"attended_classes": 86, "total_classes": 100},
+  "vocational": {
+    "instrument_id": "onet-mini-ip-2.0-es",
+    "instrument_version": "2.0-es-2025",
+    "responses": [
+      {"item_id": 1, "value": 3}, {"item_id": 2, "value": 4},
+      {"item_id": 3, "value": 2}, {"item_id": 4, "value": 4},
+      {"item_id": 5, "value": 2}, {"item_id": 6, "value": 3},
+      {"item_id": 7, "value": 3}, {"item_id": 8, "value": 4},
+      {"item_id": 9, "value": 2}, {"item_id": 10, "value": 4},
+      {"item_id": 11, "value": 2}, {"item_id": 12, "value": 3},
+      {"item_id": 13, "value": 3}, {"item_id": 14, "value": 4},
+      {"item_id": 15, "value": 2}, {"item_id": 16, "value": 4},
+      {"item_id": 17, "value": 2}, {"item_id": 18, "value": 3},
+      {"item_id": 19, "value": 3}, {"item_id": 20, "value": 4},
+      {"item_id": 21, "value": 2}, {"item_id": 22, "value": 4},
+      {"item_id": 23, "value": 2}, {"item_id": 24, "value": 3},
+      {"item_id": 25, "value": 3}, {"item_id": 26, "value": 4},
+      {"item_id": 27, "value": 2}, {"item_id": 28, "value": 4},
+      {"item_id": 29, "value": 2}, {"item_id": 30, "value": 3}
+    ]
+  },
+  "technical": {
+    "specialty": "Sistemas informáticos",
+    "competencies": [{"name": "Programación básica", "evidence": "Proyecto sintético"}]
+  },
+  "declared_interests": ["tecnología", "resolver problemas"],
+  "learning_activity": {
+    "assigned": 4,
+    "delivered": 3,
+    "late": 1,
+    "tasks": [
+      {"task_id": "T1-MAT", "delivered": true, "late": false, "score": 15, "scale_max": 20, "period": "T1", "period_order": 1},
+      {"task_id": "T1-LEN", "delivered": true, "late": true, "score": 80, "period": "T1", "period_order": 1},
+      {"task_id": "T2-MAT", "delivered": true, "late": false, "score": 18, "scale_max": 20, "period": "T2", "period_order": 2},
+      {"task_id": "T2-LEN", "delivered": false, "period": "T2", "period_order": 2}
+    ]
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "corpus_version": "bo-official-corpus-1.0.0",
+  "source_manifest_version": "2.1.0",
+  "source_count": 12,
+  "chunk_count": 773,
+  "statistics": [
+    {
+      "source_id": "BO-ME-CURRICULO-BASE-2012",
+      "segments": 211,
+      "chunks": 265,
+      "digital_pages": 198,
+      "ocr_pages": 13,
+      "warnings": [
+        "Página 20 sin texto recuperable.",
+        "Página 46 sin texto recuperable.",
+        "Página 80 sin texto recuperable.",
+        "Página 108 sin texto recuperable.",
+        "Página 130 sin texto recuperable.",
+        "Página 148 sin texto recuperable.",
+        "Página 182 sin texto recuperable.",
+        "Página 218 sin texto recuperable.",
+        "Página 219 sin texto recuperable."
+      ]
+    },
+    {
+      "source_id": "BO-ME-BTH-RM-0244-2023",
+      "segments": 182,
+      "chunks": 355,
+      "digital_pages": 175,
+      "ocr_pages": 7,
+      "warnings": [
+        "Página 4 sin texto recuperable.",
+        "Página 183 sin texto recuperable."
+      ]
+    },
+    {
+      "source_id": "BO-UCB-LP-SIS-MALLA-2026",
+      "segments": 1,
+      "chunks": 4,
+      "digital_pages": 1,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-SIS-PROFILE-2026",
+      "segments": 7,
+      "chunks": 7,
+      "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-PSI-MALLA-2026",
+      "segments": 1,
+      "chunks": 4,
+      "digital_pages": 1,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-PSI-PROFILE-2026",
+      "segments": 6,
+      "chunks": 6,
+      "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-CIV-MALLA-2026",
+      "segments": 1,
+      "chunks": 4,
+      "digital_pages": 1,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-CIV-PROFILE-2026",
+      "segments": 6,
+      "chunks": 6,
+      "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-IAM-MALLA-2026",
+      "segments": 1,
+      "chunks": 4,
+      "digital_pages": 1,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UCB-LP-IAM-PROFILE-2026",
+      "segments": 6,
+      "chunks": 7,
+      "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-ME-EVALUACION-REGULAR-RM-0190-2024",
+      "segments": 27,
+      "chunks": 84,
+      "digital_pages": 27,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UMSA-LP-CIV-PLAN-2023",
+      "segments": 12,
+      "chunks": 27,
+      "digital_pages": 10,
+      "ocr_pages": 2,
+      "warnings": []
+    }
+  ]
+}

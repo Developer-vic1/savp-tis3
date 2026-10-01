@@ -1,0 +1,22 @@
+{
+  "fixture_type": "SYNTHETIC_SCENARIO_CATALOG",
+  "seed": 20260928,
+  "scenarios": [
+    {"id": "complete", "base": "complete_profile.json", "purpose": "perfil completo"},
+    {"id": "partial", "base": "partial_without_riasec.json", "purpose": "perfil parcial"},
+    {"id": "insufficient", "base": "insufficient_profile.json", "purpose": "perfil insuficiente"},
+    {"id": "without_riasec", "base": "partial_without_riasec.json", "purpose": "sin RIASEC"},
+    {"id": "without_grades", "base": "complete_profile.json", "remove": ["academic"], "purpose": "sin notas"},
+    {"id": "without_bth", "base": "complete_profile.json", "remove": ["technical"], "purpose": "sin BTH"},
+    {"id": "riasec_flat", "generator": {"all_responses": 2}, "purpose": "RIASEC plano"},
+    {"id": "riasec_minimum", "generator": {"all_responses": 0}, "purpose": "extremo mínimo"},
+    {"id": "riasec_maximum", "generator": {"all_responses": 4}, "purpose": "extremo máximo"},
+    {"id": "riasec_tie", "generator": {"I": 4, "S": 4, "others": 0}, "purpose": "empate RIASEC"},
+    {"id": "high_affinity_low_preparation", "base": "high_affinity_low_preparation.json", "purpose": "intereses altos y preparación actual baja"},
+    {"id": "low_affinity_high_preparation", "base": "complete_profile.json", "override": {"academic_score": 95, "target_riasec": 0}, "purpose": "intereses bajos y preparación actual alta"},
+    {"id": "career_without_sources", "base": "insufficient_profile.json", "purpose": "carrera sin fuentes; no calcular"},
+    {"id": "missing_subjects", "base": "partial_without_riasec.json", "override": {"single_subject": true}, "purpose": "materias faltantes"},
+    {"id": "attendance_missing", "base": "complete_profile.json", "remove": ["attendance"], "purpose": "asistencia faltante"}
+  ],
+  "notice": "Los escenarios son pruebas de software y robustez. No representan estudiantes reales ni precisión predictiva."
+}

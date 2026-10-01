@@ -1,0 +1,11 @@
+.venv/
+.venv312/
+.cache/
+.models/
+.tools/
+.coverage
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+**/__pycache__/
+tmp/

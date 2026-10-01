@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<link rel="pingback" href="https://lpz.ucb.edu.bo/xmlrpc.php" />
+
+	<script type="text/javascript">
+		document.documentElement.className = 'js';
+	</script>
+
+	<title>Ingeniería de Sistemas | Universidad Católica Boliviana &quot;San Pablo&quot; Sede La Paz</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /><style id="et-builder-googlefonts-cached-inline">/* Original: https://fonts.googleapis.com/css?family=Oswald:200,300,regular,500,600,700|Roboto+Condensed:300,300italic,regular,italic,700,700italic&#038;subset=cyrillic,cyrillic-ext,latin,latin-ext,vietnamese,greek,greek-ext&#038;display=swap *//* User Agent: Mozilla/5.0 (Unknown; Linux x86_64) AppleWebKit/538.1 (KHTML, like Gecko) Safari/538.1 Daum/4.1 */@font-face {font-family: 'Oswald';font-style: normal;font-weight: 200;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs13FvgUE.ttf) format('truetype');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs169vgUE.ttf) format('truetype');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUE.ttf) format('truetype');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 500;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs18NvgUE.ttf) format('truetype');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 600;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1y9ogUE.ttf) format('truetype');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1xZogUE.ttf) format('truetype');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64UYK5Xk.ttf) format('truetype');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64RgK5Xk.ttf) format('truetype');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64f8N5Xk.ttf) format('truetype');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyXsovBJ.ttf) format('truetype');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyWyovBJ.ttf) format('truetype');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyVVpfBJ.ttf) format('truetype');}/* User Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0 */@font-face {font-family: 'Oswald';font-style: normal;font-weight: 200;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs13FvgUI.woff) format('woff');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs169vgUI.woff) format('woff');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUI.woff) format('woff');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 500;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs18NvgUI.woff) format('woff');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 600;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1y9ogUI.woff) format('woff');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1xZogUI.woff) format('woff');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64UYK5Xo.woff) format('woff');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64RgK5Xo.woff) format('woff');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64f8N5Xo.woff) format('woff');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyXsovBK.woff) format('woff');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyWyovBK.woff) format('woff');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyVVpfBK.woff) format('woff');}/* User Agent: Mozilla/5.0 (Windows NT 6.3; rv:39.0) Gecko/20100101 Firefox/39.0 */@font-face {font-family: 'Oswald';font-style: normal;font-weight: 200;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs13FvgUQ.woff2) format('woff2');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs169vgUQ.woff2) format('woff2');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1_FvgUQ.woff2) format('woff2');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 500;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs18NvgUQ.woff2) format('woff2');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 600;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1y9ogUQ.woff2) format('woff2');}@font-face {font-family: 'Oswald';font-style: normal;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/oswald/v57/TK3_WkUHHAIjg75cFRf3bXL8LICs1xZogUQ.woff2) format('woff2');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64UYK5Xw.woff2) format('woff2');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64RgK5Xw.woff2) format('woff2');}@font-face {font-family: 'Roboto Condensed';font-style: italic;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVW2ZhZI2eCN5jzbjEETS9weq8-19ehAyvMum7nfDB64f8N5Xw.woff2) format('woff2');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 300;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyXsovBM.woff2) format('woff2');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 400;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyWyovBM.woff2) format('woff2');}@font-face {font-family: 'Roboto Condensed';font-style: normal;font-weight: 700;font-display: swap;src: url(https://fonts.gstatic.com/s/robotocondensed/v31/ieVo2ZhZI2eCN5jzbjEETS9weq8-_d6T_POl0fRJeyVVpfBM.woff2) format('woff2');}</style><meta name='robots' content='max-image-preview:large' />
+<script type="text/javascript">
+			let jqueryParams=[],jQuery=function(r){return jqueryParams=[...jqueryParams,r],jQuery},$=function(r){return jqueryParams=[...jqueryParams,r],$};window.jQuery=jQuery,window.$=jQuery;let customHeadScripts=!1;jQuery.fn=jQuery.prototype={},$.fn=jQuery.prototype={},jQuery.noConflict=function(r){if(window.jQuery)return jQuery=window.jQuery,$=window.jQuery,customHeadScripts=!0,jQuery.noConflict},jQuery.ready=function(r){jqueryParams=[...jqueryParams,r]},$.ready=function(r){jqueryParams=[...jqueryParams,r]},jQuery.load=function(r){jqueryParams=[...jqueryParams,r]},$.load=function(r){jqueryParams=[...jqueryParams,r]},jQuery.fn.ready=function(r){jqueryParams=[...jqueryParams,r]},$.fn.ready=function(r){jqueryParams=[...jqueryParams,r]};</script><link rel='dns-prefetch' href='//www.googletagmanager.com' />
+<link rel="alternate" type="application/rss+xml" title="Universidad Católica Boliviana &quot;San Pablo&quot; Sede La Paz &raquo; Feed" href="https://lpz.ucb.edu.bo/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Universidad Católica Boliviana &quot;San Pablo&quot; Sede La Paz &raquo; Feed de los comentarios" href="https://lpz.ucb.edu.bo/comments/feed/" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://lpz.ucb.edu.bo/wp-json/oembed/1.0/embed?url=https%3A%2F%2Flpz.ucb.edu.bo%2Fpregrado%2Fingenieria-de-sistemas%2F" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://lpz.ucb.edu.bo/wp-json/oembed/1.0/embed?url=https%3A%2F%2Flpz.ucb.edu.bo%2Fpregrado%2Fingenieria-de-sistemas%2F&#038;format=xml" />
+<meta content="Divi v.4.27.9" name="generator"/><link rel='stylesheet' id='ht_ctc_main_css-css' href='https://lpz.ucb.edu.bo/wp-content/plugins/click-to-chat-for-whatsapp/new/inc/assets/css/main.css?ver=4.44' media='all' />
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:root { --wp--style--global--content-size: 823px;--wp--style--global--wide-size: 1080px; }:where(body) { margin: 0; }.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}.is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='supsystic-pricing-fonts-css' href='https://lpz.ucb.edu.bo/wp-content/plugins/data-tables-generator-by-supsystic/src/SupsysticTables/Pricing/assets/css/pricing.fonts.css?ver=1.0.0' media='all' />
+<link rel='stylesheet' id='supsystic-pricing-icons-css' href='https://lpz.ucb.edu.bo/wp-content/plugins/data-tables-generator-by-supsystic/src/SupsysticTables/Pricing/assets/css/font-awesome.min.css?ver=4.7.0' media='all' />
+<link rel='stylesheet' id='supsystic-pricing-css' href='https://lpz.ucb.edu.bo/wp-content/plugins/data-tables-generator-by-supsystic/src/SupsysticTables/Pricing/assets/css/pricing.frontend.css?ver=1.6.4' media='all' />
+<link rel='stylesheet' id='divi-style-pum-css' href='https://lpz.ucb.edu.bo/wp-content/themes/Divi/style-static.min.css?ver=4.27.9' media='all' />
+<!--n2css--><!--n2js-->
+<!-- Fragmento de código de la etiqueta de Google (gtag.js) añadida por Site Kit -->
+<!-- Fragmento de código de Google Analytics añadido por Site Kit -->
+<script id="google_gtagjs-js" src="https://www.googletagmanager.com/gtag/js?id=GT-M348CTN" async></script>
+<script id="google_gtagjs-js-after">
+window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}
+gtag("set","linker",{"domains":["lpz.ucb.edu.bo"]});
+gtag("js", new Date());
+gtag("set", "developer_id.dZTNiMT", true);
+gtag("config", "GT-M348CTN", {"googlesitekit_post_type":"page"});
+//# sourceURL=google_gtagjs-js-after
+</script>
+<link rel="https://api.w.org/" href="https://lpz.ucb.edu.bo/wp-json/" /><link rel="alternate" title="JSON" type="application/json" href="https://lpz.ucb.edu.bo/wp-json/wp/v2/pages/208437" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://lpz.ucb.edu.bo/xmlrpc.php?rsd" />
+<meta name="generator" content="WordPress 7.1.2" />
+<link rel="canonical" href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/" />
+<link rel='shortlink' href='https://lpz.ucb.edu.bo/?p=208437' />
+<meta name="generator" content="Site Kit by Google 1.188.0" />			<!-- DO NOT COPY THIS SNIPPET! Start of Page Analytics Tracking for HubSpot WordPress plugin v11.3.75-->
+			<script class="hsq-set-content-id" data-content-id="standard-page">
+				var _hsq = _hsq || [];
+				_hsq.push(["setContentType", "standard-page"]);
+			</script>
+			<!-- DO NOT COPY THIS SNIPPET! End of Page Analytics Tracking for HubSpot WordPress plugin -->
+			<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /><script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js" integrity="sha384-kW+oWsYx3YpxvjtZjFXqazFpA7UP/MbiY4jvs+RWZo2+N94PFZ36T6TFkc9O3qoB" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JMG3F6W4JD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JMG3F6W4JD');
+</script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-177765597-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-177765597-1');
+</script>
+
+<meta name="google-site-verification" content="WVejS1paPUWrEX7cAEBPLmleyAMyPsi5aPSc-zNDHSs">
+
+<meta name="keywords" content="ucb la paz, ucb regional la paz, universidad católica, universidad catolica, universidad catolica la paz,, emprendedores, identidad católica, Rating QS Star, infraestructura, biblioteca">
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WMJLGG5');</script>
+<!-- End Google Tag Manager -->
+
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv').hide();
+jQuery('.showSingle').click(function(){
+jQuery('.targetDiv').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv1').hide();
+jQuery('.showSingle1').click(function(){
+jQuery('.targetDiv1').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv2').hide();
+jQuery('.showSingle2').click(function(){
+jQuery('.targetDiv2').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv3').hide();
+jQuery('.showSingle3').click(function(){
+jQuery('.targetDiv3').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv4').hide();
+jQuery('.showSingle4').click(function(){
+jQuery('.targetDiv4').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv5').hide();
+jQuery('.showSingle5').click(function(){
+jQuery('.targetDiv5').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv6').hide();
+jQuery('.showSingle6').click(function(){
+jQuery('.targetDiv6').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv7').hide();
+jQuery('.showSingle7').click(function(){
+jQuery('.targetDiv7').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal8').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv8').hide();
+jQuery('.showSingle8').click(function(){
+jQuery('.targetDiv8').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal9').hide();
+});
+});
+</script>
+<script>
+jQuery(document).ready(function(){
+jQuery('.targetDiv9').hide();
+jQuery('.showSingle9').click(function(){
+jQuery('.targetDiv9').slideUp();
+jQuery('#div'+jQuery(this).attr('id')).slideDown();
+jQuery('#divreveal').hide();
+jQuery('#divreveal1').hide();
+jQuery('#divreveal2').hide();
+jQuery('#divreveal3').hide();
+jQuery('#divreveal4').hide();
+jQuery('#divreveal5').hide();
+jQuery('#divreveal6').hide();
+jQuery('#divreveal7').hide();
+jQuery('#divreveal8').hide();
+});
+});
+</script>
+
+<script>
+jQuery(function($){
+    $('.et_pb_accordion .et_pb_toggle_open').addClass('et_pb_toggle_close').removeClass('et_pb_toggle_open');
+
+    $('.et_pb_accordion .et_pb_toggle').click(function() {
+      $this = $(this);
+      setTimeout(function(){
+         $this.closest('.et_pb_accordion').removeClass('et_pb_accordion_toggling');
+      },700);
+    });
+});
+</script>
+<link rel="icon" href="https://lpz.ucb.edu.bo/wp-content/uploads/2018/09/logo-UCB-150x150.png" sizes="32x32" />
+<link rel="icon" href="https://lpz.ucb.edu.bo/wp-content/uploads/2018/09/logo-UCB-300x300.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://lpz.ucb.edu.bo/wp-content/uploads/2018/09/logo-UCB-300x300.png" />
+<meta name="msapplication-TileImage" content="https://lpz.ucb.edu.bo/wp-content/uploads/2018/09/logo-UCB-300x300.png" />
+<link rel="stylesheet" id="et-core-unified-208437-cached-inline-styles" href="https://lpz.ucb.edu.bo/wp-content/et-cache/208437/et-core-unified-208437.min.css?ver=1790711635" /><link rel="stylesheet" id="et-core-unified-deferred-208437-cached-inline-styles" href="https://lpz.ucb.edu.bo/wp-content/et-cache/208437/et-core-unified-deferred-208437.min.css?ver=1790711635" /><link rel='stylesheet' id='mediaelement-css' href='https://lpz.ucb.edu.bo/wp-includes/js/mediaelement/mediaelementplayer-legacy.min.css?ver=4.2.17' media='all' />
+<link rel='stylesheet' id='wp-mediaelement-css' href='https://lpz.ucb.edu.bo/wp-includes/js/mediaelement/wp-mediaelement.min.css?ver=7.1.2' media='all' />
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+/*wp_block_styles_on_demand_placeholder:6abd5f53a1649*/
+/*# sourceURL=wp-block-library-inline-css */
+</style>
+
+</head>
+<body class="wp-singular page-template-default page page-id-208437 page-child parent-pageid-207835 wp-theme-Divi et_pb_button_helper_class et_fullwidth_nav et_fullwidth_secondary_nav et_fixed_nav et_show_nav et_secondary_nav_enabled et_primary_nav_dropdown_animation_fade et_secondary_nav_dropdown_animation_fade et_header_style_centered et_pb_footer_columns2 et_cover_background et_pb_gutter et_pb_gutters3 et_pb_pagebuilder_layout et_smooth_scroll et_no_sidebar et_divi_theme et-db">
+	<div id="page-container">
+
+					<div id="top-header">
+			<div class="container clearfix">
+
+			
+				<div id="et-secondary-menu">
+				<ul class="et-social-icons">
+
+	<li class="et-social-icon et-social-facebook">
+		<a href="https://www.facebook.com/UCB.BOLIVIA/" class="icon">
+			<span>Facebook</span>
+		</a>
+	</li>
+	<li class="et-social-icon et-social-twitter">
+		<a href="https://twitter.com/UCBLaPaz" class="icon">
+			<span>X</span>
+		</a>
+	</li>
+	<li class="et-social-icon et-social-instagram">
+		<a href="https://www.instagram.com/ucb.lapaz/" class="icon">
+			<span>Instagram</span>
+		</a>
+	</li>
+
+</ul><ul id="et-secondary-nav" class="menu"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-209198"><a>Universidad</a>
+<ul class="sub-menu">
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210504"><a href="https://lpz.ucb.edu.bo/quienes-somos/">Quiénes somos</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210232"><a target="_blank" href="https://www.ucb.edu.bo/acerca-de-nosotros/mision-vision-e-identidad-catolica/">Misión, Visión e Identidad</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-218254"><a href="https://www.ucb.edu.bo/otros-programas-academicos/">Unidades Académicas Campesinas</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210254"><a href="https://www.ucb.edu.bo/ceb-y-junta-directiva/">CEUB y Junta Directiva</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210279"><a href="https://www.ucb.edu.bo/rectorado-nacional/">Autoridades Nacionales</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210489"><a href="https://lpz.ucb.edu.bo/autoridades-de-sede/">Autoridades y Junta de Sede</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210491"><a href="https://lpz.ucb.edu.bo/directores-de-carrera/">Directores de Carrera</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210492"><a href="https://www.ucb.edu.bo/acerca-de-nosotros/documentos/">Documentos Nacionales</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-258746"><a href="https://www.ucb.edu.bo/noticias/ucb-en-dialogo/">Boletín UCB en Diálogo</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-228566"><a href="https://lpz.ucb.edu.bo/reglamentos-ucb/">Reglamentos Institucionales</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-220978"><a href="https://lpz.ucb.edu.bo/recursos-ucb/">Recursos</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-259046"><a href="https://www.ucb.edu.bo/glossary/">Glosario Académico</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-227406"><a href="https://lpz.ucb.edu.bo/mapa-ucb-lp/">Mapa UCB</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-209073"><a href="#">Comunidad</a>
+<ul class="sub-menu">
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-207846"><a href="https://lpz.ucb.edu.bo/estudiantes/">Estudiantes</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-207849"><a href="https://lpz.ucb.edu.bo/administrativo/">Administrativos</a></li>
+	<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-207848"><a href="https://lpz.ucb.edu.bo/docente/">Docentes</a></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-251117"><a href="https://app.lpz.ucb.edu.bo/alumni/">Alumni U.C.B.</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-207851"><a target="_blank" href="https://internacional.ucb.edu.bo">Internacional UCB</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-209367"><a target="_blank" href="https://ucb.edu.bo/biblioteca/">Biblioteca</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-209368"><a href="https://lpz.ucb.edu.bo/ultimas-noticias/">Noticias</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-220956"><a href="https://app.lpz.ucb.edu.bo:4090/DirectorioPer/Forms/FRM_BuscadorPersonas1.aspx">Directorio</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-251064"><a href="https://lpz.ucb.edu.bo/preguntas-frecuentes/">Preguntas Frecuentes</a></li>
+</ul>				</div>
+
+			</div>
+		</div>
+		
+	
+			<header id="main-header" data-height-onload="125">
+			<div class="container clearfix et_menu_container">
+							<div class="logo_container">
+					<span class="logo_helper"></span>
+					<a href="https://lpz.ucb.edu.bo/">
+						<img src="http://lpz.ucb.edu.bo/wp-content/uploads/2026/09/luto-ucb.webp" width="590" height="100" alt="Universidad Católica Boliviana &quot;San Pablo&quot; Sede La Paz" id="logo" data-height-percentage="54" />
+					</a>
+				</div>
+							<div id="et-top-navigation" data-height="125" data-fixed-height="40">
+											<nav id="top-menu-nav">
+						<ul id="top-menu" class="nav"><li id="menu-item-221117" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-221117"><a href="https://lpz.ucb.edu.bo/inscripciones/">Inscripciones</a></li>
+<li id="menu-item-229619" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-229619"><a href="https://pagosweb.ucb.edu.bo/">Sistema de pagos</a></li>
+<li id="menu-item-207841" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-207841"><a href="https://lpz.ucb.edu.bo/becas/">Becas</a></li>
+<li id="menu-item-209373" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-209373"><a href="https://lpz.ucb.edu.bo/vida-estudiantil/">Vida estudiantil</a>
+<ul class="sub-menu">
+	<li id="menu-item-244871" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-244871"><a href="https://lpz.ucb.edu.bo/pastoral/">Pastoral</a></li>
+	<li id="menu-item-207842" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-207842"><a href="https://lpz.ucb.edu.bo/cultura-y-arte/">Cultura y Arte</a></li>
+	<li id="menu-item-251673" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-251673"><a href="https://lpz.ucb.edu.bo/deportes/">Deportes</a></li>
+	<li id="menu-item-251356" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-251356"><a href="https://lpz.ucb.edu.bo/centro-de-idiomas/">Centro de Idiomas</a></li>
+	<li id="menu-item-230614" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-230614"><a href="https://lpz.ucb.edu.bo/mediador-universitario/">Mediador Universitario</a></li>
+	<li id="menu-item-230612" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-230612"><a href="https://lpz.ucb.edu.bo/servicio-medico-estudiantil/">Servicio Médico Estudiantil</a></li>
+</ul>
+</li>
+<li id="menu-item-210291" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-210291"><a href="https://lpz.ucb.edu.bo/el-alto/">El Alto</a></li>
+<li id="menu-item-209371" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-209371"><a href="https://lpz.ucb.edu.bo/postgrados/">Postgrados</a></li>
+<li id="menu-item-229618" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-229618"><a href="https://investigacion.ucb.edu.bo/">Investigación</a></li>
+<li id="menu-item-207843" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-207843"><a href="https://lpz.ucb.edu.bo/servicios-universitarios/">Servicios universitarios</a>
+<ul class="sub-menu">
+	<li id="menu-item-230610" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-230610"><a href="https://lpz.ucb.edu.bo/unee/">UNEE &#8211; Unidad de Enlaces Educativos</a></li>
+	<li id="menu-item-230609" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-230609"><a href="https://lpz.ucb.edu.bo/usei/">USEI &#8211; Unidad de Servicios Estudiantiles Integrales</a></li>
+	<li id="menu-item-230613" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-230613"><a href="https://lpz.ucb.edu.bo/sov/">SOV &#8211; Servicio de Orientación Vocacional</a></li>
+	<li id="menu-item-230615" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-230615"><a href="https://lpz.ucb.edu.bo/clinica-juridica/">Clínica Jurídica</a></li>
+</ul>
+</li>
+<li id="menu-item-256610" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-256610"><a href="https://lpz.ucb.edu.bo/ucb-store/">UCB Store</a></li>
+<li id="menu-item-209463" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-209463"><a href="https://lpz.ucb.edu.bo/contacto/">Contactos</a></li>
+<li id="menu-item-247421" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-247421"><a href="https://lpz.ucb.edu.bo/mapa-ucb-lp/">Mapa UCB</a></li>
+</ul>						</nav>
+					
+					
+					
+											<div id="et_top_search">
+							<span id="et_search_icon"></span>
+						</div>
+					
+					<div id="et_mobile_nav_menu">
+				<div class="mobile_nav closed">
+					<span class="select_page">Seleccionar página</span>
+					<span class="mobile_menu_bar mobile_menu_bar_toggle"></span>
+				</div>
+			</div>				</div> <!-- #et-top-navigation -->
+			</div> <!-- .container -->
+						<div class="et_search_outer">
+				<div class="container et_search_form_container">
+					<form role="search" method="get" class="et-search-form" action="https://lpz.ucb.edu.bo/">
+					<input type="search" class="et-search-field" placeholder="Búsqueda &hellip;" value="" name="s" title="Buscar:" />					</form>
+					<span class="et_close_search_field"></span>
+				</div>
+			</div>
+					</header> <!-- #main-header -->
+			<div id="et-main-area">
+	
+<div id="main-content">
+
+
+			
+				<article id="post-208437" class="post-208437 page type-page status-publish hentry">
+
+				
+					<div class="entry-content">
+					<div class="et-l et-l--post">
+			<div class="et_builder_inner_content et_pb_gutters3">
+		<div class="et_pb_section et_pb_section_0 et_pb_with_background et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_0">
+				<div class="et_pb_column et_pb_column_1_4 et_pb_column_0  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_0  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2>Ingeniería de Sistemas</h2></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_4 et_pb_column_1  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_4 et_pb_column_2  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_4 et_pb_column_3  et_pb_css_mix_blend_mode_passthrough et-last-child et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_1 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_1 et_pb_equal_columns et_pb_gutters2">
+				<div class="et_pb_column et_pb_column_1_5 et_pb_column_4 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_3_5 et_pb_column_5 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_image et_pb_image_0">
+				
+				
+				
+				
+				<span class="et_pb_image_wrap "><img fetchpriority="high" decoding="async" width="800" height="553" src="https://lpz.ucb.edu.bo/wp-content/uploads/2024/04/SIS-21x145-copia.jpg" alt="" title="SIS-21x14,5-copia" class="wp-image-241695" /></span>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_5 et_pb_column_6 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_0  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img loading="lazy" decoding="async" width="700" height="700" src="https://lpz.ucb.edu.bo/wp-content/uploads/2023/01/web-Acreditada-SUB.jpg" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone wp-image-233351" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Acreditada por el Sistema de la Universidad Boliviana SUB</span></h4>
+						
+					</div>
+				</div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_2 two-columns et_pb_gutters2">
+				<div class="et_pb_column et_pb_column_1_3 et_pb_column_7 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_3 et_pb_column_8 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_1  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img loading="lazy" decoding="async" width="700" height="700" src="https://lpz.ucb.edu.bo/wp-content/uploads/2023/01/web-Acreditada-SUB.jpg" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone wp-image-233351" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Acreditada por el Sistema de la Universidad Boliviana SUB</span></h4>
+						
+					</div>
+				</div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_3 et_pb_column_9 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough et-last-child et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_2 et_pb_with_background et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_3">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_10  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_image et_pb_image_1">
+				
+				
+				
+				
+				<span class="et_pb_image_wrap "><img loading="lazy" decoding="async" width="170" height="85" src="http://lpz.ucb.edu.bo/wp-content/uploads/2024/11/SIS.png" alt="" title="SIS" class="wp-image-245801" /></span>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_3 et_pb_with_background et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_4">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_11  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_1  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><p>La carrera de Ingeniería de Sistemas de la UCB forma profesionales con visión integral, pensamiento crítico y compromiso ético, capaces de diseñar, desarrollar e implementar soluciones tecnológicas que respondan a las necesidades de la sociedad.</p>
+<p>Combina una sólida formación en ciencias, tecnología y gestión, abarcando áreas como ingeniería de software, sistemas de información, inteligencia artificial, redes y seguridad informática, con un enfoque humanista y orientado al servicio.</p>
+<p>Su sello distintivo es la integración de valores cristianos con la innovación tecnológica, promoviendo el liderazgo, la investigación y la transformación digital al servicio del bien común.</p></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_5">
+				<div class="et_pb_column et_pb_column_1_3 et_pb_column_12  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_2  et_pb_text_align_center  et_pb_blurb_position_top et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap"><span class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone et-pb-icon"></span></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Duración de la Carrera</span></h4>
+						<div class="et_pb_blurb_description"><p>9 semestres</p></div>
+					</div>
+				</div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_3 et_pb_column_13  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_3  et_pb_text_align_center  et_pb_blurb_position_top et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap"><span class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone et-pb-icon"></span></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Áreas de Estudio e Investigación</span></h4>
+						<div class="et_pb_blurb_description"><ul>
+<li style="text-align: left;">Formación en programación y desarrollo de software</li>
+<li style="text-align: left;">Sistemas de información y bases de datos</li>
+<li style="text-align: left;">Redes y seguridad informática</li>
+<li style="text-align: left;">Inteligencia artificial y ciencia de datos</li>
+<li style="text-align: left;">Gestión de proyectos e innovación tecnológica</li>
+</ul></div>
+					</div>
+				</div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_3 et_pb_column_14  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_4  et_pb_text_align_center  et_pb_blurb_position_top et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap"><span class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone et-pb-icon"></span></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Modalidades de Graduación</span></h4>
+						<div class="et_pb_blurb_description"><ul>
+<li style="text-align: left;"><span style="font-weight: 400;">Graduación por excelencia</span></li>
+<li style="text-align: left;"><span style="font-weight: 400;">Tesis de grado</span></li>
+<li style="text-align: left;"><span style="font-weight: 400;">Proyecto de grado</span></li>
+<li style="text-align: left;"><span style="font-weight: 400;">Trabajo dirigido</span></li>
+<li style="text-align: left;"><span style="font-weight: 400;">Graduación por diplomado</span></li>
+</ul>
+<p><span style="font-weight: 400;"></span></p></div>
+					</div>
+				</div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_4 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_6">
+				<div class="et_pb_column et_pb_column_1_3 et_pb_column_15  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_code et_pb_code_0">
+				
+				
+				
+				
+				<div class="et_pb_code_inner"><iframe loading="lazy" src="https://www.facebook.com/plugins/video.php?height=476&#038;href=https%3A%2F%2Fwww.facebook.com%2Freel%2F2105448433734422%2F&#038;show_text=false&#038;width=267&#038;t=0" width="267" height="506" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_3 et_pb_column_16  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_code et_pb_code_1">
+				
+				
+				
+				
+				<div class="et_pb_code_inner"><iframe loading="lazy" src="https://www.facebook.com/plugins/video.php?height=476&#038;href=https%3A%2F%2Fwww.facebook.com%2FUCB.BOLIVIA%2Fvideos%2F3944728332514499%2F&#038;show_text=false&#038;width=267&#038;t=0" width="267" height="506" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_3 et_pb_column_17  et_pb_css_mix_blend_mode_passthrough et-last-child et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_5 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_7">
+				<div class="et_pb_column et_pb_column_1_3 et_pb_column_18  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_button_module_wrapper et_pb_button_0_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_0 et_pb_bg_layout_light" href="http://lpz.ucb.edu.bo/wp-content/uploads/2025/11/SIS-2026.pdf" target="_blank" data-icon="">Malla Curricular 2026</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_1_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_1 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/wp-content/uploads/2024/12/SIS-2025.pdf" target="_blank">Malla Curricular 2025</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_2_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_2 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/wp-content/uploads/2023/12/SIS-2024-final.pdf" target="_blank">Malla Curricular 2024</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_3_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_3 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/wp-content/uploads/2022/12/SIS-2023.pdf" target="_blank">Malla Curricular 2023</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_4_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_4 et_pb_bg_layout_light" href="http://lpz.ucb.edu.bo/wp-content/uploads/2026/07/SIS-21x145-Virtual_compressed.pdf" target="_blank">PDF  de la carrera</a>
+			</div>
+			</div><div class="et_pb_column et_pb_column_2_3 et_pb_column_19  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_2  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2><span>Beneficios de estudiar esta carrera en la U.C.B.</span></h2>
+<ul>
+<li><span>Acreditaciones: nacional e internacional.</span></li>
+<li><span>Acceso a un mercado laboral en expansión.</span></li>
+<li><span>Trabajo globalizado y oportunidades de teletrabajo.</span></li>
+<li><span>Alta demanda de profesionales en TIC en un mercado globalizado.</span></li>
+<li><span>Laboratorios especializados para aplicación práctica.</span></li>
+<li><span>200 horas de prácticas preprofesionales supervisadas.</span></li>
+<li><span>Ser parte de la innovación y tecnologías emergentes.</span></li>
+<li><span>Oportunidades de emprendimiento.</span></li>
+<li><span>Potencial de altos ingresos.</span></li>
+<li><span>Flexibilidad para trabajar en distintos sectores.</span></li>
+<li><span>Posibilidad de estudios avanzados y especialización.</span></li>
+<li><span>Alta empleabilidad y estabilidad laboral.</span></li>
+</ul>
+<h2><strong><span>Convenios:</span></strong></h2>
+<ul>
+<li><span>Google, Microsoft, AWS.</span></li>
+</ul></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_6 et_clickable et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_8 et_pb_equal_columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_3_5 et_pb_column_20 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_3  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2 style="text-align: left;"><b>¿Dónde podrás trabajar?</b></h2>
+<ul>
+<li style="text-align: left;">
+<p>El Ingeniero en Sistemas puede trabajar en empresas públicas, privadas o de tecnología, desempeñándose en áreas como desarrollo de software, redes, bases de datos, seguridad informática y análisis de datos.</p>
+</li>
+<li style="text-align: left;">
+<p>También puede ejercer en bancos, industrias, instituciones educativas o de gobierno, liderando proyectos de digitalización y automatización.</p>
+</li>
+<li style="text-align: left;">
+<p>Además, está capacitado para emprender o trabajar como freelancer, ofreciendo servicios de desarrollo web, aplicaciones móviles, soporte técnico o consultoría tecnológica, y especializarse en áreas emergentes como inteligencia artificial, ciberseguridad y computación en la nube.</p>
+</li>
+</ul></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_2_5 et_pb_column_21 ds-vertical-align  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_image et_pb_image_2">
+				
+				
+				
+				
+				<span class="et_pb_image_wrap "><img loading="lazy" decoding="async" width="800" height="533" src="https://lpz.ucb.edu.bo/wp-content/uploads/2024/12/SIS-image-5.jpg" alt="" title="SIS image (5)" class="wp-image-246022" /></span>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_7 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_9">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_22  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_button_module_wrapper et_pb_button_5_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_5 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/inscripciones-estudiantes-nuevos/" target="_blank" data-icon="">¡Inscríbete ahora!</a>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_23  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_button_module_wrapper et_pb_button_6_wrapper et_pb_button_alignment_center et_pb_module ">
+				<a class="et_pb_button et_pb_button_6 et_pb_bg_layout_light" href="https://wa.me/59175851671" target="_blank">WhatsApp La Paz</a>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_8 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_10">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_24  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_4  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2>Plantel Docente</h2></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_11 et_pb_gutters2">
+				<div class="et_pb_column et_pb_column_1_4 et_pb_column_25  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_5  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img loading="lazy" decoding="async" width="1000" height="1000" src="https://lpz.ucb.edu.bo/wp-content/uploads/2022/11/Orlando-Rivera-SIS.jpg" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone wp-image-232802" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Msc. Orlando Rivera Jurado</span></h4>
+						<div class="et_pb_blurb_description"><p style="text-align: center;"><strong>Director de Carrera</strong><br />
+<a href="mailto:orivera@ucb.edu.bo" target="_blank" rel="noopener">orivera@ucb.edu.bo</a><br />
+Int. 2811</div>
+					</div>
+				</div>
+			</div><div class="et_pb_module et_pb_blurb et_pb_blurb_6  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img decoding="async" src="https://lpz.ucb.edu.bo/wp-content/uploads/2020/02/logo-UCB-investiagacion.jpg" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>MSc. Ángel Ávila Maceda </span></h4>
+						<div class="et_pb_blurb_description"><p style="text-align: center;"><strong>Docente Tiempo Completo</strong><br />
+<a href="mailto:aavila@ucb.edu.bo" target="_blank" rel="noopener">aavila@ucb.edu.bo</a><br />
+Int. 2815</div>
+					</div>
+				</div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_4 et_pb_column_26  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_7  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img decoding="async" src="https://ucblpz.com/wp-content/uploads/2019/02/Oswaldo-Figueroa.jpg" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Msc. Oswaldo Figueroa Domejean</span></h4>
+						<div class="et_pb_blurb_description"><p style="text-align: center;"><strong>Docente Tiempo Completo</strong><br />
+<a href="mailto:ofigueroa@ucb.edu.bo" target="_blank" rel="noopener">ofigueroa@ucb.edu.bo</a><br />
+ Int. 2784</div>
+					</div>
+				</div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_4 et_pb_column_27  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_8  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img loading="lazy" decoding="async" width="1000" height="1000" src="https://lpz.ucb.edu.bo/wp-content/uploads/2023/10/Mgr.-Lourdes-Eulalia-Peredo-Quiroga-Docente-TC-SIS.jpg" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone wp-image-238316" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Mgr.  Lourdes Eulalia Peredo Quiroga</span></h4>
+						<div class="et_pb_blurb_description"><p style="text-align: center;"><strong>Docente Tiempo Completo</strong><br /><a href="mailto:lperedo.q@ucb.edu.bo" target="_blank" rel="noopener">lperedo.q@ucb.edu.bo</a></p></div>
+					</div>
+				</div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_4 et_pb_column_28  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blurb et_pb_blurb_9  et_pb_text_align_left  et_pb_blurb_position_top et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_blurb_content">
+					<div class="et_pb_main_blurb_image"><span class="et_pb_image_wrap et_pb_only_image_mode_wrap"><img loading="lazy" decoding="async" width="600" height="600" src="https://lpz.ucb.edu.bo/wp-content/uploads/2025/02/Lucero-Yanez-Guzman-TC-Sistemas.png" alt="" class="et-waypoint et_pb_animation_top et_pb_animation_top_tablet et_pb_animation_top_phone wp-image-247504" /></span></div>
+					<div class="et_pb_blurb_container">
+						<h4 class="et_pb_module_header"><span>Ing. Lucero Yáñez Guzmán</span></h4>
+						<div class="et_pb_blurb_description"><p style="text-align: center;"><strong>Docente Tiempo Completo</strong><br /><a href="mailto:myanez@ucb.edu.bo">myanez@ucb.edu.bo</a></p></div>
+					</div>
+				</div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_12">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_29  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_5  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><table width="448" style="width: 440px; height: 672px;">
+<tbody>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;"><strong>N°</strong></td>
+<td style="width: 399.25px; height: 24px;"><strong>LISTA DOCENTES TH &#8211; 2-2025</strong></td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">1</td>
+<td style="width: 399.25px; height: 24px;">AGUILAR ALIAGA DENISE CLEOFE</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">2</td>
+<td style="width: 399.25px; height: 24px;">BERNAL MARTINEZ RAMIRO MARCIAL</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">3</td>
+<td style="width: 399.25px; height: 24px;">BUEZO PEÑA JACIL ABDUL</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">4</td>
+<td style="width: 399.25px; height: 24px;">CAMARGO PACHECO BRYAN CARLOS</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">5</td>
+<td style="width: 399.25px; height: 24px;">CARDENAS MIGUEL VICENTE YAMIL</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">6</td>
+<td style="width: 399.25px; height: 24px;">CARRANZA BRAVO PAOLA ALEJANDRA</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">7</td>
+<td style="width: 399.25px; height: 24px;">ESPOZO ESPINOZA JUAN ELOY</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">8</td>
+<td style="width: 399.25px; height: 24px;">MANSILLA ARCE KATIA LUZ</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">9</td>
+<td style="width: 399.25px; height: 24px;">MERLO YUJRA ROSARIO</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">10</td>
+<td style="width: 399.25px; height: 24px;">MIRANDA SALAZAR WALTER IGNACIO</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">11</td>
+<td style="width: 399.25px; height: 24px;">MURIEL USTARIZ CARLA JEANNETT</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">12</td>
+<td style="width: 399.25px; height: 24px;">OVANDO SANTANDER DANIELA CAROLINA</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">13</td>
+<td style="width: 399.25px; height: 24px;">PACHECO ARTEAGA MIGUEL ANGEL</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">14</td>
+<td style="width: 399.25px; height: 24px;">PALABRAL VELARDE JORGE GUSTAVO</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">15</td>
+<td style="width: 399.25px; height: 24px;">PEREDO MANCILLA EDSON CARLOS</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">16</td>
+<td style="width: 399.25px; height: 24px;">RIOS VILLANUEVA JOSE IGNACIO</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">17</td>
+<td style="width: 399.25px; height: 24px;">TANCARA AGUILAR JORGE</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">18</td>
+<td style="width: 399.25px; height: 24px;">TENORIO PALZA WILLY EDWIN</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">19</td>
+<td style="width: 399.25px; height: 24px;">TERAN LOPEZ HERLAND</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">20</td>
+<td style="width: 399.25px; height: 24px;">VALENZUELA FERNANDEZ PAMELA SHIRLEY</td>
+</tr>
+<tr style="height: 24px;">
+<td style="width: 24.765625px; height: 24px;">21</td>
+<td style="width: 399.25px; height: 24px;">YUJRA ALI ADALID IRVIN</td>
+</tr>
+</tbody>
+</table></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_9 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_13">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_30  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_6  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2><span>Redes Sociales y Web</span></h2></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_14 four-columns et_pb_gutters2">
+				<div class="et_pb_column et_pb_column_1_6 et_pb_column_31  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_icon et_pb_icon_0">
+				<a href="https://sis-ucb.online" target="_blank" ><span class="et_pb_icon_wrap "><span class="et-pb-icon"></span></span></a>
+			</div><div class="et_pb_module et_pb_text et_pb_text_7  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><p style="text-align: center;"><strong>Web</strong></p></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_32  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_33  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_34  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_35  et_pb_css_mix_blend_mode_passthrough et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_36  et_pb_css_mix_blend_mode_passthrough et-last-child et_pb_column_empty">
+				
+				
+				
+				
+				
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_10 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_15">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_37  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_8  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2><span>Atención de Dirección de Carrera </span></h2>
+<p><span>Av. 14 de Septiembre N°4807, Obrajes.</span></p>
+<p><span><a href="https://goo.gl/maps/nEuLFznJdcxx1mUC8" target="_blank" rel="noopener">Google Maps</a></span></p>
+<p><strong>Facultad de Ingeniería – Bloque G2</strong><br /><strong></strong><span><strong></strong></span></p>
+<p><strong>Docentes TC: </strong>Bloque C (Laboratorio de Computación Aplicada- Planta baja)</p>
+<p><strong>Horario de atención:</strong> de lunes a viernes de 9:00 a 12:30 y de 14:00 a 16:30</p>
+<p><span><strong>Teléfono:</strong> + 591 (2) 2782222</span></p>
+<p><span><strong>Secretaria:</strong> 2811, 2812, 2815</span></p>
+<h2><span>Fechas importantes</span></h2>
+<p><span>Aniversario de la carrera: 4 de noviembre de 1992</span></p></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_38  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_button_module_wrapper et_pb_button_7_wrapper et_pb_button_alignment_left et_pb_module ">
+				<a class="et_pb_button et_pb_button_7 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/contacto-docentes/%20">Atención extra aula</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_8_wrapper et_pb_button_alignment_left et_pb_module ">
+				<a class="et_pb_button et_pb_button_8 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/mapa-ucb-lp/" target="_blank">Mapa del Campus</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_9_wrapper et_pb_button_alignment_left et_pb_module ">
+				<a class="et_pb_button et_pb_button_9 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/contacto/" target="_blank">Contactos U.C.B.</a>
+			</div><div class="et_pb_button_module_wrapper et_pb_button_10_wrapper et_pb_button_alignment_left et_pb_module ">
+				<a class="et_pb_button et_pb_button_10 et_pb_bg_layout_light" href="https://lpz.ucb.edu.bo/postgrados/" target="_blank">Postgrados</a>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_11 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_16">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_39  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_text et_pb_text_9  et_pb_text_align_left et_pb_bg_layout_dark">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h2><span>Noticias</span></h2></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_17">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_40  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_module et_pb_blog_0 et_pb_blog_grid_wrapper et_pb_bg_layout_light">
+					<div class="et_pb_blog_grid clearfix ">
+					
+					
+					
+					
+					<div class="et_pb_ajax_pagination_container">
+						<div class="et_pb_salvattore_content" data-columns>
+			<article id="post-258810" class="et_pb_post clearfix et_pb_blog_item_0_0 post-258810 post type-post status-publish format-standard has-post-thumbnail hentry category-ima category-inb category-civ category-ingenieria-de-sistemas category-tel category-ien category-ilg category-imu category-tel-carreras category-ind category-imt category-iqm category-noticias tag-antennas-and-propagation tag-ieee tag-ingenieria tag-investigacion-aplicada tag-la-paz-bolivia tag-ucb">
+
+				<div class="et_pb_image_container"><a href="https://lpz.ucb.edu.bo/2nd-workshop-ieee-antennas-and-propagation-reune-a-expertos-internacionales-en-la-ucb/" class="entry-featured-image-url"><img loading="lazy" decoding="async" src="https://lpz.ucb.edu.bo/wp-content/uploads/2026/09/1.-Workshop-Antennas-and-Propagation-400x250.webp" alt="2nd Workshop IEEE Antennas and Propagation reúne a expertos internacionales en la U.C.B." class="" width="400" height="250" /></a></div>
+														<h2 class="entry-title">
+													<a href="https://lpz.ucb.edu.bo/2nd-workshop-ieee-antennas-and-propagation-reune-a-expertos-internacionales-en-la-ucb/">2nd Workshop IEEE Antennas and Propagation reúne a expertos internacionales en la U.C.B.</a>
+											</h2>
+				
+					<div class="post-content"><div class="post-content-inner et_multi_view_hidden"></div><a href="https://lpz.ucb.edu.bo/2nd-workshop-ieee-antennas-and-propagation-reune-a-expertos-internacionales-en-la-ucb/" class="more-link">leer más</a></div>			
+			</article>
+				
+			<article id="post-258721" class="et_pb_post clearfix et_pb_blog_item_0_1 post-258721 post type-post status-publish format-standard has-post-thumbnail hentry category-ingenieria-de-sistemas category-noticias tag-ingenieria-de-sistemas tag-la-paz-bolivia tag-ucb tag-workshop-de-ingenieria">
+
+				<div class="et_pb_image_container"><a href="https://lpz.ucb.edu.bo/ingenieria-de-sistemas-presenta-soluciones-innovadoras-en-la-tercera-version-de-su-workshop-2026/" class="entry-featured-image-url"><img loading="lazy" decoding="async" src="https://lpz.ucb.edu.bo/wp-content/uploads/2026/09/Workshop-1-400x250.webp" alt="Ingeniería de Sistemas presenta soluciones innovadoras en la tercera versión de su Workshop 2026" class="" width="400" height="250" /></a></div>
+														<h2 class="entry-title">
+													<a href="https://lpz.ucb.edu.bo/ingenieria-de-sistemas-presenta-soluciones-innovadoras-en-la-tercera-version-de-su-workshop-2026/">Ingeniería de Sistemas presenta soluciones innovadoras en la tercera versión de su Workshop 2026</a>
+											</h2>
+				
+					<div class="post-content"><div class="post-content-inner et_multi_view_hidden"></div><a href="https://lpz.ucb.edu.bo/ingenieria-de-sistemas-presenta-soluciones-innovadoras-en-la-tercera-version-de-su-workshop-2026/" class="more-link">leer más</a></div>			
+			</article>
+				
+			<article id="post-258284" class="et_pb_post clearfix et_pb_blog_item_0_2 post-258284 post type-post status-publish format-standard has-post-thumbnail hentry category-ingenieria category-ima category-inb category-civ category-ingenieria-de-sistemas category-tel category-ien category-ilg category-imu category-tel-carreras category-ind category-imt category-iqm category-noticias tag-ingenieria tag-la-paz-bolivia tag-occ tag-ucb">
+
+				<div class="et_pb_image_container"><a href="https://lpz.ucb.edu.bo/olimpiada-catolica-de-ciencias-occ-2026/" class="entry-featured-image-url"><img loading="lazy" decoding="async" src="https://lpz.ucb.edu.bo/wp-content/uploads/2026/08/olimpiada-catolica-de-ciencias-3-400x250.webp" alt="Olimpiada Católica de Ciencias OCC-2026" class="" width="400" height="250" /></a></div>
+														<h2 class="entry-title">
+													<a href="https://lpz.ucb.edu.bo/olimpiada-catolica-de-ciencias-occ-2026/">Olimpiada Católica de Ciencias OCC-2026</a>
+											</h2>
+				
+					<div class="post-content"><div class="post-content-inner et_multi_view_hidden"></div><a href="https://lpz.ucb.edu.bo/olimpiada-catolica-de-ciencias-occ-2026/" class="more-link">leer más</a></div>			
+			</article>
+				</div><div><div class="pagination clearfix">
+	<div class="alignleft"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/page/2/?et_blog" >&laquo; Entradas más antiguas</a></div>
+	<div class="alignright"></div>
+</div></div></div>
+					</div>
+					 
+				</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_12 et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_18 et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_6 et_pb_column_41  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_10  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Facultad de Ciencias<br />Económicas y Financieras</h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_42  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_11  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4>Facultad de<br />Ingeniería</h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_43  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_12  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4>Facultad de<br />Ingeniería</h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_44  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_13  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4>Facultad de Ciencias<br />Sociales y Humanas</h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_45  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_14  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4>Departamento de Arquitectura<br />y Diseño Gráfico</h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_46  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_15  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"></h4>
+<h4 style="text-align: center;">Salud</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_19 et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_6 et_pb_column_47  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_16 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/administracion-de-empresas/">Administración de Empresas</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_18 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/contaduria-publica/">Contaduría Pública</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_19 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/economia/">Economía</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_20 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/economia-inteligencia-negocios/">Economía e Inteligencia de Negocios</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_21 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-comercial/">Ingeniería Comercial</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_22 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-innovacion-empresarial/">Ingeniería en Innovación Empresarial</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_23 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/marketing-y-medios-digitales/">Marketing y Medios Digitales</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_48  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_24 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-ambiental/">Ingeniería Ambiental</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_25 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-biomedica/">Ingeniería Biomédica</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_26 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-bioquimica-y-bioprocesos/">Ingeniería Bioquímica</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-bioquimica-y-bioprocesos/">y de Bioprocesos</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_27 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-civil/">Ingeniería Civil</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_28 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/">Ingeniería de Sistemas</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_49  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_30 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-en-multimedia-e-interactividad-digital/">Ingeniería en Multimedia</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-en-multimedia-e-interactividad-digital/">e Interactividad Digital</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_31 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-industrial/">Ingeniería Industrial</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_32 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-quimica/">Ingeniería Química</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_33 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-mecatronica/">Ingeniería Mecatrónica</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_34 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-telecomunicaciones/">Ingeniería en Telecomunicaciones</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_50  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_36 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/comunicacion-social/">Comunicación Social</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_37 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/comunicacion-digital-multimedia/">Comunicación Digital Multimedia</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_38 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/psicologia/">Psicología</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_39 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/psicopedagogia/">Psicopedagogía</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_40  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4>Facultad de Derecho, Ciencias Políticas y Relaciones Internacionales</h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_41 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ciencias-politicas/">Ciencias Políticas y</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/ciencias-politicas/">Relaciones Internacionales</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_42 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/derecho/">Derecho</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_51  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_43 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/arquitectura/">Arquitectura</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_44 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/diseno-digital/">Diseño Digital</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_45 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/diseno-grafico/">Diseño Gráfico y</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/diseno-grafico/">Comunicación Visual</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_6 et_pb_column_52  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_47 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/medicina/">Medicina</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_48 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/nutricion-clinica-y-dietetica/">Nutrición Clínica y Dietética</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_49  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Carreras Virtuales<br />U.C.B. Nacional</h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_50  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://cba.ucb.edu.bo/antropologia/" target="_blank" rel="noopener">Antropología</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_51  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 class="fusion-title-heading title-heading-left fusion-responsive-typography-calculated" style="text-align: center;"><a href="https://cba.ucb.edu.bo/filosofia-y-letras/" target="_blank" rel="noopener">Filosofía y Letras</a><a href="https://lpz.ucb.edu.bo/pregrado/medicina/" target="_blank" rel="noopener"></a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_52  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://cba.ucb.edu.bo/programa-complementario/" target="_blank" rel="noopener">Programa Complementario</a><br /><a href="https://cba.ucb.edu.bo/programa-complementario/" target="_blank" rel="noopener">de Filosofía y Letras</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div><div class="et_pb_section et_pb_section_13 et_pb_with_background et_section_regular" >
+				
+				
+				
+				
+				
+				
+				<div class="et_pb_row et_pb_row_20 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_53  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_54  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Salud</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_21 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_54  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_55 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/medicina/">Medicina</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_55  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_56 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/nutricion-clinica-y-dietetica/">Nutrición Clínica y Dietética</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_22 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_56  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_57  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Facultad de Ciencias Económicas y Financieras</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_23 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_57  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_58 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/administracion-de-empresas/">Administración de Empresas</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_59 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/contaduria-publica/">Contaduría Pública</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_60 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/economia/">Economía</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_61 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/economia-inteligencia-negocios/">Economía e Inteligencia de Negocios</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_58  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_62 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-comercial/">Ingeniería Comercial</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_63 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-innovacion-empresarial/">Ingeniería en Innovación Empresarial</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_64 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/marketing-y-medios-digitales/">Marketing y Medios Digitales</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_24 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_59  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_66  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><div class="et_pb_module et_pb_text et_pb_text_2  et_pb_text_align_left et_pb_bg_layout_light">
+<div class="et_pb_text_inner">
+<h4>Facultad de Ingeniería</h4>
+</div>
+</div></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_25 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_60  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_67 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-ambiental/">Ingeniería Ambiental</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_68 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-biomedica/">Ingeniería Biomédica</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_69 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-bioquimica-y-bioprocesos/">Ingeniería Bioquímica</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-bioquimica-y-bioprocesos/">y de Bioprocesos</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_70 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-civil/">Ingeniería Civil</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_71 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/">Ingeniería de Sistemas</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_61  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_73 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-en-multimedia-e-interactividad-digital/" target="_blank" rel="noopener">Ingeniería en Multimedia e Interactividad Digital</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_74 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-industrial/">Ingeniería Industrial</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_75 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-quimica/">Ingeniería Química</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_76 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-mecatronica/">Ingeniería Mecatrónica</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_77 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-telecomunicaciones/">Ingeniería en Telecomunicaciones</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_26 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_62  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_79  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Facultad de Ciencias Sociales y Humanas</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_27 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_63  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_80 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/comunicacion-social/">Comunicación Social</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_81 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/comunicacion-digital-multimedia/">Comunicación Digital Multimedia</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_64  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_82 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/psicologia/">Psicología</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_83 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/psicopedagogia/">Psicopedagogía</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_28 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_65  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_84  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4>Facultad de Derecho, Ciencias Políticas y Relaciones Internacionales</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_29 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_66  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_85 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/ciencias-politicas/">Ciencias Políticas y</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/ciencias-politicas/">Relaciones Internacionales</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_67  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_86 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/derecho/">Derecho</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_30 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_68  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_87  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Departamento de Aquitectura y Diseño Gráfico</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_31 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_69  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_88 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/arquitectura/">Arquitectura</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_89 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/diseno-digital/">Diseño Digital</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_70  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_90 et_clickable  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://lpz.ucb.edu.bo/pregrado/diseno-grafico/">Diseño Gráfico y</a><br /><a href="https://lpz.ucb.edu.bo/pregrado/diseno-grafico/">Comunicación Visual</a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_32 one-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_4_4 et_pb_column_71  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_92  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;">Carreras Virtuales<br />U.C.B. Nacional</h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div><div class="et_pb_row et_pb_row_33 two-columns et_pb_gutters1">
+				<div class="et_pb_column et_pb_column_1_2 et_pb_column_72  et_pb_css_mix_blend_mode_passthrough">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_93  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://cba.ucb.edu.bo/antropologia/" target="_blank" rel="noopener">Antropología</a></h4></div>
+			</div><div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_94  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 style="text-align: center;"><a href="https://cba.ucb.edu.bo/programa-complementario/" target="_blank" rel="noopener">Programa Complementario</a><br /><a href="https://cba.ucb.edu.bo/programa-complementario/" target="_blank" rel="noopener">de Filosofía y letras</a></h4></div>
+			</div>
+			</div><div class="et_pb_column et_pb_column_1_2 et_pb_column_73  et_pb_css_mix_blend_mode_passthrough et-last-child">
+				
+				
+				
+				
+				<div class="et_pb_with_border et_pb_module et_pb_text et_pb_text_95  et_pb_text_align_left et_pb_bg_layout_light">
+				
+				
+				
+				
+				<div class="et_pb_text_inner"><h4 class="fusion-title-heading title-heading-left fusion-responsive-typography-calculated" style="text-align: center;"><a href="https://cba.ucb.edu.bo/filosofia-y-letras/" target="_blank" rel="noopener">Filosofía y Letras</a><a href="https://lpz.ucb.edu.bo/pregrado/medicina/" target="_blank" rel="noopener"></a></h4></div>
+			</div>
+			</div>
+				
+				
+				
+				
+			</div>
+				
+				
+			</div>		</div>
+	</div>
+						</div>
+
+				
+				</article>
+
+			
+
+</div>
+
+
+			<footer id="main-footer">
+				
+
+		
+				<div id="footer-bottom">
+					<div class="container clearfix">
+				<ul class="et-social-icons">
+
+	<li class="et-social-icon et-social-facebook">
+		<a href="https://www.facebook.com/UCB.BOLIVIA/" class="icon">
+			<span>Facebook</span>
+		</a>
+	</li>
+	<li class="et-social-icon et-social-twitter">
+		<a href="https://twitter.com/UCBLaPaz" class="icon">
+			<span>X</span>
+		</a>
+	</li>
+	<li class="et-social-icon et-social-instagram">
+		<a href="https://www.instagram.com/ucb.lapaz/" class="icon">
+			<span>Instagram</span>
+		</a>
+	</li>
+
+</ul><div id="footer-info"><p>© Copyright Universidad Católica Boliviana "San Pablo" Regional La Paz | Desarrollado por <a href="http://www.checkmarksrl.com">Checkmark SRL</a> | Todos los derechos reservados.</p></div>					</div>
+				</div>
+			</footer>
+		</div>
+
+
+	</div>
+
+	<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/Divi/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+		<!-- Click to Chat - https://holithemes.com/plugins/click-to-chat/  v4.44 -->
+									<div class="ht-ctc ht-ctc-chat ctc-analytics ctc_wp_desktop style-4  " id="ht-ctc-chat"  
+				style="display: none;  position: fixed; bottom: 10px; right: 10px;"   >
+												<div class="ht_ctc_style ht_ctc_chat_style">
+								
+<div class="ctc_chip ctc-analytics ctc_s_4 ctc_nb" style="display:flex;justify-content: center;align-items: center;background-color:#e4e4e4;color:#7f7d7d;padding:0 12px;border-radius:25px;font-size:13px;line-height:32px; " data-nb_top="-10px" data-nb_right="-10px">
+			<span class="s4_img" style="margin:0 8px 0 -12px;;order:0;">
+		<svg style="pointer-events:none; display: block; height:32px; width:32px;" width="32px" height="32px" viewBox="0 0 1219.547 1225.016">
+            <path style="fill: #E0E0E0;" fill="#E0E0E0" d="M1041.858 178.02C927.206 63.289 774.753.07 612.325 0 277.617 0 5.232 272.298 5.098 606.991c-.039 106.986 27.915 211.42 81.048 303.476L0 1225.016l321.898-84.406c88.689 48.368 188.547 73.855 290.166 73.896h.258.003c334.654 0 607.08-272.346 607.222-607.023.056-162.208-63.052-314.724-177.689-429.463zm-429.533 933.963h-.197c-90.578-.048-179.402-24.366-256.878-70.339l-18.438-10.93-191.021 50.083 51-186.176-12.013-19.087c-50.525-80.336-77.198-173.175-77.16-268.504.111-278.186 226.507-504.503 504.898-504.503 134.812.056 261.519 52.604 356.814 147.965 95.289 95.36 147.728 222.128 147.688 356.948-.118 278.195-226.522 504.543-504.693 504.543z"/>
+            <linearGradient id="htwaicona-chat-s4" gradientUnits="userSpaceOnUse" x1="609.77" y1="1190.114" x2="609.77" y2="21.084">
+                <stop offset="0" stop-color="#20b038"/>
+                <stop offset="1" stop-color="#60d66a"/>
+            </linearGradient>
+            <path style="fill: url(#htwaicona-chat-s4);" fill="url(#htwaicona-chat-s4)" d="M27.875 1190.114l82.211-300.18c-50.719-87.852-77.391-187.523-77.359-289.602.133-319.398 260.078-579.25 579.469-579.25 155.016.07 300.508 60.398 409.898 169.891 109.414 109.492 169.633 255.031 169.57 409.812-.133 319.406-260.094 579.281-579.445 579.281-.023 0 .016 0 0 0h-.258c-96.977-.031-192.266-24.375-276.898-70.5l-307.188 80.548z"/>
+            <image overflow="visible" opacity=".08" width="682" height="639" transform="translate(270.984 291.372)"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" style="fill: #FFFFFF;" fill="#FFF" d="M462.273 349.294c-11.234-24.977-23.062-25.477-33.75-25.914-8.742-.375-18.75-.352-28.742-.352-10 0-26.25 3.758-39.992 18.766-13.75 15.008-52.5 51.289-52.5 125.078 0 73.797 53.75 145.102 61.242 155.117 7.5 10 103.758 166.266 256.203 226.383 126.695 49.961 152.477 40.023 179.977 37.523s88.734-36.273 101.234-71.297c12.5-35.016 12.5-65.031 8.75-71.305-3.75-6.25-13.75-10-28.75-17.5s-88.734-43.789-102.484-48.789-23.75-7.5-33.75 7.516c-10 15-38.727 48.773-47.477 58.773-8.75 10.023-17.5 11.273-32.5 3.773-15-7.523-63.305-23.344-120.609-74.438-44.586-39.75-74.688-88.844-83.438-103.859-8.75-15-.938-23.125 6.586-30.602 6.734-6.719 15-17.508 22.5-26.266 7.484-8.758 9.984-15.008 14.984-25.008 5-10.016 2.5-18.773-1.25-26.273s-32.898-81.67-46.234-111.326z"/>
+            <path style="fill: #FFFFFF;" fill="#FFF" d="M1036.898 176.091C923.562 62.677 772.859.185 612.297.114 281.43.114 12.172 269.286 12.039 600.137 12 705.896 39.633 809.13 92.156 900.13L7 1211.067l318.203-83.438c87.672 47.812 186.383 73.008 286.836 73.047h.255.003c330.812 0 600.109-269.219 600.25-600.055.055-160.343-62.328-311.108-175.649-424.53zm-424.601 923.242h-.195c-89.539-.047-177.344-24.086-253.93-69.531l-18.227-10.805-188.828 49.508 50.414-184.039-11.875-18.867c-49.945-79.414-76.312-171.188-76.273-265.422.109-274.992 223.906-498.711 499.102-498.711 133.266.055 258.516 52 352.719 146.266 94.195 94.266 146.031 219.578 145.992 352.852-.118 274.999-223.923 498.749-498.899 498.749z"/>
+        </svg>		</span>
+			<span class="ctc_cta">Escríbenos</span>
+</div>
+								</div>
+							</div>
+							<span class="ht_ctc_chat_data" data-settings="{&quot;number&quot;:&quot;59175851671&quot;,&quot;pre_filled&quot;:&quot;&quot;,&quot;dis_m&quot;:&quot;show&quot;,&quot;dis_d&quot;:&quot;show&quot;,&quot;css&quot;:&quot;cursor: pointer; z-index: 99999999;&quot;,&quot;pos_d&quot;:&quot;position: fixed; bottom: 10px; right: 10px;&quot;,&quot;pos_m&quot;:&quot;position: fixed; bottom: 10px; right: 10px;&quot;,&quot;side_d&quot;:&quot;right&quot;,&quot;side_m&quot;:&quot;right&quot;,&quot;schedule&quot;:&quot;no&quot;,&quot;se&quot;:&quot;no-show-effects&quot;,&quot;ani&quot;:&quot;no-animation&quot;,&quot;page_id&quot;:208437,&quot;url_target_d&quot;:&quot;_blank&quot;,&quot;gtm&quot;:&quot;1&quot;,&quot;webhook_format&quot;:&quot;json&quot;,&quot;g_init&quot;:&quot;default&quot;,&quot;g_an_event_name&quot;:&quot;click to chat&quot;,&quot;gtm_event_name&quot;:&quot;Click to Chat&quot;,&quot;pixel_event_name&quot;:&quot;Click to Chat by HoliThemes&quot;}" data-rest="8bbd9fd7be"></span>
+					<script type="text/javascript">
+				var et_link_options_data = [{"class":"et_pb_section_6","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-quimica\/?et_fb=1&PageSpeed=off","target":"_self"},{"class":"et_pb_text_16","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/administracion-de-empresas\/","target":"_self"},{"class":"et_pb_text_18","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/contaduria-publica\/","target":"_self"},{"class":"et_pb_text_19","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/economia\/","target":"_self"},{"class":"et_pb_text_20","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/economia-inteligencia-negocios\/","target":"_self"},{"class":"et_pb_text_21","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-comercial\/","target":"_self"},{"class":"et_pb_text_22","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-innovacion-empresarial\/","target":"_self"},{"class":"et_pb_text_23","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/marketing-y-medios-digitales\/","target":"_self"},{"class":"et_pb_text_24","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-ambiental\/","target":"_self"},{"class":"et_pb_text_25","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-biomedica\/","target":"_self"},{"class":"et_pb_text_26","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-bioquimica-y-bioprocesos\/","target":"_self"},{"class":"et_pb_text_27","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-civil\/","target":"_self"},{"class":"et_pb_text_28","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-de-sistemas\/","target":"_self"},{"class":"et_pb_text_30","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-en-multimedia-e-interactividad-digital\/","target":"_self"},{"class":"et_pb_text_31","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-industrial\/","target":"_self"},{"class":"et_pb_text_32","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-quimica\/","target":"_self"},{"class":"et_pb_text_33","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-mecatronica\/","target":"_self"},{"class":"et_pb_text_34","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-telecomunicaciones\/","target":"_self"},{"class":"et_pb_text_36","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/comunicacion-social\/","target":"_self"},{"class":"et_pb_text_37","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/comunicacion-digital-multimedia\/","target":"_self"},{"class":"et_pb_text_38","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/psicologia\/","target":"_self"},{"class":"et_pb_text_39","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/psicopedagogia\/","target":"_self"},{"class":"et_pb_text_41","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ciencias-politicas\/","target":"_self"},{"class":"et_pb_text_42","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/derecho\/","target":"_self"},{"class":"et_pb_text_43","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/arquitectura\/","target":"_self"},{"class":"et_pb_text_44","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/diseno-digital\/","target":"_self"},{"class":"et_pb_text_45","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/diseno-grafico\/","target":"_self"},{"class":"et_pb_text_47","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/medicina\/","target":"_self"},{"class":"et_pb_text_48","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/nutricion-clinica-y-dietetica\/","target":"_self"},{"class":"et_pb_text_55","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/medicina\/","target":"_self"},{"class":"et_pb_text_56","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/nutricion-clinica-y-dietetica\/","target":"_self"},{"class":"et_pb_text_58","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/administracion-de-empresas\/","target":"_self"},{"class":"et_pb_text_59","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/contaduria-publica\/","target":"_self"},{"class":"et_pb_text_60","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/economia\/","target":"_self"},{"class":"et_pb_text_61","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/economia-inteligencia-negocios\/","target":"_self"},{"class":"et_pb_text_62","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-comercial\/","target":"_self"},{"class":"et_pb_text_63","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-innovacion-empresarial\/","target":"_self"},{"class":"et_pb_text_64","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/marketing-y-medios-digitales\/","target":"_self"},{"class":"et_pb_text_67","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-ambiental\/","target":"_self"},{"class":"et_pb_text_68","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-biomedica\/","target":"_self"},{"class":"et_pb_text_69","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-bioquimica-y-bioprocesos\/","target":"_self"},{"class":"et_pb_text_70","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-civil\/","target":"_self"},{"class":"et_pb_text_71","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-de-sistemas\/","target":"_self"},{"class":"et_pb_text_73","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-en-multimedia-e-interactividad-digital\/","target":"_self"},{"class":"et_pb_text_74","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-industrial\/","target":"_self"},{"class":"et_pb_text_75","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-quimica\/","target":"_self"},{"class":"et_pb_text_76","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-mecatronica\/","target":"_self"},{"class":"et_pb_text_77","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ingenieria-telecomunicaciones\/","target":"_self"},{"class":"et_pb_text_80","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/comunicacion-social\/","target":"_self"},{"class":"et_pb_text_81","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/comunicacion-digital-multimedia\/","target":"_self"},{"class":"et_pb_text_82","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/psicologia\/","target":"_self"},{"class":"et_pb_text_83","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/psicopedagogia\/","target":"_self"},{"class":"et_pb_text_85","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ciencias-politicas\/","target":"_self"},{"class":"et_pb_text_86","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/ciencias-politicas\/","target":"_self"},{"class":"et_pb_text_88","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/arquitectura\/","target":"_self"},{"class":"et_pb_text_89","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/diseno-digital\/","target":"_self"},{"class":"et_pb_text_90","url":"https:\/\/lpz.ucb.edu.bo\/pregrado\/diseno-grafico\/","target":"_self"}];
+			</script>
+	<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WMJLGG5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) --><script id="jquery-core-js-extra">
+var SDT_DATA = {"ajaxurl":"https://lpz.ucb.edu.bo/wp-admin/admin-ajax.php","siteUrl":"https://lpz.ucb.edu.bo/","pluginsUrl":"https://lpz.ucb.edu.bo/wp-content/plugins","isAdmin":""};
+//# sourceURL=jquery-core-js-extra
+</script>
+<script id="jquery-core-js" src="https://lpz.ucb.edu.bo/wp-includes/js/jquery/jquery.min.js?ver=3.7.1"></script>
+<script id="jquery-migrate-js" src="https://lpz.ucb.edu.bo/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.4.1"></script>
+<script id="jquery-js-after">
+jqueryParams.length&&$.each(jqueryParams,function(e,r){if("function"==typeof r){var n=String(r);n.replace("$","jQuery");var a=new Function("return "+n)();$(document).ready(a)}});
+//# sourceURL=jquery-js-after
+</script>
+<script id="dtgs_nonce_frontend-js" src="https://lpz.ucb.edu.bo/wp-content/plugins/data-tables-generator-by-supsystic/app/assets/js/dtgsnonce.js?ver=0.01"></script>
+<script id="dtgs_nonce_frontend-js-after">
+var DTGS_NONCE_FRONTEND = "8cc3fe766d"
+//# sourceURL=dtgs_nonce_frontend-js-after
+</script>
+<script id="ht_ctc_app_js-js-extra">
+var ht_ctc_chat_var = {"number":"59175851671","pre_filled":"","dis_m":"show","dis_d":"show","css":"cursor: pointer; z-index: 99999999;","pos_d":"position: fixed; bottom: 10px; right: 10px;","pos_m":"position: fixed; bottom: 10px; right: 10px;","side_d":"right","side_m":"right","schedule":"no","se":"no-show-effects","ani":"no-animation","page_id":"208437","url_target_d":"_blank","gtm":"1","webhook_format":"json","g_init":"default","g_an_event_name":"click to chat","gtm_event_name":"Click to Chat","pixel_event_name":"Click to Chat by HoliThemes"};
+var ht_ctc_variables = {"g_an_event_name":"click to chat","gtm_event_name":"Click to Chat","pixel_event_type":"trackCustom","pixel_event_name":"Click to Chat by HoliThemes","g_an_params_v4":[{"key":"number","value":"{number}"},{"key":"title","value":"{title}"},{"key":"url","value":"{url}"}],"g_an_params":["g_an_param_1","g_an_param_2","g_an_param_3"],"g_an_param_1":{"key":"number","value":"{number}"},"g_an_param_2":{"key":"title","value":"{title}"},"g_an_param_3":{"key":"url","value":"{url}"},"pixel_params_v4":[{"key":"Category","value":"Click to Chat for WhatsApp"},{"key":"ID","value":"{number}"},{"key":"Title","value":"{title}"},{"key":"URL","value":"{url}"}],"pixel_params":["pixel_param_1","pixel_param_2","pixel_param_3","pixel_param_4"],"pixel_param_1":{"key":"Category","value":"Click to Chat for WhatsApp"},"pixel_param_2":{"key":"ID","value":"{number}"},"pixel_param_3":{"key":"Title","value":"{title}"},"pixel_param_4":{"key":"URL","value":"{url}"},"gtm_params_v4":[{"key":"type","value":"chat"},{"key":"number","value":"{number}"},{"key":"title","value":"{title}"},{"key":"url","value":"{url}"},{"key":"ref","value":"dataLayer push"}],"gtm_params":["gtm_param_1","gtm_param_2","gtm_param_3","gtm_param_4","gtm_param_5"],"gtm_param_1":{"key":"type","value":"chat"},"gtm_param_2":{"key":"number","value":"{number}"},"gtm_param_3":{"key":"title","value":"{title}"},"gtm_param_4":{"key":"url","value":"{url}"},"gtm_param_5":{"key":"ref","value":"dataLayer push"}};
+//# sourceURL=ht_ctc_app_js-js-extra
+</script>
+<script data-wp-strategy="defer" defer id="ht_ctc_app_js-js" src="https://lpz.ucb.edu.bo/wp-content/plugins/click-to-chat-for-whatsapp/new/inc/assets/js/app.js?ver=4.44"></script>
+<script id="divi-custom-script-js-extra">
+var DIVI = {"item_count":"%d Item","items_count":"%d Items"};
+var et_builder_utils_params = {"condition":{"diviTheme":true,"extraTheme":false},"scrollLocations":["app","top"],"builderScrollLocations":{"desktop":"app","tablet":"app","phone":"app"},"onloadScrollLocation":"app","builderType":"fe"};
+var et_frontend_scripts = {"builderCssContainerPrefix":"#et-boc","builderCssLayoutPrefix":"#et-boc .et-l"};
+var et_pb_custom = {"ajaxurl":"https://lpz.ucb.edu.bo/wp-admin/admin-ajax.php","images_uri":"https://lpz.ucb.edu.bo/wp-content/themes/Divi/images","builder_images_uri":"https://lpz.ucb.edu.bo/wp-content/themes/Divi/includes/builder/images","et_frontend_nonce":"4ba8984bfd","subscription_failed":"Por favor, revise los campos a continuaci\u00f3n para asegurarse de que la informaci\u00f3n introducida es correcta.","et_ab_log_nonce":"30100c5385","fill_message":"Por favor, rellene los siguientes campos:","contact_error_message":"Por favor, arregle los siguientes errores:","invalid":"De correo electr\u00f3nico no v\u00e1lida","captcha":"Captcha","prev":"Anterior","previous":"Anterior","next":"Siguiente","wrong_captcha":"Ha introducido un n\u00famero equivocado de captcha.","wrong_checkbox":"Caja","ignore_waypoints":"no","is_divi_theme_used":"1","widget_search_selector":".widget_search","ab_tests":[],"is_ab_testing_active":"","page_id":"208437","unique_test_id":"","ab_bounce_rate":"5","is_cache_plugin_active":"no","is_shortcode_tracking":"","tinymce_uri":"https://lpz.ucb.edu.bo/wp-content/themes/Divi/includes/builder/frontend-builder/assets/vendors","accent_color":"#7EBEC5","waypoints_options":{"context":[".pum-overlay"]}};
+var et_pb_box_shadow_elements = [];
+//# sourceURL=divi-custom-script-js-extra
+</script>
+<script id="divi-custom-script-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/js/scripts.min.js?ver=4.27.9"></script>
+<script id="smoothscroll-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/js/smoothscroll.js?ver=4.27.9"></script>
+<script id="et-core-common-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/core/admin/js/common.js?ver=4.27.9"></script>
+<script id="mediaelement-core-js-before">
+var mejsL10n = {"language":"es","strings":{"mejs.download-file":"Descargar archivo","mejs.install-flash":"Est\u00e1s usando un navegador que no tiene Flash activo o instalado. Por favor, activa el componente del reproductor Flash o descarga la \u00faltima versi\u00f3n desde https://get.adobe.com/flashplayer/","mejs.fullscreen":"Pantalla completa","mejs.play":"Reproducir","mejs.pause":"Pausa","mejs.time-slider":"Control de tiempo","mejs.time-help-text":"Usa las teclas de direcci\u00f3n izquierda/derecha para avanzar un segundo y las flechas arriba/abajo para avanzar diez segundos.","mejs.live-broadcast":"Transmisi\u00f3n en vivo","mejs.volume-help-text":"Utiliza las teclas de flecha arriba/abajo para aumentar o disminuir el volumen.","mejs.unmute":"Activar el sonido","mejs.mute":"Silenciar","mejs.volume-slider":"Control de volumen","mejs.video-player":"Reproductor de v\u00eddeo","mejs.audio-player":"Reproductor de audio","mejs.captions-subtitles":"Pies de foto / Subt\u00edtulos","mejs.captions-chapters":"Cap\u00edtulos","mejs.none":"Ninguna","mejs.afrikaans":"Afrik\u00e1ans","mejs.albanian":"Albano","mejs.arabic":"\u00c1rabe","mejs.belarusian":"Bielorruso","mejs.bulgarian":"B\u00falgaro","mejs.catalan":"Catal\u00e1n","mejs.chinese":"Chino","mejs.chinese-simplified":"Chino (Simplificado)","mejs.chinese-traditional":"Chino (Tradicional)","mejs.croatian":"Croata","mejs.czech":"Checo","mejs.danish":"Dan\u00e9s","mejs.dutch":"Neerland\u00e9s","mejs.english":"Ingl\u00e9s","mejs.estonian":"Estonio","mejs.filipino":"Filipino","mejs.finnish":"Fin\u00e9s","mejs.french":"Franc\u00e9s","mejs.galician":"Gallego","mejs.german":"Alem\u00e1n","mejs.greek":"Griego","mejs.haitian-creole":"Creole haitiano","mejs.hebrew":"Hebreo","mejs.hindi":"Indio","mejs.hungarian":"H\u00fangaro","mejs.icelandic":"Island\u00e9s","mejs.indonesian":"Indonesio","mejs.irish":"Irland\u00e9s","mejs.italian":"Italiano","mejs.japanese":"Japon\u00e9s","mejs.korean":"Coreano","mejs.latvian":"Let\u00f3n","mejs.lithuanian":"Lituano","mejs.macedonian":"Macedonio","mejs.malay":"Malayo","mejs.maltese":"Malt\u00e9s","mejs.norwegian":"Noruego","mejs.persian":"Persa","mejs.polish":"Polaco","mejs.portuguese":"Portugu\u00e9s","mejs.romanian":"Rumano","mejs.russian":"Ruso","mejs.serbian":"Serbio","mejs.slovak":"Eslovaco","mejs.slovenian":"Esloveno","mejs.spanish":"Espa\u00f1ol","mejs.swahili":"Swahili","mejs.swedish":"Sueco","mejs.tagalog":"Tagalo","mejs.thai":"Tailand\u00e9s","mejs.turkish":"Turco","mejs.ukrainian":"Ukraniano","mejs.vietnamese":"Vietnamita","mejs.welsh":"Gal\u00e9s","mejs.yiddish":"Yiddish"}};
+//# sourceURL=mediaelement-core-js-before
+</script>
+<script id="mediaelement-core-js" src="https://lpz.ucb.edu.bo/wp-includes/js/mediaelement/mediaelement-and-player.min.js?ver=4.2.17"></script>
+<script id="mediaelement-migrate-js" src="https://lpz.ucb.edu.bo/wp-includes/js/mediaelement/mediaelement-migrate.min.js?ver=7.1.2"></script>
+<script id="mediaelement-js-extra">
+var _wpmejsSettings = {"pluginPath":"/wp-includes/js/mediaelement/","classPrefix":"mejs-","stretching":"responsive","audioShortcodeLibrary":"mediaelement","videoShortcodeLibrary":"mediaelement"};
+//# sourceURL=mediaelement-js-extra
+</script>
+<script id="wp-mediaelement-js" src="https://lpz.ucb.edu.bo/wp-includes/js/mediaelement/wp-mediaelement.min.js?ver=7.1.2"></script>
+<script id="salvattore-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/includes/builder/feature/dynamic-assets/assets/js/salvattore.js?ver=4.27.9"></script>
+<script id="fitvids-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/includes/builder/feature/dynamic-assets/assets/js/jquery.fitvids.js?ver=4.27.9"></script>
+<script id="magnific-popup-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/includes/builder/feature/dynamic-assets/assets/js/magnific-popup.js?ver=4.27.9"></script>
+<script id="easypiechart-js" src="https://lpz.ucb.edu.bo/wp-content/themes/Divi/includes/builder/feature/dynamic-assets/assets/js/easypiechart.js?ver=4.27.9"></script>
+</body>
+</html>

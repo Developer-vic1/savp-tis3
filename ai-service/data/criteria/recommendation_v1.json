@@ -1,0 +1,65 @@
+{
+  "criteria_version": "v1_experimental",
+  "status": "CONFIGURACIÓN EXPERIMENTAL",
+  "review_status": "NEEDS_EXPERT_REVIEW",
+  "affinity_weights": {"riasec": 0.6, "bth": 0.25, "declared_interest": 0.15},
+  "preparation_component_weights": {"knowledge": 0.8, "consistency": 0.1, "temporal": 0.1},
+  "compatibility_weights": {"affinity": 0.55, "preparation": 0.45},
+  "minimum_affinity_coverage": 0.6,
+  "minimum_preparation_coverage": 0.4,
+  "career_profiles": {
+    "BO-UCB-LP-ING-SISTEMAS": {
+      "riasec_target": {"R": 45, "I": 90, "A": 35, "S": 35, "E": 45, "C": 70},
+      "bth_tags": ["sistemas informáticos", "electrónica", "robótica"],
+      "interest_keywords": ["tecnología", "programación", "software", "datos", "resolver problemas"],
+      "requirements": [
+        {"competency": "razonamiento matemático", "subject_aliases": ["matemática", "matemáticas"], "area_aliases": ["ciencia y tecnología"], "required": 70, "weight": 0.5, "relation_id": "BR-MATH-SIS-ALGEBRA", "topic": "Álgebra y matemática discreta", "prerequisite": null},
+        {"competency": "fundamentos tecnológicos", "subject_aliases": ["tecnología", "informática", "computación", "programación"], "area_aliases": ["técnica tecnológica", "tecnología"], "required": 70, "weight": 0.35, "relation_id": "BR-BTH-SIS-PROGRAMMING", "topic": "Lógica y fundamentos de programación", "prerequisite": "Álgebra y matemática discreta"},
+        {"competency": "comunicación y pensamiento crítico", "subject_aliases": ["lenguaje", "comunicación"], "area_aliases": ["comunicación y lenguajes"], "required": 70, "weight": 0.15, "relation_id": "BR-LANG-SIS-CRITICAL", "topic": "Lectura y argumentación técnica", "prerequisite": null}
+      ]
+    },
+    "BO-UCB-LP-PSICOLOGIA": {
+      "riasec_target": {"R": 25, "I": 70, "A": 45, "S": 95, "E": 45, "C": 35},
+      "bth_tags": ["salud pública", "comunicación"],
+      "interest_keywords": ["personas", "psicología", "salud mental", "educación", "comunidad"],
+      "requirements": [
+        {"competency": "lectura y escritura académica", "subject_aliases": ["lenguaje", "comunicación"], "area_aliases": ["comunicación y lenguajes"], "required": 75, "weight": 0.45, "relation_id": "BR-LANG-PSI-WRITING", "topic": "Lectura crítica y escritura académica", "prerequisite": null},
+        {"competency": "análisis social", "subject_aliases": ["ciencias sociales", "sociales", "filosofía"], "area_aliases": ["comunidad y sociedad"], "required": 70, "weight": 0.35, "relation_id": "BR-SOCIAL-PSI-INTRO", "topic": "Fundamentos de ciencias humanas", "prerequisite": "Lectura crítica y escritura académica"},
+        {"competency": "bases biológicas", "subject_aliases": ["biología", "ciencias naturales"], "area_aliases": ["vida tierra y territorio"], "required": 65, "weight": 0.2, "relation_id": "BR-BIO-PSI-PSYCHOPHYS", "topic": "Biología humana y sistema nervioso", "prerequisite": null}
+      ]
+    },
+    "BO-UCB-LP-ING-CIVIL": {
+      "riasec_target": {"R": 80, "I": 75, "A": 25, "S": 30, "E": 45, "C": 70},
+      "bth_tags": ["construcción civil", "dibujo técnico", "electricidad industrial"],
+      "interest_keywords": ["construcción", "estructuras", "cálculo", "infraestructura", "diseño técnico"],
+      "requirements": [
+        {"competency": "razonamiento matemático", "subject_aliases": ["matemática", "matemáticas"], "area_aliases": ["ciencia y tecnología"], "required": 75, "weight": 0.45, "relation_id": "BR-MATH-CIV-UCB", "topic": "Álgebra y cálculo preuniversitario", "prerequisite": null},
+        {"competency": "fundamentos físicos", "subject_aliases": ["física"], "area_aliases": ["ciencia y tecnología"], "required": 70, "weight": 0.3, "relation_id": "BR-MATH-CIV-UCB", "topic": "Mecánica y vectores", "prerequisite": "Álgebra y cálculo preuniversitario"},
+        {"competency": "fundamentos químicos", "subject_aliases": ["química"], "area_aliases": ["ciencia y tecnología"], "required": 65, "weight": 0.15, "relation_id": "BR-MATH-CIV-UCB", "topic": "Química general y materiales", "prerequisite": null},
+        {"competency": "representación técnica", "subject_aliases": ["dibujo técnico"], "area_aliases": ["técnica tecnológica"], "required": 65, "weight": 0.1, "relation_id": "BR-BTH-CONSTRUCTION-CIV-UCB", "topic": "Dibujo técnico", "prerequisite": null}
+      ]
+    },
+    "BO-UCB-LP-ING-AMBIENTAL": {
+      "riasec_target": {"R": 65, "I": 85, "A": 35, "S": 55, "E": 45, "C": 60},
+      "bth_tags": ["gestión ambiental", "agroecología", "química industrial"],
+      "interest_keywords": ["medio ambiente", "biología", "química", "sostenibilidad", "cambio climático"],
+      "requirements": [
+        {"competency": "biología", "subject_aliases": ["biología", "ciencias naturales"], "area_aliases": ["vida tierra y territorio"], "required": 70, "weight": 0.3, "relation_id": "BR-SCIENCE-ENV-UCB", "topic": "Biología y ecología", "prerequisite": null},
+        {"competency": "química", "subject_aliases": ["química"], "area_aliases": ["ciencia y tecnología"], "required": 70, "weight": 0.3, "relation_id": "BR-SCIENCE-ENV-UCB", "topic": "Química general", "prerequisite": null},
+        {"competency": "razonamiento matemático", "subject_aliases": ["matemática", "matemáticas"], "area_aliases": ["ciencia y tecnología"], "required": 70, "weight": 0.25, "relation_id": "BR-SCIENCE-ENV-UCB", "topic": "Cálculo preuniversitario", "prerequisite": null},
+        {"competency": "gestión ambiental inicial", "subject_aliases": ["medio ambiente", "ecología"], "area_aliases": ["técnica tecnológica"], "required": 65, "weight": 0.15, "relation_id": "BR-BTH-ENV-UCB", "topic": "Desarrollo sostenible", "prerequisite": "Biología y ecología"}
+      ]
+    },
+    "BO-UMSA-LP-ING-CIVIL": {
+      "riasec_target": {"R": 80, "I": 75, "A": 25, "S": 30, "E": 45, "C": 70},
+      "bth_tags": ["construcción civil", "dibujo técnico", "electricidad industrial"],
+      "interest_keywords": ["construcción", "estructuras", "cálculo", "infraestructura", "diseño técnico"],
+      "requirements": [
+        {"competency": "razonamiento matemático", "subject_aliases": ["matemática", "matemáticas"], "area_aliases": ["ciencia y tecnología"], "required": 75, "weight": 0.45, "relation_id": "BR-MATH-CIV-UMSA", "topic": "Álgebra y cálculo preuniversitario", "prerequisite": null},
+        {"competency": "fundamentos físicos", "subject_aliases": ["física"], "area_aliases": ["ciencia y tecnología"], "required": 70, "weight": 0.3, "relation_id": "BR-MATH-CIV-UMSA", "topic": "Mecánica y vectores", "prerequisite": "Álgebra y cálculo preuniversitario"},
+        {"competency": "fundamentos químicos", "subject_aliases": ["química"], "area_aliases": ["ciencia y tecnología"], "required": 65, "weight": 0.15, "relation_id": "BR-MATH-CIV-UMSA", "topic": "Química general y materiales", "prerequisite": null},
+        {"competency": "representación técnica", "subject_aliases": ["dibujo técnico"], "area_aliases": ["técnica tecnológica"], "required": 65, "weight": 0.1, "relation_id": "BR-BTH-CONSTRUCTION-CIV-UMSA", "topic": "Dibujo técnico", "prerequisite": null}
+      ]
+    }
+  }
+}

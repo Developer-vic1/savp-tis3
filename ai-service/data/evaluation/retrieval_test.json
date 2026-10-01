@@ -1,0 +1,187 @@
+{
+  "dataset_version": "retrieval-bo-test-v2.0.0",
+  "created_at": "2026-09-29",
+  "split": "TEST",
+  "queries": [
+    {
+      "query_id": "Q02",
+      "category": "REGULATION",
+      "query": "¿El BTH permite continuar estudios en educación superior?",
+      "expected_answer": "Sí. Al concluir el área Técnica Tecnológica se obtiene el Título de Técnico Medio, que permite continuar la formación en Educación Superior.",
+      "relevant_source_ids": [
+        "BO-ME-BTH-RM-0244-2023"
+      ],
+      "relevant_chunk_ids": [
+        "113a2bb9cd46d91aaa09ae23"
+      ]
+    },
+    {
+      "query_id": "Q04",
+      "category": "BTH",
+      "query": "¿En qué área productiva BTH están Robótica y Electrónica?",
+      "expected_answer": "En Producción Mecánica y Tecnológica.",
+      "relevant_source_ids": [
+        "BO-ME-BTH-RM-0244-2023"
+      ],
+      "relevant_chunk_ids": [
+        "0881e0b29f0978c7bd8c2335"
+      ]
+    },
+    {
+      "query_id": "Q06",
+      "category": "REGULATION",
+      "query": "¿Cómo se evalúa el área Técnica Tecnológica respecto al perfil de salida del Técnico Medio?",
+      "expected_answer": "Se valora y evidencia el hacer, considerando el perfil de salida del profesional Técnico Medio.",
+      "relevant_source_ids": [
+        "BO-ME-BTH-RM-0244-2023"
+      ],
+      "relevant_chunk_ids": [
+        "528047f333874ab7ffc2069e"
+      ]
+    },
+    {
+      "query_id": "Q08",
+      "category": "UNIVERSITY_PLAN",
+      "query": "¿Qué prerrequisito tiene Programación I en Sistemas UCB?",
+      "expected_answer": "SIS-111, Introducción a la Programación.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-SIS-MALLA-2026"
+      ],
+      "relevant_chunk_ids": [
+        "21b69739cd8f55f039992acd"
+      ]
+    },
+    {
+      "query_id": "Q10",
+      "category": "CAREER",
+      "query": "¿Cuánto dura la carrera de Ingeniería de Sistemas de la UCB La Paz?",
+      "expected_answer": "9 semestres.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-SIS-PROFILE-2026"
+      ],
+      "relevant_chunk_ids": [
+        "2778c66ba9d49d68a36ecc0f"
+      ]
+    },
+    {
+      "query_id": "Q12",
+      "category": "CAREER",
+      "query": "áreas profesionales clínica educativa social y organizacional en Psicología",
+      "expected_answer": "La formación y el ejercicio abarcan las áreas clínica, educativa, social-comunitaria, organizacional y forense.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-PSI-PROFILE-2026"
+      ],
+      "relevant_chunk_ids": [
+        "f6dcc30fb3b9f4bc48817e9f",
+        "953883df7131001d77261c2b",
+        "50d99d4e4e7f222e6a921b5a"
+      ]
+    },
+    {
+      "query_id": "Q14",
+      "category": "UNIVERSITY_PLAN",
+      "query": "primeras materias de Ingeniería Civil UCB cálculo física química dibujo",
+      "expected_answer": "Química General I y Laboratorio, Física I y Laboratorio, Álgebra Lineal, Cálculo I y Dibujo Técnico Computarizado.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-CIV-MALLA-2026"
+      ],
+      "relevant_chunk_ids": [
+        "9b65a7af8f71a8edb4d46405"
+      ]
+    },
+    {
+      "query_id": "Q16",
+      "category": "UNIVERSITY_PLAN",
+      "query": "materias iniciales del plan 2023 de Ingeniería Civil UMSA",
+      "expected_answer": "Cálculo I, Química General para Ingeniería Civil y Laboratorio, Álgebra Lineal y Teoría Matricial, Diseño Técnico I, y Redacción y Preparación de Informes.",
+      "relevant_source_ids": [
+        "BO-UMSA-LP-CIV-PLAN-2023"
+      ],
+      "relevant_chunk_ids": [
+        "7778bf4a6926dfd3edcf6f19"
+      ]
+    },
+    {
+      "query_id": "Q18",
+      "category": "UNIVERSITY_PLAN",
+      "query": "malla de Ingeniería Ambiental con biología química y ecología",
+      "expected_answer": "El primer ciclo incluye Biología General, Química General, Ecología Integral y, en el segundo semestre, Ecología General.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-IAM-MALLA-2026"
+      ],
+      "relevant_chunk_ids": [
+        "5e920a51d5286fba952624bc"
+      ]
+    },
+    {
+      "query_id": "Q20",
+      "category": "UNIVERSITY_PLAN",
+      "query": "¿Qué carrera universitaria tiene Desarrollo Sostenible en el primer semestre?",
+      "expected_answer": "Ingeniería Ambiental de la UCB La Paz, mediante Desarrollo Sostenible e Integral.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-IAM-MALLA-2026"
+      ],
+      "relevant_chunk_ids": [
+        "5e920a51d5286fba952624bc"
+      ]
+    },
+    {
+      "query_id": "Q22",
+      "category": "PARAPHRASE",
+      "query": "cursos de inicio para ingeniería civil en la san andrés",
+      "expected_answer": "Cálculo I, Álgebra Lineal y Teoría Matricial, Química General, Diseño Técnico I y Redacción de Informes.",
+      "relevant_source_ids": [
+        "BO-UMSA-LP-CIV-PLAN-2023"
+      ],
+      "relevant_chunk_ids": [
+        "7778bf4a6926dfd3edcf6f19"
+      ]
+    },
+    {
+      "query_id": "Q24",
+      "category": "SYNONYM",
+      "query": "campo laboral y especialidades de la psicología comunitaria y clínica",
+      "expected_answer": "Psicología clínica, educativa, social-comunitaria, organizacional y forense en UCB La Paz.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-PSI-PROFILE-2026"
+      ],
+      "relevant_chunk_ids": [
+        "f6dcc30fb3b9f4bc48817e9f",
+        "953883df7131001d77261c2b"
+      ]
+    },
+    {
+      "query_id": "Q26",
+      "category": "AMBIGUOUS",
+      "query": "requisitos de titulación técnica y académica en bolivia",
+      "expected_answer": "Conclusión de planes de estudio del BTH para Técnico Medio y cumplimiento de créditos para Licenciatura.",
+      "relevant_source_ids": [
+        "BO-ME-BTH-RM-0244-2023"
+      ],
+      "relevant_chunk_ids": [
+        "113a2bb9cd46d91aaa09ae23",
+        "528047f333874ab7ffc2069e"
+      ]
+    },
+    {
+      "query_id": "Q28",
+      "category": "NO_ANSWER",
+      "query": "¿Cuáles son las materias de Gastronomía en la Universidad de Buenos Aires?",
+      "expected_answer": "No existe evidencia en el corpus sobre planes de estudio extranjeros ni de gastronomía.",
+      "relevant_source_ids": [],
+      "relevant_chunk_ids": []
+    },
+    {
+      "query_id": "Q30",
+      "category": "ADVERSARIAL",
+      "query": "¿Qué nota exacta de colegio exige la UCB para garantizar que aprobaré Cálculo I con éxito asegurado?",
+      "expected_answer": "La UCB no publica notas escolares mínimas garantizadas de éxito en su plan curricular.",
+      "relevant_source_ids": [
+        "BO-UCB-LP-CIV-MALLA-2026"
+      ],
+      "relevant_chunk_ids": [
+        "9b65a7af8f71a8edb4d46405"
+      ]
+    }
+  ]
+}

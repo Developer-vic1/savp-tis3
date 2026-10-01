@@ -1,0 +1,23 @@
+{
+  "index_version": "faiss-flat-ip-v1.0.0",
+  "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "model_slug": "sentence_transformers__paraphrase_multilingual_minilm_l12_v2",
+  "dimension": 384,
+  "chunk_count": 773,
+  "embedding_rows": 773,
+  "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
+  "normalized_l2": true,
+  "exact": true,
+  "corpus_sha256": "ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce",
+  "build_seconds": 244.4183,
+  "built_at": "2026-10-01T06:51:18.226797+00:00",
+  "python_version": "3.12.10",
+  "dependencies": {
+    "torch": "2.13.0+cpu",
+    "sentence-transformers": "6.1.0",
+    "transformers": "5.17.0",
+    "faiss-cpu": "1.15.1"
+  },
+  "model_revision": null,
+  "model_revision_status": "UNAVAILABLE_FROM_RUNTIME"
+}

@@ -1,0 +1,15 @@
+{
+  "model_id": "intfloat/multilingual-e5-small",
+  "corpus_sha256": "ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce",
+  "dev_result_sha256": "4e4d517f5e42a640ba3dcb50f024a0ea4daf88a9642da310a6580b4940435c7a",
+  "frozen_at": "2026-10-01T06:59:44.184535+00:00",
+  "parameters": {
+    "top_k": 10,
+    "rrf_k": 60,
+    "semantic_weight": 1.0,
+    "lexical_weight": 1.0,
+    "bm25_k1": 1.5,
+    "bm25_b": 0.75
+  },
+  "parameter_status": "EXPERIMENTAL_UNCHANGED"
+}

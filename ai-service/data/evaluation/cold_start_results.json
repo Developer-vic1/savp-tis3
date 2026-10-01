@@ -1,0 +1,14 @@
+{
+  "measured_at": "2026-10-01T07:20:30.956173+00:00",
+  "scope": "FRESH_PROCESS_FASTAPI_APP_INITIALIZATION",
+  "python": "3.12.10",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "seconds": 9.569,
+  "status": "PASS",
+  "error": null,
+  "limitations": [
+    "Una medición; incluye inicio de Python e importación de la aplicación.",
+    "No carga el modelo de embeddings, índice ni LLM.",
+    "Separada del benchmark de proceso caliente."
+  ]
+}
