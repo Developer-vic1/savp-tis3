@@ -2,6 +2,11 @@
 
 # Recuperación semántica
 
+Revalidación del 2026-10-01: la reconstrucción intentada con dependencias instaladas desde
+`uv.lock` se detuvo por el bloqueo de `torch._C`. E5 y MiniLM siguen `STALE`; no se
+escribieron vectores nuevos ni se alteraron manifiestos. El equipo alternativo solo es
+accesible mediante GitHub y todavía no se ha ejecutado allí esta fase.
+
 Fase 2.1: E5 conserva prefijos `query: ` y `passage: `; MiniLM se conserva como alternativa.
 Ambos índices siguen `STALE` hasta generar embeddings reales en una máquina compatible con Torch.
 La reconstrucción y evaluación separada DEV/TEST están preparadas, no ejecutadas.

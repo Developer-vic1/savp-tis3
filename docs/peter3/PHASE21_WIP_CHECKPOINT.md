@@ -1,5 +1,15 @@
 # Checkpoint WIP de fase 2.1 — reconstrucción pendiente
 
+## Actualización local del 2026-10-01
+
+El checkpoint `b02a392` ya está publicado en `origin/work/peter3-mejoras-fase2`.
+Un entorno limpio creado desde `uv.lock` reproduce el bloqueo de `torch._C`, por lo que
+el intento de reconstrucción no guardó índices. Mypy 1.20.2 sí inicia allí y pasa
+`mypy app scripts` (82 archivos) y `mypy .` (111 archivos) después de corregir tres
+errores reales de tipos. La suite termina con 125 passed, 2 failed, 1 skipped y 92 % de
+cobertura. El diagnóstico de `librt.internal` de abajo corresponde al entorno anterior.
+La segunda laptop se sincroniza por GitHub, sin acceso remoto de ejecución desde esta sesión.
+
 Este checkpoint preserva los cambios locales de fase 2 y prepara su continuación en una segunda laptop. **No es el commit final de fase 2 ni autoriza integración.** Rama: `work/peter3-mejoras-fase2`; base protegida: `ae386c741c850a89adc586131c9f974ac458e628`.
 
 ## Diagnóstico reproducido en la primera laptop
@@ -28,7 +38,17 @@ Fuentes y corpus pasan `python scripts/verify_sources.py --upstream-only`: 12 sn
 
 ## Continuación obligatoria en equipo compatible
 
-Partir de este commit WIP en la misma rama. Instalar Python 3.12 y dependencias según `uv.lock`, en CPU. Antes de generar vectores, comprobar `import torch`, `torch.rand(1)`, `import faiss` y `python -m mypy --version`. No usar CUDA ni embeddings sintéticos.
+Usar `C:\laragon\www\savp-tis3-aporte` en la segunda laptop, nunca el worktree antiguo del
+escritorio. Hacer `git fetch origin`, comprobar la rama `work/peter3-mejoras-fase2` y que
+`git rev-parse HEAD` y `git rev-parse origin/work/peter3-mejoras-fase2` sean
+`b02a3926a5a5487a1c0dec70069e335c37eb2615`. Instalar Python 3.12 y dependencias según
+`uv.lock`, en CPU. Antes de generar vectores, comprobar `import torch`, `torch.rand(1)`,
+`import faiss` y `python -m mypy --version`. No usar CUDA ni embeddings sintéticos.
+
+Las correcciones de tipos y esta revalidación del 2026-10-01 aún son cambios locales de la
+primera laptop, posteriores a `b02a392`; GitHub no los transferirá hasta un commit autorizado.
+Si la reconstrucción funciona en la segunda laptop, conservar los resultados reales y reunir
+los cambios de código y documentación antes de ejecutar el gate final y crear ese commit.
 
 Desde `ai-service`, ejecutar en este orden:
 

@@ -1,6 +1,6 @@
 {
   "evaluation_id": "peter3-prompt-evaluation-2026-09-30",
-  "evaluated_at": "2026-10-01T01:39:04.989336+00:00",
+  "evaluated_at": "2026-10-01T04:23:29.020116+00:00",
   "python": "3.12.10",
   "scenario_dataset": "data/evaluation/prompt_scenarios.json",
   "provider": "structured-answer-v1.0.0",

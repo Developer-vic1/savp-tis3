@@ -2,6 +2,12 @@
 
 # Estado del corpus — PETER 3
 
+Revalidación del 2026-10-01: 12 snapshots y 773 chunks pasan procedencia, integridad de
+referencias, unicidad de IDs y contenido no vacío. SHA-256 actual:
+`ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
+Los dos índices conservan el hash anterior `bda50b…`; sus 773 vectores y dimensiones
+no prueban compatibilidad con los 26 títulos modificados. `INDEX_INTEGRITY = FAIL`.
+
 Fase 2.1: `verify_sources.py --upstream-only` pasa para 773 chunks con IDs únicos, textos no
 vacíos y SHA-256 `ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
 Los dos índices conservan el hash anterior y siguen `STALE`; véase `PHASE21_WIP_CHECKPOINT.md`.
@@ -18,10 +24,11 @@ Estado reconstruido y verificado: 2026-09-29.
 - Metadatos obligatorios: `chunk_id`, `source_id`, institución, título, URL, hash, versión,
   página/sección, método de extracción y texto.
 
-## Índices
+## Índices históricos, 2026-09-29
 
 Los dos índices FAISS `IndexFlatIP` contienen 773 vectores de dimensión 384 y exactamente el
-mismo orden de `chunk_id` que el corpus. Los manifiestos registran el SHA-256 del corpus:
+mismo orden de `chunk_id` que el corpus. Sus manifiestos registran el SHA-256 anterior,
+incompatible con el corpus actual:
 
 - `intfloat/multilingual-e5-small` (seleccionado);
 - `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (comparador).

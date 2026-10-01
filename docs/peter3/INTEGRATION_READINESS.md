@@ -1,5 +1,10 @@
 # Integration readiness — PETER 3
 
+Revalidación del 2026-10-01: `mypy app scripts` y `mypy .` pasan en el entorno limpio de
+`uv.lock`; la suite sigue en 125 passed, 2 failed, 1 skipped (92 % de cobertura). Torch no
+importa por Code Integrity en este equipo. Los índices, retrieval DEV/TEST, tutor y E2E completo
+siguen sin gate satisfactorio. El checkpoint `b02a392` está en origin; no hay commit final.
+
 Checkpoint de fase 2.1: la verificación de fuentes/corpus pasa por separado, pero ambos índices
 siguen `STALE`. La reconstrucción está preparada para otro equipo en `PHASE21_WIP_CHECKPOINT.md`;
 no hay aprobación de integración ni commit final.

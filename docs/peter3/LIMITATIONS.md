@@ -2,15 +2,17 @@
 
 # Limitaciones reales
 
-Fase 2.1: Code Integrity del equipo bloquea las extensiones nativas sin firma empresarial
-`torch._C` y `librt.internal` (eventos 3033/3077). La primera impide generar embeddings y la
-segunda impide iniciar mypy; no se han inferido resultados de ninguno. El checkpoint WIP en
-`PHASE21_WIP_CHECKPOINT.md` permite continuar en una segunda laptop sin falsificar los índices.
+Fase 2.1, revalidación del 2026-10-01: Code Integrity del equipo bloquea `torch._C`
+(eventos 3033/3077), impidiendo generar embeddings reales. Mypy 1.20.2 sí pasa en un
+entorno limpio reproducido desde `uv.lock`: 0 errores en `mypy app scripts` y `mypy .`
+tras corregir tres errores de tipos. No se han ejecutado índices ni retrieval nuevos.
+La segunda laptop solo es accesible por sincronización GitHub, que no ofrece ejecución
+remota desde esta sesión.
 
 - No hay validación psicométrica específica en población boliviana ni estudio longitudinal.
 - Bridge y crosswalk son inferencias documentales; requieren revisión experta y evaluación.
 - El catálogo cubre cinco ofertas de dos universidades y no es exhaustivo.
-- Retrieval alcanza Recall@5 híbrido 0.6667 en el conjunto total; puede omitir evidencia.
+- El resultado histórico de retrieval alcanza Recall@5 híbrido 0.6667 en el conjunto total; puede omitir evidencia.
 - El benchmark de prompts tiene 13 escenarios y no prueba seguridad universal.
 - El LLM local no fue evaluado porque el runtime no estuvo disponible.
 - Los parámetros experimentales no fueron calibrados con resultados estudiantiles reales.

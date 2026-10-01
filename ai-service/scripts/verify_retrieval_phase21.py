@@ -3,7 +3,7 @@
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from app.knowledge.registry import SERVICE_ROOT
 from app.retrieval.embeddings import MODEL_SPECS
@@ -13,7 +13,10 @@ EVALUATION = SERVICE_ROOT / "data/evaluation"
 
 
 def read(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    data = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"Se esperaba objeto JSON: {path}")
+    return cast(dict[str, Any], data)
 
 
 def main() -> int:

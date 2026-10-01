@@ -2,6 +2,11 @@
 
 # Rendimiento medido — PETER 3
 
+Revalidación del 2026-10-01: no se pudo medir retrieval, tutor, E2E integral ni carga fría
+del modelo con el corpus actual porque ambos índices siguen `STALE`. El smoke HTTP real
+registró latencias por endpoint en `ai-service/data/evaluation/http_smoke_phase21.json`:
+health, RIASEC y Analysis V2 respondieron 200; knowledge y tutor respondieron 503.
+
 Fase 2.1: no hay medición nueva de retrieval, tutor o E2E porque ambos índices siguen `STALE`.
 Las cifras siguientes pertenecen a sus entornos y fechas indicados; ninguna es un SLA vigente.
 

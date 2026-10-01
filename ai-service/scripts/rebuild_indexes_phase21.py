@@ -21,7 +21,13 @@ def main() -> int:
     if len(chunks) != 773 or len({chunk.chunk_id for chunk in chunks}) != 773:
         print("FAIL: el corpus definitivo debe tener 773 IDs únicos")
         return 1
-    for model_id in MODEL_SPECS:
+    model_order = (
+        "intfloat/multilingual-e5-small",
+        "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    )
+    if set(model_order) != set(MODEL_SPECS):
+        raise ValueError("La lista de modelos cambió; revisar el plan de reconstrucción")
+    for model_id in model_order:
         print(f"Construyendo embeddings reales: {model_id}", flush=True)
         index, manifest = build_and_save_index(model_id)
         if (

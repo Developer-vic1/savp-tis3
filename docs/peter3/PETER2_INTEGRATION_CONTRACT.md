@@ -1,5 +1,9 @@
 # Contrato de integración PETER 2 ↔ PETER 3
 
+Revalidación del 2026-10-01: este contrato sigue documentado, pero knowledge y tutor
+respondieron 503 en el smoke HTTP real por los índices `STALE`. El gate de Mypy pasa en
+el entorno limpio; no compensa los gates de índice, retrieval y E2E pendientes.
+
 Estado fase 2.1: contrato documentado, integración bloqueada por los dos índices FAISS `STALE`.
 La segunda laptop debe cerrar los gates descritos en `PHASE21_WIP_CHECKPOINT.md` antes de uso real.
 

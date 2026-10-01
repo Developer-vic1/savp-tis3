@@ -2,6 +2,11 @@
 
 # Evaluación de retrieval — PETER 3
 
+Revalidación del 2026-10-01: no hay métricas DEV ni TEST para el hash de corpus actual.
+El intento de reconstrucción verificó primero las fuentes y el corpus, y se detuvo al
+importar `torch._C` por Code Integrity, antes de escribir índices o métricas. La selección
+anterior de E5 y las cifras siguientes son históricas; TEST actual no se ha ejecutado.
+
 Fase 2.1: las métricas de abajo son históricas. DEV y TEST del corpus actualizado no se han
 ejecutado por el bloqueo de Torch. `evaluate_retrieval_phase21.py` separa DEV, selección congelada
 y TEST sin sobrescritura; procedimiento en `PHASE21_WIP_CHECKPOINT.md`.

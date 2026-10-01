@@ -12,7 +12,9 @@ SERVICE_ROOT = Path(__file__).resolve().parents[2]
 class OcrEngine(Protocol):
     engine_name: str
     language: str
-    engine_version: str
+
+    @property
+    def engine_version(self) -> str: ...
 
     def extract(self, image: Image.Image) -> tuple[str, float | None]: ...
 
