@@ -3,6 +3,7 @@ import json
 import os
 import platform
 from collections.abc import Callable
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import median
 from time import perf_counter
@@ -95,11 +96,14 @@ def main() -> None:
 
     virtual_memory = psutil.virtual_memory()
     output = {
-        "benchmark_id": "peter3-performance-2026-09-29",
+        "benchmark_id": "peter3-performance-phase21",
+        "measured_at": datetime.now(UTC).isoformat(),
         "scope": "LOCAL_CPU_WARM_PROCESS_REAL_SELECTED_INDEX",
         "fixture_classification": "SYNTHETIC_TEST_FIXTURE",
         "timing_clock": "time.perf_counter",
+        "warmup_per_operation": 1,
         "environment": {
+            "host": platform.node(),
             "platform": platform.platform(),
             "python": platform.python_version(),
             "processor": platform.processor() or "not_reported_by_platform",

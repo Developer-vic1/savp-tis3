@@ -52,5 +52,6 @@ hashes declarados. Se descargaron nuevas versiones directamente de las cuatro UR
 URL final, timestamp UTC, `text/html; charset=UTF-8` y SHA-256 calculado de los bytes recibidos.
 La versión del registro subió a `2.1.0`. El corpus se reconstruyó para los cuatro HTML y se
 reparó la metadata `version` de 265 chunks del currículo ministerial solo después de verificar
-que sus hashes de fuente coincidían. Conserva 773 chunks. Los índices y las métricas de
-retrieval siguen `STALE`; ninguna cifra histórica debe presentarse como resultado de fase 2.
+que sus hashes de fuente coincidían. Conserva 773 chunks. Aquellos índices
+quedaron `STALE` en septiembre; se reconstruyeron y verificaron el 2026-10-01.
+Los resultados vigentes de DEV y TEST están en `RETRIEVAL_EVALUATION.md`.

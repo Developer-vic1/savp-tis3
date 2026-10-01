@@ -4,8 +4,20 @@
   "model_slug": "intfloat__multilingual_e5_small",
   "dimension": 384,
   "chunk_count": 773,
+  "embedding_rows": 773,
   "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
+  "normalized_l2": true,
   "exact": true,
-  "corpus_sha256": "bda50b487fd2b7d974a9201ddfdd6f87a48aefe8b0dad38b508e5e112e369d3d",
-  "build_seconds": 112.1759
+  "corpus_sha256": "ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce",
+  "build_seconds": 280.7665,
+  "built_at": "2026-10-01T06:47:12.409154+00:00",
+  "python_version": "3.12.10",
+  "dependencies": {
+    "torch": "2.13.0+cpu",
+    "sentence-transformers": "6.1.0",
+    "transformers": "5.17.0",
+    "faiss-cpu": "1.15.1"
+  },
+  "model_revision": null,
+  "model_revision_status": "UNAVAILABLE_FROM_RUNTIME"
 }

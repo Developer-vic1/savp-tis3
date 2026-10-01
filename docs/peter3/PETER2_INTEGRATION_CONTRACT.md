@@ -1,11 +1,10 @@
 # Contrato de integración PETER 2 ↔ PETER 3
 
-Revalidación del 2026-10-01: este contrato sigue documentado, pero knowledge y tutor
-respondieron 503 en el smoke HTTP real por los índices `STALE`. El gate de Mypy pasa en
-el entorno limpio; no compensa los gates de índice, retrieval y E2E pendientes.
-
-Estado fase 2.1: contrato documentado, integración bloqueada por los dos índices FAISS `STALE`.
-La segunda laptop debe cerrar los gates descritos en `PHASE21_WIP_CHECKPOINT.md` antes de uso real.
+Revalidación del 2026-10-01: E5 y MiniLM se reconstruyeron sobre el corpus actual;
+DEV, freeze y TEST se ejecutaron en ese orden. El smoke en proceso obtuvo HTTP 200
+en Knowledge y Tutor, con `trace_id`; Full PETER 3 E2E pasó. El contrato FastAPI
+está listo para que PETER 2 implemente y pruebe su cliente. La integración PHP
+real todavía no se ha ejecutado. Véanse `FINAL_STATUS.md` y `PERFORMANCE.md`.
 
 Versión de esquema V2: `2.0`. URL base local sugerida: `http://127.0.0.1:8001`. En despliegue, PETER 2 debe usar una URL interna configurable y TLS en el enlace que corresponda. PETER 2 representa preguntas y resultados; PETER 3 conserva el instrumento, valida las respuestas y calcula RIASEC.
 
@@ -45,7 +44,7 @@ La respuesta real contiene tres limitaciones. Los valores públicos `1..5` se co
 
 El formato común es `{"error":{"code":"SAVP_AI_INVALID_REQUEST","message":"...","trace_id":"<uuid>","details":[]}}`. La cabecera `X-Trace-Id` coincide con el cuerpo en respuestas normales y de error. Los códigos actuales incluyen `401` para clave inválida, `422` para contrato o instrumento inválidos, `500` para error inesperado y `503` para dependencia o configuración indisponible. `400`, `403`, `404` y `409` no son casos contractuales implementados para estos endpoints; no asumirlos como garantía. El servidor nunca debe enviar traceback al cliente.
 
-Timeout recomendado inicial de PETER 2: 5 s para `/health` y RIASEC, 30 s para análisis, búsqueda y tutor estructurado, a ajustar con mediciones del despliegue. Reintentar una vez los `GET` y los `POST` de cálculo sin efectos persistentes ante timeout o `503`, con espera breve; no reintentar `401` ni `422`. Si FastAPI cae, PETER 2 debe mostrar indisponibilidad temporal, conservar localmente el formulario según su política de privacidad y permitir reintentar sin inventar resultados. Registrar `trace_id` y latencia, evitando nombre, CI, correo y respuestas completas.
+Timeout inicial sugerido para PETER 2: 5 s para `/health` y RIASEC y 30 s para análisis y tutor estructurado caliente; validar estos valores en el despliegue. La primera búsqueda en VicDev tardó 135 s al cargar E5, así que PETER 2 necesita una política explícita de calentamiento y timeout para la primera consulta. Reintentar una vez los `GET` y los `POST` de cálculo sin efectos persistentes ante timeout o `503`, con espera breve; no reintentar `401` ni `422`. Si FastAPI cae, PETER 2 debe mostrar indisponibilidad temporal, conservar localmente el formulario según su política de privacidad y permitir reintentar sin inventar resultados. Registrar `trace_id` y latencia, evitando nombre, CI, correo y respuestas completas.
 
 El texto, orden y dimensión de los 30 reactivos se verificaron contra la aplicación oficial;
 la comprensión y equivalencia cultural boliviana requieren validación local. Sus resultados son

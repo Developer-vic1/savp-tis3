@@ -1,20 +1,33 @@
-> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
+# Limitaciones reales — PETER 3
 
-# Limitaciones reales
+Revalidación técnica del 2026-10-01: Torch 2.14.0 y el módulo nativo de
+scikit-learn 1.9.1 fueron rechazados por Windows Code Integrity en VicDev.
+La combinación oficial CPU fijada en `pyproject.toml`/`uv.lock`
+(Torch 2.13.0+cpu, torchvision 0.28.0+cpu, scikit-learn 1.8.0)
+sí cargó y generó embeddings reales. Esta compatibilidad se verificó
+en Python 3.12.10 x64; otros hosts deben reproducir `uv sync --locked`
+y los gates. No se cambió la arquitectura ni se debilitó la política
+de Windows.
 
-Fase 2.1, revalidación del 2026-10-01: Code Integrity del equipo bloquea `torch._C`
-(eventos 3033/3077), impidiendo generar embeddings reales. Mypy 1.20.2 sí pasa en un
-entorno limpio reproducido desde `uv.lock`: 0 errores en `mypy app scripts` y `mypy .`
-tras corregir tres errores de tipos. No se han ejecutado índices ni retrieval nuevos.
-La segunda laptop solo es accesible por sincronización GitHub, que no ofrece ejecución
-remota desde esta sesión.
-
-- No hay validación psicométrica específica en población boliviana ni estudio longitudinal.
-- Bridge y crosswalk son inferencias documentales; requieren revisión experta y evaluación.
-- El catálogo cubre cinco ofertas de dos universidades y no es exhaustivo.
-- El resultado histórico de retrieval alcanza Recall@5 híbrido 0.6667 en el conjunto total; puede omitir evidencia.
-- El benchmark de prompts tiene 13 escenarios y no prueba seguridad universal.
-- El LLM local no fue evaluado porque el runtime no estuvo disponible.
-- Los parámetros experimentales no fueron calibrados con resultados estudiantiles reales.
-- Las métricas de rendimiento son de CPU/proceso caliente, no SLA ni prueba de concurrencia.
-- La integración Laravel, base de datos y UI está fuera de alcance y no fue iniciada.
+- RIASEC mide intereses, no aptitud, inteligencia ni probabilidad de éxito.
+  No tiene validación psicométrica específica para población boliviana.
+- Bridge requiere revisión experta. Crosswalk relaciona clasificaciones,
+  pero no establece equivalencia ni requisitos de admisión.
+- El catálogo incluye cinco ofertas de dos universidades y no es exhaustivo.
+- Retrieval puede omitir evidencia: TEST híbrido E5 obtuvo Recall@5
+  0.8929 en las consultas positivas etiquetadas; el benchmark es pequeño.
+- Los 13 escenarios de prompts, incluida inyección, no prueban seguridad
+  universal. La existencia de una cita se comprobó, pero su soporte
+  semántico para cada afirmación sigue `NOT_EVALUATED`.
+- El LLM local es opcional y no se evaluó como dependencia operativa.
+  El tutor estructurado funciona sin él.
+- No existe predictor validado de éxito. XGBoost no se implementó por
+  falta de dataset longitudinal, objetivo y evaluación. La fase 4
+  histórica permanece `NOT_IMPLEMENTED_AS_WRITTEN` donde corresponde.
+- Los parámetros de retrieval se seleccionaron con DEV y se congelaron
+  antes de TEST. No están calibrados con resultados estudiantiles.
+- La carga fría de E5 fue lenta en VicDev. Las mediciones locales de
+  proceso caliente y el smoke en proceso no constituyen SLA ni prueba
+  de capacidad de red o producción.
+- La integración real Laravel/PETER 2, base de datos y UI corresponde
+  a una etapa posterior; este cierre valida el contrato FastAPI.

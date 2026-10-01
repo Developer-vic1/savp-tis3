@@ -1,45 +1,54 @@
-> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
+# Evaluación de retrieval — fase 2.1
 
-# Evaluación de retrieval — PETER 3
+Evaluación ejecutada el 2026-10-01 sobre el corpus de 773 chunks con SHA-256
+`ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
+Los índices E5 y MiniLM se reconstruyeron con embeddings reales: 773 vectores
+L2 normalizados de dimensión 384 por modelo. `test_index_integrity.py` y
+`verify_sources.py` pasaron.
 
-Revalidación del 2026-10-01: no hay métricas DEV ni TEST para el hash de corpus actual.
-El intento de reconstrucción verificó primero las fuentes y el corpus, y se detuvo al
-importar `torch._C` por Code Integrity, antes de escribir índices o métricas. La selección
-anterior de E5 y las cifras siguientes son históricas; TEST actual no se ha ejecutado.
+Los datasets DEV y TEST contienen 15 consultas cada uno, con relevancia manual a
+nivel de chunk. Las métricas de relevancia se calculan sobre las consultas con
+chunks relevantes. Se compararon búsqueda semántica y fusión híbrida BM25 + RRF.
+Las latencias son de este host Windows y pueden incluir la carga inicial del
+modelo; no constituyen un SLA.
 
-Fase 2.1: las métricas de abajo son históricas. DEV y TEST del corpus actualizado no se han
-ejecutado por el bloqueo de Torch. `evaluate_retrieval_phase21.py` separa DEV, selección congelada
-y TEST sin sobrescritura; procedimiento en `PHASE21_WIP_CHECKPOINT.md`.
+## DEV — antes del freeze
 
-Ejecución: 2026-09-29 sobre 773 chunks, CPU, 30 consultas con relevancia manual a nivel de
-chunk. Los conjuntos `retrieval_dev.json` y `retrieval_test.json` tienen 15 consultas cada uno,
-son disjuntos y su unión coincide con `retrieval_queries.json`. Las consultas `NO_ANSWER` tienen
-lista de relevantes vacía.
+| Modelo / método | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Mediana ms | p95 ms |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| MiniLM semántico | 0.0897 | 0.2051 | 0.2821 | 0.2718 | 0.2173 | 78.0101 | 48720.2379 |
+| MiniLM híbrido | 0.1410 | 0.2821 | 0.3846 | 0.3489 | 0.3066 | 96.1011 | 360.4241 |
+| E5 semántico | 0.1667 | 0.2692 | 0.5128 | 0.3943 | 0.3621 | 157.5853 | 192863.5674 |
+| E5 híbrido | 0.2564 | 0.4744 | 0.6026 | 0.5238 | 0.4817 | 64.2446 | 32082.0153 |
 
-| Modelo / método | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Media consulta |
-|---|---:|---:|---:|---:|---:|---:|
-| MiniLM semántico | 0.1500 | 0.2611 | 0.2944 | 0.2847 | 0.2507 | 48.08 ms |
-| MiniLM híbrido RRF | 0.1722 | 0.3778 | 0.4667 | 0.3591 | 0.3572 | 84.45 ms |
-| E5 semántico | 0.2167 | 0.3222 | 0.5444 | 0.4112 | 0.3992 | 33.98 ms |
-| E5 híbrido RRF | 0.2556 | 0.5944 | 0.6667 | 0.5159 | 0.5161 | 44.46 ms |
+E5 híbrido superó a MiniLM híbrido en las cinco métricas de relevancia DEV.
+Se conservó E5 y no se ajustaron parámetros para casos individuales.
 
-Desglose del modelo seleccionado:
+## Freeze
 
-| Split / método | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 |
-|---|---:|---:|---:|---:|---:|
-| DEV semántico | 0.1444 | 0.2333 | 0.3778 | 0.3395 | 0.2881 |
-| DEV híbrido | 0.1556 | 0.4111 | 0.5222 | 0.4206 | 0.3929 |
-| TEST semántico | 0.2889 | 0.4111 | 0.7111 | 0.4829 | 0.5104 |
-| TEST híbrido | 0.3556 | 0.7778 | 0.8111 | 0.6111 | 0.6393 |
+`retrieval_freeze_phase21.json` fija E5, corpus SHA, hash del resultado DEV,
+`top_k=10`, `rrf_k=60`, pesos semántico/léxico `1.0/1.0` y BM25
+`k1=1.5`, `b=0.75`. Estado: `EXPERIMENTAL_UNCHANGED`.
+Se generó antes de ejecutar TEST. El archivo `selected.json` señala al
+índice E5 actual.
 
-Los valores provienen de `data/evaluation/retrieval_results.json`; E5 queda seleccionado en
-`data/indexes/selected.json`. La selección es empírica para este dataset, no una superioridad
-universal ni un SLA. El Recall@5 híbrido de 0.6667 implica que todavía existen consultas donde
-el corpus o el ranking no recuperan toda la evidencia etiquetada.
+## TEST — una ejecución tras el freeze
 
-Reproducción:
+| Método | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Mediana ms | p95 ms |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| E5 semántico | 0.3095 | 0.5119 | 0.7262 | 0.5156 | 0.5399 | 88.1478 | 110613.4571 |
+| E5 híbrido | 0.3810 | 0.8690 | 0.8929 | 0.6548 | 0.7043 | 59.0309 | 548.1240 |
 
-```powershell
-.venv312\Scripts\python.exe scripts\evaluate_retrieval.py
-.venv312\Scripts\python.exe -m pytest tests\unit\test_index_integrity.py tests\unit\test_retrieval.py
-```
+`verify_retrieval_phase21.py` pasó: DEV, freeze, TEST, selección y manifests
+apuntan al mismo corpus. Las latencias p95 extremadamente altas en algunas
+series incluyen cargas frías del runtime/modelo en Windows; el benchmark de
+proceso caliente se informa por separado en `PERFORMANCE.md`.
+
+El conjunto contiene categorías `NO_ANSWER`, `AMBIGUOUS` y `ADVERSARIAL`.
+Las pruebas de tutor y los 13 escenarios de prompts comprobaron abstención,
+limitaciones y rechazo de instrucciones adversariales en sus casos evaluados.
+Estas pruebas no demuestran cobertura universal. El soporte semántico de cada
+cita frente a cada afirmación sigue `NOT_EVALUATED`.
+
+Artefactos reproducibles: `ai-service/data/evaluation/retrieval_dev_phase21.json`,
+`retrieval_freeze_phase21.json` y `retrieval_test_phase21.json`.

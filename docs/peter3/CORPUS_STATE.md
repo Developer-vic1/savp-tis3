@@ -1,41 +1,36 @@
-> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
-
 # Estado del corpus — PETER 3
 
-Revalidación del 2026-10-01: 12 snapshots y 773 chunks pasan procedencia, integridad de
-referencias, unicidad de IDs y contenido no vacío. SHA-256 actual:
-`ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
-Los dos índices conservan el hash anterior `bda50b…`; sus 773 vectores y dimensiones
-no prueban compatibilidad con los 26 títulos modificados. `INDEX_INTEGRITY = FAIL`.
+Verificación del 2026-10-01: `verify_sources.py --upstream-only` y la
+verificación completa pasaron. Hay **12 snapshots locales**, **11 referencias**
+y **773 chunks**. Los 773 `chunk_id` son únicos, sus `source_id` resuelven,
+los textos no están vacíos y los hashes SHA-256 de las 12 fuentes coinciden
+con los archivos conservados.
 
-Fase 2.1: `verify_sources.py --upstream-only` pasa para 773 chunks con IDs únicos, textos no
-vacíos y SHA-256 `ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
-Los dos índices conservan el hash anterior y siguen `STALE`; véase `PHASE21_WIP_CHECKPOINT.md`.
+SHA-256 definitivo de `data/processed/corpus.jsonl`:
 
-Estado reconstruido y verificado: 2026-09-29.
+`ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`
 
-- Versión: `bo-official-corpus-1.0.0`.
-- Fuentes: 12.
-- Chunks únicos: 773.
-- Extracción OCR conservada: 35 chunks; las demás páginas útiles usan extracción digital o
-  HTML estructurado.
-- Chunking real: objetivo de 1.200 caracteres y solapamiento de 180 caracteres. Son caracteres,
-  no tokens.
-- Metadatos obligatorios: `chunk_id`, `source_id`, institución, título, URL, hash, versión,
-  página/sección, método de extracción y texto.
+El corpus usa la versión `bo-official-corpus-1.0.0`. Incluye 35 chunks
+obtenidos mediante OCR conservado; los demás proceden de extracción digital o
+HTML estructurado. El chunking apunta a 1200 caracteres y 180 de solapamiento
+(caracteres, no tokens). Cada chunk conserva ID, fuente, institución, título,
+URL, hash, versión, página o sección, método de extracción y texto.
 
-## Índices históricos, 2026-09-29
+## Índices actuales
 
-Los dos índices FAISS `IndexFlatIP` contienen 773 vectores de dimensión 384 y exactamente el
-mismo orden de `chunk_id` que el corpus. Sus manifiestos registran el SHA-256 anterior,
-incompatible con el corpus actual:
+`scripts/rebuild_indexes_phase21.py` generó embeddings reales para E5 y
+MiniLM desde este corpus. Ambos índices FAISS `IndexFlatIP` tienen 773
+vectores de dimensión 384, 773 filas de metadata y el mismo orden de
+`chunk_id` que `corpus.jsonl`. Sus manifests registran el SHA actual;
+`test_index_integrity.py` pasó 3/3 y `verify_sources.py` confirmó ambos.
+Los vectores están normalizados en L2; el producto interno equivale a
+similitud coseno.
 
-- `intfloat/multilingual-e5-small` (seleccionado);
-- `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (comparador).
+El SHA anterior `bda50b487fd2b7d974a9201ddfdd6f87a48aefe8b0dad38b508e5e112e369d3d`
+identifica solo los índices históricos reemplazados. No debe usarse para
+seleccionar un índice del corpus actual. La selección vigente de E5 y su
+evaluación DEV/TEST están documentadas en `RETRIEVAL_EVALUATION.md`.
 
-Los vectores se normalizan en L2, por lo que el producto interno representa similitud coseno.
-BM25 se construye en memoria y ambos rankings se fusionan con RRF `k=60`.
-
-`scripts/build_corpus.py --merge-existing` permite incorporar una fuente seleccionada sin volver
-a ejecutar OCR sobre todos los PDFs. Una reconstrucción completa sigue siendo la prueba de
-reproducibilidad de referencia y puede ser costosa en CPU.
+`scripts/build_corpus.py --merge-existing` permite incorporar una fuente
+seleccionada sin repetir OCR sobre todos los PDF. Cualquier cambio posterior
+al corpus requiere regenerar los embeddings e índices, y revalidar retrieval.

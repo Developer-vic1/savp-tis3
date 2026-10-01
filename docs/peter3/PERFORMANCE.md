@@ -1,53 +1,37 @@
-> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
-
 # Rendimiento medido — PETER 3
 
-Revalidación del 2026-10-01: no se pudo medir retrieval, tutor, E2E integral ni carga fría
-del modelo con el corpus actual porque ambos índices siguen `STALE`. El smoke HTTP real
-registró latencias por endpoint en `ai-service/data/evaluation/http_smoke_phase21.json`:
-health, RIASEC y Analysis V2 respondieron 200; knowledge y tutor respondieron 503.
+Medición del 2026-10-01 en VicDev, Windows 11 `10.0.26200`, Python 3.12.10,
+CPU AMD64 Family 23 Model 160 (4 núcleos físicos, 8 lógicos), 6.26 GB de RAM.
+Se usó E5 CPU y el índice FAISS reconstruido para 773 chunks. La fixture de
+análisis es sintética. Cada operación tuvo una ejecución de calentamiento y
+20 repeticiones cronometradas con `time.perf_counter`.
 
-Fase 2.1: no hay medición nueva de retrieval, tutor o E2E porque ambos índices siguen `STALE`.
-Las cifras siguientes pertenecen a sus entornos y fechas indicados; ninguna es un SLA vigente.
-
-Fecha: 2026-09-29. Comando:
-
-```powershell
-.venv312\Scripts\python.exe scripts\benchmark_peter3.py --repetitions 20
-```
-
-Entorno: Windows 11 `10.0.26200`, Python 3.12.14, CPU AMD64 Family 25 Model 117,
-8 núcleos físicos/16 lógicos, 16.435 GB RAM, ejecución CPU. Fixture sintético; E5 y el índice
-FAISS seleccionado reales; proceso caliente.
-
-| Componente | N | Mediana | p95 |
+| Componente, proceso caliente | N | Mediana | p95 |
 |---|---:|---:|---:|
-| Analysis V2 | 20 | 10.293 ms | 15.690 ms |
-| Retrieval híbrido | 20 | 44.997 ms | 49.809 ms |
-| Tutor estructurado con retrieval | 20 | 52.223 ms | 60.452 ms |
-| Pipeline integral | 20 | 108.883 ms | 125.236 ms |
+| Analysis V2 | 20 | 7.841 ms | 12.336 ms |
+| Retrieval híbrido | 20 | 54.345 ms | 59.873 ms |
+| Tutor estructurado con retrieval | 20 | 60.122 ms | 70.972 ms |
+| Pipeline integral | 20 | 134.935 ms | 181.263 ms |
 
-El resultado íntegro está en `ai-service/data/evaluation/performance_results.json`. El pipeline
-integral se mide mediante funciones de servicio; no incluye HTTP, red, concurrencia, descarga ni
-carga fría del modelo/índice. Estas cifras no son un SLA. El LLM local no está incluido porque su
-runtime no estaba disponible.
+Los datos completos están en
+`ai-service/data/evaluation/performance_results.json`. El pipeline se mide
+mediante funciones de servicio; no incluye HTTP, red, descarga, carga inicial
+de E5 ni LLM local. Estos resultados de un proceso local no son un SLA ni una
+prueba de capacidad concurrente.
 
-## Fase 2: mediciones locales del análisis, 2026-09-30
+La prueba de inicio frío en un proceso nuevo midió **9.569 s** para iniciar
+Python e importar FastAPI. No carga el modelo ni el índice. Su archivo es
+`ai-service/data/evaluation/cold_start_results.json`. En el primer smoke con
+`TestClient`, Knowledge tardó **135393.360 ms** al cargar E5 y el tutor
+caliente **201.926 ms**. La repetición del verificador global, conservada en
+`ai-service/data/evaluation/http_smoke_phase21.json`, midió **26034.964 ms**
+para Knowledge y **75.381 ms** para Tutor; las seis rutas respondieron HTTP
+200 con trace IDs. Ocho solicitudes RIASEC concurrentes con cuatro
+trabajadores dieron 8/8 HTTP 200 (mediana **15.192 ms** en la repetición).
+La variación de la carga fría es una limitación operativa de este host.
+El smoke es en proceso y no prueba transporte de red.
 
-Python 3.12.10, Windows 11, CPU AMD64 Family 23 Model 160, 8 procesadores lógicos; fixture
-sintético, 10 iteraciones de calentamiento y 50 mediciones por componente. Proceso caliente,
-sin HTTP, retrieval, tutor ni concurrencia. Datos completos en
-`ai-service/data/evaluation/analysis_v2_phase2_performance.json`.
-
-| Componente | Mediana | p95 |
-|---|---:|---:|
-| Validación | 0.0497 ms | 0.0657 ms |
-| RIASEC | 0.0278 ms | 0.0310 ms |
-| Learning Analytics | 0.2670 ms | 0.3338 ms |
-| Recommendation V2 | 5.1650 ms | 7.2662 ms |
-| Análisis V2 completo | 6.2266 ms | 7.6337 ms |
-
-Una medición independiente de inicio de proceso e importación de FastAPI tardó 3.265 s;
-no incluye carga del modelo de embeddings, índice ni LLM. Está en
-`ai-service/data/evaluation/cold_start_results.json`. El benchmark de retrieval del 2026-09-29
-es histórico y no representa el corpus actual con índices `STALE`.
+Las latencias DEV/TEST se muestran sin filtrado en
+`RETRIEVAL_EVALUATION.md`; ciertos p95 incluyen cargas frías excepcionales
+de Windows. Los números del 2026-09-29 y los de Analysis V2 del 2026-09-30
+son una línea base histórica de otros estados del corpus/entorno.

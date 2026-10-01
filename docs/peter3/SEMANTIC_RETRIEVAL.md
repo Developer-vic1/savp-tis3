@@ -1,55 +1,44 @@
-> **Estado de fase 2 (2026-09-30):** Las cifras y los PASS fechados el 2026-09-29 describen la l?nea base hist?rica. Se reconstruy? el corpus con cuatro snapshots HTML UCB nuevos y se corrigi? metadata de versi?n respaldada por hash; ambos ?ndices FAISS y sus m?tricas siguen `STALE` hasta reconstrucci?n y revalidaci?n. V?ase `FINAL_STATUS.md`.
+# Recuperación semántica — PETER 3
 
-# Recuperación semántica
+Fase 2.1 revalidada el 2026-10-01. Los modelos vigentes son
+`intfloat/multilingual-e5-small` y
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Ambos
+codificaron los 773 chunks reales del corpus actual en dimensión 384.
+E5 aplica `query: ` a consultas y `passage: ` a documentos; MiniLM no usa
+esos prefijos. No se cambió ninguno de los modelos para resolver el entorno.
 
-Revalidación del 2026-10-01: la reconstrucción intentada con dependencias instaladas desde
-`uv.lock` se detuvo por el bloqueo de `torch._C`. E5 y MiniLM siguen `STALE`; no se
-escribieron vectores nuevos ni se alteraron manifiestos. El equipo alternativo solo es
-accesible mediante GitHub y todavía no se ha ejecutado allí esta fase.
+Los índices usan FAISS `IndexFlatIP` con vectores normalizados en L2;
+la comparación exacta por producto interno equivale a similitud coseno.
+El modo híbrido combina BM25 y resultados semánticos mediante RRF
+(`k=60`, pesos 1.0/1.0). Los filtros de fuente oficial, institución y
+tipo se aplican al devolver resultados. Cada hit conserva `chunk_id`,
+score y metadatos para trazabilidad.
 
-Fase 2.1: E5 conserva prefijos `query: ` y `passage: `; MiniLM se conserva como alternativa.
-Ambos índices siguen `STALE` hasta generar embeddings reales en una máquina compatible con Torch.
-La reconstrucción y evaluación separada DEV/TEST están preparadas, no ejecutadas.
+El bloqueo de Windows Code Integrity afectaba a Torch 2.14.0 y al módulo
+nativo de scikit-learn 1.9.1. Se verificaron wheels oficiales de Torch
+2.13.0+cpu, torchvision 0.28.0+cpu y scikit-learn 1.8.0 en Python 3.12.10
+x64. Los imports, `torch.rand`, la codificación real de dos textos con
+cada modelo y una búsqueda FAISS temporal pasaron antes de cambiar
+`pyproject.toml` y `uv.lock`. El lock usa el índice CPU oficial de
+PyTorch solo para Torch/torchvision; el runtime final volvió a pasar esos
+imports y la suite del proyecto.
 
-## Problema
+`scripts/rebuild_indexes_phase21.py` escribió vectores y manifests desde
+el código; no se copiaron vectores previos ni se editaron hashes a mano.
+Los dos manifests tienen SHA del corpus
+`ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce`.
+`verify_sources.py` y `test_index_integrity.py` pasaron. DEV comparó
+ambos modelos y los dos modos; E5 híbrido obtuvo mejores métricas de
+relevancia y fue congelado antes de ejecutar TEST una sola vez.
+Cifras y latencias: `RETRIEVAL_EVALUATION.md`.
 
-La búsqueda por coincidencia literal falla ante paráfrasis como “materias al iniciar Sistemas”
-frente a “primer ciclo / Introducción a la Programación”. Se necesita comparar dos modelos en
-el corpus boliviano real antes de seleccionar uno.
+Los manifests registran Python 3.12.10, Torch 2.13.0+cpu,
+sentence-transformers 6.1.0, transformers 5.17.0 y faiss-cpu 1.15.1.
+La revisión exacta del modelo no estuvo disponible desde este runtime;
+se registra `model_revision: null` y `UNAVAILABLE_FROM_RUNTIME`.
 
-## Evidencia y diseño
-
-Los candidatos son `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` e
-`intfloat/multilingual-e5-small`. Ambos producen vectores de 384 dimensiones y tienen soporte
-multilingüe; E5 usa prefijos `query:` y `passage:` según su model card. La selección depende
-del dataset local, no de popularidad externa.
-
-FAISS usa `IndexFlatIP` con vectores L2-normalizados: producto interno equivale a similitud
-coseno y la búsqueda es exacta para este corpus pequeño. Índices aproximados no aportan una
-ventaja defendible con los 773 chunks actuales.
-
-## Componentes
-
-- `data/evaluation/retrieval_queries.json`: consultas y fuentes relevantes versionadas.
-- `app/retrieval/embeddings.py`: adaptadores y prefijos por modelo.
-- `app/retrieval/index.py`: construcción, persistencia, carga, filtros y búsqueda FAISS.
-- `app/retrieval/metrics.py`: Recall@k, MRR y nDCG.
-- `scripts/evaluate_retrieval.py`: experimento A/B reproducible y selección.
-
-## Contrato
-
-Cada resultado conserva `chunk_id`, texto, score coseno y todos los metadatos de fuente. La
-consulta se normaliza pero no se traduce. Los filtros oficial/institución/tipo se aplican antes
-de devolver `top_k`. Una consulta sin evidencia suficiente debe producir resultados vacíos o
-una advertencia, nunca una cita inventada.
-
-## Pruebas
-
-- identidad y dimensión del índice;
-- persistencia y correspondencia ordinal chunk–vector;
-- ranking exacto con embeddings sintéticos;
-- métricas con casos conocidos y sin relevantes;
-- evaluación A/B real sobre el dataset completo;
-- endpoint con consulta, filtros y fuentes trazables.
-
-Los resultados, latencias y criterio de selección se añaden después de ejecutar el experimento.
+Una consulta sin evidencia suficiente debe producir una advertencia o
+abstención en el tutor; no se debe inventar una cita. Los escenarios
+`NO_ANSWER`, `AMBIGUOUS` y `ADVERSARIAL` se evaluaron en el
+alcance de los tests y prompts existentes. El soporte semántico de cada
+cita frente a cada afirmación permanece `NOT_EVALUATED`.

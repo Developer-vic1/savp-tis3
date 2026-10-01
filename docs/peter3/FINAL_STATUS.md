@@ -1,21 +1,49 @@
-# Estado final de PETER 3, fase 2
+# Estado final de PETER 3 — Fase 2.1
 
-## Verificación local del 2026-10-01
+Verificación local del 2026-10-01. Rama
+`work/peter3-mejoras-fase2`; checkpoint de partida
+`388890c2e004116e16374582da810406f4125508`.
+La base histórica protegida es
+`ae386c741c850a89adc586131c9f974ac458e628`.
+`b02a392` es solo una referencia histórica previa.
 
-El bloqueo de Torch persiste; ambos índices FAISS siguen `STALE`. En un entorno limpio creado
-desde `uv.lock`, Mypy 1.20.2 sí completó `mypy app scripts` (82 archivos) y `mypy .`
-(111 archivos) sin errores, tras corregir tres errores de tipos reales. La suite completa
-terminó con **125 passed, 2 failed, 1 skipped** y **92 %** de cobertura (2997 sentencias,
-253 sin cubrir). Los dos fallos siguen clasificados `EXPECTED_STALE_INDEX`. Ruff y
-`git diff --check` pasan; `verify_peter3.py` falla por los índices y los gates derivados.
-El único skip es OCR real: requiere descarga/carga del modelo y se activa con `RUN_REAL_OCR=1`.
-Esta verificación no incluye ejecución en la segunda laptop. El commit `b02a392` ya está
-publicado como checkpoint; no existe commit final de integración.
+## Gates ejecutados
 
-`PETER3_NOT_READY` — verificación del 2026-10-01 en la rama `work/peter3-mejoras-fase2`, basada en `ae386c7`.
+| Gate | Resultado |
+|---|---|
+| Fuentes y corpus | PASS: 12 snapshots, 11 referencias, 773 chunks únicos y no vacíos |
+| SHA-256 del corpus | `ebd98f3fb35058af6ff074673cccc56053d9f2ee064ee31a86ed8d25c3e4c5ce` |
+| FAISS E5 y MiniLM | PASS: 773 vectores reales, dimensión 384 y SHA actual por índice |
+| Retrieval | DEV ejecutado; E5 congelado sin ajuste; TEST ejecutado; verificador PASS |
+| RIASEC y Recommendation V2 | PASS |
+| Knowledge y Tutor | HTTP 200 en `TestClient`, con trace IDs |
+| Prompts | 13/13 PASS; 0 éxitos de inyección en los escenarios evaluados |
+| Analysis E2E / Full E2E | PASS / PASS |
+| Suite y cobertura | 127 passed, 1 skipped (OCR real opcional), 0 failed; 92 % |
+| Ruff | PASS |
+| Mypy | PASS: 0 errores en 82 archivos de `app scripts` y 111 del repositorio |
+| Seguridad | PASS: producción sin key falla cerrada; key errónea, JSON y payload inválidos rechazados sin traceback |
+| Smoke y concurrencia | PASS: seis endpoints HTTP 200 y 8/8 solicitudes RIASEC concurrentes |
+| `verify_peter3.py` | PASS: todos los gates completados en la repetición global |
+| `git diff --check` | PASS |
 
-Los 12 snapshots locales y el corpus de 773 chunks pasan la verificación de procedencia. Cuatro snapshots HTML UCB se renovaron desde páginas oficiales y el registro quedó en `2.1.0`. Se corrigió la versión de 265 chunks ministeriales cuyos hashes de origen ya coincidían. Los 773 IDs y textos conservan su orden, pero 26 títulos incluidos en la entrada de embeddings cambiaron. Los índices FAISS E5 y MiniLM siguen asociados al corpus anterior y ambos son `STALE`. Requieren reconstrucción de vectores y nueva evaluación DEV/TEST; cambiar solo sus manifiestos sería incorrecto.
+Torch 2.14.0 y scikit-learn 1.9.1 fueron bloqueados por Windows Code
+Integrity. Con wheels oficiales CPU, Torch 2.13.0+cpu, torchvision
+0.28.0+cpu y scikit-learn 1.8.0 cargaron, codificaron textos reales con
+E5/MiniLM y reprodujeron los índices desde `uv.lock`. No se cambió
+la arquitectura ni se usaron vectores antiguos.
 
-El smoke HTTP real devuelve 200 en health, cuestionario RIASEC, score RIASEC y análisis V2; 8 de 8 peticiones RIASEC concurrentes devuelven 200. Búsqueda y tutor devuelven 503 por el índice. Los 13 escenarios de prompts estructurados pasan; soporte semántico de citas permanece `NOT_EVALUATED`. Recommendation V2 pasa invariantes sobre fixture sintético. Se midió latencia local del análisis V2, pero no rendimiento actual de retrieval ni E2E con el corpus renovado.
+TEST híbrido E5 obtuvo Recall@1 0.3810, Recall@3 0.8690, Recall@5
+0.8929, MRR 0.6548 y nDCG@5 0.7043. Todas las cifras y latencias DEV,
+TEST y de proceso caliente están en `RETRIEVAL_EVALUATION.md` y
+`PERFORMANCE.md`. La carga fría de E5 en VicDev fue lenta; no se
+presentan estas mediciones como SLA.
 
-No se crea un commit final nuevo ni se hace un push nuevo mientras fallen los gates críticos. La integración PHP real, validación psicométrica boliviana, revisión experta de inferencias, LLM local y estudio longitudinal siguen pendientes. Los resultados de fase 1 son históricos y no validan la fase 2.
+El soporte semántico de citas sigue `NOT_EVALUATED`. RIASEC mide
+intereses, no aptitud; no hay validación psicométrica boliviana ni
+predictor validado de éxito. Bridge requiere revisión experta, Crosswalk
+no establece equivalencias y el catálogo no es exhaustivo.
+La integración real Laravel/PETER 2 queda para su fase posterior.
+
+Estado técnico de integración del servicio: `PETER3_INTEGRATION_READY`.
+El cliente Laravel/PETER 2 deberá validarse en su etapa posterior.

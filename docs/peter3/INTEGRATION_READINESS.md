@@ -1,72 +1,60 @@
-# Integration readiness — PETER 3
+# Preparación de integración — PETER 3
 
-Revalidación del 2026-10-01: `mypy app scripts` y `mypy .` pasan en el entorno limpio de
-`uv.lock`; la suite sigue en 125 passed, 2 failed, 1 skipped (92 % de cobertura). Torch no
-importa por Code Integrity en este equipo. Los índices, retrieval DEV/TEST, tutor y E2E completo
-siguen sin gate satisfactorio. El checkpoint `b02a392` está en origin; no hay commit final.
+Revalidación del 2026-10-01 en `work/peter3-mejoras-fase2`.
+Los índices E5 y MiniLM corresponden al corpus actual de 773 chunks.
+DEV, freeze y TEST se ejecutaron en orden; el índice E5 quedó
+seleccionado. Knowledge y Tutor respondieron HTTP 200 con `trace_id`
+en el smoke con `TestClient`. Analysis E2E, Full E2E, prompts,
+suite completa, Ruff y Mypy pasaron. La suite obtuvo 127 passed,
+1 skipped (OCR real opcional) y 92 % de cobertura.
+`FINAL_STATUS.md` recoge el estado de todos los gates.
 
-Checkpoint de fase 2.1: la verificación de fuentes/corpus pasa por separado, pero ambos índices
-siguen `STALE`. La reconstrucción está preparada para otro equipo en `PHASE21_WIP_CHECKPOINT.md`;
-no hay aprobación de integración ni commit final.
+Estado del servicio FastAPI para integración: `PETER3_INTEGRATION_READY`.
 
-Estado: `PETER3_NOT_READY` mientras se reconstruyen los índices y se reejecutan todos los
-gates de fase 2. Este aporte no contiene cliente Laravel, migraciones, UI ni escrituras en base de
-datos. El contrato detallado para PETER 2 está en `PETER2_INTEGRATION_CONTRACT.md`.
+La preparación es del servicio FastAPI y su contrato. PETER 2 debe
+implementar y probar el cliente Laravel en la siguiente etapa; no se
+modificó PHP, UI ni base de datos aquí.
 
-## Arranque
+## Ejecución reproducible
 
-```powershell
-cd ai-service
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8001
-```
+Desde `ai-service`, usar Python 3.12 x64 y
+`python -m uv sync --locked --group dev`. El lock fija los wheels CPU
+oficiales de Torch/torchvision que cargaron en VicDev y scikit-learn
+1.8.0. El arranque de producción y las credenciales deben configurarse
+para el host real; los tests de esta fase usaron ASGI `TestClient`,
+sin servidor persistente.
 
-Variables relevantes: `SAVP_AI_ENV`, `SAVP_AI_API_KEY`, `SAVP_AI_HOST`, `SAVP_AI_PORT`,
-`SAVP_AI_LOCAL_LLM_ENABLED`, `SAVP_AI_LOCAL_LLM_URL`, `SAVP_AI_LOCAL_LLM_MODEL` y
-`SAVP_AI_LOCAL_LLM_TIMEOUT_SECONDS`. En `production` la API protegida exige una clave
-configurada; con configuración vacía devuelve `503`. Usar red privada y logging sin cuerpos ni
-datos de estudiante.
+Variables relevantes: `SAVP_AI_ENV`, `SAVP_AI_API_KEY`,
+`SAVP_AI_HOST`, `SAVP_AI_PORT`,
+`SAVP_AI_LOCAL_LLM_ENABLED`, `SAVP_AI_LOCAL_LLM_URL`,
+`SAVP_AI_LOCAL_LLM_MODEL` y
+`SAVP_AI_LOCAL_LLM_TIMEOUT_SECONDS`. En `production`, faltar la
+clave configurada produce 503; una clave de cliente errónea produce
+401. El LLM local es opcional: el tutor estructurado funciona sin él.
 
 ## Contrato HTTP
 
-| Método y ruta | Uso | Entrada | Salida |
-|---|---|---|---|
-| `GET /health` | salud | ninguna | servicio, versión y schema `1.0` |
-| `GET /api/v2/riasec/instrument` | cuestionario | ninguna | 30 reactivos, escala 1–5 y atribución |
-| `POST /api/v2/riasec/score` | scoring | versión y 30 respuestas públicas 1–5 | seis scores 0–20, códigos y trace |
-| `POST /api/v1/analysis` | legacy | `AnalysisRequest`, schema `1.0` | `AnalysisResponse` experimental |
-| `POST /api/v2/analysis` | principal futuro | `AnalysisV2Request`, schema `2.0` | `AnalysisV2Response` basada en evidencia |
-| `POST /api/v1/knowledge/search` | búsqueda | query, top-k y filtros opcionales | resultados, suficiencia, corpus/modelo/retrieval |
-| `POST /api/v1/tutor/query` | tutor | pregunta y contexto allowlisted opcional | respuesta, modo, citas, suficiencia y versiones |
+| Método y ruta | Uso |
+|---|---|
+| `GET /health` | Estado del servicio. |
+| `GET /api/v2/riasec/instrument` | 30 reactivos oficiales y escala 1–5. |
+| `POST /api/v2/riasec/score` | Scoring de 30 respuestas públicas. |
+| `POST /api/v2/analysis` | Análisis V2 basado en evidencia. |
+| `POST /api/v1/knowledge/search` | Evidencia oficial recuperada y citas. |
+| `POST /api/v1/tutor/query` | Tutor estructurado, citas o abstención. |
+| `POST /api/v1/analysis` | Contrato legacy experimental. |
 
-Todos los POST aceptan y devuelven JSON. Si existe una key configurada, enviar
-`X-SAVP-AI-Key`. Cada respuesta incluye `X-Trace-Id`; el cuerpo también contiene `trace_id` en
-los contratos funcionales.
+Los POST aceptan y devuelven JSON. Si hay clave configurada,
+enviar `X-SAVP-AI-Key`. Cada respuesta incluye `X-Trace-Id`;
+los contratos funcionales incluyen también `trace_id` en el cuerpo.
+Los errores usan `{"error":{"code","message","trace_id","details"}}`.
+El contrato detallado y ejemplos están en
+`PETER2_INTEGRATION_CONTRACT.md`.
 
-## Versionado y semántica
-
-V1 es legacy y conserva puntuaciones experimentales para compatibilidad. V2 es el contrato que
-debe consumir una integración nueva: presenta constructos por separado, estados de evidencia,
-fuentes y limitaciones. Una ausencia debe conservarse como `null`/`INSUFFICIENT`, nunca convertirse
-en cero. Los consumidores no deben fabricar un score o ganador a partir de perfiles V2.
-
-## Errores y resiliencia
-
-Los errores tienen forma `{"error":{"code","message","trace_id","details"}}`. Los estados
-esperables incluyen 401 por key inválida/ausente, 422 por contrato, 503 por índice indisponible y
-500 saneado para errores imprevistos. La integración debe registrar el trace, no el payload
-completo, y tratar 4xx como error de contrato y 5xx como recuperable.
-
-Timeout sugerido inicial: 5 s para health/RIASEC y 30 s para análisis/knowledge/tutor estructurado,
-validándolo con carga real. Si se habilita LLM local, el presupuesto debe ser mayor que el timeout
-interno configurado (45 s) y contar con circuit breaker; el servicio mantiene fallback
-estructurado. Estos valores son recomendaciones operativas, no SLA medidos.
-
-## Checklist para PETER 2
-
-1. Acordar DTOs V2 y política de nullability.
-2. Proveer secret y rotación de `X-SAVP-AI-Key`.
-3. Implementar cliente con timeout, retry acotado solo para fallos transitorios y propagación de
-   trace ID.
-4. Mapear estados de evidencia sin reinterpretar constructos.
-5. Añadir pruebas de contrato entre repositorios y observabilidad.
-6. Ejecutar pruebas de carga y privacidad antes de habilitar usuarios.
+PETER 2 debe preservar estados `null`/`INSUFFICIENT`, evitar recalcular
+RIASEC, propagar trazas y aplicar timeouts medidos en su despliegue.
+La carga fría de E5 tardó 135 s en el smoke de VicDev, frente a
+latencias calientes mucho menores; planificar calentamiento y un
+timeout de primera consulta. Las cifras locales no son SLA.
+La validación psicométrica boliviana, soporte semántico de citas y la
+integración PHP real siguen fuera de este gate técnico.

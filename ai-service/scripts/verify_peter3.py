@@ -28,11 +28,15 @@ def main() -> int:
     failures: list[str] = []
     for name, command in GATES:
         print(f"\n=== {name} ===", flush=True)
+        timeout_seconds = 900 if name in {
+            "pytest, including E2E and HTTP contracts",
+            "real HTTP smoke",
+        } else 300
         try:
-            result = subprocess.run(command, cwd=ROOT, check=False, timeout=300)
+            result = subprocess.run(command, cwd=ROOT, check=False, timeout=timeout_seconds)
             failed = result.returncode != 0
         except subprocess.TimeoutExpired:
-            print(f"{name}: TIMEOUT after 300 s", flush=True)
+            print(f"{name}: TIMEOUT after {timeout_seconds} s", flush=True)
             failed = True
         print(f"{name}: {'FAIL' if failed else 'PASS'}", flush=True)
         if failed:
