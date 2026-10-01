@@ -12,7 +12,7 @@ class DashboardController extends Controller
     {
         $route = $resolver->routeFor($request->user());
 
-        abort_if(! $route, 403, 'No tienes un espacio de trabajo asignado.');
+        abort_if(! $route, 403, 'Tu cuenta requiere un único actor institucional activo. Solicita revisión a Administración.');
 
         return redirect()->route($route);
     }

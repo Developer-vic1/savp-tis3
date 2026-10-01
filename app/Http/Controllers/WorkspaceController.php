@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\InstitutionalDashboardService;
+use App\Support\WorkspaceNavigation;
 use Illuminate\Http\Request;
 
 class WorkspaceController extends Controller
@@ -42,11 +43,15 @@ class WorkspaceController extends Controller
 
     public function docente(Request $request, CursoVirtualService $cursos)
     {
+        abort_unless($request->user()->can('Acceso_Aula_Virtual') && $request->user()->can('Aula_Virtual_Docente'), 403);
+
         return view('aula-virtual.dashboard.docente', $cursos->dashboardDocente($request->user()));
     }
 
     public function estudiante(Request $request, CursoVirtualService $cursos)
     {
+        abort_unless($request->user()->can('Acceso_Aula_Virtual') && $request->user()->can('Aula_Virtual_Estudiante'), 403);
+
         return view('aula-virtual.dashboard.estudiante', $cursos->dashboardEstudiante($request->user()));
     }
 
@@ -55,7 +60,7 @@ class WorkspaceController extends Controller
         return $dashboard->for($actor) + [
             'actor' => $actor,
             'user' => $request->user(),
-            'modules' => $modules,
+            'modules' => app(WorkspaceNavigation::class)->for($request->user()),
         ];
     }
 }

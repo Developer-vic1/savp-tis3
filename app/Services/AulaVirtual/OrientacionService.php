@@ -3,12 +3,12 @@
 namespace App\Services\AulaVirtual;
 
 use App\Models\AulaVirtual\OrientacionActividad;
-use App\Models\AulaVirtual\OrientacionCarreraSugerida;
 use App\Models\AulaVirtual\OrientacionPregunta;
 use App\Models\AulaVirtual\OrientacionRespuesta;
 use App\Models\AulaVirtual\OrientacionResultado;
 use App\Models\Estudiante;
 use App\Models\User;
+use App\Services\BitacoraService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +21,7 @@ class OrientacionService
     public function resumen(User $user): array
     {
         $estudiante = $this->cursos->estudianteDeUsuario($user);
-        $actividad = $estudiante ? $this->actividadActual($estudiante) : null;
+        $actividad = $estudiante ? OrientacionActividad::with('resultado.carreras')->where('cod_est', $estudiante->cod_est)->latest()->first() : null;
         $resultado = $actividad?->resultado?->load('carreras');
 
         return [
@@ -38,6 +38,8 @@ class OrientacionService
 
     public function actividadActual(Estudiante $estudiante): OrientacionActividad
     {
+        $user = auth()->user();
+        abort_unless($user && $this->cursos->estudianteDeUsuario($user)?->cod_est === $estudiante->cod_est, 403);
         $actividad = OrientacionActividad::query()
             ->with('resultado.carreras', 'respuestas.pregunta')
             ->where('cod_est', $estudiante->cod_est)
@@ -57,6 +59,14 @@ class OrientacionService
         ]);
     }
 
+    public function actividadExistente(Estudiante $student): ?OrientacionActividad
+    {
+        $user = auth()->user();
+        abort_unless($user && $this->cursos->estudianteDeUsuario($user)?->cod_est === $student->cod_est, 403);
+
+        return OrientacionActividad::with('resultado.carreras', 'respuestas.pregunta')->where('cod_est', $student->cod_est)->latest()->first();
+    }
+
     public function preguntas(): Collection
     {
         return OrientacionPregunta::query()
@@ -67,6 +77,8 @@ class OrientacionService
 
     public function respuestasGuardadas(OrientacionActividad $actividad): array
     {
+        $this->authorizeActivity($actividad);
+
         return $actividad->respuestas()
             ->pluck('valor_likert', 'orientacion_pregunta_id')
             ->map(fn ($valor) => (int) $valor)
@@ -75,9 +87,14 @@ class OrientacionService
 
     public function guardarAvance(OrientacionActividad $actividad, array $respuestas): OrientacionActividad
     {
+        $this->authorizeActivity($actividad);
+        abort_unless(in_array($actividad->estado, ['pendiente', 'en_proceso'], true), 422, 'El resultado finalizado se conserva en el historial.');
         $preguntas = $this->preguntas();
 
         DB::transaction(function () use ($actividad, $respuestas, $preguntas) {
+            $actividad = OrientacionActividad::lockForUpdate()->findOrFail($actividad->id);
+            $this->authorizeActivity($actividad);
+            abort_unless(in_array($actividad->estado, ['pendiente', 'en_proceso'], true), 422);
             foreach ($preguntas as $pregunta) {
                 $valor = $respuestas[$pregunta->id] ?? null;
 
@@ -115,9 +132,13 @@ class OrientacionService
         $actividad = $this->guardarAvance($actividad, $respuestas);
         $preguntas = $this->preguntas();
 
-        abort_if($actividad->respuestas()->count() < $preguntas->count(), 422, 'Responde las 30 preguntas antes de finalizar.');
+        abort_if($preguntas->isEmpty(), 409, 'No hay preguntas aprobadas para esta actividad.');
+        abort_if($actividad->respuestas()->count() < $preguntas->count(), 422, 'Responde todas las preguntas visibles antes de finalizar.');
 
-        return DB::transaction(function () use ($actividad, $preguntas) {
+        return DB::transaction(function () use ($actividad) {
+            $actividad = OrientacionActividad::lockForUpdate()->findOrFail($actividad->id);
+            $this->authorizeActivity($actividad);
+            abort_unless(in_array($actividad->estado, ['pendiente', 'en_proceso'], true), 422, 'La evaluación finalizada se conserva en el historial.');
             $respuestas = $actividad->respuestas()->with('pregunta')->get();
             $porcentajes = [];
 
@@ -146,14 +167,16 @@ class OrientacionService
                 ]
             );
 
-            $resultado->carreras()->delete();
-            $this->crearCarrerasSugeridas($resultado, $porcentajes);
+            // La afinidad con carreras requiere un contrato especializado aprobado; no se fabrica un porcentaje.
 
             $actividad->forceFill([
                 'estado' => 'finalizado',
                 'avance' => 100,
                 'finalizado_at' => now(),
             ])->save();
+
+            BitacoraService::registrar(accion: 'FINALIZAR_EXPLORADOR', tabla: 'orientacion_actividades',
+                registro: (string) $actividad->id, modulo: 'Orientación', valoresNuevos: ['estado' => 'finalizado']);
 
             return $resultado->refresh()->load('carreras');
         });
@@ -169,6 +192,13 @@ class OrientacionService
             'liderazgo_emprendimiento' => 'Liderazgo-emprendimiento',
             'organizativo_administrativo' => 'Organizativo-administrativo',
         ];
+    }
+
+    private function authorizeActivity(OrientacionActividad $activity): void
+    {
+        $user = auth()->user();
+        abort_unless($user && $this->cursos->estudianteDeUsuario($user)?->cod_est === $activity->cod_est
+            && $user->can('Orientacion_Academica_Profesional'), 403);
     }
 
     public function carrerasBase(): array
@@ -193,34 +223,5 @@ class OrientacionService
             'requiere_seguimiento' => 'Requiere seguimiento',
             default => 'En proceso',
         };
-    }
-
-    private function crearCarrerasSugeridas(OrientacionResultado $resultado, array $porcentajes): void
-    {
-        $ordenadas = $porcentajes;
-        arsort($ordenadas);
-        $dimensionesSeleccionadas = array_slice(array_keys($ordenadas), 0, 2);
-        $orden = 1;
-
-        foreach ($dimensionesSeleccionadas as $dimension) {
-            foreach (array_slice($this->carrerasBase()[$dimension], 0, $dimension === $dimensionesSeleccionadas[0] ? 4 : 2) as $carrera) {
-                OrientacionCarreraSugerida::create([
-                    'orientacion_resultado_id' => $resultado->id,
-                    'carrera' => $carrera,
-                    'area_profesional' => $this->dimensiones()[$dimension],
-                    'compatibilidad' => max(1, min(100, ($porcentajes[$dimension] ?? 0) - (($orden - 1) * 2))),
-                    'razon' => 'La sugerencia se relaciona con tus respuestas predominantes en el explorador académico-vocacional.',
-                    'fortalezas' => [
-                        'Interés consistente en actividades del área.',
-                        'Potencial para desarrollar proyectos académicos vinculados.',
-                    ],
-                    'areas_a_fortalecer' => [
-                        'Complementar el resultado con rendimiento académico.',
-                        'Solicitar acompañamiento docente para decidir con mayor claridad.',
-                    ],
-                    'orden' => $orden++,
-                ]);
-            }
-        }
     }
 }

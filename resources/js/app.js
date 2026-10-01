@@ -3,8 +3,51 @@ import './bootstrap';
 import Swal from 'sweetalert2';
 import Chart from 'chart.js/auto';
 
-window.Swal = Swal;
-window.Chart = Chart;
+const themedSwal = Swal.mixin({
+    background: 'var(--ui-surface)',
+    color: 'var(--ui-text)',
+    confirmButtonColor: 'var(--ui-primary)',
+    cancelButtonColor: 'var(--ui-muted)',
+});
+window.Swal = themedSwal;
+window.addEventListener('toast', event => themedSwal.fire({
+    toast: true,
+    position: 'top-end',
+    icon: ['success', 'error', 'warning', 'info'].includes(event.detail?.type) ? event.detail.type : 'success',
+    title: event.detail?.message || 'Operación completada.',
+    showConfirmButton: false,
+    timer: 4000,
+    timerProgressBar: true,
+}));
+// Reutiliza Chart.js y descarta una instancia anterior del mismo canvas.
+window.Chart = class extends Chart {
+    constructor(canvas, config) {
+        Chart.getChart(canvas)?.destroy();
+        super(canvas, config);
+    }
+};
+Chart.register({
+    id: 'savpTheme',
+    beforeUpdate(chart) {
+        const css = getComputedStyle(document.documentElement);
+        const token = name => css.getPropertyValue(name).trim();
+        const text = token('--ui-text');
+        const border = token('--ui-border');
+        const options = chart.options;
+        if (options.plugins?.legend?.labels) options.plugins.legend.labels.color = text;
+        if (options.plugins?.title) options.plugins.title.color = text;
+        if (options.plugins?.tooltip) {
+            Object.assign(options.plugins.tooltip, { backgroundColor: token('--ui-surface'), titleColor: text, bodyColor: text, borderColor: border, borderWidth: 1 });
+        }
+        Object.values(options.scales || {}).forEach(scale => {
+            if (scale.ticks) scale.ticks.color = text;
+            if (scale.grid) scale.grid.color = border;
+            if (scale.title) scale.title.color = text;
+        });
+    },
+});
+window.addEventListener('theme-changed', () => Object.values(Chart.instances).forEach(chart => chart.update('none')));
+document.addEventListener('livewire:navigated', () => Object.values(Chart.instances).filter(chart => !chart.canvas?.isConnected).forEach(chart => chart.destroy()));
 
 /*
 |--------------------------------------------------------------------------
@@ -128,11 +171,11 @@ window.uiHelpers = {
         icon = 'warning',
         confirmButtonText = 'Sí, confirmar',
         cancelButtonText = 'Cancelar',
-        confirmButtonColor = '#059669',
-        cancelButtonColor = '#64748b',
+        confirmButtonColor = 'var(--ui-primary)',
+        cancelButtonColor = 'var(--ui-muted)',
         onConfirm = null,
     }) {
-        Swal.fire({
+        themedSwal.fire({
             title,
             text,
             icon,
@@ -154,7 +197,7 @@ window.uiHelpers = {
         title = 'Acción realizada',
         timer = 2200,
     }) {
-        Swal.fire({
+        themedSwal.fire({
             toast: true,
             position: 'top-end',
             icon,
@@ -238,3 +281,31 @@ window.documentoAutocomplete = {
         };
     },
 };
+
+// Confirmación y bloqueo de formularios HTTP que comparten el shell institucional.
+document.addEventListener('submit', async (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || form.method.toLowerCase() !== 'post' || form.hasAttribute('wire:submit')) return;
+    if (form.dataset.submitting === 'true') { event.preventDefault(); return; }
+    if (form.dataset.confirm && form.dataset.confirmed !== 'true') {
+        event.preventDefault();
+        if (form.dataset.confirming === 'true') return;
+        form.dataset.confirming = 'true';
+        const submitter = event.submitter;
+        const result = await window.Swal.fire({
+            title: 'Confirmar acción', text: form.dataset.confirm, icon: 'warning',
+            showCancelButton: true, confirmButtonText: 'Confirmar', cancelButtonText: 'Cancelar',
+        });
+        delete form.dataset.confirming;
+        if (result.isConfirmed) { form.dataset.confirmed = 'true'; form.requestSubmit(submitter); }
+        return;
+    }
+    form.dataset.submitting = 'true';
+    setTimeout(() => {
+        form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(button => { button.disabled = true; button.dataset.submitLocked = 'true'; });
+    }, 0);
+});
+window.addEventListener('pageshow', () => {
+    document.querySelectorAll('form[data-submitting], form[data-confirming]').forEach(form => { delete form.dataset.submitting; delete form.dataset.confirmed; delete form.dataset.confirming; });
+    document.querySelectorAll('[data-submit-locked]').forEach(button => { button.disabled = false; delete button.dataset.submitLocked; });
+});

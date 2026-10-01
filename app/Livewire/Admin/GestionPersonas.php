@@ -7,17 +7,19 @@ use App\Services\BitacoraService;
 use App\Support\Personas\PersonaInteligente;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class GestionPersonas extends Component
 {
-    use WithPagination;
     use WithFileUploads;
+    use WithPagination;
 
     protected string $paginationTheme = 'tailwind';
 
@@ -26,10 +28,15 @@ class GestionPersonas extends Component
     // ============================================================
 
     public string $search = '';
+
     public string $genero = '';
+
     public string $estado = '';
+
     public string $cuentaUsuario = '';
+
     public string $direccion = '';
+
     public int $perPage = 10;
 
     // ============================================================
@@ -37,16 +44,22 @@ class GestionPersonas extends Component
     // ============================================================
 
     public bool $modalCrear = false;
+
     public bool $modalVer = false;
+
     public bool $modalEditar = false;
 
     public ?Persona $personaDetalle = null;
+
+    #[Locked]
+    public ?string $personaEditando = null;
 
     // ============================================================
     // ARCHIVOS
     // ============================================================
 
     public $foto = null;
+
     public $fotoEditar = null;
 
     // ============================================================
@@ -54,12 +67,15 @@ class GestionPersonas extends Component
     // ============================================================
 
     public array $analisisPersona = [];
+
     public array $analisisPersonaEditar = [];
 
     public bool $direccionManualCrear = false;
+
     public bool $direccionManualEditar = false;
 
     public string $modoDireccionCrear = 'inteligente';
+
     public string $modoDireccionEditar = 'inteligente';
 
     // ============================================================
@@ -656,7 +672,7 @@ class GestionPersonas extends Component
                 'required',
                 'date',
                 'before_or_equal:today',
-                'after_or_equal:' . now()->subYears(120)->format('Y-m-d'),
+                'after_or_equal:'.now()->subYears(120)->format('Y-m-d'),
             ],
 
             'form.gen_per' => ['required', Rule::in($this->generosPermitidos())],
@@ -707,7 +723,7 @@ class GestionPersonas extends Component
                 'required',
                 'date',
                 'before_or_equal:today',
-                'after_or_equal:' . now()->subYears(120)->format('Y-m-d'),
+                'after_or_equal:'.now()->subYears(120)->format('Y-m-d'),
             ],
 
             'formEditar.gen_per' => ['required', Rule::in($this->generosPermitidos())],
@@ -742,6 +758,7 @@ class GestionPersonas extends Component
 
     public function abrirModalCrear(): void
     {
+        Gate::authorize('create', Persona::class);
         $this->resetValidation();
         $this->resetFormulario();
         $this->analizarFormularioCrear();
@@ -763,9 +780,11 @@ class GestionPersonas extends Component
 
         if (! $this->personaDetalle) {
             $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
             return;
         }
 
+        Gate::authorize('view', $this->personaDetalle);
         $this->modalVer = true;
     }
 
@@ -781,11 +800,13 @@ class GestionPersonas extends Component
 
         if (! $persona) {
             $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
             return;
         }
 
         $this->resetValidation();
         $this->fotoEditar = null;
+        Gate::authorize('update', $persona);
         $this->direccionManualEditar = false;
         $this->modoDireccionEditar = 'inteligente';
 
@@ -816,6 +837,7 @@ class GestionPersonas extends Component
             'est_per' => (int) (bool) $persona->est_per,
         ];
 
+        $this->personaEditando = $persona->cod_per;
         $this->analizarFormularioEditar();
         $this->modalEditar = true;
     }
@@ -867,6 +889,7 @@ class GestionPersonas extends Component
 
     private function resetFormularioEditar(): void
     {
+        $this->personaEditando = null;
         $this->fotoEditar = null;
         $this->direccionManualEditar = false;
         $this->modoDireccionEditar = 'inteligente';
@@ -1005,41 +1028,49 @@ class GestionPersonas extends Component
 
             if (preg_match('/\b(zona|barrio|urb\.?|urbanizacion|urbanización)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['zona_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(avenida|av\.?|avda\.?)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['ave_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(calle|c\/)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['cal_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/(#|nro\.?|n°|numero|número)\s*([a-zA-Z0-9\-\/]+)/iu', $segmento, $m)) {
                 $resultado['num_per'] = $this->normalizarNumeroDomicilio($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(referencia|ref\.?)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['ref_per'] = $this->limpiarTexto($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(ciudad)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['ciu_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(municipio)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['mun_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
 
             if (preg_match('/\b(departamento|depto\.?)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['dep_per'] = $this->normalizarTitulo($m[2]);
+
                 continue;
             }
         }
@@ -1080,35 +1111,35 @@ class GestionPersonas extends Component
         $partes = [];
 
         if (filled($datos['cal_per'] ?? null)) {
-            $partes[] = 'Calle ' . $datos['cal_per'];
+            $partes[] = 'Calle '.$datos['cal_per'];
         }
 
         if (filled($datos['ave_per'] ?? null)) {
-            $partes[] = 'Av. ' . $datos['ave_per'];
+            $partes[] = 'Av. '.$datos['ave_per'];
         }
 
         if (filled($datos['zona_per'] ?? null)) {
-            $partes[] = 'Zona ' . $datos['zona_per'];
+            $partes[] = 'Zona '.$datos['zona_per'];
         }
 
         if (filled($datos['num_per'] ?? null)) {
-            $partes[] = '#' . $datos['num_per'];
+            $partes[] = '#'.$datos['num_per'];
         }
 
         if (filled($datos['ref_per'] ?? null)) {
-            $partes[] = 'Ref. ' . $datos['ref_per'];
+            $partes[] = 'Ref. '.$datos['ref_per'];
         }
 
         if (filled($datos['ciu_per'] ?? null)) {
-            $partes[] = 'Ciudad ' . $datos['ciu_per'];
+            $partes[] = 'Ciudad '.$datos['ciu_per'];
         }
 
         if (filled($datos['mun_per'] ?? null) && ($datos['mun_per'] ?? null) !== ($datos['ciu_per'] ?? null)) {
-            $partes[] = 'Municipio ' . $datos['mun_per'];
+            $partes[] = 'Municipio '.$datos['mun_per'];
         }
 
         if (filled($datos['dep_per'] ?? null)) {
-            $partes[] = 'Departamento ' . $datos['dep_per'];
+            $partes[] = 'Departamento '.$datos['dep_per'];
         }
 
         return ! empty($partes) ? implode(', ', $partes) : null;
@@ -1120,6 +1151,7 @@ class GestionPersonas extends Component
 
     private function analizarFormularioCrear(): void
     {
+        Gate::authorize('create', Persona::class);
         $payload = $this->payloadParaPersonaInteligente($this->form);
         $payload['tipo_vinculacion'] = 'SOLO_PERSONA';
 
@@ -1128,32 +1160,16 @@ class GestionPersonas extends Component
 
     private function analizarFormularioEditar(): void
     {
+        Gate::authorize('viewAny', Persona::class);
+        abort_unless($this->personaEditando !== null && ($this->formEditar['cod_per'] ?? null) === $this->personaEditando, 403);
         $payload = $this->payloadParaPersonaInteligente($this->formEditar);
         $payload['tipo_vinculacion'] = 'SOLO_PERSONA';
 
-        $analisis = $this->soportePersona()->reconocerEnTiempoReal($payload);
-
-        $codActual = $this->formEditar['cod_per'] ?? null;
-        $personaDetectada = $analisis['coincidencias']['persona_principal']['cod_per'] ?? null;
-
-        if ($codActual && $personaDetectada === $codActual) {
-            $analisis['puede_continuar'] = true;
-            $analisis['estado_inteligente'] = 'VALIDO';
-            $analisis['mensaje'] = 'Editando persona existente. No se detecta duplicidad externa.';
-            $analisis['bloqueos'] = [];
-        }
-
-        $this->analisisPersonaEditar = $analisis;
+        $this->analisisPersonaEditar = $this->soportePersona()->reconocerEnTiempoReal($payload, $this->personaEditando);
     }
 
-    private function validarAnalisisAntesDeGuardar(array $analisis, ?string $codIgnorado = null): bool
+    private function validarAnalisisAntesDeGuardar(array $analisis): bool
     {
-        $personaDetectada = $analisis['coincidencias']['persona_principal']['cod_per'] ?? null;
-
-        if ($codIgnorado && $personaDetectada === $codIgnorado) {
-            return true;
-        }
-
         if (($analisis['puede_continuar'] ?? false) !== true) {
             $this->dispatch(
                 'error-general',
@@ -1210,15 +1226,17 @@ class GestionPersonas extends Component
 
     public function guardarPersona(): void
     {
+        Gate::authorize('create', Persona::class);
         $this->normalizarFormularioCrearFinal();
-        $this->validate($this->rulesCrear(), $this->messages);
-        $this->analizarFormularioCrear();
+        $this->analisisPersona = $this->soportePersona()->analizarRegistro($this->payloadParaPersonaInteligente($this->form));
 
         if (! $this->validarAnalisisAntesDeGuardar($this->analisisPersona)) {
             return;
         }
 
+        $this->validate($this->rulesCrear(), $this->messages);
         DB::transaction(function () {
+            Gate::authorize('create', Persona::class);
             $rutaFoto = null;
 
             if ($this->foto) {
@@ -1250,28 +1268,33 @@ class GestionPersonas extends Component
 
     public function actualizarPersona(): void
     {
+        abort_unless($this->personaEditando !== null && ($this->formEditar['cod_per'] ?? null) === $this->personaEditando, 403);
+        Gate::authorize('update', Persona::findOrFail($this->personaEditando));
         $this->normalizarFormularioEditarFinal();
-        $this->validate($this->rulesEditar(), $this->messages);
-        $this->analizarFormularioEditar();
+        $this->analisisPersonaEditar = $this->soportePersona()->analizarRegistro($this->payloadParaPersonaInteligente($this->formEditar), false, $this->personaEditando);
 
-        if (! $this->validarAnalisisAntesDeGuardar($this->analisisPersonaEditar, $this->formEditar['cod_per'])) {
+        if (! $this->validarAnalisisAntesDeGuardar($this->analisisPersonaEditar)) {
             return;
         }
 
+        $this->validate($this->rulesEditar(), $this->messages);
         DB::transaction(function () {
-            $persona = Persona::where('cod_per', $this->formEditar['cod_per'])->first();
+            $persona = Persona::where('cod_per', $this->personaEditando)->lockForUpdate()->first();
 
             if (! $persona) {
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
             $valoresAnteriores = $persona->toArray();
+            Gate::authorize('update', $persona);
             $rutaFoto = $persona->fot_per;
 
             if ($this->fotoEditar) {
                 if ($persona->fot_per) {
-                    Storage::disk('public')->delete($persona->fot_per);
+                    $fotoAnterior = $persona->fot_per;
+                    DB::afterCommit(fn () => Storage::disk('public')->delete($fotoAnterior));
                 }
 
                 $rutaFoto = $this->fotoEditar->store('personas', 'public');
@@ -1343,16 +1366,19 @@ class GestionPersonas extends Component
 
     public function desactivarPersona(string $codPer): void
     {
+        Gate::authorize('update', Persona::findOrFail($codPer));
         DB::transaction(function () use ($codPer) {
             $persona = Persona::where('cod_per', $codPer)->first();
 
             if (! $persona) {
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
             if (! $persona->est_per) {
                 $this->dispatch('error-general', mensaje: 'La persona ya se encuentra inactiva.');
+
                 return;
             }
 
@@ -1382,16 +1408,19 @@ class GestionPersonas extends Component
 
     public function reactivarPersona(string $codPer): void
     {
+        Gate::authorize('update', Persona::findOrFail($codPer));
         DB::transaction(function () use ($codPer) {
             $persona = Persona::where('cod_per', $codPer)->first();
 
             if (! $persona) {
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
             if ($persona->est_per) {
                 $this->dispatch('error-general', mensaje: 'La persona ya se encuentra activa.');
+
                 return;
             }
 
@@ -1421,11 +1450,14 @@ class GestionPersonas extends Component
 
     public function eliminarFotoEditar(): void
     {
+        abort_unless($this->personaEditando !== null && ($this->formEditar['cod_per'] ?? null) === $this->personaEditando, 403);
+        Gate::authorize('update', Persona::findOrFail($this->personaEditando));
         DB::transaction(function () {
             $persona = Persona::where('cod_per', $this->formEditar['cod_per'] ?? null)->first();
 
             if (! $persona || ! $persona->fot_per) {
                 $this->dispatch('error-general', mensaje: 'No existe una fotografía para eliminar.');
+
                 return;
             }
 

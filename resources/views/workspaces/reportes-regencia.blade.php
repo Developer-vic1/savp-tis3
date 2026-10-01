@@ -1,0 +1,10 @@
+@extends('layouts.app')
+@section('content')
+<div class="space-y-6">
+    <section class="ui-panel"><a class="ui-muted underline" href="{{ route('regencia.dashboard') }}">Regencia</a><h1 class="ui-title mt-3 text-2xl font-bold">Reportes de mis grados</h1><p class="ui-muted mt-2">Asignaciones activas de la gestión y grados a tu cargo. El promedio agrupa notas oficiales registradas; no es un promedio de tareas ni una alerta automática.</p></section>
+    <form class="ui-panel flex flex-wrap gap-3" method="GET"><label class="ui-label flex-1" for="regency-report-search">Asignatura o código<input id="regency-report-search" type="search" name="search" maxlength="100" class="ui-input" value="{{ $filters['search'] ?? '' }}"></label><button class="ui-btn-primary">Buscar</button><a class="ui-btn-secondary" href="{{ route('regencia.reportes') }}">Limpiar</a>@error('search')<p class="ui-error">{{ $message }}</p>@enderror</form>
+    <section class="ui-panel overflow-x-auto" tabindex="0" aria-label="Reportes autorizados"><table class="ui-table"><thead><tr><th>Gestión</th><th>Grado</th><th>Paralelo / turno</th><th>Asignatura</th><th>Inscripciones vigentes</th><th>Notas registradas</th><th>Promedio registrado</th><th>Exportar</th></tr></thead><tbody>
+    @forelse($rows as $row)<tr><td>{{ $row->gestionAcademica?->ani_gea }}</td><td>{{ $row->curso?->nom_cur }}</td><td>{{ $row->paralelo?->nom_par }} / {{ $row->turno?->nom_tur }}</td><td>{{ $row->asignatura?->nom_asi }}</td><td>{{ $row->inscripciones_vigentes }}</td><td>{{ $row->notas_registradas ?? 'No disponible' }}</td><td>{{ $row->promedio_notas === null ? 'Sin datos disponibles' : number_format($row->promedio_notas, 2) }}</td><td><a class="ui-btn-secondary" href="{{ route('regencia.reportes.pdf', $row->cod_pas) }}">Descargar PDF</a></td></tr>@empty<tr><td colspan="8" class="ui-muted">No hay asignaciones autorizadas que coincidan con la búsqueda.</td></tr>@endforelse
+    </tbody></table>{{ $rows->links() }}</section>
+</div>
+@endsection

@@ -2,18 +2,18 @@
 
 namespace App\Services\AporteIngenieril;
 
+use App\Contracts\SpecializedAcademicClient;
 use App\Services\AporteIngenieril\DTO\AporteResponse;
 
 class TutorService
 {
-    public function __construct(private readonly AporteIngenierilClient $client) {}
+    public function __construct(private readonly SpecializedAcademicClient $client) {}
 
     public function ask(string $studentId, string $question, array $academicContext = []): AporteResponse
     {
         return $this->client->tutor([
-            'student_id' => $studentId,
-            'pregunta' => $question,
-            'contexto_academico' => $academicContext,
+            'schema_version' => '1.0',
+            'question' => trim($question),
         ]);
     }
 }

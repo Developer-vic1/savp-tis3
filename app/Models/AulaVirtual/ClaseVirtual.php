@@ -6,23 +6,26 @@ use App\Models\PlanAsignatura;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class ClaseVirtual extends Model
 {
     protected $table = 'clase_virtual';
+
     protected $primaryKey = 'cod_cla';
 
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
-        'cod_cla',          //Codigo clase
-        'cod_pas',          //Codigo plan asignatura
-        'nom_cla',          //Nombre clase
-        'des_cla',          //Descripcion clase
-        'fec_ini_cla',      //Fecha inicio clase
-        'fec_fin_cla',      //Fecha fin clase
-        'est_cla',          //Estado clase
+        'cod_cla',          // Codigo clase
+        'cod_pas',          // Codigo plan asignatura
+        'nom_cla',          // Nombre clase
+        'des_cla',          // Descripcion clase
+        'fec_ini_cla',      // Fecha inicio clase
+        'fec_fin_cla',      // Fecha fin clase
+        'est_cla',          // Estado clase
     ];
 
     protected $casts = [
@@ -42,7 +45,7 @@ class ClaseVirtual extends Model
                     ? ((int) str_replace('CLA_', '', $ultimoCodigo)) + 1
                     : 1;
 
-                $claseVirtual->cod_cla = 'CLA_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+                $claseVirtual->cod_cla = 'CLA_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
             }
         });
     }
@@ -80,6 +83,11 @@ class ClaseVirtual extends Model
     public function actividades(): HasMany
     {
         return $this->hasMany(ActividadClase::class, 'cod_cla', 'cod_cla');
+    }
+
+    public function entregas(): HasManyThrough
+    {
+        return $this->hasManyThrough(EntregaTarea::class, Tarea::class, 'cod_cla', 'cod_tar', 'cod_cla', 'cod_tar');
     }
 
     public function scopeActivas($query)

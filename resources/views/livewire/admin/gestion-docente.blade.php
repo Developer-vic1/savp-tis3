@@ -48,8 +48,8 @@
                             <td class="px-5 py-4 text-sm font-black" style="color: var(--ui-text)">{{ trim(($persona?->nom_per ?? '').' '.($persona?->ape_pat_per ?? '').' '.($persona?->ape_mat_per ?? '')) ?: 'Sin persona vinculada' }}</td>
                             <td class="px-5 py-4 text-sm" style="color: var(--ui-muted)">{{ $persona?->ci_per ?? 'Sin registro' }}</td>
                             <td class="px-5 py-4 text-sm" style="color: var(--ui-text)">{{ $docente->esp_doc ?: 'Por completar' }}</td>
-                            <td class="px-5 py-4"><span class="ui-badge-info">{{ $docente->planAsignaturas->count() }} asignaciones</span></td>
-                            <td class="px-5 py-4"><span class="{{ $analisisDocente['puede_guardar'] ? 'ui-badge-success' : 'ui-badge-warning' }}">{{ $analisisDocente['completitud'] }}%</span></td>
+                            <td class="px-5 py-4"><span class="ui-badge-info">{{ $docente->plan_asignaturas_count }} asignaciones</span></td>
+                            <td class="px-5 py-4"><span class="{{ $analisisDocente['puede_guardar'] ? 'ui-badge-success' : 'ui-badge-warning' }}" title="Indicador preventivo local de especialidad; no mide desempeño académico">{{ $analisisDocente['completitud'] }}%</span><span class="ui-muted block text-xs">{{ $analisisDocente['estado_especialidad'] }}</span></td>
                             <td class="px-5 py-4"><span class="{{ $docente->est_doc === 'ACTIVO' ? 'ui-badge-success' : 'ui-badge-warning' }}">{{ $docente->est_doc }}</span></td>
                         </tr>
                     @empty

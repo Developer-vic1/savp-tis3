@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ReporteGenerado;
+use App\Services\ReportAccessService;
 use App\Services\Reportes\DatosReporteAcademicoService;
 use App\Services\Reportes\DatosReporteAdministrativoService;
 use App\Services\Reportes\DatosReporteVocacionalService;
@@ -15,12 +16,12 @@ use Illuminate\Support\Facades\Storage;
 class ReportePdfController extends Controller
 {
     public function __construct(
-        protected DatosReporteAcademicoService     $datosAcademico,
+        protected DatosReporteAcademicoService $datosAcademico,
         protected DatosReporteAdministrativoService $datosAdministrativo,
-        protected DatosReporteVocacionalService    $datosVocacional,
-        protected GeneradorMpdfService             $mpdf,
-        protected GeneradorSqlAcademicoService     $sql,
-        protected GeneradorZipReportesService      $zip,
+        protected DatosReporteVocacionalService $datosVocacional,
+        protected GeneradorMpdfService $mpdf,
+        protected GeneradorSqlAcademicoService $sql,
+        protected GeneradorZipReportesService $zip,
     ) {}
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -29,17 +30,18 @@ class ReportePdfController extends Controller
 
     public function academicoGeneral()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos']);
         try {
             $datos = $this->datosAcademico->obtener();
-            $ruta  = $this->mpdf->generarAcademicoGeneral($datos);
+            $ruta = $this->mpdf->generarAcademicoGeneral($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte no pudo ser generado. Intente de nuevo.');
             }
 
             ReporteGenerado::registrar(
-                'REP-ACA-' . now()->format('YmdHis'),
+                'REP-ACA-'.now()->format('YmdHis'),
                 'Reporte Académico General', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -49,7 +51,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte académico: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte académico: '.'No fue posible completar la acción.');
         }
     }
 
@@ -59,17 +62,18 @@ class ReportePdfController extends Controller
 
     public function calificaciones()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos']);
         try {
             $datos = $this->datosAcademico->obtener();
-            $ruta  = $this->mpdf->generarCalificaciones($datos);
+            $ruta = $this->mpdf->generarCalificaciones($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte de calificaciones no pudo ser generado.');
             }
 
             ReporteGenerado::registrar(
-                'REP-CAL-' . now()->format('YmdHis'),
+                'REP-CAL-'.now()->format('YmdHis'),
                 'Reporte de Calificaciones', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -79,7 +83,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte de calificaciones: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte de calificaciones: '.'No fue posible completar la acción.');
         }
     }
 
@@ -89,17 +94,18 @@ class ReportePdfController extends Controller
 
     public function estudiantesRiesgo()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos']);
         try {
             $datos = $this->datosAcademico->obtener();
-            $ruta  = $this->mpdf->generarEstudiantesRiesgo($datos);
+            $ruta = $this->mpdf->generarEstudiantesRiesgo($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte de estudiantes en riesgo no pudo ser generado.');
             }
 
             ReporteGenerado::registrar(
-                'REP-RIESGO-' . now()->format('YmdHis'),
+                'REP-RIESGO-'.now()->format('YmdHis'),
                 'Reporte Estudiantes en Riesgo', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -109,7 +115,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte de estudiantes en riesgo: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte de estudiantes en riesgo: '.'No fue posible completar la acción.');
         }
     }
 
@@ -119,17 +126,18 @@ class ReportePdfController extends Controller
 
     public function administrativo()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Administrativos']);
         try {
             $datos = $this->datosAdministrativo->obtener();
-            $ruta  = $this->mpdf->generarAdministrativo($datos);
+            $ruta = $this->mpdf->generarAdministrativo($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte administrativo no pudo ser generado.');
             }
 
             ReporteGenerado::registrar(
-                'REP-ADM-' . now()->format('YmdHis'),
+                'REP-ADM-'.now()->format('YmdHis'),
                 'Reporte Administrativo', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -139,7 +147,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte administrativo: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte administrativo: '.'No fue posible completar la acción.');
         }
     }
 
@@ -149,17 +158,18 @@ class ReportePdfController extends Controller
 
     public function bitacora()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Administrativos', 'Bitacora']);
         try {
             $datos = $this->datosAdministrativo->obtener();
-            $ruta  = $this->mpdf->generarBitacora($datos);
+            $ruta = $this->mpdf->generarBitacora($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte de bitácora no pudo ser generado.');
             }
 
             ReporteGenerado::registrar(
-                'REP-BIT-' . now()->format('YmdHis'),
+                'REP-BIT-'.now()->format('YmdHis'),
                 'Reporte Bitácora', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -169,7 +179,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte de bitácora: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte de bitácora: '.'No fue posible completar la acción.');
         }
     }
 
@@ -179,17 +190,18 @@ class ReportePdfController extends Controller
 
     public function vocacionalRiasec()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos']);
         try {
             $datos = $this->datosVocacional->obtenerGeneral();
-            $ruta  = $this->mpdf->generarVocacionalRiasec($datos);
+            $ruta = $this->mpdf->generarVocacionalRiasec($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte vocacional RIASEC no pudo ser generado.');
             }
 
             ReporteGenerado::registrar(
-                'REP-RIASEC-' . now()->format('YmdHis'),
+                'REP-RIASEC-'.now()->format('YmdHis'),
                 'Reporte Vocacional RIASEC', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -199,7 +211,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte vocacional RIASEC: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte vocacional RIASEC: '.'No fue posible completar la acción.');
         }
     }
 
@@ -209,17 +222,18 @@ class ReportePdfController extends Controller
 
     public function compatibilidadCarreras()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos']);
         try {
             $datos = $this->datosVocacional->obtenerCompatibilidad();
-            $ruta  = $this->mpdf->generarCompatibilidadCarreras($datos);
+            $ruta = $this->mpdf->generarCompatibilidadCarreras($datos);
 
-            $path  = Storage::disk('local')->path($ruta);
+            $path = Storage::disk('local')->path($ruta);
             if (! file_exists($path)) {
                 return back()->with('error', 'El reporte de compatibilidad de carreras no pudo ser generado.');
             }
 
             ReporteGenerado::registrar(
-                'REP-COMP-' . now()->format('YmdHis'),
+                'REP-COMP-'.now()->format('YmdHis'),
                 'Reporte Compatibilidad de Carreras', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -229,7 +243,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte de compatibilidad de carreras: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte de compatibilidad de carreras: '.'No fue posible completar la acción.');
         }
     }
 
@@ -239,6 +254,7 @@ class ReportePdfController extends Controller
 
     public function institucionalCompleto()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos', 'Reportes_Administrativos']);
         try {
             $datosAca = $this->datosAcademico->obtener();
             $datosAdm = $this->datosAdministrativo->obtener();
@@ -254,7 +270,7 @@ class ReportePdfController extends Controller
             }
 
             ReporteGenerado::registrar(
-                'REP-INST-' . now()->format('YmdHis'),
+                'REP-INST-'.now()->format('YmdHis'),
                 'Reporte Institucional Completo', 'pdf',
                 basename($path), $ruta, $path
             );
@@ -264,7 +280,8 @@ class ReportePdfController extends Controller
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el reporte institucional completo: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el reporte institucional completo: '.'No fue posible completar la acción.');
         }
     }
 
@@ -274,6 +291,7 @@ class ReportePdfController extends Controller
 
     public function respaldoSql()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Administrativos', 'Gestion_Academica']);
         try {
             $ruta = $this->sql->generar();
 
@@ -283,17 +301,18 @@ class ReportePdfController extends Controller
             }
 
             ReporteGenerado::registrar(
-                'REP-SQL-' . now()->format('YmdHis'),
+                'REP-SQL-'.now()->format('YmdHis'),
                 'Respaldo SQL Académico', 'sql',
                 basename($path), $ruta, $path
             );
 
-            return Storage::disk('local')->download($ruta, 'Respaldo-Academico-' . now()->format('Ymd') . '.sql', [
+            return Storage::disk('local')->download($ruta, 'Respaldo-Academico-'.now()->format('Ymd').'.sql', [
                 'Content-Type' => 'application/sql',
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el respaldo SQL: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el respaldo SQL: '.'No fue posible completar la acción.');
         }
     }
 
@@ -303,6 +322,7 @@ class ReportePdfController extends Controller
 
     public function paqueteZip()
     {
+        app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos', 'Reportes_Administrativos', 'Bitacora', 'Gestion_Academica']);
         try {
             $ruta = $this->zip->generar();
 
@@ -312,17 +332,18 @@ class ReportePdfController extends Controller
             }
 
             ReporteGenerado::registrar(
-                'REP-ZIP-' . now()->format('YmdHis'),
+                'REP-ZIP-'.now()->format('YmdHis'),
                 'Paquete ZIP de Reportes', 'zip',
                 basename($path), $ruta, $path
             );
 
-            return Storage::disk('local')->download($ruta, 'Paquete-Reportes-' . now()->format('Ymd') . '.zip', [
+            return Storage::disk('local')->download($ruta, 'Paquete-Reportes-'.now()->format('Ymd').'.zip', [
                 'Content-Type' => 'application/zip',
             ]);
         } catch (\Throwable $e) {
             report($e);
-            return back()->with('error', 'Error al generar el paquete ZIP: ' . $e->getMessage());
+
+            return back()->with('error', 'Error al generar el paquete ZIP: '.'No fue posible completar la acción.');
         }
     }
 }

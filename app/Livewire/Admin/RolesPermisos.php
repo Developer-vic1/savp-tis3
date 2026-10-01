@@ -2,35 +2,52 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\Role;
+use App\Models\RoleRequest;
+use App\Services\InstitutionalAuthorityService;
 use App\Services\RolePermissionService;
 use App\Services\RoleRequestService;
-use App\Services\InstitutionalAuthorityService;
-use App\Models\RoleRequest;
+use App\Support\PermissionLabel;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RolesPermisos extends Component
 {
     use WithFileUploads;
 
     public bool $showRequestModal = false;
+
     public int $requestStep = 1;
+
     public string $requestedName = '';
+
     public string $justification = '';
+
     public string $institutionalReason = '';
+
     public string $functions = '';
+
     public string $requestedScope = '';
+
     public string $observations = '';
+
     public array $requestedPermissions = [];
+
     public $document = null;
+
     public ?array $governanceResult = null;
+
     public ?int $activeRequestId = null;
+
     public string $reviewNote = '';
+
     public bool $directorMatches = false;
+
     public bool $documentReadable = false;
+
     public bool $signaturePresent = false;
+
     public bool $sealPresent = false;
 
     public ?int $selectedRoleId = null;
@@ -40,8 +57,11 @@ class RolesPermisos extends Component
     public string $search = '';
 
     public string $domain = '';
+
     public string $action = '';
+
     public string $scope = '';
+
     public string $selection = '';
 
     public function selectVisible(bool $selected): void
@@ -101,14 +121,26 @@ class RolesPermisos extends Component
     public function nextRequestStep(): void
     {
         app(RoleRequestService::class)->authorize(auth()->user(), 'roles.solicitudes.crear');
-        if ($this->requestStep === 1) $this->validate(['document' => 'required|file|max:10240|mimes:pdf,jpg,jpeg,png']);
-        if ($this->requestStep === 2) $this->validate([
-            'requestedName' => 'required|string|min:4|max:80', 'justification' => 'required|string|min:30|max:2000',
-            'institutionalReason' => 'required|string|min:20|max:2000', 'requestedScope' => 'required|string|min:5|max:120',
-        ]);
-        if ($this->requestStep === 3) $this->validate(['functions' => 'required|string|min:30|max:3000']);
-        if ($this->requestStep === 4) $this->validate(['requestedPermissions' => 'required|array|min:1']);
-        if ($this->requestStep === 5) { $this->analyzeRequest(); return; }
+        if ($this->requestStep === 1) {
+            $this->validate(['document' => 'required|file|max:10240|mimes:pdf,jpg,jpeg,png']);
+        }
+        if ($this->requestStep === 2) {
+            $this->validate([
+                'requestedName' => 'required|string|min:4|max:80', 'justification' => 'required|string|min:30|max:2000',
+                'institutionalReason' => 'required|string|min:20|max:2000', 'requestedScope' => 'required|string|min:5|max:120',
+            ]);
+        }
+        if ($this->requestStep === 3) {
+            $this->validate(['functions' => 'required|string|min:30|max:3000']);
+        }
+        if ($this->requestStep === 4) {
+            $this->validate(['requestedPermissions' => 'required|array|min:1']);
+        }
+        if ($this->requestStep === 5) {
+            $this->analyzeRequest();
+
+            return;
+        }
         $this->requestStep = min(5, $this->requestStep + 1);
     }
 
@@ -187,7 +219,8 @@ class RolesPermisos extends Component
             ->orderBy('name')
             ->get()
             ->filter(function ($permission) {
-                $label = \App\Support\PermissionLabel::describe($permission->name);
+                $label = PermissionLabel::describe($permission->name);
+
                 return ($this->search === '' || str_contains(mb_strtolower($permission->name.' '.$label['label']), mb_strtolower($this->search)))
                     && ($this->domain === '' || $this->domain === $label['domain'])
                     && ($this->action === '' || $this->action === $label['action'])
@@ -200,12 +233,12 @@ class RolesPermisos extends Component
     {
         $viewer = auth()->user();
         abort_unless($viewer?->hasRole('Administrador') && $viewer?->can('roles-permisos.gestionar'), 403);
-        $labels = Permission::query()->where('guard_name', 'web')->pluck('name')->map(fn ($name) => \App\Support\PermissionLabel::describe($name));
+        $labels = Permission::query()->where('guard_name', 'web')->pluck('name')->map(fn ($name) => PermissionLabel::describe($name));
         $current = Role::query()->where('guard_name', 'web')->find($this->selectedRoleId)?->permissions()->pluck('name')->all() ?? [];
 
         return view('livewire.admin.roles-permisos', [
             'roles' => Role::query()->where('guard_name', 'web')->withCount('users')->orderBy('name')->get(),
-            'permissionGroups' => $this->visiblePermissions()->groupBy(fn ($permission) => \App\Support\PermissionLabel::describe($permission->name)['domain']),
+            'permissionGroups' => $this->visiblePermissions()->groupBy(fn ($permission) => PermissionLabel::describe($permission->name)['domain']),
             'domains' => $labels->pluck('domain')->unique()->sort(),
             'actions' => $labels->pluck('action')->unique()->sort(),
             'scopes' => $labels->pluck('scope')->filter()->unique()->sort(),

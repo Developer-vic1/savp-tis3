@@ -17,13 +17,13 @@ final readonly class AcademicAnalysisData
     public function toPayload(): array
     {
         return array_filter([
+            'schema_version' => '1.0',
             'student_id' => $this->studentId,
-            'periodo' => $this->period,
-            'materias' => $this->subjects,
-            'notas' => $this->grades,
-            'asistencia' => $this->attendance,
-            'intereses' => $this->interests,
-            'especialidad' => $this->specialty,
+            'academic_period' => $this->period,
+            'academic' => $this->grades ? ['records' => $this->grades] : null,
+            'attendance' => $this->attendance ?: null,
+            'declared_interests' => $this->interests ?: null,
+            'technical' => $this->specialty ? ['specialty' => $this->specialty] : null,
         ], fn ($value) => $value !== null);
     }
 }

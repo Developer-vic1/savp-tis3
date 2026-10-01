@@ -12,18 +12,12 @@ class CursoVirtualController extends Controller
 
     public function indexEstudiante(Request $request)
     {
-        return view('aula-virtual.cursos.index-estudiante', [
-            'cursos' => $this->cursos->cursosEstudiante($request->user()),
-            'servicio' => $this->cursos,
-        ]);
+        return view('aula-virtual.cursos.index-estudiante');
     }
 
     public function indexDocente(Request $request)
     {
-        return view('aula-virtual.cursos.index-docente', [
-            'cursos' => $this->cursos->cursosDocente($request->user()),
-            'servicio' => $this->cursos,
-        ]);
+        return view('aula-virtual.cursos.index-docente');
     }
 
     public function showEstudiante(Request $request, string $curso)

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Services\RoleDashboardResolver;
 use Livewire\ComponentHook;
 
 /** Reautoriza componentes reutilizados, también en peticiones Livewire posteriores. */
@@ -34,13 +35,15 @@ class InstitutionalAuthorization extends ComponentHook
 
     private const SECRETARY = [
         'GestionPersonas', 'GestionEstudiantes', 'GestionInscripciones',
-        'GestionAcademica', 'GestionCurso', 'GestionParalelo', 'GestionTurnos',
+        'GestionParalelo',
         'InstitucionProcedencia', 'TipoVinculacionEstudiante',
     ];
 
     public function skip(): bool
     {
-        return ! str_starts_with($this->component::class, 'App\\Livewire\\Admin\\');
+        return ! str_starts_with($this->component::class, 'App\\Livewire\\Admin\\')
+            && ! str_starts_with($this->component::class, 'App\\Livewire\\AulaVirtual\\')
+            && ! str_starts_with($this->component::class, 'App\\Livewire\\Secretaria\\');
     }
 
     public function boot(): void
@@ -60,9 +63,32 @@ class InstitutionalAuthorization extends ComponentHook
     {
         $user = auth()->user();
         $name = class_basename($this->component);
+        if (str_starts_with($this->component::class, 'App\\Livewire\\AulaVirtual\\')) {
+            $actor = $user ? app(RoleDashboardResolver::class)->roleFor($user) : null;
+            $student = in_array($name, ['DashboardEstudiante', 'MisAsignaturasEstudiante', 'CursoDetalleEstudiante', 'EntregarTarea', 'MiAsistenciaEstudiante', 'OrientacionEstudiante', 'ResultadoOrientacion', 'ExploradorVocacional'], true);
+            abort_unless($actor === ($student ? 'Estudiante' : 'Docente') && $user->can('Acceso_Aula_Virtual')
+                && $user->can($student ? 'Aula_Virtual_Estudiante' : 'Aula_Virtual_Docente'), 403);
+            if (str_contains($this->component::class, '\\Orientacion\\')) {
+                abort_unless($user->can('Orientacion_Academica_Profesional'), 403);
+            }
+            foreach (['Materiales' => 'Materiales_Aula', 'Tareas' => 'Tareas_Aula', 'Entregas' => 'Entregas_Aula', 'Asistencia' => 'Asistencia_Aula'] as $folder => $required) {
+                if (str_contains($this->component::class, '\\'.$folder.'\\')) {
+                    abort_unless($user->can($required), 403);
+                }
+            }
+
+            return;
+        }
+        if (str_starts_with($this->component::class, 'App\\Livewire\\Secretaria\\')) {
+            abort_unless($user && app(RoleDashboardResolver::class)->roleFor($user) === 'Secretaria'
+                && $user->can('usuarios.ver.institucional'), 403);
+
+            return;
+        }
         $permission = self::MODULES[$name] ?? null;
         abort_unless($user && $user->est_usu === 'ACTIVO' && $permission
-            && ($user->hasRole('Administrador') || ($user->hasRole('Secretaria') && in_array($name, self::SECRETARY, true)))
+            && (app(RoleDashboardResolver::class)->roleFor($user) === 'Administrador'
+                || (app(RoleDashboardResolver::class)->roleFor($user) === 'Secretaria' && in_array($name, self::SECRETARY, true)))
             && $user->can($permission), 403, 'No tienes autorización para realizar esta acción.');
     }
 }

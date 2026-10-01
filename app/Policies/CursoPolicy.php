@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Curso;
 use App\Models\User;
 use App\Services\AcademicAccessService;
+use App\Services\RoleDashboardResolver;
 
 class CursoPolicy
 {
@@ -15,6 +16,6 @@ class CursoPolicy
 
     public function update(User $user, Curso $course): bool
     {
-        return $user->est_usu === 'ACTIVO' && $user->hasRole('Administrador') && $user->canAny(['cursos.gestionar.global', 'Cursos']);
+        return app(RoleDashboardResolver::class)->roleFor($user) === 'Administrador' && $user->canAny(['cursos.gestionar.global', 'Cursos']);
     }
 }

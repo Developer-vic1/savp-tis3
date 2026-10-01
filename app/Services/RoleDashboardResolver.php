@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Role;
 use App\Models\User;
 
 class RoleDashboardResolver
@@ -17,23 +18,24 @@ class RoleDashboardResolver
 
     public function routeFor(User $user): ?string
     {
-        foreach (self::ROUTES as $role => $route) {
-            if ($user->hasRole($role)) {
-                return $route;
-            }
-        }
+        $role = $this->roleFor($user);
 
-        return null;
+        return $role ? self::ROUTES[$role] : null;
     }
 
     public function roleFor(User $user): ?string
     {
-        foreach (array_keys(self::ROUTES) as $role) {
+        if ($user->est_usu !== 'ACTIVO') {
+            return null;
+        }
+
+        $actors = [];
+        foreach (Role::INSTITUTIONAL as $role) {
             if ($user->hasRole($role)) {
-                return $role;
+                $actors[] = $role;
             }
         }
 
-        return null;
+        return count($actors) === 1 ? $actors[0] : null;
     }
 }

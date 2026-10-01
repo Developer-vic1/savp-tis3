@@ -90,12 +90,12 @@
 <body class="font-sans antialiased ui-page">
     <x-banner />
 
-    <div x-data="{ sidebarOpen: true, openUser: false }" class="dashboard-bg relative">
+    <div x-data="{ sidebarOpen: true, mobileSidebar: false, openUser: false }" @keydown.escape.window="mobileSidebar = false; openUser = false" class="dashboard-bg relative">
         <div class="relative z-10 flex min-h-screen">
 
             @include('layouts.sidebar')
 
-            <div class="flex min-h-screen flex-1 flex-col transition-all duration-300"
+            <div class="flex min-h-screen min-w-0 flex-1 flex-col transition-all duration-300"
                 :class="sidebarOpen ? 'lg:ml-72' : 'lg:ml-20'">
 
                 @php
@@ -111,13 +111,15 @@
                     $nombreUsuario = $nombreCompleto ?: ($user->name ?? $user->email ?? 'Usuario');
                     $correoUsuario = $user->email ?? 'correo@ejemplo.com';
                     $inicial = strtoupper(substr($persona->nom_per ?? $user->name ?? $user->email ?? 'U', 0, 1));
-                    $rol = $user?->getRoleNames()->first() ?? 'Sin rol asignado';
+                    $rol = $user ? app(\App\Services\RoleDashboardResolver::class)->roleFor($user) : null;
                 @endphp
 
                 {{-- TOPBAR OPERATIVA --}}
                 <header class="sticky top-0 z-30 px-5 pt-5 sm:px-6 lg:px-8">
                     <div class="soft-panel topbar-shadow rounded-[2rem] px-6 py-4 sm:px-7">
                         <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-center">
+
+                            <button type="button" @click="mobileSidebar = true" class="ui-btn-secondary lg:hidden" aria-label="Abrir menú" aria-controls="workspace-sidebar" :aria-expanded="mobileSidebar">☰ Menú</button>
 
                             {{-- FECHA --}}
                             <div class="ui-card-soft px-5 py-3 text-sm font-medium">
@@ -134,16 +136,15 @@
                                         d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
 
-                                <input type="text" placeholder="Buscar módulos, registros o información..."
-                                    class="topbar-search w-full border-none bg-transparent p-0 text-sm focus:outline-none focus:ring-0"
-                                    style="color: var(--ui-text);">
+                                <livewire:shared.module-search />
                             </div>
 
                             {{-- BOTÓN MODO CLARO / OSCURO --}}
+                            <livewire:shared.notification-center />
                             <button type="button" onclick="window.themeManager.toggle()"
                                 class="inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-2xl border shadow-sm transition hover:-translate-y-0.5"
                                 style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);"
-                                title="Cambiar tema">
+                                title="Cambiar tema" aria-label="Cambiar tema">
 
                                 {{-- Luna: visible en modo claro --}}
                                 <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -162,7 +163,7 @@
                             {{-- USUARIO --}}
                             <div class="relative">
                                 <button type="button" @click="openUser = !openUser"
-                                    class="flex min-w-[290px] items-center justify-between gap-4 rounded-2xl border px-4 py-3 shadow-sm transition hover:-translate-y-0.5"
+                                    class="flex w-full items-center justify-between gap-4 rounded-2xl border px-4 py-3 shadow-sm transition hover:-translate-y-0.5"
                                     style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
 
                                     <div class="flex min-w-0 items-center gap-3">
@@ -266,6 +267,10 @@
                 </header>
 
                 <main class="flex-1 px-5 py-5 sm:px-6 lg:px-8">
+                    @if (session('status'))<p class="ui-alert-success mb-4" role="status">{{ session('status') }}</p>@endif
+                    @if (session('error'))<p class="ui-alert-danger mb-4" role="alert">{{ session('error') }}</p>@endif
+                    @if (session('warning'))<p class="ui-alert-warning mb-4" role="status">{{ session('warning') }}</p>@endif
+                    @if ($errors->any())<div class="ui-alert-danger mb-4" role="alert"><p>Revisa los campos señalados.</p>@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
                     @yield('content')
                 </main>
             </div>
@@ -283,7 +288,7 @@
                 title: event.detail.title ?? 'Operación exitosa',
                 text: event.detail.text ?? 'Los cambios se guardaron correctamente.',
                 confirmButtonText: 'Entendido',
-                confirmButtonColor: '#059669'
+                confirmButtonColor: 'var(--ui-primary)'
             });
         });
 
@@ -293,7 +298,7 @@
                 title: event.detail.title ?? 'Ocurrió un error',
                 text: event.detail.text ?? 'No se pudo completar la operación.',
                 confirmButtonText: 'Entendido',
-                confirmButtonColor: '#dc2626'
+                confirmButtonColor: 'var(--ui-danger)'
             });
         });
 
@@ -303,7 +308,7 @@
                 title: event.detail.title ?? 'Atención',
                 text: event.detail.text ?? 'Revisa la información ingresada.',
                 confirmButtonText: 'Entendido',
-                confirmButtonColor: '#d97706'
+                confirmButtonColor: 'var(--ui-warning)'
             });
         });
 
@@ -313,7 +318,7 @@
                 title: event.detail.title ?? 'Información',
                 text: event.detail.text ?? 'Se realizó una acción en el sistema.',
                 confirmButtonText: 'Entendido',
-                confirmButtonColor: '#2563eb'
+                confirmButtonColor: 'var(--ui-primary)'
             });
         });
     </script>

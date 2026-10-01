@@ -10,14 +10,22 @@ use App\Models\Docente;
 use App\Models\User;
 use App\Services\BitacoraService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AsistenciaService
 {
     public function guardar(array $datos, Docente $docente, User $usuario): AsistenciaClase
     {
-        abort_unless($usuario->est_usu === 'ACTIVO' && $usuario->can('Aula_Virtual_Docente')
+        abort_unless($usuario->est_usu === 'ACTIVO' && $usuario->can('Aula_Virtual_Docente') && $usuario->can('Asistencia_Aula')
             && app(CursoVirtualService::class)->docenteDeUsuario($usuario)?->cod_doc === $docente->cod_doc, 403);
+        $datos = validator($datos, [
+            'cod_cla' => ['required', 'string'], 'fec_asi_cla' => ['required', 'date'],
+            'tit_asi_cla' => ['nullable', 'string', 'max:150'], 'obs_asi_cla' => ['nullable', 'string', 'max:2000'],
+            'asistencias' => ['required', 'array', 'min:1'], 'asistencias.*.cod_est_asi' => ['required', 'string'],
+            'asistencias.*.min_retraso' => ['nullable', 'integer', 'min:0', 'max:300'],
+            'asistencias.*.obs_asi_est' => ['nullable', 'string', 'max:1000'],
+        ])->validate();
         $clase = ClaseVirtual::query()
             ->with('estudiantes')
             ->where('cod_cla', $datos['cod_cla'])
@@ -25,8 +33,7 @@ class AsistenciaService
             ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $docente->cod_doc))
             ->firstOrFail();
 
-        $allowedStudents = $clase->estudiantes
-            ->where('est_cla_est', 'ACTIVO')
+        $allowedStudents = app(CursoVirtualService::class)->estudiantesVigentes($clase)
             ->pluck('cod_est')
             ->all();
         $foreignStudents = array_diff(array_keys($datos['asistencias'] ?? []), $allowedStudents);
@@ -38,6 +45,13 @@ class AsistenciaService
         }
 
         return DB::transaction(function () use ($datos, $docente, $usuario) {
+            // Serializa la sesión antes de firstOrCreate: también protege el primer registro concurrente.
+            $class = ClaseVirtual::lockForUpdate()->findOrFail($datos['cod_cla']);
+            abort_unless(app(CursoVirtualService::class)->cursoParaDocente($usuario, $class->cod_cla) && $class->est_cla === 'ACTIVA', 403);
+            $allowed = app(CursoVirtualService::class)->estudiantesVigentes($class)->lockForUpdate()->pluck('cod_est')->all();
+            if (array_diff(array_keys($datos['asistencias']), $allowed)) {
+                throw ValidationException::withMessages(['asistencias' => 'La pertenencia al curso cambió. Revisa la lista e inténtalo de nuevo.']);
+            }
             $asistencia = AsistenciaClase::firstOrCreate(
                 [
                     'cod_cla' => $datos['cod_cla'],
@@ -46,6 +60,7 @@ class AsistenciaService
                     'cod_hbl' => $datos['cod_hbl'] ?? null,
                 ],
                 [
+                    'cod_asi_cla' => 'ASIC_'.Str::upper(Str::random(15)),
                     'cod_usu_reg' => $usuario->cod_usu,
                     'tip_asi_cla' => $datos['tip_asi_cla'] ?? 'CLASE',
                     'tit_asi_cla' => $datos['tit_asi_cla'] ?? 'Registro de asistencia',
@@ -68,17 +83,23 @@ class AsistenciaService
                     ]);
                 }
 
-                AsistenciaEstudiante::updateOrCreate(
-                    ['cod_asi_cla' => $asistencia->cod_asi_cla, 'cod_est' => $codEst],
-                    [
-                        'cod_est_asi' => $estado->cod_est_asi,
-                        'cod_usu_reg' => $usuario->cod_usu,
-                        'min_retraso' => max(0, (int) ($registro['min_retraso'] ?? 0)),
-                        'obs_asi_est' => $registro['obs_asi_est'] ?? null,
-                        'fec_reg_asi_est' => now(),
-                        'est_asi_est' => 'REGISTRADO',
-                    ]
-                );
+                $record = AsistenciaEstudiante::firstOrNew(['cod_asi_cla' => $asistencia->cod_asi_cla, 'cod_est' => $codEst]);
+                $changed = $record->exists && ($record->cod_est_asi !== $estado->cod_est_asi
+                    || (int) $record->min_retraso !== (int) ($registro['min_retraso'] ?? 0));
+                if ($changed && blank($registro['obs_asi_est'] ?? null)) {
+                    throw ValidationException::withMessages(['asistencias' => 'La rectificación de asistencia requiere un motivo en la observación.']);
+                }
+                if (! $record->exists) {
+                    $record->cod_asi_est = 'ASIE_'.Str::upper(Str::random(15));
+                }
+                $record->fill([
+                    'cod_est_asi' => $estado->cod_est_asi,
+                    'cod_usu_reg' => $usuario->cod_usu,
+                    'min_retraso' => max(0, (int) ($registro['min_retraso'] ?? 0)),
+                    'obs_asi_est' => $registro['obs_asi_est'] ?? null,
+                    'fec_reg_asi_est' => now(),
+                    'est_asi_est' => $changed ? 'RECTIFICADO' : ($record->est_asi_est ?? 'REGISTRADO'),
+                ])->save();
             }
 
             BitacoraService::registrar(

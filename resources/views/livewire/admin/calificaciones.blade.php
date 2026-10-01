@@ -68,7 +68,7 @@
                     <aside class="space-y-4">
                         <div class="ui-card-soft p-5"><p class="ui-kicker">Completitud</p><p class="mt-2 text-3xl font-black" style="color: var(--ui-primary)">{{ $analisis['completitud'] ?? 0 }}%</p></div>
                         <div class="ui-card-soft p-5"><p class="ui-kicker">Desempeño calculado</p><p class="mt-2 text-xl font-black" style="color: {{ ($analisis['riesgo'] ?? false) ? 'var(--ui-danger)' : 'var(--ui-success)' }}">{{ $analisis['desempeno'] ?? 'Sin nota' }}</p><button wire:click="aplicarObservacion" class="ui-btn-secondary mt-4 w-full">Usar observación sugerida</button></div>
-                        @if(!empty($analisis['bloqueos']))<div class="ui-alert-warning">@foreach($analisis['bloqueos'] as $item)<p>{{ $item }}</p>@endforeach</div>@endif
+                        <x-asistencia-inteligente :analisis="$analisis" :mostrar-completitud="false" />
                     </aside>
                 </div>
                 <div class="mt-6 flex justify-end gap-3"><button wire:click="cerrarFormulario" class="ui-btn-secondary">Cancelar</button><button wire:click="guardar" class="ui-btn-primary" @disabled(!($analisis['puede_guardar'] ?? false))>Guardar calificación</button></div>

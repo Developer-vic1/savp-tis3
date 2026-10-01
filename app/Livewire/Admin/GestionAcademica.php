@@ -20,19 +20,27 @@ class GestionAcademica extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $vista = 'general';
+
     public string $busqueda = '';
+
     public string $filtroEstado = '';
+
     public string $filtroAnio = '';
 
     public bool $showCreateModal = false;
+
     public bool $showDetailDrawer = false;
+
     public bool $showCloseModal = false;
 
     public ?string $selectedGestionId = null;
+
     public ?string $gestionParaCerrarId = null;
 
     public array $analisisCreacion = [];
+
     public array $fechasSugeridas = [];
+
     public array $periodosSugeridos = [];
 
     public array $revisionCierre = [
@@ -213,7 +221,7 @@ class GestionAcademica extends Component
             'form.anio' => ['required', 'integer', 'min:2020', 'max:2100'],
             'form.fecha_inicio' => ['required', 'date'],
             'form.fecha_fin' => ['required', 'date', 'after:form.fecha_inicio'],
-            'form.estado' => ['required', 'in:' . implode(',', GestionAcademicaInteligente::estados())],
+            'form.estado' => ['required', 'in:'.implode(',', GestionAcademicaInteligente::estados())],
         ], [
             'form.anio.required' => 'El año de gestión es obligatorio.',
             'form.anio.integer' => 'El año de gestión debe ser numérico.',
@@ -230,6 +238,7 @@ class GestionAcademica extends Component
 
         if (! Schema::hasTable('gestion_academica')) {
             $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla gestion_academica.');
+
             return;
         }
 
@@ -269,7 +278,7 @@ class GestionAcademica extends Component
                 accion: 'CREAR_GESTION_ACADEMICA',
                 tabla: 'gestion_academica',
                 registro: $codGea,
-                descripcion: 'Se registró la gestión académica ' . $this->form['anio'] . ' con estado ' . $this->form['estado'] . '.'
+                descripcion: 'Se registró la gestión académica '.$this->form['anio'].' con estado '.$this->form['estado'].'.'
             );
 
             DB::commit();
@@ -281,7 +290,7 @@ class GestionAcademica extends Component
             $this->alerta(
                 'success',
                 'Gestión académica registrada',
-                'La gestión académica ' . $this->form['anio'] . ' fue creada correctamente.'
+                'La gestión académica '.$this->form['anio'].' fue creada correctamente.'
             );
 
             $this->prepararFormularioInicial();
@@ -307,6 +316,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'La gestión académica seleccionada no existe.');
+
             return;
         }
 
@@ -328,6 +338,7 @@ class GestionAcademica extends Component
     {
         if (! Schema::hasTable('gestion_academica')) {
             $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla gestion_academica.');
+
             return;
         }
 
@@ -349,6 +360,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'La gestión académica seleccionada no existe.');
+
             return;
         }
 
@@ -366,7 +378,7 @@ class GestionAcademica extends Component
                 accion: 'ACTIVAR_GESTION_ACADEMICA',
                 tabla: 'gestion_academica',
                 registro: $id,
-                descripcion: 'Se activó la gestión académica ' . $gestion->ani_gea . '.'
+                descripcion: 'Se activó la gestión académica '.$gestion->ani_gea.'.'
             );
 
             DB::commit();
@@ -384,6 +396,7 @@ class GestionAcademica extends Component
     {
         if ($id === '') {
             $this->alerta('warning', 'Sin gestión seleccionada', 'No existe una gestión académica seleccionada para revisar el cierre.');
+
             return;
         }
 
@@ -391,6 +404,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'La gestión académica seleccionada no existe o ya no está disponible.');
+
             return;
         }
 
@@ -422,11 +436,13 @@ class GestionAcademica extends Component
     {
         if (! $this->gestionParaCerrarId) {
             $this->alerta('warning', 'Sin gestión seleccionada', 'No existe una gestión académica seleccionada.');
+
             return;
         }
 
         if (! Schema::hasTable('gestion_academica')) {
             $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla gestion_academica.');
+
             return;
         }
 
@@ -448,6 +464,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'La gestión académica seleccionada no existe.');
+
             return;
         }
 
@@ -465,7 +482,7 @@ class GestionAcademica extends Component
                 accion: 'INICIAR_CIERRE_GESTION_ACADEMICA',
                 tabla: 'gestion_academica',
                 registro: $this->gestionParaCerrarId,
-                descripcion: 'La gestión académica ' . $gestion->ani_gea . ' pasó a EN_CIERRE.'
+                descripcion: 'La gestión académica '.$gestion->ani_gea.' pasó a EN_CIERRE.'
             );
 
             DB::commit();
@@ -489,11 +506,13 @@ class GestionAcademica extends Component
     {
         if (! $this->gestionParaCerrarId) {
             $this->alerta('warning', 'Sin gestión seleccionada', 'No existe una gestión académica seleccionada para cerrar.');
+
             return;
         }
 
         if (! Schema::hasTable('gestion_academica')) {
             $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla gestion_academica.');
+
             return;
         }
 
@@ -527,6 +546,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'La gestión académica seleccionada no existe.');
+
             return;
         }
 
@@ -544,7 +564,7 @@ class GestionAcademica extends Component
                 accion: 'CERRAR_GESTION_ACADEMICA',
                 tabla: 'gestion_academica',
                 registro: $this->gestionParaCerrarId,
-                descripcion: 'Se cerró definitivamente la gestión académica ' . $gestion->ani_gea . '.'
+                descripcion: 'Se cerró definitivamente la gestión académica '.$gestion->ani_gea.'.'
             );
 
             DB::commit();
@@ -583,6 +603,7 @@ class GestionAcademica extends Component
     {
         if ($id === '') {
             $this->alerta('warning', 'Sin gestión seleccionada', 'No existe una gestión académica seleccionada para exportar.');
+
             return;
         }
 
@@ -602,6 +623,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'La gestión académica seleccionada no existe.');
+
             return;
         }
 
@@ -609,13 +631,13 @@ class GestionAcademica extends Component
             accion: 'PREPARAR_EXPORTACION_GESTION',
             tabla: 'gestion_academica',
             registro: $id,
-            descripcion: 'Se preparó la exportación ' . strtoupper($tipo) . ' de ' . $gestion['nombre'] . '.'
+            descripcion: 'Se preparó la exportación '.strtoupper($tipo).' de '.$gestion['nombre'].'.'
         );
 
         $this->alerta(
             'info',
             'Respaldo preparado',
-            'La ' . strtolower($tipo) . ' de ' . $gestion['nombre'] . ' queda validada para conectarse posteriormente con PDF, Excel o ZIP.'
+            'La '.strtolower($tipo).' de '.$gestion['nombre'].' queda validada para conectarse posteriormente con PDF, Excel o ZIP.'
         );
     }
 
@@ -629,6 +651,7 @@ class GestionAcademica extends Component
 
         if (! $codGea) {
             $this->alerta('warning', 'Sin gestión', 'No se seleccionó una gestión académica para generar respaldo.');
+
             return;
         }
 
@@ -636,6 +659,7 @@ class GestionAcademica extends Component
 
         if (! ($analisis['puede_continuar'] ?? false)) {
             $this->alerta('warning', 'Respaldo bloqueado', $analisis['mensaje'] ?? 'No se puede generar el respaldo.');
+
             return;
         }
 
@@ -643,6 +667,7 @@ class GestionAcademica extends Component
 
         if (! $gestion) {
             $this->alerta('warning', 'Gestión no encontrada', 'No se encontró la gestión académica.');
+
             return;
         }
 
@@ -669,14 +694,14 @@ class GestionAcademica extends Component
                 accion: 'GENERAR_RESPALDO_ACADEMICO',
                 tabla: 'respaldo_gestion_academica',
                 registro: $codRga,
-                nombreVisible: 'Respaldo ' . strtolower($tipoRespaldo) . ' - Gestión ' . $gestion->ani_gea,
-                descripcion: 'Se generó un respaldo académico de ' . strtolower($tipoRespaldo) . ' para la gestión ' . $gestion->ani_gea . ' antes del cierre institucional.',
+                nombreVisible: 'Respaldo '.strtolower($tipoRespaldo).' - Gestión '.$gestion->ani_gea,
+                descripcion: 'Se generó un respaldo académico de '.strtolower($tipoRespaldo).' para la gestión '.$gestion->ani_gea.' antes del cierre institucional.',
                 nivel: 'SUCCESS'
             );
 
             DB::commit();
 
-            $this->alerta('success', 'Respaldo generado', 'Se generó el respaldo académico de ' . strtolower($tipoRespaldo) . ' para la gestión ' . $gestion->ani_gea . '.');
+            $this->alerta('success', 'Respaldo generado', 'Se generó el respaldo académico de '.strtolower($tipoRespaldo).' para la gestión '.$gestion->ani_gea.'.');
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
@@ -688,6 +713,7 @@ class GestionAcademica extends Component
     {
         if (! Schema::hasTable('respaldo_gestion_academica')) {
             $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla de respaldos.');
+
             return;
         }
 
@@ -695,11 +721,13 @@ class GestionAcademica extends Component
 
         if (! $respaldo) {
             $this->alerta('warning', 'Respaldo no encontrado', 'El respaldo seleccionado no existe.');
+
             return;
         }
 
         if ($respaldo->est_rga !== 'GENERADO') {
             $this->alerta('warning', 'Estado incorrecto', 'Solo se pueden validar respaldos en estado GENERADO.');
+
             return;
         }
 
@@ -721,8 +749,8 @@ class GestionAcademica extends Component
                 accion: 'VALIDAR_RESPALDO_ACADEMICO',
                 tabla: 'respaldo_gestion_academica',
                 registro: $codRga,
-                nombreVisible: 'Respaldo ' . strtolower($respaldo->tip_rga) . ' - Gestión ' . ($gestion->ani_gea ?? ''),
-                descripcion: 'Se validó el respaldo académico ' . strtolower($respaldo->tip_rga) . ' de la gestión ' . ($gestion->ani_gea ?? '') . '. El respaldo queda habilitado para permitir el cierre definitivo.',
+                nombreVisible: 'Respaldo '.strtolower($respaldo->tip_rga).' - Gestión '.($gestion->ani_gea ?? ''),
+                descripcion: 'Se validó el respaldo académico '.strtolower($respaldo->tip_rga).' de la gestión '.($gestion->ani_gea ?? '').'. El respaldo queda habilitado para permitir el cierre definitivo.',
                 nivel: 'SUCCESS',
                 valoresAnteriores: $valoresAnteriores,
                 valoresNuevos: ['est_rga' => 'VALIDADO']
@@ -742,6 +770,7 @@ class GestionAcademica extends Component
     {
         if (! Schema::hasTable('respaldo_gestion_academica')) {
             $this->alerta('warning', 'Tabla no encontrada', 'No existe la tabla de respaldos.');
+
             return;
         }
 
@@ -749,11 +778,13 @@ class GestionAcademica extends Component
 
         if (! $respaldo) {
             $this->alerta('warning', 'Respaldo no encontrado', 'El respaldo seleccionado no existe.');
+
             return;
         }
 
         if (! in_array($respaldo->est_rga, ['GENERADO', 'VALIDADO'], true)) {
             $this->alerta('warning', 'Estado incorrecto', 'Solo se pueden archivar respaldos en estado GENERADO o VALIDADO.');
+
             return;
         }
 
@@ -775,8 +806,8 @@ class GestionAcademica extends Component
                 accion: 'ARCHIVAR_RESPALDO_ACADEMICO',
                 tabla: 'respaldo_gestion_academica',
                 registro: $codRga,
-                nombreVisible: 'Respaldo ' . strtolower($respaldo->tip_rga) . ' - Gestión ' . ($gestion->ani_gea ?? ''),
-                descripcion: 'Se archivó el respaldo académico ' . strtolower($respaldo->tip_rga) . ' de la gestión ' . ($gestion->ani_gea ?? '') . ' como expediente histórico institucional.',
+                nombreVisible: 'Respaldo '.strtolower($respaldo->tip_rga).' - Gestión '.($gestion->ani_gea ?? ''),
+                descripcion: 'Se archivó el respaldo académico '.strtolower($respaldo->tip_rga).' de la gestión '.($gestion->ani_gea ?? '').' como expediente histórico institucional.',
                 nivel: 'INFO',
                 valoresAnteriores: $valoresAnteriores,
                 valoresNuevos: ['est_rga' => 'ARCHIVADO']
@@ -802,6 +833,7 @@ class GestionAcademica extends Component
 
         if (! $respaldo || $respaldo->est_rga === 'ANULADO') {
             $this->alerta('warning', 'Acción no permitida', 'No se puede observar este respaldo.');
+
             return;
         }
 
@@ -824,8 +856,8 @@ class GestionAcademica extends Component
                 accion: 'OBSERVAR_RESPALDO_ACADEMICO',
                 tabla: 'respaldo_gestion_academica',
                 registro: $codRga,
-                nombreVisible: 'Respaldo ' . strtolower($respaldo->tip_rga) . ' - Gestión ' . ($gestion->ani_gea ?? ''),
-                descripcion: 'Se marcó como observado el respaldo académico de la gestión ' . ($gestion->ani_gea ?? '') . '. Motivo: ' . ($observacion ?: 'Sin observación detallada.'),
+                nombreVisible: 'Respaldo '.strtolower($respaldo->tip_rga).' - Gestión '.($gestion->ani_gea ?? ''),
+                descripcion: 'Se marcó como observado el respaldo académico de la gestión '.($gestion->ani_gea ?? '').'. Motivo: '.($observacion ?: 'Sin observación detallada.'),
                 nivel: 'WARNING',
                 valoresAnteriores: $valoresAnteriores,
                 valoresNuevos: ['est_rga' => 'OBSERVADO', 'obs_rga' => $observacion]
@@ -959,18 +991,8 @@ class GestionAcademica extends Component
 
     public function getPeriodosProperty(): array
     {
-        $anio = $this->gestionActiva['anio'] ?? (int) ($this->form['anio'] ?: now()->year);
-        $sugeridos = $this->soporte()->sugerirPeriodosEvaluacion((int) $anio);
-
         if (! Schema::hasTable('periodo_evaluacion')) {
-            return collect($sugeridos)
-                ->map(fn(array $periodo) => array_merge($periodo, [
-                    'id' => null,
-                    'estado' => 'SUGERIDO',
-                    'progreso' => $this->progresoFechas($periodo['fecha_inicio'], $periodo['fecha_fin']),
-                ]))
-                ->values()
-                ->all();
+            return [];
         }
 
         $catalogo = DB::table('periodo_evaluacion')
@@ -978,36 +1000,27 @@ class GestionAcademica extends Component
             ->orderBy('ord_pev')
             ->orderBy('nom_pev')
             ->get()
-            ->map(function ($periodo) use ($sugeridos) {
+            ->map(function ($periodo) {
                 $orden = (int) ($periodo->ord_pev ?? 0);
-                $sugerido = collect($sugeridos)->firstWhere('orden', $orden) ?? [];
 
                 return [
                     'id' => $periodo->cod_pev,
                     'nombre' => $periodo->nom_pev,
                     'orden' => $orden,
                     'estado' => strtoupper($periodo->est_pev ?? 'SIN_ESTADO'),
-                    'fecha_inicio' => $sugerido['fecha_inicio'] ?? null,
-                    'fecha_fin' => $sugerido['fecha_fin'] ?? null,
-                    'dias_habiles_referencia' => $sugerido['dias_habiles_referencia'] ?? 0,
-                    'incluye_descanso_pedagogico' => $sugerido['incluye_descanso_pedagogico'] ?? false,
-                    'descanso_pedagogico_dias_habiles' => $sugerido['descanso_pedagogico_dias_habiles'] ?? 0,
-                    'progreso' => $this->progresoFechas($sugerido['fecha_inicio'] ?? null, $sugerido['fecha_fin'] ?? null),
+                    // El catálogo global no persiste fechas por gestión. Las sugerencias siguen en planificación.
+                    'fecha_inicio' => null,
+                    'fecha_fin' => null,
+                    'dias_habiles_referencia' => null,
+                    'incluye_descanso_pedagogico' => false,
+                    'descanso_pedagogico_dias_habiles' => null,
+                    'progreso' => null,
                 ];
             })
             ->values()
             ->all();
 
-        return count($catalogo) > 0
-            ? $catalogo
-            : collect($sugeridos)
-            ->map(fn(array $periodo) => array_merge($periodo, [
-                'id' => null,
-                'estado' => 'SUGERIDO',
-                'progreso' => $this->progresoFechas($periodo['fecha_inicio'], $periodo['fecha_fin']),
-            ]))
-            ->values()
-            ->all();
+        return $catalogo;
     }
 
     public function getEstructuraProperty(): array
@@ -1151,7 +1164,7 @@ class GestionAcademica extends Component
         $usuarioCol = in_array('cod_usu', $columnas, true) ? 'cod_usu' : null;
 
         return DB::table('bitacora')
-            ->when($fechaCol, fn($query) => $query->orderByDesc($fechaCol))
+            ->when($fechaCol, fn ($query) => $query->orderByDesc($fechaCol))
             ->limit(5)
             ->get()
             ->map(function ($row) use ($fechaCol, $accionCol, $moduloCol, $resultadoCol, $usuarioCol) {
@@ -1185,7 +1198,7 @@ class GestionAcademica extends Component
 
     public function colorClass(string $color, string $tipo = 'soft'): string
     {
-        return match ($color . '-' . $tipo) {
+        return match ($color.'-'.$tipo) {
             'emerald-soft' => 'border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-950 dark:text-emerald-300',
             'sky-soft' => 'border-sky-300 bg-sky-50 text-sky-800 dark:border-sky-500/30 dark:bg-sky-950 dark:text-sky-300',
             'violet-soft' => 'border-violet-300 bg-violet-50 text-violet-800 dark:border-violet-500/30 dark:bg-violet-950 dark:text-violet-300',
@@ -1209,7 +1222,7 @@ class GestionAcademica extends Component
             ->orderByDesc('ani_gea')
             ->orderByDesc('created_at')
             ->get()
-            ->map(fn($row) => $this->normalizarGestion($row))
+            ->map(fn ($row) => $this->normalizarGestion($row))
             ->values();
     }
 
@@ -1223,7 +1236,7 @@ class GestionAcademica extends Component
             'id' => $row->cod_gea,
             'codigo' => $row->cod_gea,
             'anio' => (int) $row->ani_gea,
-            'nombre' => 'Gestión Académica ' . $row->ani_gea,
+            'nombre' => 'Gestión Académica '.$row->ani_gea,
             'fecha_inicio' => $row->fii_gea,
             'fecha_fin' => $row->ffi_gea,
             'estado' => $estadoNormalizado,
@@ -1265,7 +1278,7 @@ class GestionAcademica extends Component
 
         $this->form = [
             'anio' => (string) $anio,
-            'nombre' => 'Gestión Académica ' . $anio,
+            'nombre' => 'Gestión Académica '.$anio,
             'fecha_inicio' => $fechas['inicio_institucional'] ?? "{$anio}-01-19",
             'fecha_fin' => $fechas['cierre_institucional'] ?? "{$anio}-12-11",
             'modalidad' => 'Técnico Humanístico',
@@ -1296,7 +1309,7 @@ class GestionAcademica extends Component
         $anio = (int) ($this->form['anio'] ?: now()->year);
 
         $this->form['anio'] = (string) $anio;
-        $this->form['nombre'] = trim((string) ($this->form['nombre'] ?: 'Gestión Académica ' . $anio));
+        $this->form['nombre'] = trim((string) ($this->form['nombre'] ?: 'Gestión Académica '.$anio));
         $this->form['modalidad'] = trim((string) ($this->form['modalidad'] ?: 'Técnico Humanístico'));
         $this->form['estado'] = GestionAcademicaInteligente::normalizarEstado($this->form['estado'] ?? null);
         $this->form['descripcion'] = trim((string) ($this->form['descripcion'] ?? ''));
@@ -1401,7 +1414,7 @@ class GestionAcademica extends Component
     private function totalPendientesCierre(string $codGea): int
     {
         return array_sum(array_map(
-            fn($valor) => (int) $valor,
+            fn ($valor) => (int) $valor,
             $this->soporte()->pendientesCierre($codGea)
         ));
     }
@@ -1423,7 +1436,7 @@ class GestionAcademica extends Component
             $numero = ((int) $matches[1]) + 1;
         }
 
-        return 'GEA_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+        return 'GEA_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
     }
 
     private function generarCodigoPeriodo(): string
@@ -1439,7 +1452,7 @@ class GestionAcademica extends Component
             $numero = ((int) $matches[1]) + 1;
         }
 
-        return 'PEV_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+        return 'PEV_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
     }
 
     private function generarCodigoBitacora(): string
@@ -1459,7 +1472,7 @@ class GestionAcademica extends Component
             $numero = ((int) $matches[1]) + 1;
         }
 
-        return 'BIT_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+        return 'BIT_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
     }
 
     // ============================================================
@@ -1727,7 +1740,7 @@ class GestionAcademica extends Component
             $numero = ((int) $matches[1]) + 1;
         }
 
-        return 'RGA_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
+        return 'RGA_'.str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
     }
 
     private function alerta(string $icon, string $title, string $text): void

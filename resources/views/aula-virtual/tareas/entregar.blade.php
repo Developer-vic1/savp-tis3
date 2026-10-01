@@ -6,7 +6,7 @@
 @section('content')
     @php
         $estado = $entrega ? $entrega->est_ent : 'PENDIENTE';
-        $bloqueado = in_array($estado, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO', 'ANULADO'], true);
+        $bloqueado = ! $tarea->puedeRecibirEntregas() || in_array($estado, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO', 'ANULADO'], true);
         $textoEstado = match($estado) {
             'ENTREGADO' => 'Enviado',
             'ENTREGADO_TARDE' => 'Enviado tarde',
@@ -31,6 +31,11 @@
                 <div><dt class="ui-muted text-sm">Fecha límite</dt><dd class="font-bold">{{ optional($tarea->fec_lim_tar)->format('d/m/Y H:i') ?: 'Fecha definida por el docente' }}</dd></div>
                 <div><dt class="ui-muted text-sm">Puntaje máximo</dt><dd class="font-bold">{{ $tarea->pun_max_tar }}</dd></div>
             </dl>
+            @if($tarea->materiales->isNotEmpty())
+            <ul class="mt-4 space-y-2">@foreach($tarea->materiales as $file)
+                @if($file->rut_tar_mat)<li><a class="underline" href="{{ route('aula-virtual.tareas.archivos.descargar', $file->cod_tar_mat) }}">{{ $file->nom_tar_mat }}</a></li>@endif
+            @endforeach</ul>
+            @endif
         </section>
 
         <section class="ui-panel">
@@ -40,10 +45,18 @@
             </div>
 
             @if($estado === 'DEVUELTO' && $entrega->obs_ent)
-                <div class="mt-4 rounded-lg bg-amber-50 p-4 border border-amber-200">
-                    <h4 class="font-bold text-amber-800">Observación del docente:</h4>
-                    <p class="text-sm text-amber-900 mt-1 whitespace-pre-line">{{ $entrega->obs_ent }}</p>
+                <div class="ui-alert-warning mt-4">
+                    <h4 class="font-bold">Observación del docente:</h4>
+                    <p class="text-sm mt-1 whitespace-pre-line">{{ $entrega->obs_ent }}</p>
                 </div>
+            @endif
+
+            @if($entrega?->calificacion)
+                <section class="ui-card p-4 mt-4">
+                    <h4 class="ui-title font-bold">Calificación de esta tarea</h4>
+                    <p>{{ $entrega->calificacion->pun_obt }} / {{ $tarea->pun_max_tar }}</p>
+                    <p class="ui-muted whitespace-pre-line mt-2">{{ $entrega->calificacion->com_cal ?: 'Sin retroalimentación registrada.' }}</p>
+                </section>
             @endif
 
             <form method="POST" action="{{ route('aula-virtual.estudiante.tareas.entregas.store', $tarea->cod_tar) }}" enctype="multipart/form-data" class="mt-4 space-y-4">

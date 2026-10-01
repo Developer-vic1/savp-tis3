@@ -1,0 +1,19 @@
+# Estado de implementación y preparación
+
+Fase vigente al 2026-10-01: **auditoría maestra y diseño de datos terminados para revisión arquitectónica**. Implementación dependiente de persistencia nueva detenida según la solicitud. Informe [31-AUDITORIA-BD-MAESTRA.md](31-AUDITORIA-BD-MAESTRA.md), matrices [32](32-MATRIZ-TABLAS-BD.csv)/[33](33-MATRIZ-COLUMNAS-BD.csv), relaciones [34](34-RELACIONES-BD.md), modelo objetivo propuesto [35](35-MODELO-DATOS-OBJETIVO.md) y deuda [36](36-DEUDA-TECNICA-BD.md). Esta fase cambia solo documentación; conserva el código y los cambios locales anteriores.
+
+Rama: feature/REESTRUCTURACION. HEAD base del cierre: 2f9d5e8dc5a85983b244f32efcd30b14ebd4c16b. El usuario autorizó el cierre con un commit y push exclusivo a esta rama. Otros worktrees se consultaron solo en lectura.
+
+Validación pre-commit del 2026-10-01: Composer, Vite build, 129 rutas sin vendor, caché Blade, 224 PHP nuevos/modificados y diff-check PASS. Suite: 191 PASS, 31 SKIP, 582 aserciones, 0 FAIL. Auditoría documental: 29 PASS. Resumen reproducible: [evidencia/cierre-precommit-validacion.json](evidencia/cierre-precommit-validacion.json); inventario exacto de inclusión/exclusión: [evidencia/cierre-git-manifiesto.csv](evidencia/cierre-git-manifiesto.csv). Los logs crudos y el patch antiguo quedan solo locales. El siguiente paso es el smoke test público con procesos aislados de PostgreSQL; no convierte ventanas en PASS.
+
+CATÁLOGO ORIGINAL LOCALIZADO: SÍ. Ruta: C:/Users/LOQ/.codex/worktrees/61ea/savp-reestructuracion/docs/arquitectura-maestra-savp. Archivos encontrados: 43 (26 Markdown: LEEME y 25 entregables). Ventanas: 105. Numeración original recuperada: SÍ. Conciliación: realizada con IDs, actor, nombre, modalidad y ruta propuesta intactos.
+
+La matriz distingue 91 PARTIAL, 10 BLOCKED_EXTERNALLY_DB y 4 BLOCKED_EXTERNALLY_INSTITUTIONAL; PASS: 0. PARTIAL no significa necesidad de tablas nuevas: mantiene a la vista QA y trabajo interno. No se declara implementación integral finalizada.
+
+Se conservan seis migrations preparadas anteriormente, documentadas en [25-MIGRATIONS-PROPUESTAS.md](25-MIGRATIONS-PROPUESTAS.md) y validadas con php -l. La auditoría admite dos como diseño sin cambio y pide rediseño de cuatro; ninguna está autorizada para ejecución. El modelo objetivo propone ocho paquetes futuros, incluida separación de MIG-006 y edición de instrumento MIG-007 SOLO DISEÑO. NO se crearon nuevos archivos de migration ni se ejecutaron. Flags de nuevas persistencias false por defecto; no se habilitaron ni poblaron catálogos. Reportes Regente y documentación de inscripción reutilizan schema.
+
+Validación de aplicación de la fase anterior: 191 tests PASS (126 Unit y 65 Feature), 582 aserciones, 31 SKIP por persistencia/driver o feature deshabilitada; cero fallos. Los 45 SKIP originales se revisan individualmente en 26-TESTS-SKIPPED.md: 14 ahora PASS. La evidencia vigente de aplicación lleva prefijo support-*; cierre-* conserva la fase anterior. La auditoría documental añade 29 comprobaciones estáticas sin fallos y preserva 667 archivos de código/configuración/activos; evidencia bd-*. Ninguno certifica DB o UX autenticada.
+
+Support preservado: 22 clases inventariadas, 18 Supports inteligentes originales y Kardex preventivo nuevo, más 3 utilidades. Sin pérdida de caller directo. Una regresión frente a HEAD y dos defectos anteriores corregidos; ver 28/29. V051/V053 incorporan lectura, filtros y drawers de Secretaría; V079 añade prevención Livewire a notas oficiales docentes; V102 valida borrador sin guardar. Los 91 PARTIAL siguen pendientes de certificación y trabajo interno documentado.
+
+Base testing PostgreSQL: NO. Institucional conectado/modificado: NO. Migrations/seeders/rollback/DDL ejecutados: NO. Ver 21–25 para alcance, pendientes y revisión Peter 1.

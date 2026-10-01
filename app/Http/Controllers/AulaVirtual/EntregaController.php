@@ -8,7 +8,9 @@ use App\Models\AulaVirtual\EntregaTarea;
 use App\Models\AulaVirtual\Tarea;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\EntregaService;
+use App\Support\PrivateFilePath;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 
 class EntregaController extends Controller
@@ -29,10 +31,6 @@ class EntregaController extends Controller
             'archivo' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,txt,zip'],
         ]);
 
-        if ($datos['accion'] === 'enviar' && empty($datos['tex_ent']) && ! $request->hasFile('archivo')) {
-            return back()->withErrors(['tex_ent' => 'Debes escribir una respuesta o adjuntar un archivo antes de enviar.'])->withInput();
-        }
-
         $estudiante = $this->cursos->estudianteDeUsuario($request->user());
         abort_if(! $estudiante, 403);
 
@@ -49,7 +47,7 @@ class EntregaController extends Controller
 
         $datos = $request->validate([
             'pun_obt' => ['required', 'numeric', 'min:0'],
-            'com_cal' => ['nullable', 'string'],
+            'com_cal' => ['nullable', 'string', 'max:2000'],
         ]);
 
         $this->entregas->calificar($entrega, $docente, (float) $datos['pun_obt'], $datos['com_cal'] ?? null);
@@ -63,7 +61,7 @@ class EntregaController extends Controller
         abort_if(! $this->cursos->cursoParaDocente($request->user(), $entrega->tarea->cod_cla), 403);
 
         $datos = $request->validate(['obs_ent' => ['required', 'string', 'max:2000']]);
-        $entrega->devolver($datos['obs_ent']);
+        $this->entregas->devolver($entrega, $datos['obs_ent']);
 
         return back()->with('status', 'Observación enviada.');
     }
@@ -77,8 +75,10 @@ class EntregaController extends Controller
         $esDocente = (bool) $this->cursos->cursoParaDocente($request->user(), $tarea->cod_cla);
 
         abort_if(! $esPropia && ! $esDocente, 403);
-        abort_if(! Storage::exists($archivo->rut_arc), 404);
+        abort_unless($archivo->est_arc === 'ACTIVO' && PrivateFilePath::valid($archivo->rut_arc, 'aula-virtual/entregas'), 404);
+        Gate::authorize('view', $archivo->entrega);
+        abort_if(! Storage::disk('local')->exists($archivo->rut_arc), 404);
 
-        return Storage::download($archivo->rut_arc, $archivo->nom_arc);
+        return Storage::disk('local')->download($archivo->rut_arc, basename($archivo->rut_arc), ['X-Content-Type-Options' => 'nosniff']);
     }
 }

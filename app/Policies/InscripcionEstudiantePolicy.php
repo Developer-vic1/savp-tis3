@@ -5,23 +5,28 @@ namespace App\Policies;
 use App\Models\InscripcionEstudiante;
 use App\Models\User;
 use App\Services\AcademicAccessService;
+use App\Services\RegencyAccessService;
+use App\Services\RoleDashboardResolver;
 
 class InscripcionEstudiantePolicy
 {
     public function view(User $user, InscripcionEstudiante $enrollment): bool
     {
-        if ($user->est_usu !== 'ACTIVO') { return false; }
+        if (! app(RoleDashboardResolver::class)->roleFor($user)) {
+            return false;
+        }
         if ($user->hasRole('Regente') && ! $user->hasAnyRole(['Administrador', 'Director', 'Secretaria'])) {
             return $user->can('inscripciones.ver.institucional')
-                && app(\App\Services\RegencyAccessService::class)
+                && app(RegencyAccessService::class)
                     ->constrain(InscripcionEstudiante::whereKey($enrollment->getKey()), $user, 'inscripcion_estudiante')->exists();
         }
+
         return $enrollment->estudiante
             && app(AcademicAccessService::class)->canViewStudent($user, $enrollment->estudiante);
     }
 
     public function update(User $user, InscripcionEstudiante $enrollment): bool
     {
-        return $user->est_usu === 'ACTIVO' && $user->hasAnyRole(['Administrador', 'Secretaria']) && $user->can('inscripciones.gestionar.institucional');
+        return in_array(app(RoleDashboardResolver::class)->roleFor($user), ['Administrador', 'Secretaria'], true) && $user->can('inscripciones.gestionar.institucional');
     }
 }

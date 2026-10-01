@@ -1,0 +1,49 @@
+{
+  "tables_declared_historical": 64,
+  "tables_sql_snapshot": 33,
+  "tables_sql_only": 1,
+  "tables_new_proposed": 14,
+  "tables_inventory_total": 79,
+  "columns_historical": 597,
+  "columns_new_or_extension": 140,
+  "columns_inventory_total": 740,
+  "models": 55,
+  "migrations_historical": 52,
+  "migrations_proposed": 6,
+  "fks_historical": 96,
+  "fks_overlay_total": 128,
+  "indexes_historical": {
+    "PRIMARY": 64,
+    "UNIQUE": 30,
+    "INDEX": 151
+  },
+  "checks_historical": 43,
+  "classification_inventory": {
+    "CONSERVAR_Y_MEJORAR": 44,
+    "LEGACY_CONSERVADO": 4,
+    "CONSERVAR": 10,
+    "NUEVO": 14,
+    "EXTENDER": 5,
+    "NORMALIZAR": 2
+  },
+  "risks": {
+    "CRITICAL": 1,
+    "HIGH": 10,
+    "MEDIUM": 7,
+    "LOW": 2
+  },
+  "support_count": 22,
+  "support_direct_db": 10,
+  "support_query_sites": 98,
+  "window_status": {
+    "PARTIAL": 91,
+    "BLOCKED_EXTERNALLY_DB": 10,
+    "BLOCKED_EXTERNALLY_INSTITUTIONAL": 4
+  },
+  "migration_apt_as_is": 2,
+  "migration_redesign": 4,
+  "migration_logical_needs": 7,
+  "proposed_future_packages": 8,
+  "target_new_tables": 15,
+  "new_physical_migrations_this_audit": 0
+}

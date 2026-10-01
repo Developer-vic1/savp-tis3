@@ -433,7 +433,8 @@
                     @forelse ($usuarios as $usuario)
                         @php
                             $persona = $usuario->persona;
-                            $rolActual = $usuario->roles->first()?->name ?? 'Sin rol';
+                            $actores = $usuario->roles->whereIn('name', app(\App\Support\InstitutionalRoleGovernance::class)->rolesInstitucionales())->pluck('name');
+                            $rolActual = $actores->count() === 1 ? $actores->first() : 'Revisión requerida';
 
                             $nombreCompleto = trim(
                                 ($persona?->nom_per ?? '') . ' ' .
@@ -450,7 +451,7 @@
                                 'Docente' => 'Docente del sistema',
                                 'Administrador' => 'Administrador del sistema',
                                 'Director' => 'Dirección institucional',
-                                'Secretaria', 'Secretaria Académica' => 'Apoyo administrativo',
+                                'Secretaria' => 'Apoyo administrativo',
                                 'Regente' => 'Supervisión académica',
                                 default => '—',
                             };
@@ -462,7 +463,7 @@
                                 'Director' => 'background: var(--ui-violet-soft); color: var(--ui-violet); --tw-ring-color: var(--ui-violet-border);',
                                 'Docente' => 'background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);',
                                 'Estudiante' => 'background: var(--ui-info-soft); color: var(--ui-info); --tw-ring-color: var(--ui-info-border);',
-                                'Secretaria', 'Secretaria Académica' => 'background: var(--ui-warning-soft); color: var(--ui-warning); --tw-ring-color: var(--ui-warning-border);',
+                                'Secretaria' => 'background: var(--ui-warning-soft); color: var(--ui-warning); --tw-ring-color: var(--ui-warning-border);',
                                 'Regente' => 'background: var(--ui-violet-soft); color: var(--ui-violet); --tw-ring-color: var(--ui-violet-border);',
                                 default => 'background: var(--ui-surface-muted); color: var(--ui-muted); --tw-ring-color: var(--ui-border);',
                             };
@@ -1011,7 +1012,8 @@
                             ($personaDetalle?->ape_mat_per ?? '')
                         );
 
-                        $rolDetalle = $usuarioDetalle->roles->first()?->name ?? 'Sin rol';
+                        $actores = $usuarioDetalle->roles->whereIn('name', app(\App\Support\InstitutionalRoleGovernance::class)->rolesInstitucionales())->pluck('name');
+                        $rolDetalle = $actores->count() === 1 ? $actores->first() : 'Revisión requerida';
                         $estadoDetalle = $usuarioDetalle->est_usu ?? 'ACTIVO';
                         $esActivoDetalle = $estadoDetalle === 'ACTIVO';
                         $inicialDetalle = strtoupper(substr($personaDetalle?->nom_per ?? 'U', 0, 1));

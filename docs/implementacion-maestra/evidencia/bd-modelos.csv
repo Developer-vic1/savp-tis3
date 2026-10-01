@@ -1,0 +1,172 @@
+﻿model,table,file,pk,fillable,casts,soft_delete,relations
+Administrador,administrador,app/Models/Administrador.php,cod_adm,cod_adm; cod_pin; est_adm,,False,"[{""method"": ""personalInstitucional"", ""kind"": ""belongsTo"", ""arguments"": [""PersonalInstitucional::class"", ""'cod_pin'"", ""'cod_pin'""]}]"
+Asignatura,asignatura,app/Models/Asignatura.php,cod_asi,cod_asi; nom_asi; sig_asi; hor_asi; est_asi,,False,"[{""method"": ""planAsignatura"", ""kind"": ""hasMany"", ""arguments"": [""PlanAsignatura::class"", ""'cod_asi'"", ""'cod_asi'""]}, {""method"": ""calificaciones"", ""kind"": ""hasMany"", ""arguments"": [""Calificacion::class"", ""'cod_asi'"", ""'cod_asi'""]}]"
+ActividadClase,actividad_clase,app/Models/AulaVirtual/ActividadClase.php,cod_act_cla,cod_act_cla; cod_cla; cod_est; cod_usu; tip_act; ref_tab; ref_cod; fec_act; met_act,"[
+        'fec_act' => 'datetime',
+        'met_act' => 'array',
+    ]",False,"[{""method"": ""claseVirtual"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""usuario"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu'"", ""'cod_usu'""]}]"
+AsistenciaClase,asistencia_clase,app/Models/AulaVirtual/AsistenciaClase.php,cod_asi_cla,cod_asi_cla; cod_cla; cod_doc; cod_hbl; cod_usu_reg; fec_asi_cla; hor_ini_asi_cla; hor_fin_asi_cla; tip_asi_cla; tit_asi_cla; obs_asi_cla; ori_asi_cla; est_asi_cla,"[
+        'fec_asi_cla' => 'date',
+        'hor_ini_asi_cla' => 'datetime:H:i',
+        'hor_fin_asi_cla' => 'datetime:H:i',
+    ]",False,"[{""method"": ""claseVirtual"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""docente"", ""kind"": ""belongsTo"", ""arguments"": [""Docente::class"", ""'cod_doc'"", ""'cod_doc'""]}, {""method"": ""horarioBloque"", ""kind"": ""belongsTo"", ""arguments"": [""HorarioBloque::class"", ""'cod_hbl'"", ""'cod_hbl'""]}, {""method"": ""usuarioRegistro"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu_reg'"", ""'cod_usu'""]}, {""method"": ""estudiantes"", ""kind"": ""hasMany"", ""arguments"": [""AsistenciaEstudiante::class"", ""'cod_asi_cla'"", ""'cod_asi_cla'""]}]"
+AsistenciaEstudiante,asistencia_estudiante,app/Models/AulaVirtual/AsistenciaEstudiante.php,cod_asi_est,cod_asi_est; cod_asi_cla; cod_est; cod_est_asi; cod_usu_reg; min_retraso; obs_asi_est; fec_reg_asi_est; est_asi_est,"[
+        'min_retraso' => 'integer',
+        'fec_reg_asi_est' => 'datetime',
+    ]",False,"[{""method"": ""asistenciaClase"", ""kind"": ""belongsTo"", ""arguments"": [""AsistenciaClase::class"", ""'cod_asi_cla'"", ""'cod_asi_cla'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""estadoAsistencia"", ""kind"": ""belongsTo"", ""arguments"": [""EstadoAsistencia::class"", ""'cod_est_asi'"", ""'cod_est_asi'""]}, {""method"": ""usuarioRegistro"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu_reg'"", ""'cod_usu'""]}]"
+CalificacionTarea,calificacion_tarea,app/Models/AulaVirtual/CalificacionTarea.php,cod_cal_tar,cod_cal_tar; cod_ent; cod_tar; cod_est; cod_doc; pun_obt; pun_max; com_cal; fec_cal; est_cal,"[
+        'pun_obt' => 'decimal:2',
+        'pun_max' => 'decimal:2',
+        'fec_cal' => 'datetime',
+    ]",False,"[{""method"": ""entrega"", ""kind"": ""belongsTo"", ""arguments"": [""EntregaTarea::class"", ""'cod_ent'"", ""'cod_ent'""]}, {""method"": ""tarea"", ""kind"": ""belongsTo"", ""arguments"": [""Tarea::class"", ""'cod_tar'"", ""'cod_tar'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""docente"", ""kind"": ""belongsTo"", ""arguments"": [""Docente::class"", ""'cod_doc'"", ""'cod_doc'""]}]"
+ClaseEstudiante,clase_estudiante,app/Models/AulaVirtual/ClaseEstudiante.php,cod_cla_est,cod_cla_est; cod_cla; cod_est; fec_inc_cla_est; fec_ret_cla_est; ult_acc_cla_est; ult_act_cla_est; cant_acc_cla_est; est_cla_est,"[
+        'fec_inc_cla_est' => 'date',
+        'fec_ret_cla_est' => 'date',
+        'ult_acc_cla_est' => 'datetime',
+        'ult_act_cla_est' => 'datetime',
+        'cant_acc_cla_est' => 'integer',
+    ]",False,"[{""method"": ""claseVirtual"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""actividades"", ""kind"": ""hasMany"", ""arguments"": [""ActividadClase::class"", ""'cod_est'"", ""'cod_est'""]}]"
+ClaseVirtual,clase_virtual,app/Models/AulaVirtual/ClaseVirtual.php,cod_cla,cod_cla; cod_pas; nom_cla; des_cla; fec_ini_cla; fec_fin_cla; est_cla,"[
+        'fec_ini_cla' => 'date',
+        'fec_fin_cla' => 'date',
+    ]",False,"[{""method"": ""planAsignatura"", ""kind"": ""belongsTo"", ""arguments"": [""PlanAsignatura::class"", ""'cod_pas'"", ""'cod_pas'""]}, {""method"": ""estudiantes"", ""kind"": ""hasMany"", ""arguments"": [""ClaseEstudiante::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""publicaciones"", ""kind"": ""hasMany"", ""arguments"": [""PublicacionClase::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""materiales"", ""kind"": ""hasMany"", ""arguments"": [""MaterialClase::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""tareas"", ""kind"": ""hasMany"", ""arguments"": [""Tarea::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""asistencias"", ""kind"": ""hasMany"", ""arguments"": [""AsistenciaClase::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""actividades"", ""kind"": ""hasMany"", ""arguments"": [""ActividadClase::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""entregas"", ""kind"": ""hasManyThrough"", ""arguments"": [""EntregaTarea::class"", ""Tarea::class"", ""'cod_cla'"", ""'cod_tar'"", ""'cod_cla'"", ""'cod_tar'""]}]"
+EntregaArchivo,entrega_archivo,app/Models/AulaVirtual/EntregaArchivo.php,cod_ent_arc,cod_ent_arc; cod_ent; nom_arc; rut_arc; mime_arc; tam_arc; est_arc,"[
+        'tam_arc' => 'integer',
+    ]",False,"[{""method"": ""entrega"", ""kind"": ""belongsTo"", ""arguments"": [""EntregaTarea::class"", ""'cod_ent'"", ""'cod_ent'""]}]"
+EntregaTarea,entrega_tarea,app/Models/AulaVirtual/EntregaTarea.php,cod_ent,cod_ent; cod_tar; cod_est; fec_ent; tex_ent; est_ent; obs_ent,"[
+        'fec_ent' => 'datetime',
+    ]",False,"[{""method"": ""tarea"", ""kind"": ""belongsTo"", ""arguments"": [""Tarea::class"", ""'cod_tar'"", ""'cod_tar'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""archivos"", ""kind"": ""hasMany"", ""arguments"": [""EntregaArchivo::class"", ""'cod_ent'"", ""'cod_ent'""]}, {""method"": ""calificacion"", ""kind"": ""hasOne"", ""arguments"": [""CalificacionTarea::class"", ""'cod_ent'"", ""'cod_ent'""]}]"
+EstadoAsistencia,estado_asistencia,app/Models/AulaVirtual/EstadoAsistencia.php,cod_est_asi,cod_est_asi; nom_est_asi; abr_est_asi; des_est_asi; color_est_asi; valor_porcentual; afecta_asistencia; requiere_observacion; est_est_asi,"[
+        'valor_porcentual' => 'decimal:2',
+        'afecta_asistencia' => 'boolean',
+        'requiere_observacion' => 'boolean',
+    ]",False,"[{""method"": ""asistenciasEstudiantes"", ""kind"": ""hasMany"", ""arguments"": [""AsistenciaEstudiante::class"", ""'cod_est_asi'"", ""'cod_est_asi'""]}]"
+MaterialClase,material_clase,app/Models/AulaVirtual/MaterialClase.php,cod_mat,cod_mat; cod_cla; cod_pub; cod_usu; nom_mat; tip_mat; rut_mat; url_mat; mime_mat; tam_mat; est_mat,"[
+        'tam_mat' => 'integer',
+    ]",False,"[{""method"": ""claseVirtual"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""publicacion"", ""kind"": ""belongsTo"", ""arguments"": [""PublicacionClase::class"", ""'cod_pub'"", ""'cod_pub'""]}, {""method"": ""usuario"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu'"", ""'cod_usu'""]}]"
+OrientacionActividad,orientacion_actividades,app/Models/AulaVirtual/OrientacionActividad.php,id,cod_est; cod_gea; estado; avance; iniciado_at; finalizado_at; revisado_por,"[
+        'avance' => 'integer',
+        'iniciado_at' => 'datetime',
+        'finalizado_at' => 'datetime',
+    ]",False,"[{""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""gestionAcademica"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""revisor"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'revisado_por'"", ""'cod_usu'""]}, {""method"": ""respuestas"", ""kind"": ""hasMany"", ""arguments"": [""OrientacionRespuesta::class"", ""'orientacion_actividad_id'""]}, {""method"": ""resultado"", ""kind"": ""hasOne"", ""arguments"": [""OrientacionResultado::class"", ""'orientacion_actividad_id'""]}]"
+OrientacionCarreraSugerida,orientacion_carreras_sugeridas,app/Models/AulaVirtual/OrientacionCarreraSugerida.php,id,orientacion_resultado_id; carrera; area_profesional; compatibilidad; razon; fortalezas; areas_a_fortalecer; orden,"[
+        'compatibilidad' => 'decimal:2',
+        'fortalezas' => 'array',
+        'areas_a_fortalecer' => 'array',
+        'orden' => 'integer',
+    ]",False,"[{""method"": ""resultado"", ""kind"": ""belongsTo"", ""arguments"": [""OrientacionResultado::class"", ""'orientacion_resultado_id'""]}]"
+OrientacionPregunta,orientacion_preguntas,app/Models/AulaVirtual/OrientacionPregunta.php,id,codigo; dimension; texto; tipo; orden; visible,"[
+        'orden' => 'integer',
+        'visible' => 'boolean',
+    ]",False,"[{""method"": ""respuestas"", ""kind"": ""hasMany"", ""arguments"": [""OrientacionRespuesta::class"", ""'orientacion_pregunta_id'""]}]"
+OrientacionRespuesta,orientacion_respuestas,app/Models/AulaVirtual/OrientacionRespuesta.php,id,orientacion_actividad_id; orientacion_pregunta_id; cod_est; valor_likert,"[
+        'valor_likert' => 'integer',
+    ]",False,"[{""method"": ""actividad"", ""kind"": ""belongsTo"", ""arguments"": [""OrientacionActividad::class"", ""'orientacion_actividad_id'""]}, {""method"": ""pregunta"", ""kind"": ""belongsTo"", ""arguments"": [""OrientacionPregunta::class"", ""'orientacion_pregunta_id'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}]"
+OrientacionResultado,orientacion_resultados,app/Models/AulaVirtual/OrientacionResultado.php,id,orientacion_actividad_id; cod_est; tecnico_practico; analitico_cientifico; creativo_expresivo; social_comunitario; liderazgo_emprendimiento; organizativo_administrativo; perfil_predominante; interpretacion; compatibilidad_principal; estado,"[
+        'tecnico_practico' => 'decimal:2',
+        'analitico_cientifico' => 'decimal:2',
+        'creativo_expresivo' => 'decimal:2',
+        'social_comunitario' => 'decimal:2',
+        'liderazgo_emprendimiento' => 'decimal:2',
+        'organizativo_administrativo' => 'decimal:2',
+        'compatibilidad_principal' => 'decimal:2',
+    ]",False,"[{""method"": ""actividad"", ""kind"": ""belongsTo"", ""arguments"": [""OrientacionActividad::class"", ""'orientacion_actividad_id'""]}, {""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""carreras"", ""kind"": ""hasMany"", ""arguments"": [""OrientacionCarreraSugerida::class"", ""'orientacion_resultado_id'""]}]"
+PublicacionClase,publicacion_clase,app/Models/AulaVirtual/PublicacionClase.php,cod_pub,cod_pub; cod_cla; cod_usu; tip_pub; tit_pub; con_pub; fec_pub; est_pub,"[
+        'fec_pub' => 'datetime',
+    ]",False,"[{""method"": ""claseVirtual"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""usuario"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu'"", ""'cod_usu'""]}, {""method"": ""materiales"", ""kind"": ""hasMany"", ""arguments"": [""MaterialClase::class"", ""'cod_pub'"", ""'cod_pub'""]}]"
+Tarea,tarea,app/Models/AulaVirtual/Tarea.php,cod_tar,cod_tar; cod_cla; cod_doc; tit_tar; des_tar; tip_tar; fec_pub_tar; fec_lim_tar; pun_max_tar; perm_ent_tardia; est_tar,"[
+        'fec_pub_tar' => 'datetime',
+        'fec_lim_tar' => 'datetime',
+        'pun_max_tar' => 'decimal:2',
+        'perm_ent_tardia' => 'boolean',
+    ]",False,"[{""method"": ""claseVirtual"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""docente"", ""kind"": ""belongsTo"", ""arguments"": [""Docente::class"", ""'cod_doc'"", ""'cod_doc'""]}, {""method"": ""materiales"", ""kind"": ""hasMany"", ""arguments"": [""TareaMaterial::class"", ""'cod_tar'"", ""'cod_tar'""]}, {""method"": ""entregas"", ""kind"": ""hasMany"", ""arguments"": [""EntregaTarea::class"", ""'cod_tar'"", ""'cod_tar'""]}, {""method"": ""calificaciones"", ""kind"": ""hasMany"", ""arguments"": [""CalificacionTarea::class"", ""'cod_tar'"", ""'cod_tar'""]}]"
+TareaMaterial,tarea_material,app/Models/AulaVirtual/TareaMaterial.php,cod_tar_mat,cod_tar_mat; cod_tar; nom_tar_mat; tip_tar_mat; rut_tar_mat; url_tar_mat; mime_tar_mat; tam_tar_mat; est_tar_mat,"[
+        'tam_tar_mat' => 'integer',
+    ]",False,"[{""method"": ""tarea"", ""kind"": ""belongsTo"", ""arguments"": [""Tarea::class"", ""'cod_tar'"", ""'cod_tar'""]}]"
+UnidadClase,unidades_clase,app/Models/AulaVirtual/UnidadClase.php,id,,"['publicada' => 'boolean', 'orden' => 'integer', 'archivada_at' => 'datetime']",False,"[{""method"": ""clase"", ""kind"": ""belongsTo"", ""arguments"": [""ClaseVirtual::class"", ""'cod_cla'"", ""'cod_cla'""]}, {""method"": ""autor"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'created_by'"", ""'cod_usu'""]}, {""method"": ""materiales"", ""kind"": ""hasMany"", ""arguments"": [""MaterialClase::class"", ""'unidad_id'""]}, {""method"": ""tareas"", ""kind"": ""hasMany"", ""arguments"": [""Tarea::class"", ""'unidad_id'""]}]"
+Bitacora,bitacora,app/Models/Bitacora.php,cod_bit,cod_bit; cod_usu; rol_bit; acc_bit; mod_bit; tab_bit; reg_bit; nom_reg_bit; des_bit; niv_bit; res_bit; ip_bit; age_bit; rut_bit; met_bit; val_ant_bit; val_nue_bit; err_bit; fec_bit,"[
+            'fec_bit' => 'datetime',
+            'val_ant_bit' => 'array',
+            'val_nue_bit' => 'array',
+        ]",False,"[{""method"": ""usuario"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu'"", ""'cod_usu'""]}]"
+CalendarioEvento,calendario_evento,app/Models/CalendarioEvento.php,cod_cae,,"['fii_cae' => 'date', 'ffi_cae' => 'date']",False,"[{""method"": ""gestion"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""curso"", ""kind"": ""belongsTo"", ""arguments"": [""Curso::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""autor"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'created_by'"", ""'cod_usu'""]}]"
+Calificacion,calificacion,app/Models/Calificacion.php,cod_cal,cod_cal; cod_est; cod_asi; cod_pev; cod_pas; not_cal; obs_cal; est_cal,['not_cal' => 'decimal:2'],False,"[{""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""asignatura"", ""kind"": ""belongsTo"", ""arguments"": [""Asignatura::class"", ""'cod_asi'"", ""'cod_asi'""]}, {""method"": ""periodoEvaluacion"", ""kind"": ""belongsTo"", ""arguments"": [""PeriodoEvaluacion::class"", ""'cod_pev'"", ""'cod_pev'""]}, {""method"": ""planAsignatura"", ""kind"": ""belongsTo"", ""arguments"": [""PlanAsignatura::class"", ""'cod_pas'"", ""'cod_pas'""]}]"
+Curso,curso,app/Models/Curso.php,cod_cur,cod_cur; nom_cur; niv_cur; est_cur,,False,"[{""method"": ""inscripciones"", ""kind"": ""hasMany"", ""arguments"": [""InscripcionEstudiante::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""planesAsignatura"", ""kind"": ""hasMany"", ""arguments"": [""PlanAsignatura::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""planesEspecialidad"", ""kind"": ""hasMany"", ""arguments"": [""PlanEspecialidad::class"", ""'cod_cur'"", ""'cod_cur'""]}]"
+Director,director,app/Models/Director.php,cod_dir,cod_dir; cod_pin; est_dir,,False,"[{""method"": ""personalInstitucional"", ""kind"": ""belongsTo"", ""arguments"": [""PersonalInstitucional::class"", ""'cod_pin'"", ""'cod_pin'""]}]"
+Docente,docente,app/Models/Docente.php,cod_doc,cod_doc; cod_pin; esp_doc; est_doc; num_mod_doc,,False,"[{""method"": ""personalInstitucional"", ""kind"": ""belongsTo"", ""arguments"": [""PersonalInstitucional::class"", ""'cod_pin'"", ""'cod_pin'""]}, {""method"": ""planAsignaturas"", ""kind"": ""hasMany"", ""arguments"": [""PlanAsignatura::class"", ""'cod_doc'"", ""'cod_doc'""]}, {""method"": ""planEspecialidades"", ""kind"": ""hasMany"", ""arguments"": [""PlanEspecialidad::class"", ""'cod_doc'"", ""'cod_doc'""]}]"
+DocumentoInscripcionEstudiante,documento_inscripcion_estudiante,app/Models/DocumentoInscripcionEstudiante.php,cod_die,cod_die; cod_ins; nom_die; tip_die; est_die; obl_die; fec_lim_die; fec_pre_die; rut_die; for_die; tam_die; has_die; obs_die,"[
+        'obl_die' => 'boolean',
+        'fec_lim_die' => 'date',
+        'fec_pre_die' => 'date',
+        'tam_die' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""inscripcion"", ""kind"": ""belongsTo"", ""arguments"": [""InscripcionEstudiante::class"", ""'cod_ins'"", ""'cod_ins'""]}]"
+EspecialidadTecnica,especialidad_tecnica,app/Models/EspecialidadTecnica.php,cod_esp,cod_esp; nom_esp; des_esp; est_esp,,False,"[{""method"": ""estudiantes"", ""kind"": ""hasMany"", ""arguments"": [""Estudiante::class"", ""'cod_esp'"", ""'cod_esp'""]}, {""method"": ""planesEspecialidad"", ""kind"": ""hasMany"", ""arguments"": [""PlanEspecialidad::class"", ""'cod_esp'"", ""'cod_esp'""]}]"
+Estudiante,estudiante,app/Models/Estudiante.php,cod_est,cod_est; rud_est; cod_per; cod_tve; cod_ipe; cod_esp; est_est,,False,"[{""method"": ""persona"", ""kind"": ""belongsTo"", ""arguments"": [""Persona::class"", ""'cod_per'"", ""'cod_per'""]}, {""method"": ""tipoVinculacion"", ""kind"": ""belongsTo"", ""arguments"": [""TipoVinculacionEstudiante::class"", ""'cod_tve'"", ""'cod_tve'""]}, {""method"": ""institucionProcedencia"", ""kind"": ""belongsTo"", ""arguments"": [""InstitucionProcedencia::class"", ""'cod_ipe'"", ""'cod_ipe'""]}, {""method"": ""especialidad"", ""kind"": ""belongsTo"", ""arguments"": [""EspecialidadTecnica::class"", ""'cod_esp'"", ""'cod_esp'""]}, {""method"": ""calificaciones"", ""kind"": ""hasMany"", ""arguments"": [""Calificacion::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""inscripciones"", ""kind"": ""hasMany"", ""arguments"": [""InscripcionEstudiante::class"", ""'cod_est'"", ""'cod_est'""]}]"
+GestionAcademica,gestion_academica,app/Models/GestionAcademica.php,cod_gea,cod_gea; ani_gea; fii_gea; ffi_gea; est_gea,,False,"[{""method"": ""inscripciones"", ""kind"": ""hasMany"", ""arguments"": [""InscripcionEstudiante::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""planesAsignatura"", ""kind"": ""hasMany"", ""arguments"": [""PlanAsignatura::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""respaldos"", ""kind"": ""hasMany"", ""arguments"": [""RespaldoGestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""horarios"", ""kind"": ""hasMany"", ""arguments"": [""Horario::class"", ""'cod_gea'"", ""'cod_gea'""]}]"
+Horario,horario,app/Models/Horario.php,cod_hor,cod_hor; cod_gea; cod_cur; cod_par; cod_pho; obs_hor; est_hor,"[
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""detalles"", ""kind"": ""hasMany"", ""arguments"": [""HorarioDetalle::class"", ""'cod_hor'"", ""'cod_hor'""]}, {""method"": ""detallesActivos"", ""kind"": ""hasMany"", ""arguments"": [""HorarioDetalle::class"", ""'cod_hor'"", ""'cod_hor'""]}, {""method"": ""gestion"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""curso"", ""kind"": ""belongsTo"", ""arguments"": [""Curso::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""paralelo"", ""kind"": ""belongsTo"", ""arguments"": [""Paralelo::class"", ""'cod_par'"", ""'cod_par'""]}, {""method"": ""plantilla"", ""kind"": ""belongsTo"", ""arguments"": [""PlantillaHoraria::class"", ""'cod_pho'"", ""'cod_pho'""]}]"
+HorarioBloque,horario_bloque,app/Models/HorarioBloque.php,cod_hbl,cod_hbl; cod_pho; num_hbl; hor_ini_hbl; hor_fin_hbl; nom_hbl; tip_hbl; obs_hbl; est_hbl,"[
+        'num_hbl' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""plantilla"", ""kind"": ""belongsTo"", ""arguments"": [""PlantillaHoraria::class"", ""'cod_pho'"", ""'cod_pho'""]}, {""method"": ""detalles"", ""kind"": ""hasMany"", ""arguments"": [""HorarioDetalle::class"", ""'cod_hbl'"", ""'cod_hbl'""]}, {""method"": ""detallesActivos"", ""kind"": ""hasMany"", ""arguments"": [""HorarioDetalle::class"", ""'cod_hbl'"", ""'cod_hbl'""]}]"
+HorarioDetalle,horario_detalle,app/Models/HorarioDetalle.php,cod_hde,cod_hde; cod_hor; cod_hbl; dia_hde; cod_pas; cod_pes; aul_hde; obs_hde; est_hde,"[
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""horario"", ""kind"": ""belongsTo"", ""arguments"": [""Horario::class"", ""'cod_hor'"", ""'cod_hor'""]}, {""method"": ""bloque"", ""kind"": ""belongsTo"", ""arguments"": [""HorarioBloque::class"", ""'cod_hbl'"", ""'cod_hbl'""]}, {""method"": ""planAsignatura"", ""kind"": ""belongsTo"", ""arguments"": [""PlanAsignatura::class"", ""'cod_pas'"", ""'cod_pas'""]}, {""method"": ""planEspecialidad"", ""kind"": ""belongsTo"", ""arguments"": [""PlanEspecialidad::class"", ""'cod_pes'"", ""'cod_pes'""]}]"
+InscripcionEstudiante,inscripcion_estudiante,app/Models/InscripcionEstudiante.php,cod_ins,cod_ins; cod_est; cod_gea; cod_cur; cod_par; cod_tur; fei_ins; tip_ins; con_ins; est_ins; pro_ins; obs_ins; mot_obs_ins; doc_com_ins; sob_aut_ins; sie_ins; fec_sie_ins; cod_esp_tec; est_esp_tec_ins; obs_esp_tec_ins; fec_con_ins; fec_anu_ins; mot_anu_ins; fec_ret_ins; mot_ret_ins,"[
+        'fei_ins' => 'date',
+        'doc_com_ins' => 'boolean',
+        'sob_aut_ins' => 'boolean',
+        'sie_ins' => 'boolean',
+        'fec_sie_ins' => 'datetime',
+        'fec_con_ins' => 'datetime',
+        'fec_anu_ins' => 'datetime',
+        'fec_ret_ins' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""gestionAcademica"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""curso"", ""kind"": ""belongsTo"", ""arguments"": [""Curso::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""paralelo"", ""kind"": ""belongsTo"", ""arguments"": [""Paralelo::class"", ""'cod_par'"", ""'cod_par'""]}, {""method"": ""turno"", ""kind"": ""belongsTo"", ""arguments"": [""Turno::class"", ""'cod_tur'"", ""'cod_tur'""]}, {""method"": ""especialidadTecnica"", ""kind"": ""belongsTo"", ""arguments"": [""EspecialidadTecnica::class"", ""'cod_esp_tec'"", ""'cod_esp'""]}, {""method"": ""documentos"", ""kind"": ""hasMany"", ""arguments"": [""DocumentoInscripcionEstudiante::class"", ""'cod_ins'"", ""'cod_ins'""]}, {""method"": ""documentosPendientes"", ""kind"": ""hasMany"", ""arguments"": [""DocumentoInscripcionEstudiante::class"", ""'cod_ins'"", ""'cod_ins'""]}, {""method"": ""documentosObservados"", ""kind"": ""hasMany"", ""arguments"": [""DocumentoInscripcionEstudiante::class"", ""'cod_ins'"", ""'cod_ins'""]}]"
+InstitucionProcedencia,institucion_procedencia,app/Models/InstitucionProcedencia.php,cod_ipe,cod_ipe; nom_ipe; tip_ipe; ciu_ipe; est_ipe,,False,"[{""method"": ""estudiantes"", ""kind"": ""hasMany"", ""arguments"": [""Estudiante::class"", ""'cod_ipe'"", ""'cod_ipe'""]}]"
+MetaAcademica,metas_academicas,app/Models/MetaAcademica.php,id,,['fecha_objetivo' => 'date'],False,"[{""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""gestion"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""autor"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'created_by'"", ""'cod_usu'""]}]"
+Paralelo,paralelo,app/Models/Paralelo.php,cod_par,cod_par; nom_par; est_par,,False,"[{""method"": ""inscripciones"", ""kind"": ""hasMany"", ""arguments"": [""InscripcionEstudiante::class"", ""'cod_par'"", ""'cod_par'""]}, {""method"": ""planesAsignatura"", ""kind"": ""hasMany"", ""arguments"": [""PlanAsignatura::class"", ""'cod_par'"", ""'cod_par'""]}, {""method"": ""planesEspecialidad"", ""kind"": ""hasMany"", ""arguments"": [""PlanEspecialidad::class"", ""'cod_par'"", ""'cod_par'""]}]"
+PeriodoEvaluacion,periodo_evaluacion,app/Models/PeriodoEvaluacion.php,cod_pev,cod_pev; nom_pev; ord_pev; est_pev,,False,"[{""method"": ""calificaciones"", ""kind"": ""hasMany"", ""arguments"": [""Calificacion::class"", ""'cod_pev'"", ""'cod_pev'""]}]"
+Persona,persona,app/Models/Persona.php,cod_per,cod_per; nom_per; ape_pat_per; ape_mat_per; ci_per; com_per; exp_per; fec_nac_per; gen_per; tel_per; ema_per; dir_per; fot_per; est_per,,False,"[{""method"": ""usuario"", ""kind"": ""hasOne"", ""arguments"": [""User::class"", ""'cod_per'"", ""'cod_per'""]}]"
+PersonalInstitucional,personal_institucional,app/Models/PersonalInstitucional.php,cod_pin,cod_pin; cod_per; car_pin; est_pin,,False,"[{""method"": ""persona"", ""kind"": ""belongsTo"", ""arguments"": [""Persona::class"", ""'cod_per'"", ""'cod_per'""]}, {""method"": ""docente"", ""kind"": ""hasOne"", ""arguments"": [""Docente::class"", ""'cod_pin'"", ""'cod_pin'""]}, {""method"": ""secretariaGeneral"", ""kind"": ""hasOne"", ""arguments"": [""SecretariaGeneral::class"", ""'cod_pin'"", ""'cod_pin'""]}, {""method"": ""administrador"", ""kind"": ""hasOne"", ""arguments"": [""Administrador::class"", ""'cod_pin'"", ""'cod_pin'""]}, {""method"": ""director"", ""kind"": ""hasOne"", ""arguments"": [""Director::class"", ""'cod_pin'"", ""'cod_pin'""]}, {""method"": ""usuario"", ""kind"": ""hasOneThrough"", ""arguments"": [""User::class"", ""Persona::class"", ""'cod_per'"", ""'cod_per'"", ""'cod_per'"", ""'cod_per'""]}]"
+PlanAsignatura,plan_asignatura,app/Models/PlanAsignatura.php,cod_pas,cod_pas; cod_asi; cod_doc; cod_cur; cod_par; cod_tur; cod_gea; hor_pas; est_pas,,False,"[{""method"": ""asignatura"", ""kind"": ""belongsTo"", ""arguments"": [""Asignatura::class"", ""'cod_asi'"", ""'cod_asi'""]}, {""method"": ""docente"", ""kind"": ""belongsTo"", ""arguments"": [""Docente::class"", ""'cod_doc'"", ""'cod_doc'""]}, {""method"": ""curso"", ""kind"": ""belongsTo"", ""arguments"": [""Curso::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""paralelo"", ""kind"": ""belongsTo"", ""arguments"": [""Paralelo::class"", ""'cod_par'"", ""'cod_par'""]}, {""method"": ""turno"", ""kind"": ""belongsTo"", ""arguments"": [""Turno::class"", ""'cod_tur'"", ""'cod_tur'""]}, {""method"": ""gestionAcademica"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}]"
+PlanEspecialidad,plan_especialidad,app/Models/PlanEspecialidad.php,cod_pes,cod_pes; cod_esp; cod_doc; cod_cur; cod_par; cod_tur; cod_gea; hor_pes; est_pes,,False,"[{""method"": ""especialidad"", ""kind"": ""belongsTo"", ""arguments"": [""EspecialidadTecnica::class"", ""'cod_esp'"", ""'cod_esp'""]}, {""method"": ""docente"", ""kind"": ""belongsTo"", ""arguments"": [""Docente::class"", ""'cod_doc'"", ""'cod_doc'""]}, {""method"": ""curso"", ""kind"": ""belongsTo"", ""arguments"": [""Curso::class"", ""'cod_cur'"", ""'cod_cur'""]}, {""method"": ""paralelo"", ""kind"": ""belongsTo"", ""arguments"": [""Paralelo::class"", ""'cod_par'"", ""'cod_par'""]}, {""method"": ""turno"", ""kind"": ""belongsTo"", ""arguments"": [""Turno::class"", ""'cod_tur'"", ""'cod_tur'""]}, {""method"": ""gestionAcademica"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}]"
+PlantillaHoraria,plantilla_horaria,app/Models/PlantillaHoraria.php,cod_pho,cod_pho; cod_tur; nom_pho; tip_pho; des_pho; fec_ini_pho; fec_fin_pho; dur_blo_pho; ord_pho; act_pho; est_pho,"[
+        'fec_ini_pho' => 'date',
+        'fec_fin_pho' => 'date',
+        'dur_blo_pho' => 'integer',
+        'ord_pho' => 'integer',
+        'act_pho' => 'boolean',
+        'est_pho' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""turno"", ""kind"": ""belongsTo"", ""arguments"": [""Turno::class"", ""'cod_tur'"", ""'cod_tur'""]}, {""method"": ""bloques"", ""kind"": ""hasMany"", ""arguments"": [""HorarioBloque::class"", ""'cod_pho'"", ""'cod_pho'""]}, {""method"": ""bloquesActivos"", ""kind"": ""hasMany"", ""arguments"": [""HorarioBloque::class"", ""'cod_pho'"", ""'cod_pho'""]}, {""method"": ""horarios"", ""kind"": ""hasMany"", ""arguments"": [""Horario::class"", ""'cod_pho'"", ""'cod_pho'""]}, {""method"": ""horariosActivos"", ""kind"": ""hasMany"", ""arguments"": [""Horario::class"", ""'cod_pho'"", ""'cod_pho'""]}]"
+Regente,regente,app/Models/Regente.php,cod_reg,cod_reg; cod_pin; est_reg,,False,"[{""method"": ""personalInstitucional"", ""kind"": ""belongsTo"", ""arguments"": [""PersonalInstitucional::class"", ""'cod_pin'"", ""'cod_pin'""]}]"
+RegenteAsignacion,regente_asignaciones,app/Models/RegenteAsignacion.php,id,cod_reg; cod_gea; cod_cur; activa,['activa' => 'boolean'],False,"[{""method"": ""regente"", ""kind"": ""belongsTo"", ""arguments"": [""Regente::class"", ""'cod_reg'"", ""'cod_reg'""]}, {""method"": ""gestion"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""curso"", ""kind"": ""belongsTo"", ""arguments"": [""Curso::class"", ""'cod_cur'"", ""'cod_cur'""]}]"
+ReporteGenerado,reportes_generados,app/Models/ReporteGenerado.php,id,codigo; tipo_reporte; formato; nombre_archivo; ruta_archivo; tamano_bytes; hash_archivo; generado_por; estado; observacion,,False,[]
+RespaldoGestionAcademica,respaldo_gestion_academica,app/Models/RespaldoGestionAcademica.php,cod_rga,cod_rga; cod_gea; tip_rga; for_rga; rut_rga; tam_rga; has_rga; obs_rga; fec_rga; est_rga,"[
+        'tam_rga' => 'integer',
+        'fec_rga' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ]",False,"[{""method"": ""gestionAcademica"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}]"
+Role,roles,app/Models/Role.php,id,,,False,[]
+RoleRequest,role_requests,app/Models/RoleRequest.php,id,requested_name; justification; institutional_reason; functions; scope; observations; requested_permissions; analysis_result; status; requested_by; director_id; reviewed_by; reviewed_at; review_note; document_path; document_hash; document_original_name; document_mime; document_size; document_analysis; created_role_id,"['requested_permissions' => 'array', 'analysis_result' => 'array', 'document_analysis' => 'array', 'reviewed_at' => 'datetime']",False,[]
+SecretariaGeneral,secretaria_general,app/Models/SecretariaGeneral.php,cod_sge,cod_sge; cod_pin; est_sge,,False,"[{""method"": ""personalInstitucional"", ""kind"": ""belongsTo"", ""arguments"": [""PersonalInstitucional::class"", ""'cod_pin'"", ""'cod_pin'""]}]"
+SeguimientoAcademico,seguimiento_academico,app/Models/SeguimientoAcademico.php,cod_seg,,"['fec_ape_seg' => 'date', 'fec_pro_seg' => 'date', 'fec_cie_seg' => 'date',
+        'visible_estudiante' => 'boolean', 'version_catalogo' => 'integer']",False,"[{""method"": ""estudiante"", ""kind"": ""belongsTo"", ""arguments"": [""Estudiante::class"", ""'cod_est'"", ""'cod_est'""]}, {""method"": ""planAsignatura"", ""kind"": ""belongsTo"", ""arguments"": [""PlanAsignatura::class"", ""'cod_pas'"", ""'cod_pas'""]}, {""method"": ""gestion"", ""kind"": ""belongsTo"", ""arguments"": [""GestionAcademica::class"", ""'cod_gea'"", ""'cod_gea'""]}, {""method"": ""responsable"", ""kind"": ""belongsTo"", ""arguments"": [""User::class"", ""'cod_usu_res'"", ""'cod_usu'""]}]"
+TipoVinculacionEstudiante,tipo_vinculacion_estudiante,app/Models/TipoVinculacionEstudiante.php,cod_tve,cod_tve; nom_tve; des_tve; est_tve,,False,"[{""method"": ""estudiantes"", ""kind"": ""hasMany"", ""arguments"": [""Estudiante::class"", ""'cod_tve'"", ""'cod_tve'""]}]"
+Turno,turno,app/Models/Turno.php,cod_tur,cod_tur; nom_tur; hor_ini_tur; hor_fin_tur; est_tur,,False,"[{""method"": ""planesAsignatura"", ""kind"": ""hasMany"", ""arguments"": [""PlanAsignatura::class"", ""'cod_tur'"", ""'cod_tur'""]}]"
+User,users,app/Models/User.php,cod_usu,cod_usu; cod_per; email; password; email_verified_at; google_id; avatar; auth_provider; last_login_at; remember_token; current_team_id; profile_photo_path; two_factor_secret; two_factor_recovery_codes; two_factor_confirmed_at; est_usu,"[
+            'email_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'password' => 'hashed',
+            'two_factor_confirmed_at' => 'datetime',
+        ]",False,"[{""method"": ""persona"", ""kind"": ""belongsTo"", ""arguments"": [""Persona::class"", ""'cod_per'"", ""'cod_per'""]}]"

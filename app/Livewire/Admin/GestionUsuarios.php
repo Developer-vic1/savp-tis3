@@ -9,9 +9,13 @@ use App\Models\Estudiante;
 use App\Models\Persona;
 use App\Models\PersonalInstitucional;
 use App\Models\Regente;
+use App\Models\Role;
 use App\Models\SecretariaGeneral;
 use App\Models\User;
 use App\Services\BitacoraService;
+use App\Services\RoleDashboardResolver;
+use App\Services\RolePermissionService;
+use App\Support\InstitutionalRoleGovernance;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -19,7 +23,6 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Spatie\Permission\Models\Role;
 
 class GestionUsuarios extends Component
 {
@@ -29,7 +32,6 @@ class GestionUsuarios extends Component
         'Administrador',
         'Director',
         'Secretaria',
-        'Secretaria Académica',
         'Regente',
     ];
 
@@ -38,7 +40,6 @@ class GestionUsuarios extends Component
         'Director',
         'Docente',
         'Secretaria',
-        'Secretaria Académica',
         'Regente',
     ];
 
@@ -55,12 +56,17 @@ class GestionUsuarios extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $rol = '';
+
     public string $estado = '';
+
     public int $perPage = 10;
 
     public array $selected = [];
+
     public bool $selectAll = false;
+
     public string $accionLote = '';
 
     /*
@@ -85,6 +91,7 @@ class GestionUsuarios extends Component
     |--------------------------------------------------------------------------
     */
     public bool $modalEditar = false;
+
     public ?User $usuarioDetalle = null;
 
     public array $formEditar = [
@@ -129,7 +136,7 @@ class GestionUsuarios extends Component
                 'regex:/[0-9]/',
                 'regex:/[^A-Za-z0-9]/',
             ],
-            'form.role' => ['required', 'exists:roles,name'],
+            'form.role' => ['required', Rule::in(app(InstitutionalRoleGovernance::class)->rolesInstitucionales()), Rule::exists('roles', 'name')->where('guard_name', 'web')],
         ];
 
         if (Schema::hasColumn('users', 'est_usu')) {
@@ -252,11 +259,13 @@ class GestionUsuarios extends Component
         DB::beginTransaction();
 
         try {
-            $persona = Persona::where('cod_per', $this->form['cod_per'])->first();
+            app(RolePermissionService::class)->lockRoles();
+            $persona = Persona::where('cod_per', $this->form['cod_per'])->lockForUpdate()->first();
 
             if (! $persona) {
                 DB::rollBack();
                 $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
+
                 return;
             }
 
@@ -272,7 +281,7 @@ class GestionUsuarios extends Component
             }
 
             $user = User::create($data);
-            $user->syncRoles([$this->form['role']]);
+            app(RolePermissionService::class)->assignActor($user, $this->form['role'], Auth::user());
             $user->load(['persona', 'roles']);
 
             $this->sincronizarPerfilUsuario($user);
@@ -289,7 +298,7 @@ class GestionUsuarios extends Component
                     'cod_usu' => $user->cod_usu,
                     'cod_per' => $user->cod_per,
                     'email' => $user->email,
-                    'rol' => $user->roles->first()?->name,
+                    'rol' => $this->actorName($user),
                     'est_usu' => $user->est_usu ?? null,
                 ]
             );
@@ -338,13 +347,14 @@ class GestionUsuarios extends Component
 
         if (! $this->usuarioDetalle) {
             $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
             return;
         }
 
         $this->formVer = [
             'cod_usu' => $this->usuarioDetalle->cod_usu,
             'email' => $this->usuarioDetalle->email,
-            'role' => $this->usuarioDetalle->roles->first()?->name ?? '',
+            'role' => $this->actorName($this->usuarioDetalle) ?? '',
             'est_usu' => $this->usuarioDetalle->est_usu ?? 'ACTIVO',
         ];
 
@@ -377,11 +387,13 @@ class GestionUsuarios extends Component
 
         if (! $usuario) {
             $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
             return;
         }
 
         if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
             $this->dispatch('error-general', mensaje: 'No puedes editar un usuario inactivo. Primero debes reactivarlo.');
+
             return;
         }
 
@@ -392,7 +404,7 @@ class GestionUsuarios extends Component
         $this->formEditar = [
             'cod_usu' => $usuario->cod_usu,
             'email' => $usuario->email,
-            'role' => $usuario->roles->first()?->name ?? '',
+            'role' => $this->actorName($usuario) ?? '',
             'est_usu' => $usuario->est_usu ?? 'ACTIVO',
             'password' => '',
             'password_confirmation' => '',
@@ -427,7 +439,7 @@ class GestionUsuarios extends Component
                 'max:255',
                 Rule::unique('users', 'email')->ignore($this->formEditar['cod_usu'], 'cod_usu'),
             ],
-            'formEditar.role' => ['required', 'exists:roles,name'],
+            'formEditar.role' => ['required', Rule::in(app(InstitutionalRoleGovernance::class)->rolesInstitucionales()), Rule::exists('roles', 'name')->where('guard_name', 'web')],
             'formEditar.est_usu' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])],
             'formEditar.password' => [
                 'nullable',
@@ -454,19 +466,22 @@ class GestionUsuarios extends Component
         DB::beginTransaction();
 
         try {
+            app(RolePermissionService::class)->lockRoles();
             $usuario = User::with(['persona', 'roles'])
                 ->where('cod_usu', $this->formEditar['cod_usu'])
+                ->lockForUpdate()
                 ->first();
 
             if (! $usuario) {
                 DB::rollBack();
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
                 return;
             }
 
             $valoresAnteriores = $this->resumenUsuario($usuario);
 
-            $rolAnterior = $usuario->roles->first()?->name;
+            $rolAnterior = $this->actorName($usuario);
             $rolNuevo = $this->formEditar['role'];
 
             if ($usuario->hasRole('Administrador')
@@ -474,6 +489,7 @@ class GestionUsuarios extends Component
                 && $this->esUltimoAdministrador($usuario)) {
                 DB::rollBack();
                 $this->addError('formEditar.role', 'No puedes retirar el rol al último Administrador activo.');
+
                 return;
             }
 
@@ -495,7 +511,7 @@ class GestionUsuarios extends Component
                 $this->desactivarPerfilAnterior($usuario, $rolAnterior);
             }
 
-            $usuario->syncRoles([$rolNuevo]);
+            app(RolePermissionService::class)->assignActor($usuario, $rolNuevo, Auth::user());
             $usuario->load(['persona', 'roles']);
 
             $this->sincronizarPerfilUsuario($usuario);
@@ -572,7 +588,7 @@ class GestionUsuarios extends Component
             'Administrador' => Administrador::where('cod_pin', $personal->cod_pin)->update(['est_adm' => 'INACTIVO']),
             'Director' => Director::where('cod_pin', $personal->cod_pin)->update(['est_dir' => 'INACTIVO']),
             'Docente' => Docente::where('cod_pin', $personal->cod_pin)->update(['est_doc' => 'INACTIVO']),
-            'Secretaria', 'Secretaria Académica' => SecretariaGeneral::where('cod_pin', $personal->cod_pin)->update(['est_sge' => 'INACTIVO']),
+            'Secretaria' => SecretariaGeneral::where('cod_pin', $personal->cod_pin)->update(['est_sge' => 'INACTIVO']),
             'Regente' => Regente::where('cod_pin', $personal->cod_pin)->update(['est_reg' => 'INACTIVO']),
             default => null,
         };
@@ -591,7 +607,7 @@ class GestionUsuarios extends Component
             $this->selected = $this->usuariosQuery()
                 ->where('cod_usu', '!=', $usuarioActual)
                 ->pluck('cod_usu')
-                ->map(fn($id) => (string) $id)
+                ->map(fn ($id) => (string) $id)
                 ->toArray();
         } else {
             $this->selected = [];
@@ -615,16 +631,19 @@ class GestionUsuarios extends Component
         $this->authorizeUserAction($this->accionLote === 'activar' ? 'usuarios.activar' : 'usuarios.desactivar');
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
+
             return;
         }
 
         if (empty($this->selected) || empty($this->accionLote)) {
             $this->dispatch('error-general', mensaje: 'Selecciona usuarios y una acción para continuar.');
+
             return;
         }
 
         if (! in_array($this->accionLote, ['activar', 'inactivar'], true)) {
             $this->dispatch('error-general', mensaje: 'Acción de lote no permitida.');
+
             return;
         }
 
@@ -642,6 +661,7 @@ class GestionUsuarios extends Component
             foreach ($usuarios as $usuario) {
                 if ($this->accionLote === 'inactivar' && ($usuario->cod_usu === $usuarioActual || $this->esUltimoAdministrador($usuario))) {
                     $omitidos[] = $usuario->cod_usu;
+
                     continue;
                 }
 
@@ -736,6 +756,7 @@ class GestionUsuarios extends Component
     {
         return Role::query()
             ->where('guard_name', 'web')
+            ->whereIn('name', app(InstitutionalRoleGovernance::class)->rolesInstitucionales())
             ->orderBy('name')
             ->get();
     }
@@ -814,7 +835,7 @@ class GestionUsuarios extends Component
         $numero = (int) str_replace('USU_', '', $ultimo);
         $nuevo = $numero + 1;
 
-        return 'USU_' . str_pad((string) $nuevo, 4, '0', STR_PAD_LEFT);
+        return 'USU_'.str_pad((string) $nuevo, 4, '0', STR_PAD_LEFT);
     }
 
     private function esUltimoAdministrador(User $usuario): bool
@@ -829,12 +850,21 @@ class GestionUsuarios extends Component
             ->where('cod_usu', '!=', $usuario->cod_usu)
             ->where('est_usu', 'ACTIVO')
             ->whereHas('roles', fn ($query) => $query->where('name', 'Administrador'))
+            ->whereDoesntHave('roles', fn ($query) => $query->whereIn('name', array_diff(app(InstitutionalRoleGovernance::class)->rolesInstitucionales(), ['Administrador'])))
             ->doesntExist();
     }
 
     private function authorizeUserAction(string $permission): void
     {
-        abort_unless(Auth::user()?->est_usu === 'ACTIVO' && Auth::user()->hasRole('Administrador') && Auth::user()->can($permission), 403, 'No tienes autorización para realizar esta acción.');
+        abort_unless(Auth::user() && app(RoleDashboardResolver::class)->roleFor(Auth::user()) === 'Administrador' && Auth::user()->can($permission), 403, 'No tienes autorización para realizar esta acción.');
+    }
+
+    private function actorName(User $user): ?string
+    {
+        $names = $user->roles->where('guard_name', 'web')->pluck('name')
+            ->intersect(app(InstitutionalRoleGovernance::class)->rolesInstitucionales())->values();
+
+        return $names->count() === 1 ? $names->first() : null;
     }
 
     /*
@@ -847,32 +877,39 @@ class GestionUsuarios extends Component
         $this->authorizeUserAction('usuarios.desactivar');
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
+
             return;
         }
 
         if (Auth::user()?->cod_usu === $codUsu) {
             $this->dispatch('no-puedes-desactivarte');
             $this->dispatch('error-general', mensaje: 'No puedes desactivar tu propia cuenta.');
+
             return;
         }
 
         DB::transaction(function () use ($codUsu) {
+            app(RolePermissionService::class)->lockRoles();
             $usuario = User::with(['persona', 'roles'])
                 ->where('cod_usu', $codUsu)
+                ->lockForUpdate()
                 ->first();
 
             if (! $usuario) {
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
                 return;
             }
 
             if (($usuario->est_usu ?? 'ACTIVO') === 'INACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra inactivo.');
+
                 return;
             }
 
             if ($this->esUltimoAdministrador($usuario)) {
                 $this->dispatch('error-general', mensaje: 'No puedes desactivar al último Administrador activo.');
+
                 return;
             }
 
@@ -906,6 +943,7 @@ class GestionUsuarios extends Component
         $this->authorizeUserAction('usuarios.activar');
         if (! Schema::hasColumn('users', 'est_usu')) {
             $this->dispatch('error-general', mensaje: 'La tabla de usuarios no tiene campo de estado.');
+
             return;
         }
 
@@ -916,11 +954,13 @@ class GestionUsuarios extends Component
 
             if (! $usuario) {
                 $this->dispatch('error-general', mensaje: 'No se encontró el usuario seleccionado.');
+
                 return;
             }
 
             if (($usuario->est_usu ?? 'ACTIVO') === 'ACTIVO') {
                 $this->dispatch('error-general', mensaje: 'El usuario ya se encuentra activo.');
+
                 return;
             }
 
@@ -963,7 +1003,7 @@ class GestionUsuarios extends Component
                 logger('Usuario con perfil faltante', [
                     'cod_usu' => $usuario->cod_usu,
                     'cod_per' => $usuario->cod_per,
-                    'rol' => $usuario->roles->first()?->name,
+                    'rol' => $this->actorName($usuario),
                 ]);
 
                 return true;
@@ -975,7 +1015,7 @@ class GestionUsuarios extends Component
 
     private function usuarioTienePerfilFaltante(User $usuario): bool
     {
-        $rol = $usuario->roles->first()?->name;
+        $rol = $this->actorName($usuario);
 
         if (! $rol || ! $usuario->cod_per) {
             return false;
@@ -1002,7 +1042,7 @@ class GestionUsuarios extends Component
                 'Administrador' => ! Administrador::where('cod_pin', $personal->cod_pin)->where('est_adm', 'ACTIVO')->exists(),
                 'Director' => ! Director::where('cod_pin', $personal->cod_pin)->where('est_dir', 'ACTIVO')->exists(),
                 'Docente' => ! Docente::where('cod_pin', $personal->cod_pin)->where('est_doc', 'ACTIVO')->exists(),
-                'Secretaria', 'Secretaria Académica' => ! SecretariaGeneral::where('cod_pin', $personal->cod_pin)->where('est_sge', 'ACTIVO')->exists(),
+                'Secretaria' => ! SecretariaGeneral::where('cod_pin', $personal->cod_pin)->where('est_sge', 'ACTIVO')->exists(),
                 'Regente' => ! Regente::where('cod_pin', $personal->cod_pin)->where('est_reg', 'ACTIVO')->exists(),
                 default => false,
             };
@@ -1028,7 +1068,7 @@ class GestionUsuarios extends Component
                     $detalle[] = [
                         'cod_usu' => $usuario->cod_usu,
                         'email' => $usuario->email,
-                        'rol' => $usuario->roles->first()?->name,
+                        'rol' => $this->actorName($usuario),
                     ];
                 }
             }
@@ -1043,7 +1083,7 @@ class GestionUsuarios extends Component
                     ? 'Sincronización de perfiles completada'
                     : 'Sincronización revisada sin cambios',
                 descripcion: $sincronizados > 0
-                    ? 'Se sincronizaron ' . $sincronizados . ' perfiles institucionales pendientes. El sistema actualizó la relación entre usuarios, personas y roles académicos.'
+                    ? 'Se sincronizaron '.$sincronizados.' perfiles institucionales pendientes. El sistema actualizó la relación entre usuarios, personas y roles académicos.'
                     : 'Se ejecutó la revisión de sincronización de usuarios. No se encontraron perfiles institucionales pendientes de actualización.',
                 nivel: $sincronizados > 0 ? 'SUCCESS' : 'INFO',
                 resultado: 'EXITOSO',
@@ -1056,7 +1096,7 @@ class GestionUsuarios extends Component
             DB::commit();
 
             $this->dispatch('usuarios-sincronizados', cantidad: $sincronizados);
-            $this->dispatch('success-general', mensaje: 'Sincronización completada. Registros sincronizados: ' . $sincronizados);
+            $this->dispatch('success-general', mensaje: 'Sincronización completada. Registros sincronizados: '.$sincronizados);
         } catch (\Throwable $e) {
             DB::rollBack();
             report($e);
@@ -1079,7 +1119,7 @@ class GestionUsuarios extends Component
 
     private function sincronizarPerfilUsuario(User $usuario): void
     {
-        $rol = $usuario->roles->first()?->name;
+        $rol = $this->actorName($usuario);
 
         if (! $rol || ! $usuario->cod_per) {
             return;
@@ -1089,7 +1129,7 @@ class GestionUsuarios extends Component
             Estudiante::updateOrCreate(
                 ['cod_per' => $usuario->cod_per],
                 [
-                    'rud_est' => 'AUTO-' . $usuario->cod_per,
+                    'rud_est' => 'AUTO-'.$usuario->cod_per,
                     'cod_tve' => 'TVE_0002',
                     'cod_ipe' => 'IPE_0001',
                     'cod_esp' => 'ESP_0001',
@@ -1136,7 +1176,7 @@ class GestionUsuarios extends Component
                 ]
             ),
 
-            'Secretaria', 'Secretaria Académica' => SecretariaGeneral::updateOrCreate(
+            'Secretaria' => SecretariaGeneral::updateOrCreate(
                 ['cod_pin' => $personal->cod_pin],
                 ['est_sge' => 'ACTIVO']
             ),
@@ -1211,7 +1251,7 @@ class GestionUsuarios extends Component
             ])->filter()->implode(' '));
 
             if ($nombre !== '') {
-                return $nombre . ' · ' . $usuario->email;
+                return $nombre.' · '.$usuario->email;
             }
         }
 
@@ -1224,7 +1264,7 @@ class GestionUsuarios extends Component
             'cod_usu' => $usuario->cod_usu,
             'cod_per' => $usuario->cod_per,
             'email' => $usuario->email,
-            'rol' => $usuario->roles->first()?->name,
+            'rol' => $this->actorName($usuario),
             'est_usu' => $usuario->est_usu ?? null,
         ];
     }

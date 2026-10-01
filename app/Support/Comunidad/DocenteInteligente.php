@@ -14,6 +14,7 @@ class DocenteInteligente
         return [
             'especialidad' => $normalizada,
             'completitud' => $bloqueos === [] ? 100 : 30,
+            'estado_especialidad' => $bloqueos === [] ? 'Registrada' : 'Requiere revisión',
             'bloqueos' => $bloqueos,
             'puede_guardar' => $bloqueos === [],
         ];

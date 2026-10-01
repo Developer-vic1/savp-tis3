@@ -13,16 +13,7 @@
         <p class="ui-alert-warning">El historial por gestión está pendiente de aplicación autorizada. Las notas antiguas se conservan sin atribuirles una gestión automáticamente.</p>
     @else
         @can('calificaciones.gestionar.curso')
-        <form class="ui-panel space-y-4" method="POST" action="{{ route('docente.cursos.calificaciones.store', $course->cod_cla) }}">@csrf
-            <h2 class="ui-title text-xl font-bold">Registrar nota oficial</h2>
-            <div class="grid gap-4 md:grid-cols-2">
-                <label class="ui-label">Estudiante inscrito<select name="cod_est" class="ui-select" required><option value="">Seleccionar estudiante</option>@foreach($students as $student)<option value="{{ $student->cod_est }}" @selected(old('cod_est') === $student->cod_est)>{{ $student->persona?->nom_per }} {{ $student->persona?->ape_pat_per }} · {{ $student->cod_est }}</option>@endforeach</select></label>
-                <label class="ui-label">Periodo<select name="cod_pev" class="ui-select" required><option value="">Seleccionar periodo</option>@foreach($periods as $period)<option value="{{ $period->cod_pev }}" @selected(old('cod_pev') === $period->cod_pev)>{{ $period->nom_pev }}</option>@endforeach</select></label>
-                <label class="ui-label">Nota sobre 100<input name="not_cal" type="number" min="0" max="100" step="0.01" class="ui-input" value="{{ old('not_cal') }}" required></label>
-                <label class="ui-label">Observación<input name="obs_cal" maxlength="255" class="ui-input" value="{{ old('obs_cal') }}"></label>
-            </div>
-            <button class="ui-btn-primary" type="submit">Registrar nota</button>
-        </form>
+        <livewire:shared.teacher-grade-form :curso="$course->cod_cla" />
         @endcan
         <div class="ui-card overflow-x-auto" tabindex="0" aria-label="Notas oficiales">
             <table class="ui-table text-sm">
@@ -37,6 +28,7 @@
                             <form id="grade-{{ $grade->cod_cal }}" method="POST" action="{{ route('docente.cursos.calificaciones.update', [$course->cod_cla, $grade]) }}">@csrf @method('PUT')
                                 <button class="ui-btn-secondary">Guardar</button>
                             </form>
+                            @if($grade->est_cal === 'ACTIVO')<button type="button" class="ui-btn-secondary mt-2" x-data @click="$dispatch('review-official-grade', {id: @js($grade->cod_cal)}); window.scrollTo({top:0,behavior:'smooth'})">Revisar con asistencia</button>@endif
                         @else Solo lectura @endcan</td>
                     </tr>
                 @empty<tr><td colspan="5" class="ui-muted">No hay notas oficiales registradas para esta asignación.</td></tr>@endforelse</tbody>

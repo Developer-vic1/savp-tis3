@@ -2,16 +2,9 @@
 
 namespace App\Livewire\AulaVirtual\Cursos;
 
-use App\Services\AulaVirtual\CursoVirtualService;
-use Livewire\Component;
+use App\Livewire\Shared\CourseList;
 
-class MisCursosDocente extends Component
+class MisCursosDocente extends CourseList
 {
-    public function render(CursoVirtualService $cursos)
-    {
-        return view('livewire.aula-virtual.cursos.mis-cursos-docente', [
-            'cursos' => $cursos->cursosDocente(auth()->user()),
-            'servicio' => $cursos,
-        ]);
-    }
+    protected const ACTOR = 'Docente';
 }

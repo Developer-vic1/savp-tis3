@@ -734,7 +734,7 @@
                         </div>
 
                         <div class="grid gap-4 lg:grid-cols-3">
-                            @foreach ($periodos as $periodo)
+                            @forelse ($periodos as $periodo)
                                 <article class="ga-soft rounded-[1.5rem] p-4 transition hover:-translate-y-0.5 hover:shadow-md">
                                     <div class="flex items-start justify-between gap-3">
                                         <div>
@@ -765,7 +765,7 @@
 
                                         <div class="flex justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-950">
                                             <span>Días hábiles ref.</span>
-                                            <span class="font-black">{{ $periodo['dias_habiles_referencia'] ?? 0 }}</span>
+                                            <span class="font-black">{{ $periodo['dias_habiles_referencia'] ?? 'No registrados' }}</span>
                                         </div>
                                     </div>
 
@@ -775,7 +775,9 @@
                                         </div>
                                     @endif
                                 </article>
-                            @endforeach
+                            @empty
+                                <p class="ui-muted lg:col-span-3">No hay períodos de evaluación registrados. Las sugerencias de planificación se muestran por separado.</p>
+                            @endforelse
                         </div>
                     </section>
                 </div>
@@ -961,7 +963,7 @@
                 </div>
 
                 <div class="grid gap-4 lg:grid-cols-3">
-                    @foreach ($periodos as $periodo)
+                    @forelse ($periodos as $periodo)
                         <article class="ga-soft rounded-[1.5rem] p-4 transition hover:-translate-y-0.5 hover:shadow-md">
                             <div class="flex items-start justify-between gap-3">
                                 <div>
@@ -992,7 +994,7 @@
 
                                 <div class="flex justify-between rounded-xl border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-slate-950">
                                     <span>Días hábiles ref.</span>
-                                    <span class="font-black">{{ $periodo['dias_habiles_referencia'] ?? 0 }}</span>
+                                    <span class="font-black">{{ $periodo['dias_habiles_referencia'] ?? 'No registrados' }}</span>
                                 </div>
                             </div>
 
@@ -1002,13 +1004,19 @@
                                 </div>
                             @endif
 
+                            @if(is_numeric($periodo['progreso'] ?? null))
                             <div class="mt-4 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                                 <div class="h-full rounded-full bg-gradient-to-r from-violet-500 to-emerald-500 transition-all duration-700"
                                     style="width: {{ $periodo['progreso'] ?? 0 }}%">
                                 </div>
                             </div>
+                            @else
+                                <p class="ui-muted mt-4 text-xs">Las fechas de este período no están registradas por gestión.</p>
+                            @endif
                         </article>
-                    @endforeach
+                    @empty
+                        <p class="ui-muted lg:col-span-3">No hay períodos de evaluación registrados. Las sugerencias de planificación se muestran por separado.</p>
+                    @endforelse
                 </div>
             </section>
         @endif

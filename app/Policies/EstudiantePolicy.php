@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Estudiante;
 use App\Models\User;
 use App\Services\AcademicAccessService;
+use App\Services\RoleDashboardResolver;
 
 class EstudiantePolicy
 {
@@ -15,6 +16,6 @@ class EstudiantePolicy
 
     public function update(User $user, Estudiante $student): bool
     {
-        return $user->est_usu === 'ACTIVO' && $user->hasAnyRole(['Administrador', 'Secretaria']) && $user->can('estudiantes.gestionar.institucional');
+        return in_array(app(RoleDashboardResolver::class)->roleFor($user), ['Administrador', 'Secretaria'], true) && $user->can('estudiantes.gestionar.institucional');
     }
 }

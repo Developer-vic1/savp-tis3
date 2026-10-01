@@ -2,24 +2,19 @@
 
 namespace Tests\Feature\Authorization;
 
-use App\Models\Persona;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
 class WorkspaceAuthorizationTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[DataProvider('workspaceRoles')]
-    public function test_dashboard_redirects_each_role_to_its_workspace(string $role, string $route): void
+    public function test_role_identity_does_not_bypass_revoked_module_permission(string $role, string $url): void
     {
         $user = $this->userWithRole($role);
-
-        $this->actingAs($user)->get('/dashboard')->assertRedirect(route($route));
+        $user->shouldReceive('can', 'checkPermissionTo')->andReturnFalse();
+        $this->actingAs($user)->get($url)->assertForbidden();
     }
 
     public function test_student_cannot_enter_administration(): void
@@ -41,23 +36,14 @@ class WorkspaceAuthorizationTest extends TestCase
 
     private function userWithRole(string $role): User
     {
-        $number = str_pad((string) (Persona::query()->count() + 1), 4, '0', STR_PAD_LEFT);
-        $person = Persona::query()->create([
-            'cod_per' => 'PER_'.$number,
-            'nom_per' => $role,
-            'ape_pat_per' => 'Prueba',
-            'ci_per' => '9'.$number,
-            'est_per' => true,
-        ]);
-        $user = User::query()->create([
-            'cod_usu' => 'USU_'.$number,
-            'cod_per' => $person->cod_per,
-            'email' => strtolower($role).$number.'@example.test',
+        $user = Mockery::mock(User::class)->makePartial();
+        $user->forceFill([
+            'cod_usu' => 'TEST_WORKSPACE',
+            'email' => strtolower($role).'@example.test',
             'email_verified_at' => now(),
-            'password' => Hash::make('Testing#123'),
             'est_usu' => 'ACTIVO',
         ]);
-        $user->assignRole(Role::firstOrCreate(['name' => $role, 'guard_name' => 'web']));
+        $user->shouldReceive('hasRole')->andReturnUsing(fn ($name) => $name === $role);
 
         return $user;
     }
@@ -65,12 +51,12 @@ class WorkspaceAuthorizationTest extends TestCase
     public static function workspaceRoles(): array
     {
         return [
-            ['Administrador', 'admin.dashboard'],
-            ['Director', 'direccion.dashboard'],
-            ['Secretaria', 'secretaria.dashboard'],
-            ['Regente', 'regencia.dashboard'],
-            ['Docente', 'docente.dashboard'],
-            ['Estudiante', 'estudiante.dashboard'],
+            ['Administrador', '/admin/gestion-personas'],
+            ['Director', '/direccion/consultas/cursos'],
+            ['Secretaria', '/secretaria/personas'],
+            ['Regente', '/regencia/consultas/estudiantes'],
+            ['Docente', '/docente'],
+            ['Estudiante', '/estudiante'],
         ];
     }
 }

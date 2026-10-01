@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HistoricalReportController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('welcome');
@@ -19,6 +20,7 @@ Route::middleware([
     'verified',
 ])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/reportes/historicos/{report}/descargar', [HistoricalReportController::class, 'download'])->middleware('actor:Administrador,Director,Secretaria')->name('reportes.historicos.descargar');
     require __DIR__.'/admin.php';
     require __DIR__.'/actors.php';
 });

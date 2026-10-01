@@ -35,7 +35,7 @@
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Mis asignaturas', 'valor' => $metricas['asignaturas'] ?? 0, 'descripcion' => 'Asignaturas inscritas.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Actividades pendientes', 'valor' => $metricas['actividades_pendientes'] ?? 0, 'descripcion' => 'Actividades pendientes.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Tareas entregadas', 'valor' => $metricas['tareas_entregadas'] ?? 0, 'descripcion' => 'Entregas registradas.'])
-            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Promedio actual', 'valor' => $metricas['promedio_actual'] ?? 'Disponible según calificación', 'descripcion' => 'Calificaciones recientes.'])
+            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Promedio LMS (%)', 'valor' => $metricas['promedio_actual'] ?? 'Sin calificaciones', 'descripcion' => 'Puntajes de tareas normalizados según su máximo.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Asistencia general', 'valor' => isset($metricas['asistencia_general']) ? $metricas['asistencia_general'] . '%' : 'Disponible según registro', 'descripcion' => 'Seguimiento de asistencia.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Orientación en proceso', 'valor' => $metricas['orientacion_en_proceso'] ?? 0, 'descripcion' => 'Orientación académica-profesional.'])
         </section>

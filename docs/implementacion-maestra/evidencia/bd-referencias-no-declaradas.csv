@@ -1,0 +1,2 @@
+﻿FILE,LINE,REFERENCE,STATUS
+app/Support/Academico/GestionAcademicaInteligente.php,1197,reporte,"REFERENCIA_NO_DECLARADA; revisar fallback, no crear tabla"

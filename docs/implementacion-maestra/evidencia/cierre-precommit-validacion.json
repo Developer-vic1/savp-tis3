@@ -1,0 +1,210 @@
+{
+  "fecha": "2026-10-01",
+  "branch": "feature/REESTRUCTURACION",
+  "head_base": "2f9d5e8dc5a85983b244f32efcd30b14ebd4c16b",
+  "composer_validate": "PASS",
+  "vite_build": "PASS",
+  "route_list_except_vendor": {
+    "estado": "PASS",
+    "rutas": 129
+  },
+  "view_clear": "PASS",
+  "view_cache": "PASS",
+  "php_lint": {
+    "estado": "PASS",
+    "archivos": 224
+  },
+  "git_diff_check": "PASS",
+  "tests": {
+    "total": 222,
+    "pass": 191,
+    "skip": 31,
+    "fail": 0,
+    "assertions": 582,
+    "omitidos": [
+      {
+        "clase": "Tests.Feature.ApiTokenPermissionsTest",
+        "test": "test_api_token_permissions_can_be_updated",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.AuthenticationPersistenceTest",
+        "test": "test_users_can_authenticate_using_the_login_screen",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.AuthenticationPersistenceTest",
+        "test": "test_users_can_not_authenticate_with_invalid_password",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.Authorization.AcademicContextTest",
+        "test": "test_assignment_limit_and_duplicate_are_enforced",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.Authorization.AcademicContextTest",
+        "test": "test_retirement_preserves_record_and_releases_capacity",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.Authorization.AcademicContextTest",
+        "test": "test_regent_cannot_read_same_student_in_another_year",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.Authorization.AcademicContextTest",
+        "test": "test_inactive_regent_cannot_receive_an_assignment",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.Authorization.AcademicContextTest",
+        "test": "test_official_grades_preserve_both_years",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.Authorization.AcademicContextTest",
+        "test": "test_closed_period_requires_reason_for_rectification",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.BrowserSessionsTest",
+        "test": "test_other_browser_sessions_can_be_logged_out",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.CreateApiTokenTest",
+        "test": "test_api_tokens_can_be_created",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.DeleteAccountTest",
+        "test": "test_user_accounts_can_be_deleted",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.DeleteAccountTest",
+        "test": "test_correct_password_must_be_provided_before_account_can_be_deleted",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.DeleteApiTokenTest",
+        "test": "test_api_tokens_can_be_deleted",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.EmailVerificationTest",
+        "test": "test_email_verification_screen_can_be_rendered",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.EmailVerificationTest",
+        "test": "test_email_can_be_verified",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.EmailVerificationTest",
+        "test": "test_email_can_not_verified_with_invalid_hash",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.PasswordConfirmationTest",
+        "test": "test_password_can_be_confirmed",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.PasswordConfirmationTest",
+        "test": "test_password_is_not_confirmed_with_invalid_password",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.PasswordResetTest",
+        "test": "test_reset_password_link_can_be_requested",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.PasswordResetTest",
+        "test": "test_password_can_be_reset_with_valid_token",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.ProfileInformationTest",
+        "test": "test_current_profile_information_is_available",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.ProfileInformationTest",
+        "test": "test_profile_information_can_be_updated",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.RegistrationPersistenceTest",
+        "test": "test_new_users_can_register",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.RegistrationTest",
+        "test": "test_registration_screen_cannot_be_rendered_if_support_is_disabled",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.TwoFactorAuthenticationSettingsTest",
+        "test": "test_two_factor_authentication_can_be_enabled",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.TwoFactorAuthenticationSettingsTest",
+        "test": "test_recovery_codes_can_be_regenerated",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.TwoFactorAuthenticationSettingsTest",
+        "test": "test_two_factor_authentication_can_be_disabled",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.UpdatePasswordTest",
+        "test": "test_password_can_be_updated",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.UpdatePasswordTest",
+        "test": "test_current_password_must_be_correct",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      },
+      {
+        "clase": "Tests.Feature.UpdatePasswordTest",
+        "test": "test_new_passwords_must_match",
+        "motivo": "Sin PDO SQLite / funcionalidad deshabilitada; revisión detallada en 26-TESTS-SKIPPED.md"
+      }
+    ]
+  },
+  "auditoria_documental": {
+    "pass": 29,
+    "fail": 0
+  },
+  "migrations_propuestas": 6,
+  "migrations_ejecutadas": 0,
+  "seeders_ejecutados": 0,
+  "postgresql_institucional_conectado": false,
+  "schema_modificado": false,
+  "secretos_detectados_en_candidatos": false,
+  "archivos_para_stage": 315,
+  "archivos_excluidos": 58,
+  "notas": [
+    "Logs y reportes crudos anteriores se conservan localmente y se excluyen del commit. Esta evidencia resumida los sustituye para el cierre.",
+    "Las seis migrations son propuestas no ejecutadas; mantienen el dictamen del documento 25.",
+    "31 SKIP: falta PDO SQLite o feature deshabilitada. Ninguna certificación de DB ni de las 105 ventanas.",
+    "Build generado, .env, vendor y node_modules excluidos por .gitignore. El SQL histórico ya versionado no tiene cambios y no forma parte de este commit."
+  ],
+  "git_diff_cached_check": "PASS",
+  "correccion_precommit": {
+    "archivos": [
+      "docs/implementacion-maestra/33-MATRIZ-COLUMNAS-BD.csv",
+      "docs/implementacion-maestra/evidencia/bd-modelos.csv",
+      "docs/implementacion-maestra/evidencia/documentar-bd-maestra.py"
+    ],
+    "lineas": 97,
+    "estado": "PASS"
+  }
+}

@@ -2,17 +2,21 @@
     <button type="button" wire:click="abrir"
         class="inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--savp-green)] px-4 py-2.5 text-sm font-bold text-white transition hover:brightness-105 focus:outline-none focus:ring-4 focus:ring-emerald-300/40">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18.75a6.75 6.75 0 1 0 0-13.5 6.75 6.75 0 0 0 0 13.5ZM12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                d="M12 18.75a6.75 6.75 0 1 0 0-13.5 6.75 6.75 0 0 0 0 13.5ZM12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3" />
         </svg>
         Explorador académico-vocacional
     </button>
 
     @if ($abierto)
-        <div class="fixed inset-0 z-[80] flex items-center justify-center px-4 py-6" role="dialog" aria-modal="true" aria-label="Explorador académico-vocacional">
+        <div class="fixed inset-0 z-[80] flex items-center justify-center px-4 py-6" role="dialog" aria-modal="true"
+            aria-label="Explorador académico-vocacional">
             <div class="absolute inset-0 bg-slate-950/65 backdrop-blur-sm"
-                onclick="if (!@js($sinGuardar) || confirm('Hay cambios sin guardar. ¿Cerrar el explorador?')) { @this.cerrar(); }"></div>
+                onclick="if (!@js($sinGuardar) || confirm('Hay cambios sin guardar. ¿Cerrar el explorador?')) { @this.cerrar(); }">
+            </div>
 
-            <section class="relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border shadow-2xl"
+            <section
+                class="relative z-10 flex max-h-[92vh] w-full max-w-4xl flex-col overflow-hidden rounded-lg border shadow-2xl"
                 style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
                 <header class="border-b p-5" style="border-color: var(--ui-border);">
                     <div class="flex items-start justify-between gap-4">
@@ -29,7 +33,8 @@
                             class="rounded-lg p-2 text-[var(--ui-muted)] transition hover:bg-[var(--ui-surface-muted)] focus:outline-none focus:ring-4 focus:ring-emerald-300/40"
                             aria-label="Cerrar">
                             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18 18 6M6 6l12 12" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                    d="M6 18 18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
@@ -45,7 +50,8 @@
 
                     @if ($resultado)
                         <div class="space-y-5">
-                            <div class="rounded-lg border p-4" style="border-color: var(--ui-border); background: var(--ui-surface-soft);">
+                            <div class="rounded-lg border p-4"
+                                style="border-color: var(--ui-border); background: var(--ui-surface-soft);">
                                 <h3 class="ui-title text-xl font-black">Resultados por áreas</h3>
                                 <p class="ui-subtitle mt-2 text-sm leading-7">{{ $mensajeOrientativo }}</p>
                             </div>
@@ -103,11 +109,13 @@
                                     <span class="ui-title">{{ $progreso }}%</span>
                                 </div>
                                 <div class="h-2 overflow-hidden rounded-full bg-[var(--ui-surface-muted)]">
-                                    <div class="h-full rounded-full bg-[var(--savp-green)]" style="width: {{ $progreso }}%"></div>
+                                    <div class="h-full rounded-full bg-[var(--savp-green)]" style="width: {{ $progreso }}%">
+                                    </div>
                                 </div>
                             </div>
 
-                            <article class="rounded-lg border p-5" style="border-color: var(--ui-border); background: var(--ui-surface-soft);">
+                            <article class="rounded-lg border p-5"
+                                style="border-color: var(--ui-border); background: var(--ui-surface-soft);">
                                 <h3 class="ui-title text-xl font-black leading-8">{{ $preguntaActual['texto'] }}</h3>
                             </article>
 
@@ -115,7 +123,8 @@
                                 <legend class="ui-label">Escala de respuesta</legend>
                                 <div class="grid gap-3 md:grid-cols-5">
                                     @foreach ([1 => 'No me representa', 2 => 'Me representa poco', 3 => 'Neutral', 4 => 'Me representa', 5 => 'Me representa mucho'] as $valor => $label)
-                                        <label class="flex cursor-pointer flex-col gap-2 rounded-lg border p-3 text-sm font-bold transition focus-within:ring-4 focus-within:ring-emerald-300/40"
+                                        <label
+                                            class="flex cursor-pointer flex-col gap-2 rounded-lg border p-3 text-sm font-bold transition focus-within:ring-4 focus-within:ring-emerald-300/40"
                                             style="border-color: var(--ui-border); background: {{ (int) ($respuestas[$preguntaActual['id']] ?? 0) === $valor ? 'var(--savp-green-soft)' : 'var(--ui-surface)' }};">
                                             <input type="radio" class="accent-[var(--savp-green)]"
                                                 wire:model.live="respuestas.{{ $preguntaActual['id'] }}" value="{{ $valor }}">
@@ -140,11 +149,12 @@
                         {{ $mensajeOrientativo }}
                     </div>
                     <div class="flex flex-wrap justify-end gap-2">
-                        @if (! $resultado)
+                        @if (!$resultado)
                             <button type="button" wire:click="anterior" @disabled($paso === 0)
                                 class="ui-btn-secondary focus:outline-none focus:ring-4 focus:ring-emerald-300/40">Anterior</button>
                             <button type="button" wire:click="guardarAvance" wire:loading.attr="disabled"
-                                class="ui-btn-secondary focus:outline-none focus:ring-4 focus:ring-emerald-300/40">Guardar avance</button>
+                                class="ui-btn-secondary focus:outline-none focus:ring-4 focus:ring-emerald-300/40">Guardar
+                                avance</button>
                             @if ($paso + 1 < $total)
                                 <button type="button" wire:click="siguiente" wire:loading.attr="disabled"
                                     class="ui-btn-primary focus:outline-none focus:ring-4 focus:ring-emerald-300/40">Siguiente</button>

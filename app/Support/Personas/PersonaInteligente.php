@@ -15,17 +15,25 @@ class PersonaInteligente
     // ============================================================
 
     public const ESTADO_ACTIVO = 'ACTIVO';
+
     public const ESTADO_INACTIVO = 'INACTIVO';
 
     public const ESTADO_VALIDO = 'VALIDO';
+
     public const ESTADO_OBSERVADO = 'OBSERVADO';
+
     public const ESTADO_BLOQUEADO = 'BLOQUEADO';
+
     public const ESTADO_RECUPERABLE = 'RECUPERABLE';
+
     public const ESTADO_INCOMPLETO = 'INCOMPLETO';
 
     public const EDAD_MINIMA_ESTUDIANTE = 4;
+
     public const EDAD_MAXIMA_ESTUDIANTE = 25;
+
     public const EDAD_MINIMA_PERSONAL = 18;
+
     public const EDAD_MAXIMA_PERSONA = 120;
 
     public const TIPOS_VINCULACION = [
@@ -61,12 +69,12 @@ class PersonaInteligente
     // ANÁLISIS PRINCIPAL EN TIEMPO REAL
     // ============================================================
 
-    public function reconocerEnTiempoReal(array $datos): array
+    public function reconocerEnTiempoReal(array $datos, ?string $ignorarCodigo = null): array
     {
-        return $this->analizarRegistro($datos, true);
+        return $this->analizarRegistro($datos, true, $ignorarCodigo);
     }
 
-    public function analizarRegistro(array $datos, bool $modoTiempoReal = false): array
+    public function analizarRegistro(array $datos, bool $modoTiempoReal = false, ?string $ignorarCodigo = null): array
     {
         $datos = $this->normalizarDatos($datos);
 
@@ -92,7 +100,8 @@ class PersonaInteligente
         $contacto = $this->analizarContacto($datos, $modoTiempoReal);
         $direccion = $this->analizarDireccion($datos, $modoTiempoReal);
         $edad = $this->analizarEdad($datos['fec_nac_per'], $datos['tipo_vinculacion']);
-        $duplicidad = $this->analizarDuplicidad($datos);
+        $coincidencias = $this->buscarCoincidencias($datos, $ignorarCodigo);
+        $duplicidad = $this->analizarDuplicidad($datos, $ignorarCodigo, $coincidencias);
         $vinculacion = $this->analizarVinculacionDeseada($datos);
 
         $bloqueos = array_merge(
@@ -124,8 +133,6 @@ class PersonaInteligente
             $duplicidad['sugerencias'],
             $vinculacion['sugerencias']
         );
-
-        $coincidencias = $this->buscarCoincidencias($datos);
 
         $personaPrincipal = $coincidencias['persona_principal'] ?? null;
         $resumenPersona = $personaPrincipal
@@ -362,7 +369,7 @@ class PersonaInteligente
     // DUPLICIDAD Y RECONOCIMIENTO
     // ============================================================
 
-    public function analizarDuplicidad(array $datos): array
+    public function analizarDuplicidad(array $datos, ?string $ignorarCodigo = null, ?array $coincidencias = null): array
     {
         $datos = $this->normalizarDatos($datos);
 
@@ -370,7 +377,7 @@ class PersonaInteligente
         $advertencias = [];
         $sugerencias = [];
 
-        $coincidencias = $this->buscarCoincidencias($datos);
+        $coincidencias ??= $this->buscarCoincidencias($datos, $ignorarCodigo);
 
         if ($coincidencias['duplicado_ci'] ?? false) {
             if ($coincidencias['persona_inactiva_recuperable'] ?? false) {
@@ -409,7 +416,7 @@ class PersonaInteligente
         ];
     }
 
-    public function buscarCoincidencias(array $datos): array
+    public function buscarCoincidencias(array $datos, ?string $ignorarCodigo = null): array
     {
         $datos = $this->normalizarDatos($datos);
 
@@ -420,6 +427,7 @@ class PersonaInteligente
         if (Schema::hasTable('persona')) {
             if ($this->tieneValor($datos['ci_per']) && Schema::hasColumn('persona', 'ci_per')) {
                 $personasPorCi = DB::table('persona')
+                    ->when($ignorarCodigo !== null, fn ($query) => $query->where('cod_per', '!=', $ignorarCodigo))
                     ->where('ci_per', $datos['ci_per'])
                     ->when(Schema::hasColumn('persona', 'com_per') && $this->tieneValor($datos['com_per']), function ($query) use ($datos) {
                         $query->where(function ($sub) use ($datos) {
@@ -434,6 +442,7 @@ class PersonaInteligente
 
             if ($this->tieneValor($datos['ema_per']) && Schema::hasColumn('persona', 'ema_per')) {
                 $personasPorCorreo = DB::table('persona')
+                    ->when($ignorarCodigo !== null, fn ($query) => $query->where('cod_per', '!=', $ignorarCodigo))
                     ->whereRaw('LOWER(ema_per) = ?', [$datos['ema_per']])
                     ->limit(5)
                     ->get();
@@ -446,8 +455,9 @@ class PersonaInteligente
                 && Schema::hasColumn('persona', 'ape_pat_per')
             ) {
                 $personasPorNombre = DB::table('persona')
-                    ->whereRaw('LOWER(nom_per) LIKE ?', ['%' . mb_strtolower($datos['nom_per']) . '%'])
-                    ->whereRaw('LOWER(ape_pat_per) LIKE ?', ['%' . mb_strtolower($datos['ape_pat_per']) . '%'])
+                    ->when($ignorarCodigo !== null, fn ($query) => $query->where('cod_per', '!=', $ignorarCodigo))
+                    ->whereRaw('LOWER(nom_per) LIKE ?', ['%'.mb_strtolower($datos['nom_per']).'%'])
+                    ->whereRaw('LOWER(ape_pat_per) LIKE ?', ['%'.mb_strtolower($datos['ape_pat_per']).'%'])
                     ->limit(8)
                     ->get();
             }
@@ -1188,7 +1198,7 @@ class PersonaInteligente
             'personal_existente' => (bool) ($coincidencias['personal_existente'] ?? false),
             'persona_principal' => $personaPrincipal ? [
                 'cod_per' => $personaPrincipal->cod_per ?? null,
-                'nombre' => trim(($personaPrincipal->nom_per ?? '') . ' ' . ($personaPrincipal->ape_pat_per ?? '') . ' ' . ($personaPrincipal->ape_mat_per ?? '')),
+                'nombre' => trim(($personaPrincipal->nom_per ?? '').' '.($personaPrincipal->ape_pat_per ?? '').' '.($personaPrincipal->ape_mat_per ?? '')),
                 'ci' => $personaPrincipal->ci_per ?? null,
                 'correo' => $personaPrincipal->ema_per ?? null,
                 'estado' => $this->personaEstaActiva($personaPrincipal) ? self::ESTADO_ACTIVO : self::ESTADO_INACTIVO,

@@ -49,7 +49,7 @@
                             </p>
                         </div>
                         <p class="mt-2 text-sm font-bold" style="color: var(--ui-text);">
-                            {{ Auth::user()->getRoleNames()->first() ?? 'Sin rol' }}
+                            {{ app(\App\Services\RoleDashboardResolver::class)->roleFor(Auth::user()) ?? 'Revisión requerida' }}
                         </p>
                     </div>
 
@@ -79,7 +79,7 @@
                             </svg>
                             <p class="text-[11px] font-semibold uppercase tracking-[0.16em]"
                                 style="color: var(--ui-muted);">
-                                Periodo activo
+                                Periodos habilitados
                             </p>
                         </div>
                         <p class="mt-2 text-sm font-bold" style="color: var(--ui-primary);">
@@ -136,7 +136,7 @@
                     <div class="mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold ring-1"
                         style="background: var(--ui-surface-muted); color: var(--ui-muted); --tw-ring-color: var(--ui-border);">
                         <span class="h-1.5 w-1.5 rounded-full" style="background: var(--ui-primary);"></span>
-                        Actualizado hoy
+                        <a href="{{ route($item['route']) }}" class="underline">Abrir {{ $item['label'] }}</a>
                     </div>
                 </article>
             @endforeach

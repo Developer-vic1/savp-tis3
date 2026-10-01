@@ -2,14 +2,9 @@
 
 namespace App\Livewire\AulaVirtual\Cursos;
 
-use Livewire\Component;
+use App\Livewire\Shared\CourseWorkspace;
 
-class CursoDetalleEstudiante extends Component
+class CursoDetalleEstudiante extends CourseWorkspace
 {
-    public string $curso = '';
-
-    public function render()
-    {
-        return view('livewire.aula-virtual.cursos.curso-detalle-estudiante');
-    }
+    protected const ACTOR = 'Estudiante';
 }

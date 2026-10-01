@@ -17,7 +17,7 @@
             <p class="ui-muted text-xs font-black uppercase">{{ $cursoTexto ?: 'Cursos asignados' }}</p>
             <h3 class="ui-title mt-2 text-xl font-black">{{ $asignatura }}</h3>
         </div>
-        @include('aula-virtual.componentes.status-badge', ['estado' => 'Publicado'])
+        @include('aula-virtual.componentes.status-badge', ['estado' => $curso->est_cla])
     </div>
     <dl class="mt-4 grid gap-3 text-sm sm:grid-cols-2">
         <div><dt class="ui-muted">Turno</dt><dd class="ui-title font-bold">{{ $turno ?: 'Información académica disponible según inscripción.' }}</dd></div>
@@ -25,9 +25,9 @@
         <div><dt class="ui-muted">Materiales</dt><dd class="ui-title font-bold">{{ $resumen['materiales'] ?? 0 }}</dd></div>
         <div><dt class="ui-muted">{{ $docente ? 'Entregas pendientes' : 'Tareas pendientes' }}</dt><dd class="ui-title font-bold">{{ $docente ? ($resumen['entregas_pendientes'] ?? 0) : ($resumen['tareas_pendientes'] ?? 0) }}</dd></div>
     </dl>
-    <div class="mt-5">
-        @include('aula-virtual.componentes.progress-bar', ['value' => $resumen['progreso'] ?? 0, 'label' => 'Seguimiento'])
-    </div>
+    @if(!$docente && $resumen['progreso'] !== null)
+        <div class="mt-5">@include('aula-virtual.componentes.progress-bar', ['value' => $resumen['progreso'], 'label' => 'Cumplimiento de tareas publicadas'])</div>
+    @endif
     <div class="mt-5">
         @include('aula-virtual.componentes.icon-action-button', ['href' => $href, 'icon' => 'entrar', 'label' => 'Entrar'])
     </div>

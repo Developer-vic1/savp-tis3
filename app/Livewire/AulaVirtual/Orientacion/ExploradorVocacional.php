@@ -2,29 +2,43 @@
 
 namespace App\Livewire\AulaVirtual\Orientacion;
 
+use App\Models\AulaVirtual\OrientacionActividad;
+use App\Models\AulaVirtual\OrientacionResultado;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\OrientacionService;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 class ExploradorVocacional extends Component
 {
     public bool $abierto = false;
+
     public bool $autoOpen = false;
+
     public bool $sinGuardar = false;
+
     public int $paso = 0;
+
+    #[Locked]
     public array $preguntas = [];
+
     public array $respuestas = [];
+
+    #[Locked]
     public ?int $actividadId = null;
+
+    #[Locked]
     public ?int $resultadoId = null;
+
     public ?string $mensaje = null;
 
     public function mount(OrientacionService $orientacion, CursoVirtualService $cursos, bool $autoOpen = false): void
     {
         $this->autoOpen = $autoOpen;
         $this->cargarEstado($orientacion, $cursos);
-        
-        if ($this->autoOpen && $this->actividadId && !$this->resultadoId && count($this->preguntas) > 0) {
-            $actividad = \App\Models\AulaVirtual\OrientacionActividad::find($this->actividadId);
+
+        if ($this->autoOpen && $this->actividadId && ! $this->resultadoId && count($this->preguntas) > 0) {
+            $actividad = OrientacionActividad::find($this->actividadId);
             if ($actividad && in_array($actividad->estado, ['pendiente', 'en_proceso'], true)) {
                 $this->abierto = true;
             }
@@ -51,6 +65,7 @@ class ExploradorVocacional extends Component
     {
         if (! $this->respuestaActualValida()) {
             $this->addError('respuestaActual', 'Selecciona una opción para continuar.');
+
             return;
         }
 
@@ -76,7 +91,8 @@ class ExploradorVocacional extends Component
     public function finalizar(OrientacionService $orientacion): void
     {
         if (count(array_filter($this->respuestas, fn ($valor) => in_array((int) $valor, [1, 2, 3, 4, 5], true))) < count($this->preguntas)) {
-            $this->addError('respuestaActual', 'Responde las 30 preguntas antes de finalizar.');
+            $this->addError('respuestaActual', 'Responde todas las preguntas visibles antes de finalizar.');
+
             return;
         }
 
@@ -90,11 +106,13 @@ class ExploradorVocacional extends Component
     public function render()
     {
         $resultado = null;
+        $student = app(CursoVirtualService::class)->estudianteDeUsuario(auth()->user());
+        abort_unless($student, 403);
 
         if ($this->resultadoId) {
-            $resultado = \App\Models\AulaVirtual\OrientacionResultado::with('carreras')->find($this->resultadoId);
+            $resultado = OrientacionResultado::with('carreras')->where('cod_est', $student->cod_est)->findOrFail($this->resultadoId);
         } elseif ($this->actividadId) {
-            $resultado = \App\Models\AulaVirtual\OrientacionActividad::with('resultado.carreras')->find($this->actividadId)?->resultado;
+            $resultado = OrientacionActividad::with('resultado.carreras')->where('cod_est', $student->cod_est)->findOrFail($this->actividadId)?->resultado;
         }
 
         return view('livewire.aula-virtual.orientacion.explorador-vocacional', [
@@ -115,17 +133,17 @@ class ExploradorVocacional extends Component
             return;
         }
 
-        $actividad = $orientacion->actividadActual($estudiante);
+        $actividad = $orientacion->actividadExistente($estudiante);
         $preguntas = $orientacion->preguntas();
 
-        $this->actividadId = $actividad->id;
-        $this->resultadoId = $actividad->resultado?->id;
+        $this->actividadId = $actividad?->id;
+        $this->resultadoId = $actividad?->resultado?->id;
         $this->preguntas = $preguntas->map(fn ($pregunta) => [
             'id' => $pregunta->id,
             'texto' => $pregunta->texto,
             'orden' => $pregunta->orden,
         ])->values()->all();
-        $this->respuestas = $orientacion->respuestasGuardadas($actividad);
+        $this->respuestas = $actividad ? $orientacion->respuestasGuardadas($actividad) : [];
 
         $respondidas = count(array_filter($this->respuestas));
         $this->paso = min(max(0, $respondidas), max(0, $preguntas->count() - 1));
@@ -134,7 +152,10 @@ class ExploradorVocacional extends Component
     private function actividad(OrientacionService $orientacion)
     {
         if ($this->actividadId) {
-            return \App\Models\AulaVirtual\OrientacionActividad::findOrFail($this->actividadId);
+            $student = app(CursoVirtualService::class)->estudianteDeUsuario(auth()->user());
+            abort_unless($student, 403);
+
+            return OrientacionActividad::where('cod_est', $student->cod_est)->findOrFail($this->actividadId);
         }
 
         $estudiante = app(CursoVirtualService::class)->estudianteDeUsuario(auth()->user());

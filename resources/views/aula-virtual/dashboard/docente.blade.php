@@ -36,7 +36,7 @@
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Estudiantes asignados', 'valor' => $metricas['estudiantes_asignados'] ?? 0, 'descripcion' => 'Participantes inscritos.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Tareas activas', 'valor' => $metricas['tareas_activas'] ?? 0, 'descripcion' => 'Actividades publicadas.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Entregas por revisar', 'valor' => $metricas['entregas_por_revisar'] ?? 0, 'descripcion' => 'Bandeja de revisión.'])
-            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Asistencias pendientes', 'valor' => $metricas['asistencias_pendientes'] ?? 0, 'descripcion' => 'Registros por curso.'])
+            @include('aula-virtual.componentes.metric-card', ['titulo' => 'Sesiones de asistencia abiertas', 'valor' => $metricas['asistencias_pendientes'] ?? 0, 'descripcion' => 'Sesiones registradas que siguen abiertas.'])
             @include('aula-virtual.componentes.metric-card', ['titulo' => 'Seguimiento orientación', 'valor' => $metricas['seguimiento_orientacion'] ?? 0, 'descripcion' => 'Acompañamiento académico-profesional.'])
         </section>
 

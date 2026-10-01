@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Docente;
+use App\Models\PlanAsignatura;
 use App\Support\Comunidad\DocenteInteligente;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -15,6 +16,7 @@ class GestionDocente extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $search = '';
+
     public string $estado = '';
 
     public function updatedSearch(): void
@@ -36,10 +38,11 @@ class GestionDocente extends Component
 
     public function render()
     {
-        $docentesBase = Docente::with(['personalInstitucional.persona', 'planAsignaturas']);
+        $this->validate(['search' => 'string|max:100', 'estado' => 'in:,ACTIVO,INACTIVO']);
+        $docentesBase = Docente::with('personalInstitucional.persona')->withCount('planAsignaturas');
         $soporte = app(DocenteInteligente::class);
-        $todos = (clone $docentesBase)->get();
-        $incompletos = $todos->filter(fn (Docente $docente) => ! $soporte->analizarEspecialidad($docente->esp_doc)['puede_guardar'])->count();
+        $incompletos = Docente::query()->select('esp_doc')->cursor()
+            ->filter(fn (Docente $docente) => ! $soporte->analizarEspecialidad($docente->esp_doc)['puede_guardar'])->count();
 
         $docentes = $docentesBase
             ->when($this->search !== '', function (Builder $query) {
@@ -62,9 +65,9 @@ class GestionDocente extends Component
             'docentes' => $docentes,
             'soporteDocente' => $soporte,
             'metricasDocentes' => [
-                'total' => $todos->count(),
-                'activos' => $todos->where('est_doc', 'ACTIVO')->count(),
-                'carga' => $todos->sum(fn (Docente $docente) => $docente->planAsignaturas->count()),
+                'total' => Docente::count(),
+                'activos' => Docente::where('est_doc', 'ACTIVO')->count(),
+                'carga' => PlanAsignatura::whereHas('docente')->count(),
                 'incompletos' => $incompletos,
             ],
         ]);

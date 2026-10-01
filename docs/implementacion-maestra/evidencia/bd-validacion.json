@@ -1,0 +1,157 @@
+{
+  "scope": "STATIC DOCUMENTS ONLY; no Laravel bootstrap, SQL, DB or migrations execution",
+  "checks": [
+    {
+      "CHECK": "Inventory tables 64 historical + 14 proposed + 1 ledger",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Columns 597 historical + 140 overlay + 3 ledger",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Unique table/column pairs",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Table column counts",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "All Models mapped",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "All fillable columns declared",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "All original migrations/proposals accounted",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "No unresolved Blueprint/DDL statements",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Declared FK endpoints exist",
+      "PASS": true,
+      "DETAIL": "[]"
+    },
+    {
+      "CHECK": "Declared FK types compatible",
+      "PASS": true,
+      "DETAIL": "[]"
+    },
+    {
+      "CHECK": "Declared referenced keys have PK/UNIQUE",
+      "PASS": true,
+      "DETAIL": "[]"
+    },
+    {
+      "CHECK": "FK historic/overlay counts",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Historic index declarations",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "105 original IDs without changes",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "105 original actors/window names preserved",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Window statuses unchanged",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "No false PASS added",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Original architecture hashes preserved",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Original architecture 43 files present",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Source/config/env/assets/SQL/locks/seeders preserved",
+      "PASS": true,
+      "DETAIL": "667 protected files; changed=[]"
+    },
+    {
+      "CHECK": "52 historic migrations preserved",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Six proposals preserved",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Required documents exist",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Migration review retains original exact text",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "No COPY data in structured SQL evidence",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Python syntax auditar-bd-estatico.py",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Python syntax documentar-bd-maestra.py",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Python syntax verificar-bd-documentacion.py",
+      "PASS": true,
+      "DETAIL": ""
+    },
+    {
+      "CHECK": "Local document links resolve",
+      "PASS": true,
+      "DETAIL": "[]"
+    }
+  ],
+  "pass": 29,
+  "fail": 0,
+  "changed_source_files": [],
+  "migrations_executed": 0,
+  "seeders_executed": 0,
+  "db_access": false,
+  "schema_modified": false
+}

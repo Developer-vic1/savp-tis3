@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\AulaVirtual\ClaseVirtual;
+use App\Models\Calificacion;
 use App\Models\Curso;
 use App\Models\Estudiante;
+use App\Models\InscripcionEstudiante;
 use App\Models\PlanAsignatura;
 use App\Models\User;
-use App\Models\InscripcionEstudiante;
-use App\Models\Calificacion;
 use App\Services\AulaVirtual\CursoVirtualService;
 
 class AcademicAccessService
@@ -22,7 +21,9 @@ class AcademicAccessService
 
     public function canViewStudent(User $user, Estudiante $student): bool
     {
-        if ($user->est_usu !== 'ACTIVO') { return false; }
+        if (! app(RoleDashboardResolver::class)->roleFor($user)) {
+            return false;
+        }
         if ($user->hasAnyRole(['Administrador', 'Director', 'Secretaria'])) {
             return $user->canAny(['estudiantes.ver.global', 'estudiantes.ver.institucional', 'Estudiantes']);
         }
@@ -33,7 +34,7 @@ class AcademicAccessService
         }
 
         if ($user->hasRole('Regente') && $user->can('estudiantes.ver.institucional')) {
-            return app(RegencyAccessService::class)->constrain(InscripcionEstudiante::where('cod_est', $student->cod_est), $user, 'inscripcion_estudiante')->exists();
+            return app(RegencyAccessService::class)->constrain(InscripcionEstudiante::where('cod_est', $student->cod_est)->where('est_ins', 'ACTIVA'), $user, 'inscripcion_estudiante')->exists();
         }
 
         if (! $user->hasRole('Docente') || ! $user->canAny(['estudiantes.ver.curso', 'Aula_Virtual_Docente'])) {
@@ -42,15 +43,14 @@ class AcademicAccessService
 
         $teacher = $this->virtualCourses->docenteDeUsuario($user);
 
-        return $teacher && ClaseVirtual::query()
-            ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $teacher->cod_doc))
-            ->whereHas('estudiantes', fn ($query) => $query->where('cod_est', $student->cod_est)->where('est_cla_est', 'ACTIVO'))
-            ->exists();
+        return $teacher && $this->virtualCourses->vinculosVigentes($user)->where('cod_est', $student->cod_est)->exists();
     }
 
     public function canViewCourse(User $user, Curso $course): bool
     {
-        if ($user->est_usu !== 'ACTIVO') { return false; }
+        if (! app(RoleDashboardResolver::class)->roleFor($user)) {
+            return false;
+        }
         if ($user->hasAnyRole(['Administrador', 'Director', 'Secretaria'])) {
             return $user->canAny(['cursos.ver.global', 'cursos.ver.institucional', 'Cursos']);
         }
@@ -79,7 +79,9 @@ class AcademicAccessService
 
     public function canManageGrade(User $user, string $studentId, string $subjectId, ?string $planId = null): bool
     {
-        if ($user->est_usu !== 'ACTIVO') { return false; }
+        if (! app(RoleDashboardResolver::class)->roleFor($user)) {
+            return false;
+        }
         if (! $planId) {
             return false;
         }
@@ -115,7 +117,9 @@ class AcademicAccessService
 
     public function canViewGrade(User $user, Calificacion $grade): bool
     {
-        if ($user->est_usu !== 'ACTIVO') { return false; }
+        if (! app(RoleDashboardResolver::class)->roleFor($user)) {
+            return false;
+        }
         if ($user->hasAnyRole(['Administrador', 'Director'])) {
             return $user->canAny(['calificaciones.ver.global', 'calificaciones.ver.institucional']);
         }
@@ -130,6 +134,7 @@ class AcademicAccessService
         }
 
         $teacher = $user->hasRole('Docente') ? $this->virtualCourses->docenteDeUsuario($user) : null;
+
         return $teacher && $user->can('calificaciones.ver.curso')
             && $grade->planAsignatura?->cod_doc === $teacher->cod_doc;
     }

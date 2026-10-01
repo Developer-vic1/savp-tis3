@@ -158,11 +158,7 @@
                             </div>
                         </div>
 
-                        @if (!empty($analisis['bloqueos']))
-                            <div class="ui-alert-warning">
-                                @foreach ($analisis['bloqueos'] as $bloqueo)<p>{{ $bloqueo }}</p>@endforeach
-                            </div>
-                        @endif
+                        <x-asistencia-inteligente :analisis="$analisis" :mostrar-completitud="false" :mostrar-sugerencias="false" :mostrar-coincidencias="false" />
 
                         @if (!empty($analisis['sugerencias']['area']))
                             <div class="ui-card-soft p-5">

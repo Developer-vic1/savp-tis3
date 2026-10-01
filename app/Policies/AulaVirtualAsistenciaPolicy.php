@@ -12,13 +12,13 @@ class AulaVirtualAsistenciaPolicy
     {
         $service = app(CursoVirtualService::class);
 
-        return $user->can('Acceso_Aula_Virtual') && (bool) ($service->cursoParaEstudiante($user, $asistencia->cod_cla)
+        return $user->can('Acceso_Aula_Virtual') && $user->can('Asistencia_Aula') && (bool) ($service->cursoParaEstudiante($user, $asistencia->cod_cla)
             ?? $service->cursoParaDocente($user, $asistencia->cod_cla));
     }
 
     public function update(User $user, AsistenciaClase $asistencia): bool
     {
-        return $user->can('Aula_Virtual_Docente')
-            && (bool) app(CursoVirtualService::class)->cursoParaDocente($user, $asistencia->cod_cla);
+        return $user->can('Aula_Virtual_Docente') && $user->can('Asistencia_Aula')
+            && app(CursoVirtualService::class)->cursoParaDocente($user, $asistencia->cod_cla)?->est_cla === 'ACTIVA';
     }
 }

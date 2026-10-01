@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Role;
 use App\Models\RoleRequest;
 use App\Models\User;
 use App\Support\InstitutionalRoleGovernance;
@@ -11,7 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RoleRequestService
@@ -20,7 +20,7 @@ class RoleRequestService
 
     public function authorize(User $actor, string $permission): void
     {
-        if ($actor->est_usu !== 'ACTIVO' || ! $actor->hasRole('Administrador') || ! $actor->can('roles-permisos.gestionar') || ! $actor->can($permission)) {
+        if ((new RoleDashboardResolver)->roleFor($actor) !== 'Administrador' || ! $actor->can('roles-permisos.gestionar') || ! $actor->can($permission)) {
             throw new AuthorizationException('No tiene autorización para esta operación de gobernanza.');
         }
     }
@@ -38,9 +38,13 @@ class RoleRequestService
     {
         $this->authorize($actor, 'roles.solicitudes.crear');
         $authority = $this->authority->current();
-        if ($authority['status'] !== 'ACTIVO') throw ValidationException::withMessages(['document' => $authority['message']]);
+        if ($authority['status'] !== 'ACTIVO') {
+            throw ValidationException::withMessages(['document' => $authority['message']]);
+        }
         $analysis = $this->analyze($data);
-        if ($analysis['status'] !== 'APTO') throw ValidationException::withMessages(['requested_name' => $analysis['summary']]);
+        if ($analysis['status'] !== 'APTO') {
+            throw ValidationException::withMessages(['requested_name' => $analysis['summary']]);
+        }
 
         // MIME se determina por contenido; el nombre original solo se conserva como metadato.
         $mime = $file->getMimeType();
@@ -53,7 +57,9 @@ class RoleRequestService
         $hash = hash_file('sha256', $file->getRealPath());
         $reuse = RoleRequest::query()->where('document_hash', $hash)->exists();
         $path = $file->storeAs('role-requests', bin2hex(random_bytes(20)).'.'.$types[$mime], 'local');
-        if (! $path) throw ValidationException::withMessages(['document' => 'No se pudo guardar el documento privado.']);
+        if (! $path) {
+            throw ValidationException::withMessages(['document' => 'No se pudo guardar el documento privado.']);
+        }
         try {
             return DB::transaction(function () use ($actor, $data, $file, $path, $hash, $mime, $analysis, $authority, $reuse) {
                 $request = RoleRequest::create([
@@ -68,6 +74,7 @@ class RoleRequestService
                     'Solicitud documental recibida; pendiente de revisión independiente.', valoresNuevos: ['hash' => $hash, 'estado' => $request->status]);
                 BitacoraService::registrar('DOCUMENTO_ASOCIADO', 'role_requests', (string) $request->id, 'Roles y Permisos', $request->requested_name,
                     'Documento privado asociado.', valoresNuevos: ['hash' => $hash]);
+
                 return $request;
             });
         } catch (\Throwable $e) {
@@ -93,7 +100,10 @@ class RoleRequestService
     public function review(User $actor, int $id, bool $approved, string $note, bool $directorMatches, bool $readable, bool $signaturePresent, bool $sealPresent): RoleRequest
     {
         $this->authorize($actor, 'roles.solicitudes.analizar');
-        if (mb_strlen(trim($note)) < 20) throw ValidationException::withMessages(['review_note' => 'Explique la revisión en al menos 20 caracteres.']);
+        if (mb_strlen(trim($note)) < 20) {
+            throw ValidationException::withMessages(['review_note' => 'Explique la revisión en al menos 20 caracteres.']);
+        }
+
         return DB::transaction(function () use ($actor, $id, $approved, $note, $directorMatches, $readable, $signaturePresent, $sealPresent) {
             $request = RoleRequest::query()->lockForUpdate()->findOrFail($id);
             if (! in_array($request->status, ['PENDIENTE_REVISION', 'REQUIERE_REVISION_REUSO'], true) || $request->requested_by === $actor->cod_usu) {
@@ -117,6 +127,7 @@ class RoleRequestService
                 ])]);
             BitacoraService::registrar($approved ? 'ANALIZAR_SOLICITUD_ROL' : 'RECHAZAR_SOLICITUD_ROL', 'role_requests', (string) $request->id,
                 'Roles y Permisos', $request->requested_name, $note, valoresNuevos: ['estado' => $request->status, 'hash' => $request->document_hash]);
+
             return $request;
         });
     }
@@ -125,6 +136,7 @@ class RoleRequestService
     {
         $this->authorize($actor, 'roles.crear');
         $this->authorize($actor, 'roles.permisos.asignar');
+
         return DB::transaction(function () use ($actor, $id) {
             $this->authorize($actor, 'roles.crear');
             $this->authorize($actor, 'roles.permisos.asignar');
@@ -138,19 +150,23 @@ class RoleRequestService
             }
             $review = $request->document_analysis['manual_review'] ?? [];
             foreach (['director_matches', 'document_readable', 'signature_present', 'seal_present'] as $key) {
-                if (($review[$key] ?? false) !== true) throw ValidationException::withMessages(['role_request' => 'La revisión documental está incompleta.']);
+                if (($review[$key] ?? false) !== true) {
+                    throw ValidationException::withMessages(['role_request' => 'La revisión documental está incompleta.']);
+                }
             }
             if (! Storage::disk('local')->exists($request->document_path) || hash_file('sha256', Storage::disk('local')->path($request->document_path)) !== $request->document_hash) {
                 throw ValidationException::withMessages(['role_request' => 'El documento ya no está disponible o fue alterado.']);
             }
             $analysis = $this->analyze($request->only(['requested_name', 'justification', 'functions', 'requested_permissions']));
-            if ($analysis['status'] !== 'APTO') throw ValidationException::withMessages(['role_request' => $analysis['summary']]);
-            $role = Role::create(['name' => trim($request->requested_name), 'guard_name' => 'web']);
-            $role->syncPermissions($analysis['allowed_permissions']);
+            if ($analysis['status'] !== 'APTO') {
+                throw ValidationException::withMessages(['role_request' => $analysis['summary']]);
+            }
+            $role = app(RolePermissionService::class)->createApprovedRole($request->requested_name, $analysis['allowed_permissions'], $actor);
             $request->update(['status' => 'CREADA', 'created_role_id' => $role->id, 'analysis_result' => $analysis]);
             BitacoraService::registrar('CREAR_ROL', 'roles', (string) $role->id, 'Roles y Permisos', $role->name,
                 'Rol creado desde solicitud validada.', valoresNuevos: ['solicitud' => $request->id, 'permisos' => $analysis['allowed_permissions'], 'hash' => $request->document_hash]);
             app(PermissionRegistrar::class)->forgetCachedPermissions();
+
             return $role;
         });
     }

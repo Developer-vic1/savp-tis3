@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
+use App\Models\AulaVirtual\OrientacionActividad;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\OrientacionService;
 use Illuminate\Http\Request;
@@ -38,8 +39,21 @@ class OrientacionController extends Controller
 
     public function seguimientoDocente(Request $request)
     {
+        $filters = $request->validate(['search' => ['nullable', 'string', 'max:100'],
+            'estado' => ['nullable', 'in:pendiente,en_proceso,finalizado,revisado,requiere_seguimiento']]);
+        $scope = $this->cursos->vinculosVigentes($request->user())->selectRaw('1')
+            ->whereColumn('clase_estudiante.cod_est', 'orientacion_actividades.cod_est')
+            ->whereHas('claseVirtual.planAsignatura', fn ($q) => $q->whereColumn('plan_asignatura.cod_gea', 'orientacion_actividades.cod_gea'));
+        $rows = OrientacionActividad::with('estudiante.persona', 'gestionAcademica', 'resultado')
+            ->whereExists($scope->toBase())
+            ->when(filled($filters['estado'] ?? null), fn ($q) => $q->where('estado', $filters['estado']))
+            ->when(filled($filters['search'] ?? null), fn ($q) => $q->whereHas('estudiante.persona', fn ($p) => $p->where(fn ($names) => $names->where('nom_per', 'like', '%'.$filters['search'].'%')->orWhere('ape_pat_per', 'like', '%'.$filters['search'].'%'))))
+            ->latest()->paginate(20)->withQueryString();
+
         return view('aula-virtual.orientacion.seguimiento-docente', [
-            'cursos' => $this->cursos->cursosDocente($request->user()),
+            'rows' => $rows,
+            'filters' => $filters,
+            'dimensiones' => $this->orientacion->dimensiones(),
         ]);
     }
 }

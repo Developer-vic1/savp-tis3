@@ -5,11 +5,14 @@ namespace App\Livewire\Admin;
 use App\Models\Asignatura;
 use App\Models\Calificacion;
 use App\Models\Estudiante;
+use App\Models\GestionAcademica;
 use App\Models\PeriodoEvaluacion;
-use App\Services\BitacoraService;
+use App\Models\PlanAsignatura;
+use App\Services\GradeService;
 use App\Support\Evaluacion\CalificacionInteligente;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -20,23 +23,61 @@ class Calificaciones extends Component
     protected string $paginationTheme = 'tailwind';
 
     public string $search = '';
+
     public string $periodoFiltro = '';
+
     public string $asignaturaFiltro = '';
+
     public string $estado = '';
+
     public string $gestionFiltro = '';
+
     public bool $modalFormulario = false;
+
+    #[Locked]
     public bool $editando = false;
+
+    #[Locked]
     public ?string $seleccionado = null;
+
     public array $form = [];
+
     public array $analisis = [];
 
-    public function mount(): void { $this->limpiarFormulario(); }
-    public function updatedForm(mixed $value = null, ?string $key = null): void { $this->analizar(); }
-    public function updatedSearch(): void { $this->resetPage(); }
-    public function updatedPeriodoFiltro(): void { $this->resetPage(); }
-    public function updatedAsignaturaFiltro(): void { $this->resetPage(); }
-    public function updatedEstado(): void { $this->resetPage(); }
-    public function updatedGestionFiltro(): void { $this->resetPage(); }
+    public function mount(): void
+    {
+        $this->limpiarFormulario();
+    }
+
+    public function updatedForm(mixed $value = null, ?string $key = null): void
+    {
+        $this->analizar();
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedPeriodoFiltro(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedAsignaturaFiltro(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedEstado(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedGestionFiltro(): void
+    {
+        $this->resetPage();
+    }
 
     public function abrirCrear(): void
     {
@@ -66,7 +107,7 @@ class Calificaciones extends Component
     public function analizar(): void
     {
         if (! empty($this->form['cod_pas'])) {
-            $this->form['cod_asi'] = \App\Models\PlanAsignatura::find($this->form['cod_pas'])?->cod_asi;
+            $this->form['cod_asi'] = PlanAsignatura::find($this->form['cod_pas'])?->cod_asi;
         }
         $this->analisis = app(CalificacionInteligente::class)->analizar($this->form, $this->seleccionado);
     }
@@ -79,10 +120,11 @@ class Calificaciones extends Component
 
     public function guardar(): void
     {
-        abort_unless(app(\App\Services\GradeService::class)->available(), 409, 'El historial por gestión requiere aplicación autorizada del esquema.');
+        abort_unless(app(GradeService::class)->available(), 409, 'El historial por gestión requiere aplicación autorizada del esquema.');
         $this->analizar();
         if (! ($this->analisis['puede_guardar'] ?? false)) {
             $this->dispatch('swal:warning', title: 'Calificación bloqueada', text: implode(' ', $this->analisis['bloqueos'] ?? []));
+
             return;
         }
 
@@ -97,7 +139,7 @@ class Calificaciones extends Component
             'form.est_cal' => ['required', Rule::in(['ACTIVO', 'INACTIVO', 'ANULADO'])],
         ]);
 
-        app(\App\Services\GradeService::class)->save(auth()->user(), $this->form['cod_pas'], $this->form['cod_est'], $this->form['cod_pev'],
+        app(GradeService::class)->save(auth()->user(), $this->form['cod_pas'], $this->form['cod_est'], $this->form['cod_pev'],
             (float) $this->form['not_cal'], $this->form['obs_cal'] ?? null,
             $this->editando ? Calificacion::findOrFail($this->seleccionado) : null, $this->form['motivo'] ?? null, $this->form['est_cal']);
 
@@ -142,9 +184,9 @@ class Calificaciones extends Component
         $menor = $lowest ? ['nombre' => $lowest->asignatura?->nom_asi, 'promedio' => round($lowest->promedio, 2)] : null;
 
         return view('livewire.admin.calificaciones', [
-            'years' => \App\Models\GestionAcademica::orderByDesc('ani_gea')->get(),
-            'plans' => \App\Models\PlanAsignatura::with('asignatura', 'gestionAcademica', 'curso', 'paralelo')->orderByDesc('cod_gea')->get(),
-            'ready' => app(\App\Services\GradeService::class)->available(),
+            'years' => GestionAcademica::orderByDesc('ani_gea')->get(),
+            'plans' => PlanAsignatura::with('asignatura', 'gestionAcademica', 'curso', 'paralelo')->orderByDesc('cod_gea')->get(),
+            'ready' => app(GradeService::class)->available(),
             'calificaciones' => $query->orderByDesc('created_at')->paginate(10),
             'estudiantes' => Estudiante::with('persona')->where('est_est', 'ACTIVO')->get()->sortBy(fn ($e) => $e->persona?->ape_pat_per),
             'asignaturas' => Asignatura::where('est_asi', 'ACTIVO')->orderBy('nom_asi')->get(),

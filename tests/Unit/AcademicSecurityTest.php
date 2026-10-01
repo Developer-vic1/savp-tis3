@@ -2,17 +2,25 @@
 
 namespace Tests\Unit;
 
+use App\Models\AulaVirtual\ClaseVirtual;
+use App\Models\AulaVirtual\EntregaTarea;
+use App\Models\AulaVirtual\MaterialClase;
+use App\Models\AulaVirtual\Tarea;
 use App\Models\Calificacion;
 use App\Models\Curso;
 use App\Models\Estudiante;
 use App\Models\ReporteGenerado;
 use App\Models\User;
+use App\Policies\AulaVirtualEntregaPolicy;
+use App\Policies\AulaVirtualMaterialPolicy;
+use App\Policies\AulaVirtualTareaPolicy;
 use App\Policies\ReporteGeneradoPolicy;
 use App\Services\AcademicAccessService;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\GradeService;
 use App\Services\OperationalAccountService;
 use App\Services\RegencyAccessService;
+use App\Services\ReportAccessService;
 use Mockery;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -27,25 +35,71 @@ class AcademicSecurityTest extends TestCase
         $courses->shouldNotReceive('cursoParaEstudiante');
         $courses->shouldReceive('cursoParaDocente')->andReturnNull();
         $this->app->instance(CursoVirtualService::class, $courses);
-        $material = new \App\Models\AulaVirtual\MaterialClase(['cod_cla' => 'A', 'est_mat' => 'OCULTO']);
-        $this->assertFalse((new \App\Policies\AulaVirtualMaterialPolicy())->view($actor, $material));
+        $material = new MaterialClase(['cod_cla' => 'A', 'est_mat' => 'OCULTO']);
+        $this->assertFalse((new AulaVirtualMaterialPolicy)->view($actor, $material));
     }
 
     public function test_teacher_cannot_grade_delivery_from_another_course(): void
     {
         $actor = Mockery::mock(User::class)->makePartial();
+        $actor->shouldReceive('can')->with('Acceso_Aula_Virtual')->andReturn(true);
+        $actor->shouldReceive('can')->with('Calificaciones_Aula')->andReturn(true);
         $actor->shouldReceive('can')->with('Aula_Virtual_Docente')->andReturn(true);
+        $actor->shouldReceive('can')->with('Entregas_Aula')->andReturn(true);
         $courses = Mockery::mock(CursoVirtualService::class);
         $courses->shouldReceive('cursoParaDocente')->with($actor, 'B')->andReturnNull();
         $this->app->instance(CursoVirtualService::class, $courses);
-        $delivery = new \App\Models\AulaVirtual\EntregaTarea();
-        $delivery->setRelation('tarea', new \App\Models\AulaVirtual\Tarea(['cod_cla' => 'B']));
-        $this->assertFalse((new \App\Policies\AulaVirtualEntregaPolicy())->grade($actor, $delivery));
+        $delivery = new EntregaTarea;
+        $delivery->setRelation('tarea', new Tarea(['cod_cla' => 'B']));
+        $this->assertFalse((new AulaVirtualEntregaPolicy)->grade($actor, $delivery));
     }
 
     public function test_student_cannot_submit_draft_task(): void
     {
-        $this->assertFalse((new \App\Policies\AulaVirtualTareaPolicy())->submit(new User(), new \App\Models\AulaVirtual\Tarea(['est_tar' => 'BORRADOR'])));
+        $this->assertFalse((new AulaVirtualTareaPolicy)->submit(new User, new Tarea(['est_tar' => 'BORRADOR'])));
+    }
+
+    public function test_closed_course_cannot_be_graded(): void
+    {
+        $actor = Mockery::mock(User::class)->makePartial();
+        $actor->shouldReceive('can')->andReturn(true);
+        $course = new ClaseVirtual(['cod_cla' => 'OWN', 'est_cla' => 'CERRADA']);
+        $courses = Mockery::mock(CursoVirtualService::class);
+        $courses->shouldReceive('cursoParaDocente')->with($actor, 'OWN')->andReturn($course);
+        $this->app->instance(CursoVirtualService::class, $courses);
+        $delivery = new EntregaTarea;
+        $delivery->setRelation('tarea', new Tarea(['cod_cla' => 'OWN']));
+        $this->assertFalse((new AulaVirtualEntregaPolicy)->grade($actor, $delivery));
+    }
+
+    public function test_revoked_delivery_permission_denies_grading_before_query(): void
+    {
+        $actor = Mockery::mock(User::class)->makePartial();
+        $actor->shouldReceive('can')->with('Acceso_Aula_Virtual')->andReturn(true);
+        $actor->shouldReceive('can')->with('Calificaciones_Aula')->andReturn(true);
+        $actor->shouldReceive('can')->with('Aula_Virtual_Docente')->andReturn(true);
+        $actor->shouldReceive('can')->with('Entregas_Aula')->andReturn(false);
+        $this->assertFalse((new AulaVirtualEntregaPolicy)->grade($actor, new EntregaTarea));
+    }
+
+    public function test_admin_without_report_permission_cannot_export(): void
+    {
+        $actor = Mockery::mock(User::class)->makePartial();
+        $actor->est_usu = 'ACTIVO';
+        $actor->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Administrador');
+        $actor->shouldReceive('can')->with('Reportes_Administrativos')->andReturn(false);
+        $this->expectException(HttpException::class);
+        (new ReportAccessService)->authorize($actor, ['Reportes_Administrativos']);
+    }
+
+    public function test_director_with_broad_report_permission_cannot_export_admin_package(): void
+    {
+        $actor = Mockery::mock(User::class)->makePartial();
+        $actor->est_usu = 'ACTIVO';
+        $actor->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Director');
+        $actor->shouldNotReceive('can');
+        $this->expectException(HttpException::class);
+        (new ReportAccessService)->authorize($actor, ['Reportes_Administrativos']);
     }
 
     public function test_inactive_account_is_denied_by_all_academic_entry_points(): void
@@ -53,9 +107,9 @@ class AcademicSecurityTest extends TestCase
         $actor = new User(['est_usu' => 'INACTIVO']);
         $courses = Mockery::mock(CursoVirtualService::class);
         $access = new AcademicAccessService($courses);
-        $this->assertFalse($access->canViewStudent($actor, new Estudiante()));
-        $this->assertFalse($access->canViewCourse($actor, new Curso()));
-        $this->assertFalse($access->canViewGrade($actor, new Calificacion()));
+        $this->assertFalse($access->canViewStudent($actor, new Estudiante));
+        $this->assertFalse($access->canViewCourse($actor, new Curso));
+        $this->assertFalse($access->canViewGrade($actor, new Calificacion));
         $this->assertFalse($access->canManageGrade($actor, 'E', 'A', 'P'));
     }
 
@@ -78,14 +132,15 @@ class AcademicSecurityTest extends TestCase
         $actor = Mockery::mock(User::class)->makePartial();
         $actor->est_usu = 'ACTIVO';
         $actor->shouldReceive('hasAnyRole')->with(['Administrador', 'Director'])->andReturn(false);
+        $actor->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Regente');
         $actor->shouldReceive('canAny')->andReturn(true);
-        $this->assertFalse((new ReporteGeneradoPolicy())->view($actor, new ReporteGenerado()));
+        $this->assertFalse((new ReporteGeneradoPolicy)->view($actor, new ReporteGenerado));
     }
 
     public function test_inactive_administrator_cannot_assign_regency(): void
     {
         $this->expectException(HttpException::class);
-        (new RegencyAccessService())->assign(new User(['est_usu' => 'INACTIVO']), []);
+        (new RegencyAccessService)->assign(new User(['est_usu' => 'INACTIVO']), []);
     }
 
     public function test_regent_cannot_write_grades_even_with_accidentally_granted_permission(): void
@@ -106,6 +161,6 @@ class AcademicSecurityTest extends TestCase
         $actor->shouldReceive('can')->with('usuarios.ver.institucional')->andReturn(true);
         $actor->shouldReceive('can')->with('usuarios.crear')->andReturn(false);
         $this->expectException(HttpException::class);
-        (new OperationalAccountService())->save($actor, [], null);
+        (new OperationalAccountService)->save($actor, [], null);
     }
 }

@@ -14,56 +14,83 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\WithPagination;
+use Spatie\Activitylog\Facades\Activity;
 use Throwable;
 
 class GestionInscripciones extends Component
 {
-    use WithPagination;
     use WithFileUploads;
+    use WithPagination;
 
     protected string $paginationTheme = 'tailwind';
 
     public string $vista = 'proceso';
+
     public string $subvistaProceso = 'pendientes';
 
     public string $busquedaEstudiante = '';
+
     public string $busquedaPendientes = '';
+
     public string $busquedaTabla = '';
 
     public int $porPagina = 10;
+
     public int $pasoInscripcion = 1;
 
     public string $modoFormulario = 'crear';
+
     public ?string $codInscripcionEditando = null;
+
     public ?string $codInscripcionAccion = null;
 
     public array $catalogos = [];
+
     public array $resumen = [];
+
     public array $panelGestion = [];
+
     public array $panelCupo = [];
+
     public array $panelDocumental = [];
+
     public array $panelRevision = [];
+
     public array $reportesDisponibles = [];
 
     public array $estudiantesSinInscripcion = [];
+
     public array $resultadosEstudiantes = [];
+
     public ?array $estudianteSeleccionado = null;
+
     public array $historialEstudiante = [];
+
     public array $situacionEstudiante = [];
+
     public array $cursoSugerido = [];
 
     public array $analisis = [];
+
     public array $confirmacionFinal = [];
+
     public array $pasos = [];
+
     public array $documentos = [];
+
     public array $documentosDisponibles = [];
+
     public string $documentoCatalogoSeleccionado = '';
+
     public array $documentosEliminados = [];
+
     public array $previsualizacionChecklist = [];
 
     // Sugerencias aplicadas (UX): ocultan botones contextuales al aplicarse.
     public bool $cursoSugeridoAplicado = false;
+
     public bool $turnoSugeridoAplicado = false;
+
     public bool $tipoSugeridoAplicado = false;
 
     // Paso 3: carga PDF por documento (Livewire no maneja bien archivos dentro del array $documentos).
@@ -71,32 +98,48 @@ class GestionInscripciones extends Component
 
     // Paso 3: sugerencia compacta de documentos faltantes para el tipo actual.
     public bool $sugerenciaDocumentalVisible = false;
+
     public array $documentosFaltantesSugeridos = [];
+
     public bool $modalConfirmarFechaDocumento = false;
+
     public ?int $indiceDocumentoFecha = null;
+
     public string $motivoModificarFechaDocumento = '';
 
     public bool $modalInscripcion = false;
+
     public bool $modalDetalle = false;
+
     public bool $modalDocumentos = false;
+
     public bool $modalAnular = false;
+
     public bool $modalRetirar = false;
+
     public bool $modalChecklist = false;
 
     // Modal de acciones agrupadas por fila.
     public bool $modalAcciones = false;
+
     public ?array $accionesInscripcion = null;
 
     public ?array $detalleInscripcion = null;
+
     public array $documentosModal = [];
 
     public string $motivoAccion = '';
+
     public ?string $fechaRetiro = null;
 
     public bool $mostrarValidaciones = false;
+
     public bool $permitirSobrecupo = false;
+
     public bool $turnoMananaAplicado = false;
+
     public bool $mostrarPanelEspecialidad = false;
+
     public bool $condicionesAceptadas = false;
 
     // BTH: ocultar botón "Dejar pendiente" tras aplicarlo.
@@ -328,7 +371,7 @@ class GestionInscripciones extends Component
         if (! empty($this->formInscripcion['cod_esp_tec'])) {
             $this->formInscripcion['est_esp_tec_ins'] = 'ASIGNADA';
             $this->especialidadPendienteAplicada = false;
-        } else if ($this->mostrarPanelEspecialidad) {
+        } elseif ($this->mostrarPanelEspecialidad) {
             $this->formInscripcion['est_esp_tec_ins'] = 'PENDIENTE';
         }
 
@@ -356,6 +399,7 @@ class GestionInscripciones extends Component
         if ($indice !== null && isset($this->documentos[$indice])) {
             if ($campo === 'obs_die') {
                 $this->generarSugerenciaObservacion($indice);
+
                 return;
             }
 
@@ -386,13 +430,13 @@ class GestionInscripciones extends Component
         }
 
         // Subir PDF y actualizar metadata.
-        $codEst = $this->formInscripcion['cod_est'] ?? 'SIN_EST';
-        $path = $archivo->store("inscripciones/{$codEst}", 'public');
+        $path = $archivo->store('inscripciones-privadas', 'local');
+        abort_unless($path, 503, 'No fue posible guardar el documento.');
 
         $this->documentos[$indice]['rut_die'] = $path;
         $this->documentos[$indice]['for_die'] = 'PDF';
         $this->documentos[$indice]['tam_die'] = method_exists($archivo, 'getSize') ? $archivo->getSize() : null;
-        $this->documentos[$indice]['has_die'] = method_exists($archivo, 'hashName') ? $archivo->hashName() : null;
+        $this->documentos[$indice]['has_die'] = hash_file('sha256', $archivo->getRealPath());
 
         // Regla: al subir PDF se marca como PRESENTADO y se registra fecha de presentación.
         $this->documentos[$indice]['est_die'] = 'PRESENTADO';
@@ -511,6 +555,7 @@ class GestionInscripciones extends Component
         $detalle = $this->soporte()->obtenerInscripcion($codIns);
         if (! $detalle) {
             $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+
             return;
         }
 
@@ -599,6 +644,7 @@ class GestionInscripciones extends Component
 
         if (mb_strlen($termino) < 2) {
             $this->resultadosEstudiantes = [];
+
             return;
         }
 
@@ -617,6 +663,7 @@ class GestionInscripciones extends Component
 
         if (! $estudiante) {
             $this->notificar('error', 'No se pudo seleccionar el estudiante.');
+
             return;
         }
 
@@ -668,6 +715,7 @@ class GestionInscripciones extends Component
 
         if (! $turnoManana || empty($turnoManana['cod_tur'])) {
             $this->turnoMananaAplicado = false;
+
             return;
         }
 
@@ -684,6 +732,7 @@ class GestionInscripciones extends Component
 
         if (! $turnoManana || empty($turnoManana['cod_tur'])) {
             $this->notificar('warning', 'No se detectó un turno Mañana activo. Revisa Gestión de Turnos.');
+
             return;
         }
 
@@ -705,6 +754,7 @@ class GestionInscripciones extends Component
 
         if (empty($codCurso)) {
             $this->notificar('warning', 'No existe un curso sugerido disponible para aplicar.');
+
             return;
         }
 
@@ -738,11 +788,13 @@ class GestionInscripciones extends Component
             $this->formInscripcion['cod_esp_tec'] = '';
             $this->formInscripcion['est_esp_tec_ins'] = 'NO_APLICA';
             $this->formInscripcion['obs_esp_tec_ins'] = '';
+
             return;
         }
 
         if (! empty($this->formInscripcion['cod_esp_tec'])) {
             $this->formInscripcion['est_esp_tec_ins'] = 'ASIGNADA';
+
             return;
         }
 
@@ -803,6 +855,7 @@ class GestionInscripciones extends Component
 
         if ($paso > 1 && ! $this->estudianteSeleccionado) {
             $this->notificar('warning', 'Seleccione un estudiante antes de continuar.');
+
             return;
         }
 
@@ -843,6 +896,7 @@ class GestionInscripciones extends Component
         if (empty($this->documentos)) {
             $this->generarDocumentosRequeridos();
             $this->ocultarSugerenciaDocumental();
+
             return;
         }
 
@@ -868,13 +922,13 @@ class GestionInscripciones extends Component
     {
         $catalogo = $this->soporte()->catalogoDocumentosRequeridos();
         $usados = collect($this->documentos)
-            ->map(fn(array $doc) => $this->normalizarMayuscula($doc['clave_doc'] ?? ''))
+            ->map(fn (array $doc) => $this->normalizarMayuscula($doc['clave_doc'] ?? ''))
             ->filter()
             ->values()
             ->all();
 
         $this->documentosDisponibles = collect($catalogo)
-            ->filter(fn(array $doc) => ! in_array($this->normalizarMayuscula($doc['clave_doc'] ?? ''), $usados, true))
+            ->filter(fn (array $doc) => ! in_array($this->normalizarMayuscula($doc['clave_doc'] ?? ''), $usados, true))
             ->values()
             ->all();
 
@@ -899,6 +953,7 @@ class GestionInscripciones extends Component
         foreach ($this->documentos as $doc) {
             if (($this->normalizarMayuscula($doc['clave_doc'] ?? '')) === $claveDoc) {
                 $this->notificar('warning', 'El documento ya existe en la lista.');
+
                 return;
             }
         }
@@ -936,6 +991,7 @@ class GestionInscripciones extends Component
         if (count($faltantes) > 0) {
             $this->documentosFaltantesSugeridos = $faltantes;
             $this->sugerenciaDocumentalVisible = true;
+
             return;
         }
 
@@ -1002,11 +1058,13 @@ class GestionInscripciones extends Component
     {
         if ($this->indiceDocumentoFecha === null || ! isset($this->documentos[$this->indiceDocumentoFecha])) {
             $this->cancelarModificarFechaDocumento();
+
             return;
         }
         $motivo = trim($this->motivoModificarFechaDocumento);
         if (mb_strlen($motivo) < 5) {
             $this->notificar('warning', 'Registra un motivo de al menos 5 caracteres para modificar la fecha límite.');
+
             return;
         }
         $this->documentos[$this->indiceDocumentoFecha]['fecha_limite_editable'] = true;
@@ -1054,6 +1112,7 @@ class GestionInscripciones extends Component
     {
         if ($paso === 1 && ! $this->estudianteSeleccionado) {
             $this->notificar('warning', 'Seleccione un estudiante antes de continuar.');
+
             return false;
         }
 
@@ -1071,6 +1130,7 @@ class GestionInscripciones extends Component
         if (! ($resultado['puede'] ?? false)) {
             $this->mostrarValidaciones = true;
             $this->notificar('warning', $resultado['mensaje'] ?? 'Completa el paso actual antes de continuar.');
+
             return false;
         }
 
@@ -1085,6 +1145,7 @@ class GestionInscripciones extends Component
                 $this->mostrarValidaciones = true;
                 $primerBloqueo = ($doc['bloqueos_criticos'][0] ?? $doc['bloqueos'][0] ?? 'Existen bloqueos documentales que deben corregirse.');
                 $this->notificar('warning', $primerBloqueo);
+
                 return false;
             }
         }
@@ -1108,6 +1169,7 @@ class GestionInscripciones extends Component
 
         if (empty($this->documentos)) {
             $this->aplicarChecklistReemplazar();
+
             return;
         }
 
@@ -1248,6 +1310,7 @@ class GestionInscripciones extends Component
                 $this->documentos[$indice]['fec_pre_die'] = null;
                 $this->documentos[$indice]['fec_lim_die'] = null;
                 $this->recalcularTodo();
+
                 return;
             }
 
@@ -1281,6 +1344,7 @@ class GestionInscripciones extends Component
     {
         if (! $this->condicionesAceptadas) {
             $this->notificar('warning', 'Debe aceptar los términos y condiciones de inscripción para confirmar.');
+
             return;
         }
         $this->guardarInscripcion();
@@ -1290,6 +1354,7 @@ class GestionInscripciones extends Component
     {
         if (! $this->condicionesAceptadas) {
             $this->notificar('warning', 'Debe aceptar los términos y condiciones de inscripción para confirmar.');
+
             return;
         }
         $this->guardarInscripcion(imprimir: true);
@@ -1308,6 +1373,7 @@ class GestionInscripciones extends Component
         if (! ($this->analisis['puede_continuar'] ?? false) && ! $forzarPendiente) {
             $this->pasoInscripcion = 4;
             $this->notificarBloqueosActuales();
+
             return;
         }
 
@@ -1334,7 +1400,7 @@ class GestionInscripciones extends Component
         // Capa de seguridad definitiva: solo guardar campos del $fillable del modelo.
         // Esto garantiza que ninguna columna fantasma llegue al INSERT, independientemente
         // del comportamiento del Schema::hasColumn con el driver de PgSQL en Livewire.
-        $fillablePermitidos = (new InscripcionEstudiante())->getFillable();
+        $fillablePermitidos = (new InscripcionEstudiante)->getFillable();
         $datos = array_intersect_key($datos, array_flip($fillablePermitidos));
 
         try {
@@ -1347,7 +1413,7 @@ class GestionInscripciones extends Component
                     $codIns = $this->codInscripcionEditando;
                     $accion = 'ACTUALIZAR_INSCRIPCION';
                 } else {
-                    $inscripcion = new InscripcionEstudiante();
+                    $inscripcion = new InscripcionEstudiante;
 
                     foreach ($datos as $campo => $valor) {
                         $inscripcion->{$campo} = $valor;
@@ -1430,8 +1496,9 @@ class GestionInscripciones extends Component
         }
         $base = 'No se pudo guardar la inscripción. Revisa los datos del formulario y la documentación.';
         if (app()->environment('local')) {
-            return $base . ' Detalle técnico: ' . mb_substr($e->getMessage(), 0, 160);
+            return $base.' Detalle técnico: '.mb_substr($e->getMessage(), 0, 160);
         }
+
         return $base;
     }
 
@@ -1446,7 +1513,7 @@ class GestionInscripciones extends Component
 
         // Persistimos en pro_ins una representación legible sin requerir nueva columna.
         if ($detalle !== '' && in_array($tipo, ['OTRA_UNIDAD', 'TRASLADO_DEPARTAMENTAL', 'TRASLADO_INTERDEPARTAMENTAL', 'EXTERIOR', 'OTRO'], true)) {
-            return $tipo . ' - ' . $detalle;
+            return $tipo.' - '.$detalle;
         }
 
         return $tipo;
@@ -1462,6 +1529,7 @@ class GestionInscripciones extends Component
 
         if (! ($evaluacion['puede_continuar'] ?? false)) {
             $this->notificar('warning', $evaluacion['mensaje'] ?? 'No se puede editar esta inscripción.');
+
             return;
         }
 
@@ -1480,6 +1548,7 @@ class GestionInscripciones extends Component
 
         if (! $registro) {
             $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+
             return;
         }
 
@@ -1534,6 +1603,7 @@ class GestionInscripciones extends Component
 
         if (! $this->detalleInscripcion) {
             $this->notificar('error', 'No se encontró la inscripción seleccionada.');
+
             return;
         }
 
@@ -1578,6 +1648,7 @@ class GestionInscripciones extends Component
 
         if (! $inscripcion) {
             $this->notificar('error', 'No se encontró la inscripción.');
+
             return;
         }
 
@@ -1654,6 +1725,7 @@ class GestionInscripciones extends Component
                 $this->documentosModal[$indice]['est_die'] = 'PRESENTADO';
                 $this->documentosModal[$indice]['fec_pre_die'] = null;
                 $this->documentosModal[$indice]['fec_lim_die'] = null;
+
                 return;
             }
 
@@ -1686,6 +1758,7 @@ class GestionInscripciones extends Component
     {
         if (! $this->codInscripcionAccion) {
             $this->notificar('error', 'No existe inscripción seleccionada.');
+
             return;
         }
 
@@ -1703,7 +1776,7 @@ class GestionInscripciones extends Component
                     $claves[$clave] = true;
                 }
 
-                $fillable = (new DocumentoInscripcionEstudiante())->getFillable();
+                $fillable = (new DocumentoInscripcionEstudiante)->getFillable();
                 foreach ($normalizados as $documento) {
                     $payload = collect($documento)
                         ->only($fillable)
@@ -1717,6 +1790,7 @@ class GestionInscripciones extends Component
                     if ($modelo) {
                         $modelo->fill($payload);
                         $modelo->save();
+
                         continue;
                     }
 
@@ -1788,6 +1862,7 @@ class GestionInscripciones extends Component
         if (! ($evaluacion['puede_continuar'] ?? false)) {
             $this->analisis = $evaluacion;
             $this->notificar('warning', 'La anulación presenta bloqueos.');
+
             return;
         }
 
@@ -1854,6 +1929,7 @@ class GestionInscripciones extends Component
         if (! ($evaluacion['puede_continuar'] ?? false)) {
             $this->analisis = $evaluacion;
             $this->notificar('warning', 'El retiro presenta bloqueos.');
+
             return;
         }
 
@@ -1892,6 +1968,7 @@ class GestionInscripciones extends Component
 
         if (! $registro) {
             $this->notificar('error', 'No se encontró la inscripción.');
+
             return;
         }
 
@@ -1903,6 +1980,7 @@ class GestionInscripciones extends Component
 
         if ($duplicidad['existe'] ?? false) {
             $this->notificar('warning', 'No se puede reactivar porque el estudiante ya tiene una inscripción activa en esa gestión.');
+
             return;
         }
 
@@ -2107,6 +2185,7 @@ class GestionInscripciones extends Component
 
         if (! $codIns) {
             $this->notificar('warning', 'Selecciona una inscripción para generar la constancia.');
+
             return;
         }
 
@@ -2114,6 +2193,7 @@ class GestionInscripciones extends Component
 
         if (! ($constancia['disponible'] ?? false)) {
             $this->notificar('warning', $constancia['mensaje'] ?? 'No se pudo preparar la constancia.');
+
             return;
         }
 
@@ -2286,7 +2366,7 @@ class GestionInscripciones extends Component
         }
 
         if ($this->busquedaTabla !== '') {
-            $buscar = '%' . mb_strtolower(trim($this->busquedaTabla)) . '%';
+            $buscar = '%'.mb_strtolower(trim($this->busquedaTabla)).'%';
 
             $query->where(function ($q) use ($buscar) {
                 $q->whereRaw('LOWER(persona.nom_per) LIKE ?', [$buscar])
@@ -2357,7 +2437,7 @@ class GestionInscripciones extends Component
             ->where('cod_ins', $codIns)
             ->orderBy('created_at')
             ->get()
-            ->map(fn($documento) => [
+            ->map(fn ($documento) => [
                 'cod_die' => $documento->cod_die ?? null,
                 'clave_doc' => null,
                 'nom_die' => $documento->nom_die ?? 'Documento',
@@ -2411,7 +2491,7 @@ class GestionInscripciones extends Component
                 );
                 if (! ($revisionFecha['valida'] ?? false)) {
                     throw ValidationException::withMessages([
-                        'documentos' => "{$nombre}: " . (($revisionFecha['bloqueos'][0] ?? 'fecha límite inválida.')),
+                        'documentos' => "{$nombre}: ".(($revisionFecha['bloqueos'][0] ?? 'fecha límite inválida.')),
                     ]);
                 }
 
@@ -2424,7 +2504,7 @@ class GestionInscripciones extends Component
             }
         }
 
-        $fillable = (new DocumentoInscripcionEstudiante())->getFillable();
+        $fillable = (new DocumentoInscripcionEstudiante)->getFillable();
         foreach ($normalizados as $documento) {
             $payload = collect($documento)
                 ->only($fillable)
@@ -2437,6 +2517,7 @@ class GestionInscripciones extends Component
             if ($modelo) {
                 $modelo->fill($payload);
                 $modelo->save();
+
                 continue;
             }
 
@@ -2606,16 +2687,16 @@ class GestionInscripciones extends Component
     ): void {
         // Spatie: solo log con propiedades, sin performedOn() sobre stdClass.
         try {
-            if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
+            if (class_exists(Activity::class)) {
                 activity()
                     ->causedBy(auth()->user())
                     ->withProperties([
                         'modulo' => 'Gestión de Inscripciones',
-                        'tabla'  => $tabla,
+                        'tabla' => $tabla,
                         'registro' => $registro,
                         'descripcion' => $descripcion,
                     ])
-                    ->log($accion . ' - ' . $descripcion);
+                    ->log($accion.' - '.$descripcion);
             }
         } catch (Throwable) {
             //
@@ -2628,9 +2709,9 @@ class GestionInscripciones extends Component
         // cod_bit lo genera Bitacora::booted() automáticamente; no se genera aquí.
         try {
             $columnas = Schema::getColumnListing('bitacora');
-            $request  = request();
-            $usuario  = auth()->user();
-            $payload  = [];
+            $request = request();
+            $usuario = auth()->user();
+            $payload = [];
 
             if (in_array('acc_bit', $columnas, true)) {
                 $payload['acc_bit'] = mb_substr($descripcion, 0, 500);

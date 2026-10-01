@@ -7,6 +7,7 @@ use App\Models\AulaVirtual\MaterialClase;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\MaterialService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class MaterialController extends Controller
 {
@@ -35,7 +36,7 @@ class MaterialController extends Controller
         $datos = $request->validate([
             'nom_mat' => ['required', 'string', 'max:180'],
             'tip_mat' => ['required', 'in:ARCHIVO,ENLACE,PDF,VIDEO,IMAGEN,DOCUMENTO,OTRO'],
-            'url_mat' => ['nullable', 'url', 'max:500'],
+            'url_mat' => ['nullable', 'url:http,https', 'max:500'],
             'archivo' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,mp4,txt'],
             'est_mat' => ['nullable', 'in:ACTIVO,OCULTO'],
         ]);
@@ -50,23 +51,23 @@ class MaterialController extends Controller
 
     public function descargar(Request $request, MaterialClase $material)
     {
-        \Illuminate\Support\Facades\Gate::authorize('view', $material);
+        Gate::authorize('view', $material);
 
         return $this->materiales->descargar($material);
     }
 
     public function publicar(Request $request, MaterialClase $material)
     {
-        \Illuminate\Support\Facades\Gate::authorize('update', $material);
-        $material->forceFill(['est_mat' => 'ACTIVO'])->save();
+        Gate::authorize('update', $material);
+        $this->materiales->state($material, 'ACTIVO', $request->user());
 
         return back()->with('status', 'Material publicado.');
     }
 
     public function ocultar(Request $request, MaterialClase $material)
     {
-        \Illuminate\Support\Facades\Gate::authorize('update', $material);
-        $material->forceFill(['est_mat' => 'OCULTO'])->save();
+        Gate::authorize('update', $material);
+        $this->materiales->state($material, 'OCULTO', $request->user());
 
         return back()->with('status', 'Material oculto.');
     }

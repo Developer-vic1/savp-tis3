@@ -8,10 +8,16 @@ use PHPUnit\Framework\TestCase;
 class InstitutionalRoleGovernanceTest extends TestCase
 {
     private InstitutionalRoleGovernance $engine;
+
     private array $roles = ['Administrador', 'Director', 'Secretaria', 'Regente', 'Docente', 'Estudiante'];
+
     private array $permissions = ['reportes.ver.institucional', 'usuarios.asignar_roles', 'estudiantes.ver.global', 'estudiantes.ver.institucional'];
 
-    protected function setUp(): void { parent::setUp(); $this->engine = new InstitutionalRoleGovernance(); }
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->engine = new InstitutionalRoleGovernance;
+    }
 
     private function analyze(string $name, string $functions, array $permissions = ['reportes.ver.institucional'], string $reason = 'Se necesita distribuir un trabajo institucional concreto y verificable.'): array
     {
@@ -63,5 +69,13 @@ class InstitutionalRoleGovernanceTest extends TestCase
             'Preparar reportes estadísticos para dirección institucional.', ['Gestion_Usuarios', 'calificaciones.ver.curso'], $this->roles, $available);
         $this->assertSame('PERMISOS_INCOMPATIBLES', $result['status']);
         $this->assertCount(2, $result['blocked_permissions']);
+    }
+
+    public function test_secretaria_academica_is_a_cargo_and_not_an_additional_actor(): void
+    {
+        $result = $this->analyze('Secretaria Académica', 'Preparar reportes estadísticos para dirección institucional.');
+        $this->assertSame('Secretaria', $result['suggested_role']);
+        $this->assertSame('DUPLICA_ROL_EXISTENTE', $result['status']);
+        $this->assertNotEmpty($result['reasons']);
     }
 }

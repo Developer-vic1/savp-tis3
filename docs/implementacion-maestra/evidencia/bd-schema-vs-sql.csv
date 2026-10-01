@@ -1,0 +1,80 @@
+﻿TABLE,IN_MIGRATIONS,IN_SQL_SNAPSHOT,DECLARED_ONLY_COLUMNS,SQL_ONLY_COLUMNS,TYPE_DIFFERENCES,NULLABLE_DIFFERENCES,INTERPRETATION
+actividad_clase,True,False,cod_act_cla; cod_cla; cod_est; cod_usu; created_at; fec_act; met_act; ref_cod; ref_tab; tip_act; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+administrador,True,False,cod_adm; cod_pin; created_at; est_adm; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+asignatura,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+asistencia_clase,True,False,cod_asi_cla; cod_cla; cod_doc; cod_hbl; cod_usu_reg; created_at; est_asi_cla; fec_asi_cla; hor_fin_asi_cla; hor_ini_asi_cla; obs_asi_cla; ori_asi_cla; tip_asi_cla; tit_asi_cla; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+asistencia_estudiante,True,False,cod_asi_cla; cod_asi_est; cod_est; cod_est_asi; cod_usu_reg; created_at; est_asi_est; fec_reg_asi_est; min_retraso; obs_asi_est; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+bitacora,True,True,age_bit; des_bit; err_bit; ip_bit; met_bit; mod_bit; niv_bit; nom_reg_bit; res_bit; rol_bit; rut_bit; val_ant_bit; val_nue_bit,est_bit,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+cache,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+cache_locks,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+calendario_evento,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+calendario_evento_revisiones,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+calificacion,True,True,cod_pas,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+calificacion_tarea,True,False,cod_cal_tar; cod_doc; cod_ent; cod_est; cod_tar; com_cal; created_at; est_cal; fec_cal; pun_max; pun_obt; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+clase_estudiante,True,False,cant_acc_cla_est; cod_cla; cod_cla_est; cod_est; created_at; est_cla_est; fec_inc_cla_est; fec_ret_cla_est; ult_acc_cla_est; ult_act_cla_est; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+clase_virtual,True,False,cod_cla; cod_pas; created_at; des_cla; est_cla; fec_fin_cla; fec_ini_cla; nom_cla; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+curso,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+director,True,False,cod_dir; cod_pin; created_at; est_dir; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+docente,True,True,num_mod_doc,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+documento_inscripcion_estudiante,True,False,cod_die; cod_ins; created_at; est_die; fec_lim_die; fec_pre_die; for_die; has_die; nom_die; obl_die; obs_die; rut_die; tam_die; tip_die; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+entrega_archivo,True,False,cod_ent; cod_ent_arc; created_at; est_arc; mime_arc; nom_arc; rut_arc; tam_arc; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+entrega_tarea,True,False,cod_ent; cod_est; cod_tar; created_at; est_ent; fec_ent; obs_ent; tex_ent; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+especialidad_tecnica,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+estado_asistencia,True,False,abr_est_asi; afecta_asistencia; cod_est_asi; color_est_asi; created_at; des_est_asi; est_est_asi; nom_est_asi; requiere_observacion; updated_at; valor_porcentual,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+estudiante,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+failed_jobs,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+gestion_academica,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+horario,True,False,cod_cur; cod_gea; cod_hor; cod_par; cod_pho; created_at; est_hor; obs_hor; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+horario_bloque,True,False,cod_hbl; cod_pho; created_at; est_hbl; hor_fin_hbl; hor_ini_hbl; nom_hbl; num_hbl; obs_hbl; tip_hbl; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+horario_detalle,True,False,aul_hde; cod_hbl; cod_hde; cod_hor; cod_pas; cod_pes; created_at; dia_hde; est_hde; obs_hde; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+inscripcion_estudiante,True,True,cod_esp_tec; con_ins; doc_com_ins; est_esp_tec_ins; fec_anu_ins; fec_con_ins; fec_ret_ins; fec_sie_ins; mot_anu_ins; mot_obs_ins; mot_ret_ins; obs_esp_tec_ins; obs_ins; pro_ins; sie_ins; sob_aut_ins; tip_ins,,est_ins: DECLARED=character varying(30); SQL=character varying(20),,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+institucion_procedencia,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+job_batches,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+jobs,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+kardex_categorias,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+kardex_estados,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+kardex_medidas,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+kardex_niveles,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+kardex_tipos,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+material_clase,True,False,cod_cla; cod_mat; cod_pub; cod_usu; created_at; est_mat; mime_mat; nom_mat; rut_mat; tam_mat; tip_mat; updated_at; url_mat,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+meta_academica_revisiones,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+metas_academicas,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+migrations,False,True,,batch; id; migration,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+model_has_permissions,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+model_has_roles,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+notifications,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+orientacion_actividades,True,False,avance; cod_est; cod_gea; created_at; estado; finalizado_at; id; iniciado_at; revisado_por; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+orientacion_carreras_sugeridas,True,False,area_profesional; areas_a_fortalecer; carrera; compatibilidad; created_at; fortalezas; id; orden; orientacion_resultado_id; razon; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+orientacion_preguntas,True,False,codigo; created_at; dimension; id; orden; texto; tipo; updated_at; visible,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+orientacion_respuestas,True,False,cod_est; created_at; id; orientacion_actividad_id; orientacion_pregunta_id; updated_at; valor_likert,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+orientacion_resultados,True,False,analitico_cientifico; cod_est; compatibilidad_principal; created_at; creativo_expresivo; estado; id; interpretacion; liderazgo_emprendimiento; organizativo_administrativo; orientacion_actividad_id; perfil_predominante; social_comunitario; tecnico_practico; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+paralelo,True,True,,cod_cur,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+password_reset_tokens,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+periodo_evaluacion,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+permissions,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+persona,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+personal_access_tokens,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+personal_institucional,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+plan_asignatura,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+plan_especialidad,True,False,cod_cur; cod_doc; cod_esp; cod_gea; cod_par; cod_pes; cod_tur; created_at; est_pes; hor_pes; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+plantilla_horaria,True,False,act_pho; cod_pho; cod_tur; created_at; des_pho; dur_blo_pho; est_pho; fec_fin_pho; fec_ini_pho; nom_pho; ord_pho; tip_pho; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+publicacion_clase,True,False,cod_cla; cod_pub; cod_usu; con_pub; created_at; est_pub; fec_pub; tip_pub; tit_pub; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+regente,True,False,cod_pin; cod_reg; created_at; est_reg; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+regente_asignaciones,True,False,activa; cod_cur; cod_gea; cod_reg; created_at; id; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+reportes_generados,True,False,codigo; created_at; estado; formato; generado_por; hash_archivo; id; nombre_archivo; observacion; ruta_archivo; tamano_bytes; tipo_reporte; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+respaldo_gestion_academica,True,False,cod_gea; cod_rga; created_at; est_rga; fec_rga; for_rga; has_rga; obs_rga; rut_rga; tam_rga; tip_rga; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+role_has_permissions,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+role_requests,True,False,analysis_result; created_at; created_role_id; director_id; document_analysis; document_hash; document_mime; document_original_name; document_path; document_size; functions; id; institutional_reason; justification; observations; requested_by; requested_name; requested_permissions; review_note; reviewed_at; reviewed_by; scope; status; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+roles,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+secretaria_general,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+seguimiento_academico,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+seguimiento_evidencias,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+seguimiento_revisiones,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+sessions,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+tarea,True,False,cod_cla; cod_doc; cod_tar; created_at; des_tar; est_tar; fec_lim_tar; fec_pub_tar; perm_ent_tardia; pun_max_tar; tip_tar; tit_tar; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+tarea_material,True,False,cod_tar; cod_tar_mat; created_at; est_tar_mat; mime_tar_mat; nom_tar_mat; rut_tar_mat; tam_tar_mat; tip_tar_mat; updated_at; url_tar_mat,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+tipo_vinculacion_estudiante,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+turno,True,True,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+unidades_clase,False,False,,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+user_status_logs,True,False,cod_usu; cod_usu_admin; created_at; est_usu; id; motivo; updated_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL
+users,True,True,auth_provider; avatar; est_usu; google_id; last_login_at,,,,Diferencia entre archivos; no prueba estado actual de PostgreSQL

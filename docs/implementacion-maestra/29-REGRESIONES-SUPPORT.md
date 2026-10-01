@@ -1,0 +1,21 @@
+# Regresiones y defectos preventivos revisados
+
+La clasificación distingue pérdida comprobada frente a HEAD de defectos que ya existían. No se atribuye al trabajo actual una eliminación que el diff no demuestra.
+
+| ID / prioridad | Support | Comportamiento original / caller | Cambio o defecto | Efecto | Corrección aplicada | Test | Estado |
+|---|---|---|---|---|---|---|---|
+| REG-SUP-001 / P1 | DocenteInteligente | analizarEspecialidad devolvía completitud 100/30; GestionDocente y su vista la consumían | El diff anterior reemplazó completitud por estado_especialidad y la vista eliminó el porcentaje | Contrato y asistencia visual degradados | Se reincorporó completitud y porcentaje; se conserva el nuevo estado adicional y se aclara que es un indicador preventivo | SupportPreventiveTest::test_docente_preserves_original_completeness_and_normalization | CORREGIDA |
+| DEF-SUP-002 / P0 | PersonaInteligente / GestionPersonas | Identidad, fecha futura y duplicidad generaban bloqueos; caller de edición ya contenía bypass en HEAD | Si la persona principal coincidía con el ID editado, se borraba todo bloqueos y se permitía guardar; ID editable dentro de formEditar | Un bloqueo distinto de duplicidad podía desaparecer y otra coincidencia quedar ocultada | Excluir solo el ID propio en todas las consultas, identidad Locked del servidor, conservar bloqueos; Policy y revisión final antes de validación/persistencia | SupportPreventiveTest::test_persona_edit_excludes_self_in_each_query_and_bounds_results; SupportLivewireIntegrationTest::test_edit_preserves_non_duplicate_blockers_and_uses_server_identity | CORREGIDO |
+| DEF-SUP-003 / P1 | GestionAcademicaInteligente / GestionAcademica | sugerirPeriodosEvaluacion es una ayuda local, no fechas persistidas por período | getPeriodosProperty mezclaba sugerencias con filas del catálogo global | Fechas estimadas/progreso se mostraban como registros reales | Catálogo muestra fechas no registradas; sugerencias originales permanecen en planificación | AcademicPeriodPresentationTest (2 casos); SupportPreventiveTest::test_gestion_invalid_range_blocks_while_suggestions_remain_distinct | CORREGIDO |
+
+Regresiones funcionales conocidas frente a HEAD: 1 detectada, 1 corregida, 0 abiertas. Defectos previos adicionales: 2 detectados y corregidos. P0 abiertas: 0; P1 abiertas: 0; P2 abiertas detectadas: 0, dentro del alcance de comparación/revisión documentado. QA visual y prueba con PostgreSQL siguen pendientes y no permiten afirmar ausencia universal de defectos.
+
+No se detectó eliminación de archivos Support originales ni pérdida de caller directo. No se hizo git restore/reset/clean/stash ni reemplazo masivo de carpetas. Workspaces, Services, Policies, scopes, rutas, mejoras LMS, tema y seis migrations propuestas permanecen.
+
+## Pruebas de regresión — subconjunto, no suma al total
+
+Subconjunto de 8 casos: SupportPreventiveTest::test_docente_preserves_original_completeness_and_normalization y ::test_persona_edit_excludes_self_in_each_query_and_bounds_results; los cuatro primeros casos de SupportLivewireIntegrationTest (fecha futura, duplicado, sugerencia, edición); los dos casos de AcademicPeriodPresentationTest. Los tests usan dobles en la frontera de consultas/transacción; no acreditan escrituras reales. No se suman otra vez al total de PHPUnit.
+
+## Continuación del cierre de PARTIALS
+
+Después de preservar Support se corrigió la escritura pedagógica expuesta a Secretaría en V051/V053; se mantuvieron las URLs en solo lectura. V051 incorpora nivel registrado, paralelo/turno/gestión correlacionados en un mismo plan y drawer mínimo; V053 estado, franja y drawer de turno/plantillas. Consultas institucionales usan filtros Livewire, contexto en URL, paginación de 20 y dependencias que se limpian al cambiar gestión. Los drawers reautorizan apertura/render, muestran empty y datos limitados, y preparan Escape/foco/teclado. V079 incorpora Support en la creación docente de notas oficiales, separada de notas LMS; tests rechazan estudiante ajeno antes de Support. Las metas V102 permiten validar borrador sin guardar, con estados de creación restringidos y errores que desaparecen al corregir; la persistencia sigue bloqueada por MIG-004. La campana presenta un fallback comprensible sin badge inventado. Ninguno de estos cambios certifica por sí solo PASS integral de la ventana.

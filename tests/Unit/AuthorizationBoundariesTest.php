@@ -3,6 +3,9 @@
 namespace Tests\Unit;
 
 use App\Http\Middleware\EnsureActorRole;
+use App\Livewire\Admin\GestionPersonas;
+use App\Livewire\Admin\GestionUsuarios;
+use App\Livewire\InstitutionalAuthorization;
 use App\Models\Curso;
 use App\Models\Estudiante;
 use App\Models\User;
@@ -21,19 +24,16 @@ class AuthorizationBoundariesTest extends TestCase
         $user = Mockery::mock(User::class)->makePartial();
         $user->est_usu = 'ACTIVO';
         $user->shouldReceive('hasAnyRole')->andReturn(false);
-        $user->shouldReceive('hasRole')->with('Estudiante')->andReturn(false);
-        $user->shouldReceive('hasRole')->with('Docente')->andReturn(false);
-        $user->shouldReceive('hasRole')->with('Administrador')->andReturn(false);
-        $user->shouldReceive('hasRole')->with('Regente')->andReturn(false);
+        $user->shouldReceive('hasRole')->andReturn(false);
         $courses = Mockery::mock(CursoVirtualService::class);
         $courses->shouldNotReceive('docenteDeUsuario');
         $courses->shouldNotReceive('estudianteDeUsuario');
         $service = new AcademicAccessService($courses);
 
-        $this->assertFalse($service->canViewStudent($user, new Estudiante()));
-        $this->assertFalse($service->canViewCourse($user, new Curso()));
+        $this->assertFalse($service->canViewStudent($user, new Estudiante));
+        $this->assertFalse($service->canViewCourse($user, new Curso));
         $this->assertFalse($service->canManageGrade($user, 'EST_1', 'ASI_1'));
-        $this->assertSame([], (new InstitutionalDashboardService())->for('Regente')['metrics']);
+        $this->assertSame([], (new InstitutionalDashboardService)->for('Regente')['metrics']);
     }
 
     public function test_student_cannot_read_another_student(): void
@@ -41,7 +41,7 @@ class AuthorizationBoundariesTest extends TestCase
         $user = Mockery::mock(User::class)->makePartial();
         $user->est_usu = 'ACTIVO';
         $user->shouldReceive('hasAnyRole')->andReturn(false);
-        $user->shouldReceive('hasRole')->with('Estudiante')->andReturn(true);
+        $user->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Estudiante');
         $user->shouldReceive('canAny')->andReturn(true);
         $courses = Mockery::mock(CursoVirtualService::class);
         $courses->shouldReceive('estudianteDeUsuario')->with($user)->andReturn(new Estudiante(['cod_est' => 'EST_A']));
@@ -58,7 +58,7 @@ class AuthorizationBoundariesTest extends TestCase
         $request->setUserResolver(fn () => $user);
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage('No tienes autorización');
-        (new EnsureActorRole())->handle($request, fn () => response('No debe ejecutarse'), 'Administrador');
+        (new EnsureActorRole)->handle($request, fn () => response('No debe ejecutarse'), 'Administrador');
     }
 
     public function test_unlinked_user_cannot_resolve_null_person_profiles(): void
@@ -67,7 +67,7 @@ class AuthorizationBoundariesTest extends TestCase
         $user->shouldReceive('hasRole')->andReturn(true);
         $user->cod_per = null;
         $user->est_usu = 'ACTIVO';
-        $courses = new CursoVirtualService();
+        $courses = new CursoVirtualService;
         $this->assertNull($courses->estudianteDeUsuario($user));
         $this->assertNull($courses->docenteDeUsuario($user));
     }
@@ -76,11 +76,10 @@ class AuthorizationBoundariesTest extends TestCase
     {
         $user = Mockery::mock(User::class)->makePartial();
         $user->est_usu = 'ACTIVO';
-        $user->shouldReceive('hasRole')->with('Administrador')->andReturn(false);
-        $user->shouldReceive('hasRole')->with('Secretaria')->andReturn(true);
+        $user->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Secretaria');
         auth()->setUser($user);
-        $hook = new \App\Livewire\InstitutionalAuthorization();
-        $hook->setComponent(new \App\Livewire\Admin\GestionUsuarios());
+        $hook = new InstitutionalAuthorization;
+        $hook->setComponent(new GestionUsuarios);
         $this->expectException(HttpException::class);
         $hook->call('guardarUsuario', [], fn () => null);
     }
@@ -89,11 +88,11 @@ class AuthorizationBoundariesTest extends TestCase
     {
         $user = Mockery::mock(User::class)->makePartial();
         $user->est_usu = 'ACTIVO';
-        $user->shouldReceive('hasRole')->with('Administrador')->andReturn(true);
+        $user->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Administrador');
         $user->shouldReceive('can')->with('Registro_Personas')->andReturn(false);
         auth()->setUser($user);
-        $hook = new \App\Livewire\InstitutionalAuthorization();
-        $hook->setComponent(new \App\Livewire\Admin\GestionPersonas());
+        $hook = new InstitutionalAuthorization;
+        $hook->setComponent(new GestionPersonas);
         $this->expectException(HttpException::class);
         $hook->call('guardarPersona', [], fn () => null);
     }

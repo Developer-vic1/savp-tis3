@@ -42,10 +42,13 @@ return [
     ],
 
     'peter3' => [
+        // Solo se habilita tras aprobar el contrato y el entorno de integración.
+        'enabled' => env('PETER3_ENABLED', false),
         'url' => env('PETER3_API_URL'),
         'connect_timeout' => (int) env('PETER3_CONNECT_TIMEOUT', 3),
         'timeout' => (int) env('PETER3_TIMEOUT', 10),
         'version' => env('PETER3_API_VERSION', 'v1'),
+        'key' => env('PETER3_API_KEY'),
         'paths' => [
             'health' => env('PETER3_HEALTH_PATH', '/health'),
             'analysis' => env('PETER3_ANALYSIS_PATH'),

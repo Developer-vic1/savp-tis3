@@ -13,20 +13,25 @@ use PHPUnit\Framework\TestCase;
 
 class RoleRequestAuthorizationTest extends TestCase
 {
-    protected function tearDown(): void { Mockery::close(); parent::tearDown(); }
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
+    }
 
     private function service(): RoleRequestService
     {
-        return new RoleRequestService(new InstitutionalRoleGovernance(), new InstitutionalAuthorityService(), new InstitutionalDocumentAnalyzer());
+        return new RoleRequestService(new InstitutionalRoleGovernance, new InstitutionalAuthorityService, new InstitutionalDocumentAnalyzer);
     }
 
     private function actor(bool $admin, bool $module, bool $operation, string $status = 'ACTIVO'): User
     {
         $actor = Mockery::mock(User::class)->makePartial();
         $actor->est_usu = $status;
-        $actor->shouldReceive('hasRole')->with('Administrador')->andReturn($admin);
+        $actor->shouldReceive('hasRole')->andReturnUsing(fn ($role) => $role === 'Administrador' && $admin);
         $actor->shouldReceive('can')->with('roles-permisos.gestionar')->andReturn($module);
         $actor->shouldReceive('can')->with('roles.solicitudes.crear')->andReturn($operation);
+
         return $actor;
     }
 
