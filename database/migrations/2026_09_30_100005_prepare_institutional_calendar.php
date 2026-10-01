@@ -38,7 +38,7 @@ return new class extends Migration
             $table->index('created_by');
         });
         Schema::table('calendario_evento', fn (Blueprint $table) => $table->foreign('cod_cae_ori')->references('cod_cae')->on('calendario_evento')->restrictOnDelete()->cascadeOnUpdate());
-        DB::statement("ALTER TABLE calendario_evento ADD CONSTRAINT calendar_event_content_check CHECK (ffi_cae >= fii_cae AND ((hoi_cae IS NULL AND hof_cae IS NULL) OR (hoi_cae IS NOT NULL AND hof_cae IS NOT NULL AND hof_cae > hoi_cae)) AND (cod_par IS NULL OR cod_cur IS NOT NULL) AND (cod_cae_ori IS NULL OR cod_cae_ori <> cod_cae) AND est_cae IN ('PREALERTA','CONFIRMADO','CANCELADO','FINALIZADO') AND efe_cae IN ('INFORMATIVO','SIN_CLASES','SUSPENSION_PARCIAL','INGRESO_DIFERIDO','SALIDA_ANTICIPADA','HORARIO_AJUSTADO','RECUPERACION','ACTIVIDAD_INSTITUCIONAL') AND NULLIF(TRIM(mot_cae), '') IS NOT NULL)");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE calendario_evento ADD CONSTRAINT calendar_event_content_check CHECK (ffi_cae >= fii_cae AND ((hoi_cae IS NULL AND hof_cae IS NULL) OR (hoi_cae IS NOT NULL AND hof_cae IS NOT NULL AND hof_cae > hoi_cae)) AND (cod_par IS NULL OR cod_cur IS NOT NULL) AND (cod_cae_ori IS NULL OR cod_cae_ori <> cod_cae) AND est_cae IN ('PREALERTA','CONFIRMADO','CANCELADO','FINALIZADO') AND efe_cae IN ('INFORMATIVO','SIN_CLASES','SUSPENSION_PARCIAL','INGRESO_DIFERIDO','SALIDA_ANTICIPADA','HORARIO_AJUSTADO','RECUPERACION','ACTIVIDAD_INSTITUCIONAL') AND NULLIF(TRIM(mot_cae), '') IS NOT NULL)");
         Schema::create('calendario_evento_revisiones', function (Blueprint $table) {
             $table->id();
             $table->string('cod_cae', 20);
@@ -51,7 +51,7 @@ return new class extends Migration
             $table->index(['cod_cae', 'created_at']);
             $table->index('cod_usu');
         });
-        DB::statement("ALTER TABLE calendario_evento_revisiones ADD CONSTRAINT calendar_event_revision_check CHECK (NULLIF(TRIM(motivo), '') IS NOT NULL AND jsonb_typeof(datos) = 'object')");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE calendario_evento_revisiones ADD CONSTRAINT calendar_event_revision_check CHECK (NULLIF(TRIM(motivo), '') IS NOT NULL AND jsonb_typeof(datos) = 'object')");
     }
 
     public function down(): void

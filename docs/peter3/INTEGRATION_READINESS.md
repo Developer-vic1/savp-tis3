@@ -1,3 +1,5 @@
+> **Estado histórico previo a Fusion_Sistema.** Para la procedencia corregida, métricas actuales e integración Laravel/FastAPI validada el 2026-10-01, consultar [FUSION_VALIDATION.md](FUSION_VALIDATION.md) y [FUSION_INTEGRATION.md](FUSION_INTEGRATION.md). Los resultados de este documento se conservan como antecedentes.
+
 # Preparación de integración — PETER 3
 
 Revalidación del 2026-10-01 en `work/peter3-mejoras-fase2`.

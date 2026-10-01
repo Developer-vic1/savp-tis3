@@ -1,0 +1,10 @@
+{
+  "fixture_classification": "ISOLATED_TEST_DATA",
+  "status": "PASS",
+  "login": true,
+  "persistence": true,
+  "riasec_trace_id": "baf132aa-cadb-4317-b7b0-899be269f836",
+  "analysis_trace_id": "28737627-63e1-44b8-9fae-ad7172f382de",
+  "corpus_version": "bo-official-corpus-1.0.0",
+  "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde"
+}

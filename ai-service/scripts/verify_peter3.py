@@ -16,7 +16,7 @@ GATES = (
     ("Recommendation V2 invariants", [sys.executable, "scripts/evaluate_recommendation_v2.py"]),
     ("prompt scenarios", [sys.executable, "scripts/evaluate_prompts.py"]),
     ("pytest, including E2E and HTTP contracts", [sys.executable, "-m", "pytest"]),
-    ("real HTTP smoke", [sys.executable, "scripts/smoke_http.py"]),
+    ("in-process HTTP contract smoke", [sys.executable, "scripts/smoke_http.py"]),
     ("ruff", [sys.executable, "-m", "ruff", "check", "."]),
     ("mypy production and scripts", [sys.executable, "-m", "mypy", "app", "scripts"]),
     ("mypy repository", [sys.executable, "-m", "mypy", "."]),
@@ -30,7 +30,7 @@ def main() -> int:
         print(f"\n=== {name} ===", flush=True)
         timeout_seconds = 900 if name in {
             "pytest, including E2E and HTTP contracts",
-            "real HTTP smoke",
+            "in-process HTTP contract smoke",
         } else 300
         try:
             result = subprocess.run(command, cwd=ROOT, check=False, timeout=timeout_seconds)

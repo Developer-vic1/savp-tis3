@@ -15,11 +15,11 @@ return new class extends Migration
             $table->foreign('cod_est')->references('cod_est')->on('estudiante')->restrictOnDelete()->cascadeOnUpdate();
             $table->index(['cod_est', 'est_cal'], 'calificacion_student_state_idx');
         });
-        DB::statement('ALTER TABLE calificacion ADD CONSTRAINT academic_official_score_check CHECK (not_cal >= 0 AND not_cal <= 100) NOT VALID');
-        DB::statement('ALTER TABLE tarea ADD CONSTRAINT lms_task_maximum_check CHECK (pun_max_tar >= 1 AND pun_max_tar <= 1000) NOT VALID');
-        DB::statement('ALTER TABLE calificacion_tarea ADD CONSTRAINT lms_submission_score_check CHECK (pun_max > 0 AND pun_obt >= 0 AND pun_obt <= pun_max) NOT VALID');
-        DB::statement('ALTER TABLE orientacion_respuestas ADD CONSTRAINT local_orientation_likert_check CHECK (valor_likert BETWEEN 1 AND 5) NOT VALID');
-        DB::statement('ALTER TABLE orientacion_actividades ADD CONSTRAINT local_orientation_progress_check CHECK (avance BETWEEN 0 AND 100) NOT VALID');
+        \App\Support\PortableCheckConstraint::statement('ALTER TABLE calificacion ADD CONSTRAINT academic_official_score_check CHECK (not_cal >= 0 AND not_cal <= 100) NOT VALID');
+        \App\Support\PortableCheckConstraint::statement('ALTER TABLE tarea ADD CONSTRAINT lms_task_maximum_check CHECK (pun_max_tar >= 1 AND pun_max_tar <= 1000) NOT VALID');
+        \App\Support\PortableCheckConstraint::statement('ALTER TABLE calificacion_tarea ADD CONSTRAINT lms_submission_score_check CHECK (pun_max > 0 AND pun_obt >= 0 AND pun_obt <= pun_max) NOT VALID');
+        \App\Support\PortableCheckConstraint::statement('ALTER TABLE orientacion_respuestas ADD CONSTRAINT local_orientation_likert_check CHECK (valor_likert BETWEEN 1 AND 5) NOT VALID');
+        \App\Support\PortableCheckConstraint::statement('ALTER TABLE orientacion_actividades ADD CONSTRAINT local_orientation_progress_check CHECK (avance BETWEEN 0 AND 100) NOT VALID');
     }
 
     public function down(): void
@@ -27,7 +27,7 @@ return new class extends Migration
         foreach (['calificacion' => 'academic_official_score_check', 'tarea' => 'lms_task_maximum_check',
             'calificacion_tarea' => 'lms_submission_score_check', 'orientacion_respuestas' => 'local_orientation_likert_check',
             'orientacion_actividades' => 'local_orientation_progress_check'] as $table => $constraint) {
-            DB::statement("ALTER TABLE {$table} DROP CONSTRAINT {$constraint}");
+            \App\Support\PortableCheckConstraint::statement("ALTER TABLE {$table} DROP CONSTRAINT {$constraint}");
         }
         Schema::table('calificacion', function (Blueprint $table) {
             $table->dropIndex('calificacion_student_state_idx');

@@ -70,7 +70,7 @@ final class WorkspaceNavigation
         'docente.cursos' => ['aula-virtual.docente.cursos', 'aula-virtual.docente.curso', 'docente.curso', 'docente.cursos.calificaciones'],
         'estudiante.materias' => ['aula-virtual.estudiante.asignaturas', 'aula-virtual.estudiante.curso', 'estudiante.materia'],
         'estudiante.asistencia' => ['aula-virtual.estudiante.asistencia'],
-        'estudiante.intereses' => ['aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados'],
+        'estudiante.intereses' => ['aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados', 'aula-virtual.estudiante.orientacion.peter3', 'aula-virtual.estudiante.orientacion.peter3.score', 'aula-virtual.estudiante.orientacion.peter3.analysis', 'aula-virtual.estudiante.orientacion.peter3.query'],
     ];
 
     public static function groupIcon(string $group): string

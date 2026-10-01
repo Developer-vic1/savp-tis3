@@ -1,12 +1,12 @@
 from typing import Literal
 
 from fastapi import APIRouter, Depends, Request
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict
 
 from app.api.dependencies import verify_api_key
-from app.contracts.requests import RiasecResponse, VocationalData
 from app.riasec.instrument import load_instrument
-from app.riasec.scoring import official_web_value_to_internal, score_riasec
+from app.riasec.public_contract import PublicRiasecData
+from app.riasec.scoring import score_riasec
 
 router = APIRouter(
     prefix="/api/v2/riasec", tags=["riasec-v2"], dependencies=[Depends(verify_api_key)]
@@ -17,14 +17,8 @@ class ApiModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class PublicResponse(ApiModel):
-    item_id: int = Field(ge=1, le=30)
-    value: int = Field(strict=True, ge=1, le=5)
-
-
-class ScoreRequest(ApiModel):
-    instrument_version: str = Field(min_length=1, max_length=80)
-    responses: list[PublicResponse] = Field(min_length=30, max_length=30)
+class ScoreRequest(PublicRiasecData):
+    pass
 
 
 class InstrumentItem(ApiModel):
@@ -102,19 +96,7 @@ def instrument() -> InstrumentResponse:
 
 @router.post("/score", response_model=ScoreResponse)
 def score(payload: ScoreRequest, request: Request) -> ScoreResponse:
-    data = load_instrument()
-    vocational = VocationalData(
-        instrument_id=data["instrument_id"],
-        instrument_version=payload.instrument_version,
-        responses=[
-            RiasecResponse(
-                item_id=item.item_id,
-                value=official_web_value_to_internal(item.value),
-            )
-            for item in payload.responses
-        ],
-    )
-    result = score_riasec(vocational)
+    result = score_riasec(payload.to_vocational())
     return ScoreResponse(
         instrument_version=result.instrument_version,
         scores=result.scores,

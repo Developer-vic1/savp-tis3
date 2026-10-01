@@ -1,0 +1,19 @@
+{
+  "command": "php artisan test --compact; process-only PHP_INI_SCAN_DIR enabling existing pdo_sqlite; PETER3_REAL_E2E=1",
+  "total": 243,
+  "passed": 236,
+  "skipped": 7,
+  "failed": 0,
+  "assertions": 760,
+  "database": ":memory: SQLite guarded before migrations",
+  "skipped_cases": [
+    "test_api_token_permissions_can_be_updated",
+    "test_api_tokens_can_be_created",
+    "test_api_tokens_can_be_deleted",
+    "test_email_verification_screen_can_be_rendered",
+    "test_email_can_be_verified",
+    "test_email_can_not_verified_with_invalid_hash",
+    "test_registration_screen_cannot_be_rendered_if_support_is_disabled"
+  ],
+  "skip_reason": "Features disabled: API tokens, email verification; registration-disabled case skipped because registration feature is enabled."
+}

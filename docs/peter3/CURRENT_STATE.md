@@ -1,3 +1,5 @@
+> **Estado histórico previo a Fusion_Sistema.** Para la procedencia corregida, métricas actuales e integración Laravel/FastAPI validada el 2026-10-01, consultar [FUSION_VALIDATION.md](FUSION_VALIDATION.md) y [FUSION_INTEGRATION.md](FUSION_INTEGRATION.md). Los resultados de este documento se conservan como antecedentes.
+
 > **Nota histórica (2026-09-30):** Este documento describe la línea base de esa fecha. El estado vigente de corpus, FAISS y gates está en `FINAL_STATUS.md`.
 
 # Estado actual de PETER 3

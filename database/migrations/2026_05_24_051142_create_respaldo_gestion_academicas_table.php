@@ -41,19 +41,19 @@ return new class extends Migration
             $table->index('fec_rga', 'respaldo_gestion_fec_rga_index');
         });
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE respaldo_gestion_academica
             ADD CONSTRAINT respaldo_gestion_tip_check
             CHECK (tip_rga IN ('PRELIMINAR', 'CIERRE', 'AUDITORIA', 'RECUPERACION'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE respaldo_gestion_academica
             ADD CONSTRAINT respaldo_gestion_for_check
             CHECK (for_rga IN ('ZIP', 'PDF', 'XLSX', 'JSON'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE respaldo_gestion_academica
             ADD CONSTRAINT respaldo_gestion_est_check
             CHECK (est_rga IN ('GENERADO', 'VALIDADO', 'OBSERVADO', 'ARCHIVADO', 'ANULADO'))

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->index(['cod_cla', 'publicada', 'archivada_at']);
             $table->index('created_by');
         });
-        DB::statement("ALTER TABLE unidades_clase ADD CONSTRAINT units_content_check CHECK (orden > 0 AND NULLIF(TRIM(titulo), '') IS NOT NULL AND (archivada_at IS NULL OR NOT publicada))");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE unidades_clase ADD CONSTRAINT units_content_check CHECK (orden > 0 AND NULLIF(TRIM(titulo), '') IS NOT NULL AND (archivada_at IS NULL OR NOT publicada))");
         foreach (['material_clase', 'tarea', 'publicacion_clase'] as $name) {
             Schema::table($name, function (Blueprint $table) use ($name) {
                 $table->unsignedBigInteger('unidad_id')->nullable();

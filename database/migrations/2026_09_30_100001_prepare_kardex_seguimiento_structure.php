@@ -23,7 +23,7 @@ return new class extends Migration
                 $table->primary(['codigo', 'version']);
                 $table->index(['version', 'activo']);
             });
-            DB::statement("ALTER TABLE {$name} ADD CONSTRAINT {$name}_version_check CHECK (version > 0)");
+            \App\Support\PortableCheckConstraint::statement("ALTER TABLE {$name} ADD CONSTRAINT {$name}_version_check CHECK (version > 0)");
         }
         // PK cod_pas ya evita duplicados; esta clave permite validar contexto compuesto por FK.
         Schema::table('plan_asignatura', function (Blueprint $table) {
@@ -69,7 +69,7 @@ return new class extends Migration
                 $table->index([$field, 'version_catalogo']);
             }
         });
-        DB::statement("ALTER TABLE seguimiento_academico ADD CONSTRAINT seguimiento_domain_check CHECK (version_catalogo > 0 AND NULLIF(TRIM(mot_seg), '') IS NOT NULL AND vis_seg IN ('NORMAL','RESTRINGIDO') AND (NOT visible_estudiante OR vis_seg = 'NORMAL') AND (fec_pro_seg IS NULL OR fec_pro_seg >= fec_ape_seg) AND (fec_cie_seg IS NULL OR fec_cie_seg >= fec_ape_seg))");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE seguimiento_academico ADD CONSTRAINT seguimiento_domain_check CHECK (version_catalogo > 0 AND NULLIF(TRIM(mot_seg), '') IS NOT NULL AND vis_seg IN ('NORMAL','RESTRINGIDO') AND (NOT visible_estudiante OR vis_seg = 'NORMAL') AND (fec_pro_seg IS NULL OR fec_pro_seg >= fec_ape_seg) AND (fec_cie_seg IS NULL OR fec_cie_seg >= fec_ape_seg))");
         Schema::create('seguimiento_revisiones', function (Blueprint $table) {
             $table->id();
             $table->string('cod_seg', 20);
@@ -83,7 +83,7 @@ return new class extends Migration
             $table->index(['cod_seg', 'created_at']);
             $table->index('cod_usu');
         });
-        DB::statement("ALTER TABLE seguimiento_revisiones ADD CONSTRAINT seguimiento_revision_check CHECK (tipo IN ('RECTIFICACION','ANULACION','CAMBIO_ESTADO','SEGUIMIENTO') AND NULLIF(TRIM(motivo), '') IS NOT NULL AND jsonb_typeof(datos) = 'object')");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE seguimiento_revisiones ADD CONSTRAINT seguimiento_revision_check CHECK (tipo IN ('RECTIFICACION','ANULACION','CAMBIO_ESTADO','SEGUIMIENTO') AND NULLIF(TRIM(motivo), '') IS NOT NULL AND jsonb_typeof(datos) = 'object')");
         Schema::create('seguimiento_evidencias', function (Blueprint $table) {
             $table->id();
             $table->string('cod_seg', 20);
@@ -99,7 +99,7 @@ return new class extends Migration
             $table->index(['cod_seg', 'created_at']);
             $table->index('cod_usu');
         });
-        DB::statement("ALTER TABLE seguimiento_evidencias ADD CONSTRAINT seguimiento_evidence_check CHECK (bytes > 0 AND sha256 ~ '^[a-f0-9]{64}$' AND ruta LIKE 'kardex/%')");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE seguimiento_evidencias ADD CONSTRAINT seguimiento_evidence_check CHECK (bytes > 0 AND sha256 ~ '^[a-f0-9]{64}$' AND ruta LIKE 'kardex/%')");
     }
 
     public function down(): void

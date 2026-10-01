@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Awaitable, Callable
+from time import perf_counter
 from typing import Any
 from uuid import uuid4
 
@@ -25,8 +26,10 @@ class TraceIdMiddleware(BaseHTTPMiddleware):
         call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         request.state.trace_id = str(uuid4())
+        started = perf_counter()
         response = await call_next(request)
         response.headers["X-Trace-Id"] = request.state.trace_id
+        response.headers["Server-Timing"] = f"app;dur={(perf_counter() - started) * 1000:.3f}"
         return response
 
 

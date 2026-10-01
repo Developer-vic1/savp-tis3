@@ -23,7 +23,7 @@ return new class extends Migration
             $table->index(['notifiable_type', 'notifiable_id', 'read_at', 'created_at'], 'notifications_recipient_unread_idx');
             $table->unique(['notifiable_id', 'event_key'], 'notifications_recipient_event_unique');
         });
-        DB::statement("ALTER TABLE notifications ADD CONSTRAINT notification_payload_check CHECK (jsonb_typeof(data) = 'object')");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE notifications ADD CONSTRAINT notification_payload_check CHECK (jsonb_typeof(data) = 'object')");
     }
 
     public function down(): void

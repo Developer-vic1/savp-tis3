@@ -103,7 +103,7 @@ return new class extends Migration
                 ->cascadeOnUpdate();
         });
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE inscripcion_estudiante
             ADD CONSTRAINT inscripcion_tip_check
             CHECK (tip_ins IN (
@@ -117,7 +117,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE inscripcion_estudiante
             ADD CONSTRAINT inscripcion_con_check
             CHECK (con_ins IN (
@@ -130,7 +130,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE inscripcion_estudiante
             ADD CONSTRAINT inscripcion_est_check
             CHECK (est_ins IN (
@@ -144,7 +144,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE inscripcion_estudiante
             ADD CONSTRAINT inscripcion_esp_tec_est_check
             CHECK (est_esp_tec_ins IN (
@@ -156,7 +156,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE inscripcion_estudiante
             ADD CONSTRAINT inscripcion_fechas_estado_check
             CHECK (

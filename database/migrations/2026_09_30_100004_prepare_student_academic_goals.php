@@ -28,7 +28,7 @@ return new class extends Migration
             $table->index('cod_gea');
             $table->index('created_by');
         });
-        DB::statement("ALTER TABLE metas_academicas ADD CONSTRAINT academic_goal_content_check CHECK (estado IN ('BORRADOR','ACTIVA','COMPLETADA','CANCELADA') AND NULLIF(TRIM(titulo), '') IS NOT NULL AND NULLIF(TRIM(objetivo), '') IS NOT NULL)");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE metas_academicas ADD CONSTRAINT academic_goal_content_check CHECK (estado IN ('BORRADOR','ACTIVA','COMPLETADA','CANCELADA') AND NULLIF(TRIM(titulo), '') IS NOT NULL AND NULLIF(TRIM(objetivo), '') IS NOT NULL)");
         Schema::create('meta_academica_revisiones', function (Blueprint $table) {
             $table->id();
             $table->uuid('meta_id');
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->index(['meta_id', 'created_at']);
             $table->index('cod_usu');
         });
-        DB::statement("ALTER TABLE meta_academica_revisiones ADD CONSTRAINT academic_goal_revision_check CHECK (NULLIF(TRIM(motivo), '') IS NOT NULL AND jsonb_typeof(datos) = 'object')");
+        \App\Support\PortableCheckConstraint::statement("ALTER TABLE meta_academica_revisiones ADD CONSTRAINT academic_goal_revision_check CHECK (NULLIF(TRIM(motivo), '') IS NOT NULL AND jsonb_typeof(datos) = 'object')");
     }
 
     public function down(): void

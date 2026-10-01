@@ -21,8 +21,12 @@ wire y lo normaliza al tipo explícito `DeclaredInterest`. `history` usa
 `HistoricalAcademicPeriod`. Campos desconocidos producen 422 porque los modelos usan
 `extra="forbid"`.
 
-RIASEC requiere exactamente 30 respuestas únicas con valor entero 0–4 cuando el bloque está
-presente. Un bloque ausente no es un instrumento con cero respuestas.
+El bloque legacy `vocational` requiere 30 respuestas únicas con valor entero 0–4. Desde
+Fusion_Sistema también se acepta `riasec_public` con `instrument_version` y 30 respuestas
+`item_id`/`value` en escala pública 1–5. Peter 3 valida y transforma mediante el mismo adaptador
+usado por `/api/v2/riasec/score`; Laravel no transforma la escala. Ambos bloques juntos producen
+422. Un bloque ausente no es un instrumento con cero respuestas.
+Detalles y prueba de integración: [FUSION_INTEGRATION.md](FUSION_INTEGRATION.md).
 
 ## Response
 

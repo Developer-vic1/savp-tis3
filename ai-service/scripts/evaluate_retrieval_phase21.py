@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import math
+import platform
 from datetime import UTC, datetime
 from pathlib import Path
 from statistics import median
@@ -131,6 +132,7 @@ def evaluate_split(split: str) -> None:
             "dataset_version": dataset["dataset_version"],
             "corpus_sha256": corpus_sha(),
             "evaluated_at": datetime.now(UTC).isoformat(),
+            "environment": {"python": platform.python_version(), "platform": platform.platform()},
             "query_count": len(dataset["queries"]),
             "models": results,
         },
@@ -165,6 +167,7 @@ def freeze(model_id: str) -> None:
         "corpus_sha256": corpus_sha(),
         "dev_result_sha256": hashlib.sha256(DEV_RESULT.read_bytes()).hexdigest(),
         "frozen_at": datetime.now(UTC).isoformat(),
+        "environment": {"python": platform.python_version(), "platform": platform.platform()},
         "parameters": {
             "top_k": 10,
             "rrf_k": RRF_K,

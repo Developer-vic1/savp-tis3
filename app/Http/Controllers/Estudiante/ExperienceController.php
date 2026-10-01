@@ -23,6 +23,12 @@ class ExperienceController extends Controller
     public function show(Request $request, string $area, CursoVirtualService $courses)
     {
         abort_unless(isset(self::AREAS[$area]), 404);
+        if (in_array($area, ['futuro', 'preparacion', 'asistente'], true)) {
+            abort_unless($request->user()->can('Orientacion_Academica_Profesional'), 403);
+            return redirect()->route('aula-virtual.estudiante.orientacion.peter3', ['section' => match ($area) {
+                'futuro' => 'analisis', 'asistente' => 'tutor', default => 'perfil',
+            }]);
+        }
         $permission = match ($area) {
             'progreso' => 'calificaciones.ver.propias',
             'futuro' => 'Orientacion_Academica_Profesional',

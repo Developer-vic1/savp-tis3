@@ -33,6 +33,9 @@
             </section>
             @endif
         @elseif($area === 'fuentes')
+            @can('Orientacion_Academica_Profesional')
+                <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Fuentes para explorar carreras</h2><a class="ui-btn-primary mt-4" href="{{ route('aula-virtual.estudiante.orientacion.peter3', ['section'=>'fuentes']) }}">Consultar fuentes de orientación</a></section>
+            @endcan
             <livewire:shared.academic-sources />
             <section class="ui-panel"><h2 class="ui-title text-xl font-black">Materiales publicados en mis materias</h2>
                 @forelse($materials ?? [] as $material)<p class="ui-muted mt-3">{{ $material->nom_mat }} · <a class="underline" href="{{ route('aula-virtual.estudiante.curso', $material->cod_cla) }}">Abrir materia</a></p>@empty<p class="ui-muted mt-3">Todavía no hay materiales publicados disponibles.</p>@endforelse

@@ -261,43 +261,43 @@ return new class extends Migration
         | CHECK CONSTRAINTS PARA POSTGRESQL
         |--------------------------------------------------------------------------
         */
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario
             ADD CONSTRAINT horario_estado_check
             CHECK (est_hor IN ('ACTIVO', 'INACTIVO', 'PLANIFICADO', 'ARCHIVADO'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario_bloque
             ADD CONSTRAINT horario_bloque_horas_check
             CHECK (hor_fin_hbl > hor_ini_hbl)
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario_bloque
             ADD CONSTRAINT horario_bloque_tipo_check
             CHECK (tip_hbl IN ('CLASE', 'RECREO', 'DESCANSO', 'FORMACION', 'SALIDA', 'OTRO'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario_bloque
             ADD CONSTRAINT horario_bloque_estado_check
             CHECK (est_hbl IN ('ACTIVO', 'INACTIVO'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario_detalle
             ADD CONSTRAINT horario_detalle_dia_check
             CHECK (dia_hde IN ('LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario_detalle
             ADD CONSTRAINT horario_detalle_estado_check
             CHECK (est_hde IN ('ACTIVO', 'INACTIVO', 'SUSPENDIDO'))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE horario_detalle
             ADD CONSTRAINT horario_detalle_plan_check
             CHECK (

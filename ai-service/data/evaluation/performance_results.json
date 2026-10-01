@@ -1,18 +1,18 @@
 {
   "benchmark_id": "peter3-performance-phase21",
-  "measured_at": "2026-10-01T09:12:18.061056+00:00",
+  "measured_at": "2026-10-01T18:13:37.670091+00:00",
   "scope": "LOCAL_CPU_WARM_PROCESS_REAL_SELECTED_INDEX",
   "fixture_classification": "SYNTHETIC_TEST_FIXTURE",
   "timing_clock": "time.perf_counter",
   "warmup_per_operation": 1,
   "environment": {
-    "host": "VicDev",
+    "host": "LAPTOP-04CORQDR",
     "platform": "Windows-11-10.0.26200-SP0",
-    "python": "3.12.10",
-    "processor": "AMD64 Family 23 Model 160 Stepping 0, AuthenticAMD",
-    "logical_cpu_count": 8,
-    "physical_cpu_count": 4,
-    "memory_total_bytes": 6255276032,
+    "python": "3.14.0",
+    "processor": "AMD64 Family 25 Model 117 Stepping 2, AuthenticAMD",
+    "logical_cpu_count": 16,
+    "physical_cpu_count": 8,
+    "memory_total_bytes": 16435761152,
     "embedding_device": "cpu",
     "corpus_version": "bo-official-corpus-1.0.0",
     "embedding_model": "intfloat/multilingual-e5-small",
@@ -21,31 +21,31 @@
   "results": {
     "analysis_v2": {
       "repetitions": 20,
-      "median_ms": 7.841,
-      "p95_ms": 12.336,
-      "minimum_ms": 5.585,
-      "maximum_ms": 37.127
+      "median_ms": 8.13,
+      "p95_ms": 10.061,
+      "minimum_ms": 7.54,
+      "maximum_ms": 11.798
     },
     "retrieval_hybrid": {
       "repetitions": 20,
-      "median_ms": 54.345,
-      "p95_ms": 59.873,
-      "minimum_ms": 45.112,
-      "maximum_ms": 63.545
+      "median_ms": 49.515,
+      "p95_ms": 59.571,
+      "minimum_ms": 44.222,
+      "maximum_ms": 147.081
     },
     "tutor_structured_with_retrieval": {
       "repetitions": 20,
-      "median_ms": 60.122,
-      "p95_ms": 70.972,
-      "minimum_ms": 56.0,
-      "maximum_ms": 75.403
+      "median_ms": 51.362,
+      "p95_ms": 60.489,
+      "minimum_ms": 41.645,
+      "maximum_ms": 71.478
     },
     "full_pipeline": {
       "repetitions": 20,
-      "median_ms": 134.935,
-      "p95_ms": 181.263,
-      "minimum_ms": 102.932,
-      "maximum_ms": 188.5
+      "median_ms": 93.174,
+      "p95_ms": 115.188,
+      "minimum_ms": 89.295,
+      "maximum_ms": 173.716
     }
   },
   "limitations": [

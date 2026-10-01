@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.contracts.evidence import AvailabilityStatus, Limitation, SourceReference
 from app.contracts.requests import (
@@ -14,6 +14,7 @@ from app.contracts.requests import (
 )
 from app.contracts.responses import AnalysisStatus, LearningActivityProfile, RiasecProfile
 from app.recommendation.evidence_models import CareerEvidenceProfile, EvidenceQuality
+from app.riasec.public_contract import PublicRiasecData
 
 
 class V2ContractModel(BaseModel):
@@ -39,10 +40,19 @@ class AnalysisV2Request(V2ContractModel):
     academic: AcademicData | None = None
     attendance: AttendanceData | None = None
     vocational: VocationalData | None = None
+    riasec_public: PublicRiasecData | None = None
     technical: TechnicalData | None = None
     declared_interests: list[DeclaredInterest] = Field(default_factory=list, max_length=50)
     history: list[HistoricalAcademicPeriod] = Field(default_factory=list, max_length=100)
     learning_activity: LearningActivityData | None = None
+
+    @model_validator(mode="after")
+    def adapt_public_riasec(self) -> "AnalysisV2Request":
+        if self.riasec_public is not None:
+            if self.vocational is not None:
+                raise ValueError("Use riasec_public o vocational, nunca ambos")
+            self.vocational = self.riasec_public.to_vocational()
+        return self
 
     @field_validator("declared_interests", mode="before")
     @classmethod

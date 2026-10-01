@@ -532,7 +532,7 @@
                 const themeToggle = document.getElementById('loginThemeToggle');
 
                 function validateEmail(email) {
-                    return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email);
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
                 }
 
                 function updateFormState() {

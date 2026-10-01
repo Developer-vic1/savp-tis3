@@ -1,5 +1,8 @@
 * text=auto eol=lf
 
+# Frozen retrieval evidence is hashed as bytes; preserve the evaluated files verbatim.
+ai-service/data/evaluation/retrieval_*phase21*.json -text whitespace=cr-at-eol
+
 *.blade.php diff=html
 *.css diff=css
 *.html diff=html

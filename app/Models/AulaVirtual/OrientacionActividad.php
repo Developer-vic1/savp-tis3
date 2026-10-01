@@ -22,12 +22,21 @@ class OrientacionActividad extends Model
         'iniciado_at',
         'finalizado_at',
         'revisado_por',
+        'riasec_public',
+        'riasec_score',
+        'analysis_snapshot',
+        'analysis_completed_at',
+        'riasec_input_hash',
     ];
 
     protected $casts = [
         'avance' => 'integer',
         'iniciado_at' => 'datetime',
         'finalizado_at' => 'datetime',
+        'riasec_public' => 'array',
+        'riasec_score' => 'array',
+        'analysis_snapshot' => 'array',
+        'analysis_completed_at' => 'datetime',
     ];
 
     public function estudiante(): BelongsTo

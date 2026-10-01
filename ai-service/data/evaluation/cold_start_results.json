@@ -1,9 +1,9 @@
 {
-  "measured_at": "2026-10-01T07:20:30.956173+00:00",
+  "measured_at": "2026-10-01T17:54:17.676259+00:00",
   "scope": "FRESH_PROCESS_FASTAPI_APP_INITIALIZATION",
-  "python": "3.12.10",
+  "python": "3.14.0",
   "platform": "Windows-11-10.0.26200-SP0",
-  "seconds": 9.569,
+  "seconds": 2.36,
   "status": "PASS",
   "error": null,
   "limitations": [

@@ -45,7 +45,7 @@ return new class extends Migration
             $table->index('fec_pre_die', 'idx_documento_inscripcion_fec_pre_die');
         });
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE documento_inscripcion_estudiante
             ADD CONSTRAINT documento_inscripcion_tip_check
             CHECK (tip_die IN (
@@ -62,7 +62,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE documento_inscripcion_estudiante
             ADD CONSTRAINT documento_inscripcion_est_check
             CHECK (est_die IN (
@@ -76,7 +76,7 @@ return new class extends Migration
             ))
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE documento_inscripcion_estudiante
             ADD CONSTRAINT documento_inscripcion_for_check
             CHECK (
@@ -85,7 +85,7 @@ return new class extends Migration
             )
         ");
 
-        DB::statement("
+        \App\Support\PortableCheckConstraint::statement("
             ALTER TABLE documento_inscripcion_estudiante
             ADD CONSTRAINT documento_inscripcion_fechas_check
             CHECK (

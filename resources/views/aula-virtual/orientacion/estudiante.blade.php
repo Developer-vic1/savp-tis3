@@ -6,6 +6,7 @@
 @section('content')
     <div class="space-y-6">
         <section class="ui-panel">
+            <a class="ui-btn-primary mb-4 inline-flex" href="{{ route('aula-virtual.estudiante.orientacion.peter3') }}">Mi orientación: perfil, RIASEC y análisis</a>
             <p class="ui-kicker">Explorador académico-vocacional</p>
             <h2 class="ui-title mt-2 text-2xl font-black">Resumen</h2>
             <p class="ui-subtitle mt-3 text-sm leading-7">{{ $resumen['mensaje'] }}</p>

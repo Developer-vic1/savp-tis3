@@ -7,6 +7,7 @@ use App\Http\Controllers\AulaVirtual\CursoVirtualController;
 use App\Http\Controllers\AulaVirtual\EntregaController;
 use App\Http\Controllers\AulaVirtual\MaterialController;
 use App\Http\Controllers\AulaVirtual\OrientacionController;
+use App\Http\Controllers\AulaVirtual\StudentOrientationController;
 use App\Http\Controllers\AulaVirtual\ReporteAulaVirtualController;
 use App\Http\Controllers\AulaVirtual\TareaController;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +43,12 @@ Route::prefix('aula-virtual')
                     ->middleware('can:Asistencia_Aula')->name('asistencia');
                 Route::get('/orientacion', [OrientacionController::class, 'estudiante'])
                     ->middleware('can:Orientacion_Academica_Profesional')->name('orientacion');
+                Route::middleware('can:Orientacion_Academica_Profesional')->group(function () {
+                    Route::get('/mi-orientacion', [StudentOrientationController::class, 'show'])->name('orientacion.peter3');
+                    Route::post('/mi-orientacion/riasec', [StudentOrientationController::class, 'score'])->name('orientacion.peter3.score');
+                    Route::post('/mi-orientacion/analisis', [StudentOrientationController::class, 'analyze'])->name('orientacion.peter3.analysis');
+                    Route::post('/mi-orientacion/consulta', [StudentOrientationController::class, 'query'])->name('orientacion.peter3.query');
+                });
                 Route::get('/orientacion/explorador', [OrientacionController::class, 'explorador'])
                     ->middleware('can:Orientacion_Academica_Profesional')->name('orientacion.explorador');
                 Route::get('/orientacion/resultados', [OrientacionController::class, 'resultados'])

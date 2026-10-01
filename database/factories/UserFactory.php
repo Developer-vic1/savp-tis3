@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Persona;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -27,7 +28,13 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'cod_usu' => 'USU_'.Str::upper(Str::random(16)),
+            'cod_per' => fn () => Persona::create([
+                'cod_per' => 'PER_'.Str::upper(Str::random(16)),
+                'nom_per' => fake()->firstName(), 'ape_pat_per' => fake()->lastName(),
+                'ci_per' => fake()->unique()->numerify('##########'),
+            ])->cod_per,
+            'est_usu' => 'ACTIVO',
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
