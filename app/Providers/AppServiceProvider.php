@@ -59,7 +59,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Livewire::componentHook(InstitutionalAuthorization::class);
-        $this->loadMigrationsFrom(database_path('migrations/aula_virtual'));
+        $this->loadMigrationsFrom([
+            database_path('migrations/Academico'),
+            database_path('migrations/AulaVirtual'),
+            database_path('migrations/AporteAcademicoVocacional'),
+        ]);
 
         // El catálogo histórico permite consultar la matriz aunque los permisos
         // de gobernanza nuevos todavía no se hayan aplicado a la base de datos.
