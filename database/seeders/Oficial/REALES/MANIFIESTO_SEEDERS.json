@@ -1,0 +1,152 @@
+[
+  {
+    "archivo": "AdministradorOficialSeeder.php",
+    "sha256_organizado": "5319c8e453fcb9ec04f7277b215add958e118c4abd57af1f3429a6d104c5b4da",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "5bb5874b7187bc4ce24ed61e6fb79eb0965f2995902d8b20606f4c300e40c6f6"
+  },
+  {
+    "archivo": "AsignaturasOficialesSeeder.php",
+    "sha256_organizado": "b56e4414627e9928c15b8a80a20ca3ea6271515c3d6c4222758c9732489294a4",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "74fb458c859c6325f5dc80d555b60dd916a50000d976ddec413b41c402053f43"
+  },
+  {
+    "archivo": "BloquesHorariosOficialesSeeder.php",
+    "sha256_organizado": "30e8fa49842c2c6068d2536a3f2f6178178ed35e4552b707535ff833249f31fb",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "b6ce7966592d8b6c74158a4c5bf0cb1b4bff61ceadd55545899d053a5c6c9bce"
+  },
+  {
+    "archivo": "CatalogosAcademicosOficialSeeder.php",
+    "sha256_organizado": "6487d04d382c3d69d9dfaa656581c720cd2688aba981efc8da83c01b6632e0ec",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "0d8c6f4111f5842e21516e8135aeda481f1f33fad712beeb28ac3becfffb8ea2"
+  },
+  {
+    "archivo": "ConfiguracionCalendario2026Seeder.php",
+    "sha256_organizado": "c44790d7e09dc2106f3d0f70c9a80ae0f7da6be534f0f5a15654a6ded795301e",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "af1ebcb8ac19a7e6185e59775f6fedbfaab27f6a59034c790154712dcff7ea70"
+  },
+  {
+    "archivo": "CursosOficialesSeeder.php",
+    "sha256_organizado": "2988c991a5ada240924aa08e0b4ff06bfda0986cadf79ca1e859a159766e8bc3",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "154b0d3743ae68748770b9de56e3dd15151cc784e6016eba90b813520b7417bb"
+  },
+  {
+    "archivo": "DocentesOficialesSeeder.php",
+    "sha256_organizado": "91ad74f2be106f636a4bb67a4a95a3060131dc9268a71774c065bfdba2f23195",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "c2b1cf644a16e70668275701d575743b3e2224726d906973cfdb96b67126ffc6"
+  },
+  {
+    "archivo": "EspecialidadesOficialesSeeder.php",
+    "sha256_organizado": "92d67022e99befa5e9552ba46aa09cf9bd95ddd6c2d07f1869c6bb5a73f45328",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "27810fc293f0f3e4e30a2ad42e4ae2af5a20d309e5fc98bd659a8574381e2a61"
+  },
+  {
+    "archivo": "EstadosAsistenciaOficialSeeder.php",
+    "sha256_organizado": "c54b482b34a394e25038d87b5c6c76a04d3973d5eeadfa3907f7f58c2d8e46be",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "30ebd3c7e561a04434a034c7919ce667ae04aaadb4a36ff7815811c2f9fa88e3"
+  },
+  {
+    "archivo": "Gestion2026Seeder.php",
+    "sha256_organizado": "89225393ca13fb6a5916ce9c98e3994f3e02e3bdf6f1df3b2224290ee213ec92",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "7562bb82f55ccee2b5232d5afa09579f92ff00720ed5a35efc0fb3c2f5dd8982"
+  },
+  {
+    "archivo": "GestionAcademicaOficialSeeder.php",
+    "sha256_organizado": "9fa5bea7075fefeba034a160d8002a56710728adede2b655323c8e2fa7d6dc22",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "064382214b63dfb4b5aa029c1bbbe86f325d4ec2c101e060b2ed688bed7eb0e3"
+  },
+  {
+    "archivo": "HorarioDetalleOficialSeeder.php",
+    "sha256_organizado": "63a5c4ed7545b66bc93332847163a9cbaca3c0e710d6860052ca101f064e89e1",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "43a1e7c2a6eba02c6b91de07b494667953b62412abbfd58e6eaad55e40864669"
+  },
+  {
+    "archivo": "HorariosOficialesSeeder.php",
+    "sha256_organizado": "0ed01630c108a8f0d4c89416ea41078dd3d14359b75978811ebe09e21172f3a8",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "44ca52bc345f9c1434a950e2a7dc8b398f964db83beaf65966c5d621ca118f39"
+  },
+  {
+    "archivo": "InstitucionProcedenciaSeeder.php",
+    "sha256_organizado": "99c2f64ac78076481d1774a93fbea8d7ccf930623955d219f367eab352e85ed6",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "b14329b3591a6e000b2518a29cae9fe478c46ca758eefe271cddd602dfc57bfa"
+  },
+  {
+    "archivo": "ParalelosOficialesSeeder.php",
+    "sha256_organizado": "8f33b01c9a360cae3e77185c658f11286bbadc1664c134ed3666aeedc73d2b29",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "ff23a1115219ffe27a2f208e32e31467a1053b558348a6b8b1ae8a7c77a08757"
+  },
+  {
+    "archivo": "PeriodosEvaluacionOficialSeeder.php",
+    "sha256_organizado": "44e455c0be9f75b5174a8b12cc100f6e5b09d781560b1988faa2d1ce582533f1",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "e8673d16925c588601eb7931ba7e04d5ef2d16c0ed05621b7168665bdb13f47b"
+  },
+  {
+    "archivo": "PersonalInstitucionalOficialSeeder.php",
+    "sha256_organizado": "a38817cab558766610396babb0c75bcef612fd6086e44d5ceb0632e22b17ad95",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "c7c33d3e55d04eded2db4e5381ade7b291b5a1e8c7738bc39edce95692561777"
+  },
+  {
+    "archivo": "PlanesAsignaturaOficialesSeeder.php",
+    "sha256_organizado": "d66826b8fa0109e32d66f121553f09d16472acad5b97fdb686c85ea678c5f896",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "c7c8a9c7f05b5fbf6bdaba804d69152809379ecd39fd79fbcaaa2277d72e7c8a"
+  },
+  {
+    "archivo": "PlanesEspecialidadOficialesSeeder.php",
+    "sha256_organizado": "6982adf78447d1e6acb84707b625f1421be8853d88f9ab3a2b983792ee03c3e5",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "81daecd8b94681c423ed2d255c21d3423dd936cc5fccb8a6d81cd8094253db34"
+  },
+  {
+    "archivo": "PlantillasHorariasOficialesSeeder.php",
+    "sha256_organizado": "34c40f468f533ab696c4e319a56ee892b4d5d124e9b250f683c8577c6fd1ae01",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "c128ab06ad0fc2080ddf913377f592e70d99771bc5075f1aba48ee26bb3d6603"
+  },
+  {
+    "archivo": "RolesYPermisosOficialSeeder.php",
+    "sha256_organizado": "3c163f78e3050a11e0d272983eaf711338a6344b44079eb18bb8ba8ed8de57d1",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "013457c6f7b4dc321370aa7d1895b4e252ce97d0f743a4df0963bb03b80a4cf3"
+  },
+  {
+    "archivo": "TiposVinculacionOficialSeeder.php",
+    "sha256_organizado": "8c2f3f6ba1237084b6b92efaa4f3aa91f39239401a5c458522b2168a080c8867",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "45bd1735c74e69c5e862ce8a783d05166d48d553bbc3311a787364065bcd9e68"
+  },
+  {
+    "archivo": "TurnosOficialesSeeder.php",
+    "sha256_organizado": "3f308136b0914bd9aaf8ba54a472e51cbafcd47b4b37d53549edb0b5e0de4b6f",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "83b1445b71842719f0a3d40dc35703e6cc33ef8b1f4d69a8d0b8597e80d7538c"
+  },
+  {
+    "archivo": "TurnosYPlantillasOficialSeeder.php",
+    "sha256_organizado": "3673b27736dc1f5463567c2419a314026920917d8286e102b1d29848ebb1d900",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "4086f8d35a943b907c9226a9c428de2f6c2da26c0e8b459369053132ec911ca6"
+  },
+  {
+    "archivo": "UsuariosInstitucionalesOficialSeeder.php",
+    "sha256_organizado": "532e3bb19da800cf81ba316e932b3291b726f602e82e8e5440016ef06127841d",
+    "cambio": "SOLO NAMESPACE; DATOS Y LOGICA CONSERVADOS",
+    "sha256_original": "9f8fa980d5c9a1e6b0cd39d5b16859f5d9a5efe8dabd8ab5f0a808bc42578f79"
+  }
+]

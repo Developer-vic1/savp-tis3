@@ -1,0 +1,29 @@
+{
+  "anio": 2026,
+  "inicio": "2026-02-02",
+  "fin": "2026-12-02",
+  "corte": "2026-08-31",
+  "sin_notas": false,
+  "actividad_hasta": "2026-08-31",
+  "invierno": [
+    "2026-07-06",
+    "2026-07-17"
+  ],
+  "trimestres": [
+    [
+      "2026-02-02",
+      "2026-05-08"
+    ],
+    [
+      "2026-05-11",
+      "2026-08-31"
+    ],
+    [
+      "2026-09-01",
+      "2026-12-02"
+    ]
+  ],
+  "trimestres_registrados": 2,
+  "naturaleza_periodizacion": "FECHAS MINEDU 2026; DISTRIBUCION HISTORICA INSTITUCIONAL SINTETICA EN 2020-2025, NO ACTA OFICIAL",
+  "pandemia": null
+}

@@ -1,0 +1,29 @@
+{
+  "anio": 2023,
+  "inicio": "2023-02-01",
+  "fin": "2023-12-08",
+  "corte": "2023-12-08",
+  "sin_notas": false,
+  "actividad_hasta": "2023-12-08",
+  "invierno": [
+    "2023-07-03",
+    "2023-07-21"
+  ],
+  "trimestres": [
+    [
+      "2023-02-01",
+      "2023-05-08"
+    ],
+    [
+      "2023-05-11",
+      "2023-08-31"
+    ],
+    [
+      "2023-09-01",
+      "2023-12-08"
+    ]
+  ],
+  "trimestres_registrados": 3,
+  "naturaleza_periodizacion": "FECHAS MINEDU 2026; DISTRIBUCION HISTORICA INSTITUCIONAL SINTETICA EN 2020-2025, NO ACTA OFICIAL",
+  "pandemia": null
+}

@@ -1,0 +1,29 @@
+{
+  "anio": 2025,
+  "inicio": "2025-02-03",
+  "fin": "2025-12-05",
+  "corte": "2025-12-05",
+  "sin_notas": false,
+  "actividad_hasta": "2025-12-05",
+  "invierno": [
+    "2025-07-07",
+    "2025-07-25"
+  ],
+  "trimestres": [
+    [
+      "2025-02-03",
+      "2025-05-08"
+    ],
+    [
+      "2025-05-11",
+      "2025-08-31"
+    ],
+    [
+      "2025-09-01",
+      "2025-12-05"
+    ]
+  ],
+  "trimestres_registrados": 3,
+  "naturaleza_periodizacion": "FECHAS MINEDU 2026; DISTRIBUCION HISTORICA INSTITUCIONAL SINTETICA EN 2020-2025, NO ACTA OFICIAL",
+  "pandemia": null
+}

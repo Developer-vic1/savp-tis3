@@ -1,0 +1,267 @@
+{
+  "catalog_version": "bo-careers-1.1.0",
+  "generated_at": "2026-10-01",
+  "scope_note": "Catalogo institucional trazable. Recommendation V2 solo usa carreras con CORPUS_VALIDADO; las fuentes oficiales externas se muestran separadas.",
+  "universities": [
+    {
+      "university_id": "BO-UCB-LP",
+      "name": "Universidad Católica Boliviana San Pablo",
+      "campus": "Sede La Paz",
+      "city": "La Paz"
+    },
+    {
+      "university_id": "BO-UMSA-LP",
+      "name": "Universidad Mayor de San Andrés",
+      "campus": "La Paz",
+      "city": "La Paz"
+    },
+    {
+      "university_id": "BO-UNIFRANZ-LP",
+      "name": "Universidad Privada Franz Tamayo - UNIFRANZ",
+      "campus": "Sede La Paz",
+      "city": "La Paz"
+    },
+    {
+      "university_id": "BO-UPB-LP",
+      "name": "Universidad Privada Boliviana - UPB",
+      "campus": "Campus La Paz",
+      "city": "La Paz"
+    },
+    {
+      "university_id": "BO-EMI-LP",
+      "name": "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre",
+      "campus": "Unidad Academica La Paz",
+      "city": "La Paz"
+    }
+  ],
+  "careers": [
+    {
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "university_id": "BO-UCB-LP",
+      "name": "Ingeniería de Sistemas",
+      "aliases": ["Sistemas", "Ingeniería de Sistemas Informáticos"],
+      "degree": "Licenciatura",
+      "duration_semesters": 9,
+      "valid_from": "2026",
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Diseño, desarrollo e implementación de soluciones tecnológicas con formación en ciencias, tecnología y gestión.",
+      "official_knowledge_areas": [
+        "programación y desarrollo de software",
+        "sistemas de información y bases de datos",
+        "redes y seguridad informática",
+        "inteligencia artificial y ciencia de datos",
+        "gestión de proyectos e innovación tecnológica"
+      ],
+      "initial_subjects": [
+        "Álgebra Lineal",
+        "Matemáticas Discretas",
+        "Introducción a la Programación",
+        "Ingeniería de Sistemas",
+        "Pensamiento Crítico"
+      ],
+      "source_ids": ["BO-UCB-LP-SIS-MALLA-2026", "BO-UCB-LP-SIS-PROFILE-2026"]
+    },
+    {
+      "career_id": "BO-UCB-LP-PSICOLOGIA",
+      "university_id": "BO-UCB-LP",
+      "name": "Psicología",
+      "aliases": ["Carrera de Psicología"],
+      "degree": "Licenciatura",
+      "duration_semesters": 9,
+      "valid_from": "2026",
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Diagnóstico, planificación, intervención e investigación ética en áreas clínica, educativa, social-comunitaria y organizacional.",
+      "official_knowledge_areas": [
+        "psicología educativa",
+        "psicología clínica",
+        "psicología social-comunitaria",
+        "psicología organizacional",
+        "psicología forense"
+      ],
+      "initial_subjects": [
+        "Introducción a la Psicología",
+        "Teorías y Paradigmas Actuales de la Psicología",
+        "Psicología del Desarrollo Infantil",
+        "Psicofisiología",
+        "Escritura Académica"
+      ],
+      "source_ids": ["BO-UCB-LP-PSI-MALLA-2026", "BO-UCB-LP-PSI-PROFILE-2026"]
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-CIVIL",
+      "university_id": "BO-UCB-LP",
+      "name": "Ingeniería Civil",
+      "aliases": ["Civil"],
+      "degree": "Licenciatura",
+      "duration_semesters": 10,
+      "valid_from": "2026",
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Formación teórica, tecnológica y práctica orientada a proyectos de servicio y obras civiles.",
+      "official_knowledge_areas": [
+        "estructuras",
+        "vías de transporte",
+        "geotecnia",
+        "sanitaria y medio ambiente",
+        "hidráulica e hidrología",
+        "geodesia y topografía"
+      ],
+      "initial_subjects": [
+        "Química General I y Laboratorio",
+        "Física I y Laboratorio",
+        "Álgebra Lineal",
+        "Cálculo I",
+        "Dibujo Técnico Computarizado"
+      ],
+      "source_ids": ["BO-UCB-LP-CIV-MALLA-2026", "BO-UCB-LP-CIV-PROFILE-2026"]
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-AMBIENTAL",
+      "university_id": "BO-UCB-LP",
+      "name": "Ingeniería Ambiental",
+      "aliases": ["Ambiental"],
+      "degree": "Licenciatura",
+      "duration_semesters": 10,
+      "valid_from": "2026",
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Proyectos de gestión y tecnologías ambientales para prevenir, mitigar, restaurar y remediar problemas ambientales.",
+      "official_knowledge_areas": [
+        "gestión ambiental",
+        "residuos sólidos",
+        "tratamiento de aguas residuales",
+        "remediación ambiental",
+        "cambio climático y gestión del riesgo"
+      ],
+      "initial_subjects": [
+        "Biología General y Laboratorio",
+        "Cálculo I",
+        "Química General I y Laboratorio",
+        "Desarrollo Sostenible e Integral",
+        "Ecología Integral y Gestión Sociocomunitaria"
+      ],
+      "source_ids": ["BO-UCB-LP-IAM-MALLA-2026", "BO-UCB-LP-IAM-PROFILE-2026"]
+    },
+    {
+      "career_id": "BO-UMSA-LP-ING-CIVIL",
+      "university_id": "BO-UMSA-LP",
+      "name": "Ingeniería Civil",
+      "aliases": ["Civil"],
+      "degree": "Licenciatura",
+      "duration_semesters": 10,
+      "valid_from": "2023",
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": null,
+      "official_knowledge_areas": [
+        "estructuras",
+        "vías",
+        "hidráulica",
+        "suelos y geotecnia",
+        "sanitaria"
+      ],
+      "initial_subjects": [
+        "Cálculo I",
+        "Química General para Ingeniería Civil y Laboratorio",
+        "Álgebra Lineal y Teoría Matricial",
+        "Diseño Técnico I",
+        "Redacción y Preparación de Informes"
+      ],
+      "source_ids": ["BO-UMSA-LP-CIV-PLAN-2023"]
+    },
+    {
+      "career_id": "BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL",
+      "university_id": "BO-UNIFRANZ-LP",
+      "name": "Ingenieria de Sistemas e Innovacion Digital",
+      "aliases": ["Sistemas", "Innovacion Digital"],
+      "degree": null,
+      "duration_semesters": null,
+      "duration_text": "4 anos y medio",
+      "valid_from": null,
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Formacion en inteligencia artificial, analisis de datos, ciberseguridad, cloud computing e innovacion tecnologica.",
+      "official_knowledge_areas": [
+        "Produccion de sistemas",
+        "Control de calidad y testeo de software",
+        "Redes y comunicaciones",
+        "Innovacion tecnologica",
+        "Inteligencia numerica"
+      ],
+      "initial_subjects": [],
+      "source_ids": [
+        "BO-UNIFRANZ-LP-SISID-PROFILE-2026",
+        "BO-UNIFRANZ-LP-SISID-MALLA-2026"
+      ],
+      "evidence_layer": "CORPUS_VALIDADO",
+      "recommendation_eligible": true
+    },
+    {
+      "career_id": "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES",
+      "university_id": "BO-UPB-LP",
+      "name": "Ingenieria de Sistemas Computacionales",
+      "aliases": ["Sistemas Computacionales", "Sistemas"],
+      "degree": null,
+      "duration_semesters": 9,
+      "duration_text": "9 semestres",
+      "valid_from": null,
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Analiza problemas reales y disena, implementa y gestiona sistemas informaticos con principios de software, informatica y disciplinas afines.",
+      "official_knowledge_areas": [
+        "Data Analytics",
+        "Inteligencia Artificial",
+        "Seguridad Informatica",
+        "Desarrollo de sistemas complejos",
+        "Transformacion Digital e Industria 4.0"
+      ],
+      "initial_subjects": [
+        "Algebra Lineal",
+        "Matematicas para Ingenieria I",
+        "Programacion I"
+      ],
+      "source_ids": [
+        "BO-UPB-LP-SISC-PROFILE-2026",
+        "BO-UPB-LP-SISC-MALLA-2026"
+      ],
+      "evidence_layer": "CORPUS_VALIDADO",
+      "recommendation_eligible": true
+    },
+    {
+      "career_id": "BO-EMI-LP-ING-SISTEMAS",
+      "university_id": "BO-EMI-LP",
+      "name": "Ingenieria de Sistemas",
+      "aliases": ["Sistemas"],
+      "degree": null,
+      "duration_semesters": null,
+      "duration_text": null,
+      "valid_from": null,
+      "valid_until": null,
+      "status": "EXTERNAL_INFORMATION_ONLY",
+      "entry_profile": null,
+      "entry_profile_status": "SOURCE_UNSNAPSHOTTED",
+      "professional_profile": null,
+      "official_knowledge_areas": [],
+      "initial_subjects": [],
+      "source_ids": ["BO-EMI-LP-SIS-PROFILE-EXTERNAL-2026"],
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "recommendation_eligible": false
+    }
+  ]
+}

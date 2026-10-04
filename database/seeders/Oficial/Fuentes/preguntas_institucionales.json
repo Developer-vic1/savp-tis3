@@ -1,0 +1,152 @@
+[
+  {
+    "dimension": "tecnico_practico",
+    "texto": "ME INTERESA CONSTRUIR, REPARAR O ENSAMBLAR OBJETOS UTILIZANDO HERRAMIENTAS, EQUIPOS O DISPOSITIVOS TECNOLÓGICOS.",
+    "codigo": "ORAV-01"
+  },
+  {
+    "dimension": "tecnico_practico",
+    "texto": "DISFRUTO REALIZAR ACTIVIDADES PRÁCTICAS DONDE PUEDA APLICAR CONOCIMIENTOS TÉCNICOS EN SITUACIONES REALES.",
+    "codigo": "ORAV-02"
+  },
+  {
+    "dimension": "tecnico_practico",
+    "texto": "ME LLAMA LA ATENCIÓN TRABAJAR CON COMPUTADORAS, CIRCUITOS, MÁQUINAS, SENSORES O SISTEMAS TECNOLÓGICOS.",
+    "codigo": "ORAV-03"
+  },
+  {
+    "dimension": "tecnico_practico",
+    "texto": "PREFIERO APRENDER HACIENDO PRÁCTICAS, EXPERIMENTOS O PROYECTOS ANTES QUE SOLO LEYENDO TEORÍA.",
+    "codigo": "ORAV-04"
+  },
+  {
+    "dimension": "tecnico_practico",
+    "texto": "ME INTERESA RESOLVER PROBLEMAS TÉCNICOS RELACIONADOS CON INSTALACIONES, MANTENIMIENTO, PROGRAMACIÓN O DISPOSITIVOS ELECTRÓNICOS.",
+    "codigo": "ORAV-05"
+  },
+  {
+    "dimension": "analitico_cientifico",
+    "texto": "ME GUSTA ANALIZAR INFORMACIÓN PARA ENCONTRAR CAUSAS, PATRONES O POSIBLES SOLUCIONES.",
+    "codigo": "ORAV-06"
+  },
+  {
+    "dimension": "analitico_cientifico",
+    "texto": "DISFRUTO RESOLVER PROBLEMAS DE LÓGICA, MATEMÁTICA, FÍSICA O RAZONAMIENTO ESTRUCTURADO.",
+    "codigo": "ORAV-07"
+  },
+  {
+    "dimension": "analitico_cientifico",
+    "texto": "ME INTERESA INVESTIGAR CÓMO FUNCIONAN LAS COSAS Y COMPROBAR RESULTADOS CON DATOS.",
+    "codigo": "ORAV-08"
+  },
+  {
+    "dimension": "analitico_cientifico",
+    "texto": "ME SIENTO CÓMODO INTERPRETANDO GRÁFICOS, TABLAS, RESULTADOS ACADÉMICOS O INFORMACIÓN NUMÉRICA.",
+    "codigo": "ORAV-09"
+  },
+  {
+    "dimension": "analitico_cientifico",
+    "texto": "ME ATRAEN LAS CARRERAS DONDE SE REQUIERE PRECISIÓN, ANÁLISIS, INVESTIGACIÓN Y PENSAMIENTO CRÍTICO.",
+    "codigo": "ORAV-10"
+  },
+  {
+    "dimension": "creativo_expresivo",
+    "texto": "ME GUSTA CREAR IDEAS, DISEÑOS, PRESENTACIONES, CONTENIDOS VISUALES O PROPUESTAS ORIGINALES.",
+    "codigo": "ORAV-11"
+  },
+  {
+    "dimension": "creativo_expresivo",
+    "texto": "DISFRUTO EXPRESAR MIS IDEAS MEDIANTE DIBUJOS, TEXTOS, EXPOSICIONES, MÚSICA, DISEÑO O RECURSOS DIGITALES.",
+    "codigo": "ORAV-12"
+  },
+  {
+    "dimension": "creativo_expresivo",
+    "texto": "ME INTERESA BUSCAR SOLUCIONES DIFERENTES O INNOVADORAS CUANDO ENFRENTO UN PROBLEMA.",
+    "codigo": "ORAV-13"
+  },
+  {
+    "dimension": "creativo_expresivo",
+    "texto": "PREFIERO ACTIVIDADES DONDE PUEDA IMAGINAR, DISEÑAR O TRANSFORMAR ALGO DE MANERA CREATIVA.",
+    "codigo": "ORAV-14"
+  },
+  {
+    "dimension": "creativo_expresivo",
+    "texto": "ME ATRAEN LAS CARRERAS RELACIONADAS CON COMUNICACIÓN, DISEÑO, PRODUCCIÓN, ARTE, INNOVACIÓN O CREACIÓN DE CONTENIDOS.",
+    "codigo": "ORAV-15"
+  },
+  {
+    "dimension": "social_comunitario",
+    "texto": "ME INTERESA AYUDAR A OTRAS PERSONAS A RESOLVER DUDAS, APRENDER O SUPERAR DIFICULTADES.",
+    "codigo": "ORAV-16"
+  },
+  {
+    "dimension": "social_comunitario",
+    "texto": "DISFRUTO TRABAJAR CON GRUPOS, ESCUCHAR OPINIONES Y COLABORAR CON MIS COMPAÑEROS.",
+    "codigo": "ORAV-17"
+  },
+  {
+    "dimension": "social_comunitario",
+    "texto": "ME GUSTARÍA PARTICIPAR EN ACTIVIDADES QUE MEJOREN LA VIDA DE UNA COMUNIDAD O GRUPO DE PERSONAS.",
+    "codigo": "ORAV-18"
+  },
+  {
+    "dimension": "social_comunitario",
+    "texto": "ME SIENTO CÓMODO EXPLICANDO TEMAS, ORIENTANDO O ACOMPAÑANDO A OTROS ESTUDIANTES.",
+    "codigo": "ORAV-19"
+  },
+  {
+    "dimension": "social_comunitario",
+    "texto": "ME ATRAEN LAS CARRERAS RELACIONADAS CON EDUCACIÓN, SALUD, PSICOLOGÍA, TRABAJO SOCIAL O APOYO COMUNITARIO.",
+    "codigo": "ORAV-20"
+  },
+  {
+    "dimension": "liderazgo_emprendimiento",
+    "texto": "ME INTERESA ORGANIZAR EQUIPOS, COORDINAR ACTIVIDADES O TOMAR DECISIONES EN UN GRUPO.",
+    "codigo": "ORAV-21"
+  },
+  {
+    "dimension": "liderazgo_emprendimiento",
+    "texto": "DISFRUTO PROPONER IDEAS PARA INICIAR PROYECTOS, NEGOCIOS, CAMPAÑAS O ACTIVIDADES ESCOLARES.",
+    "codigo": "ORAV-22"
+  },
+  {
+    "dimension": "liderazgo_emprendimiento",
+    "texto": "ME SIENTO CAPAZ DE ASUMIR RESPONSABILIDADES CUANDO UN EQUIPO NECESITA DIRECCIÓN.",
+    "codigo": "ORAV-23"
+  },
+  {
+    "dimension": "liderazgo_emprendimiento",
+    "texto": "ME ATRAE NEGOCIAR, PRESENTAR PROPUESTAS, CONVENCER CON ARGUMENTOS O DEFENDER UNA IDEA.",
+    "codigo": "ORAV-24"
+  },
+  {
+    "dimension": "liderazgo_emprendimiento",
+    "texto": "ME INTERESAN LAS CARRERAS RELACIONADAS CON ADMINISTRACIÓN, EMPRENDIMIENTO, DIRECCIÓN, VENTAS O GESTIÓN DE PROYECTOS.",
+    "codigo": "ORAV-25"
+  },
+  {
+    "dimension": "organizativo_administrativo",
+    "texto": "ME GUSTA ORDENAR INFORMACIÓN, REGISTRAR DATOS, PLANIFICAR ACTIVIDADES O LLEVAR CONTROLES.",
+    "codigo": "ORAV-26"
+  },
+  {
+    "dimension": "organizativo_administrativo",
+    "texto": "ME INTERESA TRABAJAR CON DOCUMENTOS, REPORTES, PRESUPUESTOS, INVENTARIOS O PROCESOS ADMINISTRATIVOS.",
+    "codigo": "ORAV-27"
+  },
+  {
+    "dimension": "organizativo_administrativo",
+    "texto": "PREFIERO ACTIVIDADES DONDE EXISTAN REGLAS CLARAS, PROCEDIMIENTOS Y ORGANIZACIÓN.",
+    "codigo": "ORAV-28"
+  },
+  {
+    "dimension": "organizativo_administrativo",
+    "texto": "ME SIENTO CÓMODO REVISANDO DETALLES PARA EVITAR ERRORES EN REGISTROS, CUENTAS O DOCUMENTOS.",
+    "codigo": "ORAV-29"
+  },
+  {
+    "dimension": "organizativo_administrativo",
+    "texto": "ME ATRAEN LAS CARRERAS RELACIONADAS CON CONTABILIDAD, ADMINISTRACIÓN, SECRETARIADO, FINANZAS, GESTIÓN DOCUMENTAL O PROCESOS INSTITUCIONALES.",
+    "codigo": "ORAV-30"
+  }
+]

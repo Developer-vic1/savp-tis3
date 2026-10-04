@@ -1,0 +1,29 @@
+{
+  "anio": 2024,
+  "inicio": "2024-02-05",
+  "fin": "2024-12-06",
+  "corte": "2024-12-06",
+  "sin_notas": false,
+  "actividad_hasta": "2024-12-06",
+  "invierno": [
+    "2024-07-01",
+    "2024-07-19"
+  ],
+  "trimestres": [
+    [
+      "2024-02-05",
+      "2024-05-08"
+    ],
+    [
+      "2024-05-11",
+      "2024-08-31"
+    ],
+    [
+      "2024-09-01",
+      "2024-12-06"
+    ]
+  ],
+  "trimestres_registrados": 3,
+  "naturaleza_periodizacion": "FECHAS MINEDU 2026; DISTRIBUCION HISTORICA INSTITUCIONAL SINTETICA EN 2020-2025, NO ACTA OFICIAL",
+  "pandemia": null
+}

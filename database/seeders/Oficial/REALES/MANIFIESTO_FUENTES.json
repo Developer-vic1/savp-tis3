@@ -1,0 +1,38 @@
+[
+  {
+    "sha256": "7134ae0d752be484a64e10de8c5b47dcf6188f9d86d2066fb39523d9d0065fcd",
+    "archivo": "catalogos_academicos_data.local.php"
+  },
+  {
+    "sha256": "cb6e0f6e323aca86d3a1c2004386123f41a9ed51e3d632a22079f86960a74e25",
+    "archivo": "horario_detalle_data.local.php"
+  },
+  {
+    "sha256": "8c3a47b93a9f9aa1b70f5258325e554e95122c79bedc98300d97ac93a420e4c2",
+    "archivo": "horarios_data.local.php"
+  },
+  {
+    "sha256": "f147e16dd3aae8718945c9f4db176d9592e1acfb5e5527be32a68ed8de6e5393",
+    "archivo": "personal_franz_tamayo_2026.local.php"
+  },
+  {
+    "sha256": "ae7e4e75120ec5ff0c07ba97817807195f0d42ed5c96ebdf2dbb708b66c15c6d",
+    "archivo": "personal_institucional.local.php"
+  },
+  {
+    "sha256": "059bb25b5f3120b8a39f7e186275f0df543ec1bc45feaf0bc51184745c068ea0",
+    "archivo": "planes_asignatura_data.local.php"
+  },
+  {
+    "sha256": "a99643da3d512ed8849ad5d30a41f1530bfc88ad2d75102a15d9906b27500d0f",
+    "archivo": "planes_especialidad_data.local.php"
+  },
+  {
+    "sha256": "f7f6b95bc5c0bcd5253214f6588bfe3f2600ddea335b0b6f9153295ce6f58e2a",
+    "archivo": "roles_permisos_data.local.php"
+  },
+  {
+    "sha256": "79f0e887101ea54e638250cb6e7b39eda51585aedea370df5e414a3b84b4db08",
+    "archivo": "turnos_plantillas_bloques_data.local.php"
+  }
+]
