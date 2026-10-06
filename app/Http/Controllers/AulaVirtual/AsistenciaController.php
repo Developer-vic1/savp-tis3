@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\EstadoAsistencia;
+use App\Models\Oficial\Academico\AsistenciaEstudiante;
+use App\Models\Oficial\Academico\EstadoAsistencia;
+use App\Models\Oficial\Academico\HorarioDetalle;
 use App\Services\AulaVirtual\AsistenciaService;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Illuminate\Http\Request;
@@ -20,10 +21,15 @@ class AsistenciaController extends Controller
     {
         $clase = $this->cursos->cursoParaDocente($request->user(), $curso);
         abort_if(! $clase, 403);
-        $clase->setRelation('estudiantes', $this->cursos->estudiantesVigentes($clase)->with('estudiante.persona')->get());
+        $fecha = $request->validate(['fecha' => ['nullable', 'date_format:Y-m-d']])['fecha'] ?? now()->toDateString();
+        $clase->setRelation('estudiantes', $this->cursos->estudiantesVigentes($clase, $fecha)->with('estudiante.persona')->get());
+        $bloques = HorarioDetalle::with('horarioBloque')->where($clase->cod_pas ? 'cod_pas' : 'cod_pes', $clase->cod_pas ?? $clase->cod_pes)
+            ->where('est_hde', 'ACTIVO')->get()->pluck('horarioBloque')->filter()->unique('cod_hbl')->sortBy('num_hbl')->values();
 
         return view('aula-virtual.asistencia.registrar', [
             'curso' => $clase,
+            'fechaAsistencia' => $fecha,
+            'bloques' => $bloques,
             'estados' => EstadoAsistencia::where('est_est_asi', 'ACTIVO')->orderBy('nom_est_asi')->get(),
         ]);
     }
@@ -36,12 +42,14 @@ class AsistenciaController extends Controller
 
         $datos = $request->validate([
             'fec_asi_cla' => ['required', 'date'],
+            'cod_hbl' => ['nullable', 'exists:horario_bloque,cod_hbl'],
             'tit_asi_cla' => ['nullable', 'string', 'max:150'],
             'obs_asi_cla' => ['nullable', 'string'],
             'asistencias' => ['array'],
             'asistencias.*.cod_est_asi' => ['required', 'string'],
             'asistencias.*.min_retraso' => ['nullable', 'integer', 'min:0', 'max:300'],
             'asistencias.*.obs_asi_est' => ['nullable', 'string', 'max:1000'],
+            'asistencias.*.cod_nes' => ['nullable', 'exists:novedad_estudiante,cod_nes'],
         ]);
 
         $datos['cod_cla'] = $clase->cod_cla;

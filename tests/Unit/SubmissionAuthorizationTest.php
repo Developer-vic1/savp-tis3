@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Policies\AulaVirtualEntregaPolicy;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Mockery;

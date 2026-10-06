@@ -34,32 +34,13 @@
             @endif
         @elseif($area === 'fuentes')
             @can('Orientacion_Academica_Profesional')
-                <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Fuentes para explorar carreras</h2><a class="ui-btn-primary mt-4" href="{{ route('aula-virtual.estudiante.orientacion.peter3', ['section'=>'fuentes']) }}">Consultar fuentes de orientación</a></section>
+                <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Fuentes para explorar carreras</h2><a class="ui-btn-primary mt-4" href="{{ route('aula-virtual.estudiante.orientacion.aporte', ['section'=>'fuentes']) }}">Consultar fuentes de orientación</a></section>
             @endcan
             <livewire:shared.academic-sources />
             <section class="ui-panel"><h2 class="ui-title text-xl font-black">Materiales publicados en mis materias</h2>
                 @forelse($materials ?? [] as $material)<p class="ui-muted mt-3">{{ $material->nom_mat }} · <a class="underline" href="{{ route('aula-virtual.estudiante.curso', $material->cod_cla) }}">Abrir materia</a></p>@empty<p class="ui-muted mt-3">Todavía no hay materiales publicados disponibles.</p>@endforelse
                 @if($materials){{ $materials->links() }}@endif
             </section>
-        @elseif($area === 'preparacion')
-            <section class="ui-panel"><h2 class="ui-title text-xl font-black">Actividades pendientes</h2>
-                @forelse($academic['pendientes'] as $task)<p class="ui-muted mt-3">{{ $task->tit_tar }} · {{ $task->fec_lim_tar?->format('d/m/Y H:i') ?? 'Sin fecha límite' }}</p>@empty<p class="ui-muted mt-3">No hay actividades pendientes registradas en tus materias.</p>@endforelse
-            </section>
-        @elseif($area === 'asistente')
-            <livewire:shared.study-assistant />
-        @elseif($area === 'futuro')
-            <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Opciones registradas para explorar</h2>
-                <p class="ui-muted mt-2">Las opciones son orientativas y requieren acompañamiento. No determinan qué debes estudiar.</p>
-                @forelse($orientation?->carreras ?? [] as $career)
-                    <article class="ui-card-soft mt-4 p-4"><h3 class="font-bold">Podrías explorar {{ $career->carrera }}</h3><p class="ui-muted mt-2">{{ $career->razon }}</p></article>
-                @empty
-                    <p class="ui-muted mt-4">Aún no hay opciones académicas verificadas para mostrar.</p>
-                @endforelse
-                <a class="ui-btn-secondary mt-4" href="{{ route('estudiante.intereses') }}">Revisar mis intereses</a>
-            </section>
-        @elseif($area === 'plan')
-            <livewire:shared.academic-plan />
-            <a class="ui-btn-secondary" href="{{ route('estudiante.area', ['area' => 'preparacion']) }}">Ver actividades pendientes</a>
         @else
             <section class="ui-panel text-center">
                 <h2 class="ui-title text-xl font-black">Aún no hay información suficiente</h2>

@@ -40,7 +40,7 @@ su historial, se identifica como anterior y ya no se abre automáticamente.
 
 Los textos y cinco opciones de los 30 ítems proceden del endpoint oficial, sin una copia PHP.
 Laravel guarda respuestas enteras 1–5 con `item_id` e `instrument_version` y no calcula puntajes.
-Peter 3 comparte `PublicRiasecData.to_vocational()` entre score y análisis: allí valida versión,
+Aporte Ingenieril SAVP comparte `PublicRiasecData.to_vocational()` entre score y análisis: allí valida versión,
 IDs, escala y convierte una sola vez a la representación interna 0–4. El análisis recibe:
 
 ```json
@@ -107,7 +107,6 @@ En terminales separadas, desde este checkout:
 ```powershell
 # FastAPI: asignar la clave privada en esta terminal, sin publicarla.
 $env:SAVP_AI_API_KEY = '<clave-interna>'
-$env:SAVP_AI_LOCAL_LLM_ENABLED = 'false'
 ai-service/.venv/Scripts/python.exe -m uvicorn app.main:app --app-dir ai-service --host 127.0.0.1 --port 8001
 
 # Laravel: configurar la misma clave y una BD previamente autorizada.
@@ -120,10 +119,10 @@ php artisan serve
 npm run dev -- --host 127.0.0.1
 ```
 
-No hacen falta Docker, un proveedor cloud ni un LLM. `php artisan peter3:warmup` comprueba
-salud y precarga E5 con una búsqueda sin guardar actividad estudiantil. Debe ejecutarse al
-arrancar el servicio para evitar que la primera consulta normal absorba la carga del modelo.
-Los modelos/índices se reutilizan dentro del proceso; consultas personales no se cachean.
+No hacen falta Docker, un proveedor cloud ni un modelo. `php artisan peter3:warmup` comprueba
+salud y carga el corpus documental BM25 con una búsqueda sin guardar actividad estudiantil.
+Puede ejecutarse al arrancar el servicio para detectar un corpus no disponible. Las consultas
+personales no se cachean.
 
 Salud/instrumento/score usan 5 s; consultas normales admiten 1–30 s (por defecto 10);
 conexión 1–10 s (por defecto 3); precarga explícita 1–180 s (por defecto 90).

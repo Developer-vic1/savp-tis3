@@ -1,0 +1,1 @@
+<article class="ui-card-soft asignaturas-tarjeta asignaturas-campo-{{ $m->campo_educativo['clave'] }}" wire:key="asignatura-{{ $claveVista }}-{{ $m->cod_asi }}">@include('livewire.admin.asignaturas.identidad') @include('livewire.admin.asignaturas.datos') @include('livewire.admin.asignaturas.acciones')</article>

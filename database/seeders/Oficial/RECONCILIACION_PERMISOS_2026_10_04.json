@@ -1,0 +1,51 @@
+{
+    "antes_relaciones": 128,
+    "despues_relaciones": 221,
+    "permisos": 111,
+    "roles": 6,
+    "por_rol": [
+        {
+            "rol": "Director",
+            "permisos": 31
+        },
+        {
+            "rol": "Administrador",
+            "permisos": 74
+        },
+        {
+            "rol": "Regente",
+            "permisos": 15
+        },
+        {
+            "rol": "Secretaria",
+            "permisos": 33
+        },
+        {
+            "rol": "Docente",
+            "permisos": 39
+        },
+        {
+            "rol": "Estudiante",
+            "permisos": 29
+        }
+    ],
+    "base": "SAVPTIS3-OFICIAL",
+    "puerto": 5432,
+    "fecha": "2026-10-04T19:25:50+00:00",
+    "conteos_institucionales_conservados": {
+        "persona": 1280,
+        "users": 668,
+        "estudiante": 612,
+        "docente": 48,
+        "personal_institucional": 56,
+        "plan_asignatura": 2100,
+        "plan_especialidad": 476,
+        "horario": 904,
+        "horario_detalle": 27192,
+        "inscripcion_estudiante": 2144,
+        "calificacion": 64856,
+        "asistencia_estudiante": 2365208
+    },
+    "fuente": "database\/seeders\/RolSeeder.php",
+    "aprobacion": "SI, RECONCILIAR PERMISOS EXISTENTES Y FUTUROS"
+}

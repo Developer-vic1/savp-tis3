@@ -215,7 +215,7 @@ class TutorResponse(ContractModel):
     schema_version: Literal["1.0"] = "1.0"
     trace_id: str
     answer: str
-    answer_mode: Literal["STRUCTURED", "LOCAL_LLM"]
+    answer_mode: Literal["STRUCTURED"]
     suggested_topics: list[str]
     sources: list[KnowledgeEvidence]
     insufficient_evidence: bool
@@ -223,4 +223,3 @@ class TutorResponse(ContractModel):
     provider_version: str = "structured-answer-v1.0.0"
     corpus_version: str | None = None
     embedding_model: str | None = None
-    model_version: str | None = None

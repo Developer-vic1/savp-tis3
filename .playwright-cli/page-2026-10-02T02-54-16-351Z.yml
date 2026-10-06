@@ -1,0 +1,36 @@
+- generic [ref=f7e1]:
+  - text: "Notice: file_put_contents(): Write of 60 bytes failed with errno=22 Invalid argument in C:\\laragon\\www\\savp-reestructuracion\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php on line 21"
+  - generic [ref=f7e4]:
+    - generic [ref=f7e6]:
+      - img "Logo Franz Tamayo N°3" [ref=f7e8]
+      - generic [ref=f7e11]:
+        - paragraph [ref=f7e12]: Franz Tamayo N°3
+        - paragraph [ref=f7e13]: Sistema SAVP – TIS 3
+    - generic [ref=f7e14]:
+      - link "Volver al inicio" [ref=f7e15] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012
+      - button "Cambiar tema" [ref=f7e18] [cursor=pointer]
+      - generic [ref=f7e21]:
+        - generic [ref=f7e22]:
+          - generic [ref=f7e23]: Acceso institucional
+          - heading "Bienvenido" [level=1] [ref=f7e25]
+          - paragraph [ref=f7e26]: Inicia sesión para acceder al sistema de la Unidad Educativa Franz Tamayo N°3 .
+        - generic [ref=f7e27]:
+          - generic [ref=f7e28]:
+            - generic [ref=f7e29]: Correo electrónico
+            - textbox "Correo electrónico" [active] [ref=f7e31]:
+              - /placeholder: usuario@gmail.com
+          - generic [ref=f7e32]:
+            - generic [ref=f7e33]: Contraseña
+            - generic [ref=f7e34]:
+              - textbox "Contraseña" [ref=f7e35]:
+                - /placeholder: Ingresa tu contraseña
+              - button "Mostrar u ocultar contraseña" [ref=f7e36] [cursor=pointer]
+          - generic [ref=f7e39]:
+            - generic [ref=f7e40]:
+              - checkbox "Recordarme" [ref=f7e41]
+              - generic [ref=f7e42]: Recordarme
+            - link "¿Olvidaste tu contraseña?" [ref=f7e43] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/forgot-password
+          - button "Ingresar al sistema" [disabled] [ref=f7e45]
+        - paragraph [ref=f7e50]: Acceso exclusivo para usuarios autorizados del sistema institucional.

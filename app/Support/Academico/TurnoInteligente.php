@@ -2186,21 +2186,7 @@ class TurnoInteligente
 
     private function generarCodigo(string $tabla, string $columna, string $prefijo): string
     {
-        $ultimo = DB::table($tabla)
-            ->where($columna, 'like', "{$prefijo}_%")
-            ->orderByDesc($columna)
-            ->value($columna);
-
-        $numero = $ultimo
-            ? (int) str_replace("{$prefijo}_", '', $ultimo)
-            : 0;
-
-        do {
-            $numero++;
-            $codigo = $prefijo . '_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
-        } while (DB::table($tabla)->where($columna, $codigo)->exists());
-
-        return $codigo;
+        return \App\Support\Modelos\FormatoCodigoInstitucional::siguiente(DB::connection(), $tabla);
     }
 
     private function filtrarColumnas(string $tabla, array $datos): array
@@ -2693,7 +2679,7 @@ class TurnoInteligente
 
             // Insertamos los nuevos bloques
             foreach ($analisis['preview_bloques'] as $bloqueData) {
-                $bloque = new \App\Models\HorarioBloque();
+                $bloque = new \App\Models\Oficial\Academico\HorarioBloque();
                 $bloque->cod_pho = $codPho;
                 $bloque->num_hbl = $bloqueData['numero'];
                 $bloque->nom_hbl = $bloqueData['nombre'];

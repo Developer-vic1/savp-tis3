@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DocumentoInscripcionEstudiante;
+use App\Models\Oficial\Academico\DocumentoInscripcionEstudiante;
 use App\Services\BitacoraService;
 use App\Services\RoleDashboardResolver;
 use App\Support\PrivateFilePath;

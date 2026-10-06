@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InstitucionProcedencia extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'institucion_procedencia';
 
     protected $primaryKey = 'cod_ipe';
@@ -26,16 +29,6 @@ class InstitucionProcedencia extends Model
         'tel_ipe',
         'web_ipe',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($institucion) {
-
-            if (! $institucion->cod_ipe) {
-                $institucion->cod_ipe = 'IPE_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

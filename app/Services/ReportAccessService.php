@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 
 class ReportAccessService
 {

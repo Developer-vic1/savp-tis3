@@ -1,0 +1,5 @@
+<div class="usuarios-mosaico mt-4">
+    <div class="usuarios-mosaico-area" role="img" aria-label="Mosaico proporcional de roles. Cada bloque representa su cantidad de cuentas."><template x-for="bloque in mosaicoRoles" :key="bloque.nombre"><div class="usuarios-mosaico-bloque" :class="'usuarios-color-'+bloque.indice" :style="`left:${bloque.x/10}%;top:${bloque.y/6}%;width:${bloque.ancho/10}%;height:${bloque.alto/6}%`" :title="bloque.nombre+': '+bloque.cantidad+' cuentas'"><span x-show="bloque.ancho>180 && bloque.alto>100" x-text="bloque.nombre+' · '+bloque.cantidad"></span></div></template></div>
+    <p class="ui-muted text-xs mt-3" x-show="!rolesVisibles.length">No hay cuentas del equipo institucional con estos filtros. Puedes elegir todos los roles.</p>
+</div>
+<div class="usuarios-leyenda mt-4"><template x-for="bloque in rolesVisibles" :key="bloque.nombre"><div><span :class="'usuarios-color-'+bloque.indice" aria-hidden="true"></span><span x-text="bloque.nombre"></span><strong class="ui-title" x-text="bloque.cantidad"></strong></div></template></div>

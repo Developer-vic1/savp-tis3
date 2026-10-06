@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\AulaVirtual;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TareaMaterial extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'tarea_material';
 
     protected $primaryKey = 'cod_tar_mat';
@@ -33,15 +36,6 @@ class TareaMaterial extends Model
     protected $casts = [
         'tam_tar_mat' => 'integer',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (TareaMaterial $tareaMaterial) {
-            if (! $tareaMaterial->cod_tar_mat) {
-                $tareaMaterial->cod_tar_mat = 'TARM_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function tarea(): BelongsTo
     {

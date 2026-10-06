@@ -2,9 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\MetaAcademica;
-use App\Models\User;
-use App\Policies\MetaAcademicaPolicy;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AcademicGoalService;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\UnitContentService;
@@ -57,9 +55,11 @@ class PreparedPersistenceBoundaryTest extends TestCase
         $courses = Mockery::mock(CursoVirtualService::class);
         $courses->shouldNotReceive('estudianteDeUsuario');
         $this->app->instance(CursoVirtualService::class, $courses);
-        $policy = new MetaAcademicaPolicy;
-        $goal = new MetaAcademica;
-        $this->assertFalse($policy->view($this->actor('Docente'), $goal));
-        $this->assertFalse($policy->update($this->actor('Docente'), $goal));
+        try {
+            (new AcademicGoalService)->find($this->actor('Docente'), 'META_NO_PERSISTIDA');
+            $this->fail('El docente no debe obtener una meta personal.');
+        } catch (HttpException $error) {
+            $this->assertSame(403, $error->getStatusCode());
+        }
     }
 }

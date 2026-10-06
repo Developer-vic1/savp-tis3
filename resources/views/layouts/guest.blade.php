@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <x-icono-institucional />
 
     <title>Franz Tamayo N°3 | Acceso</title>
 
@@ -24,7 +25,7 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link
-        href="https://fonts.bunny.net/css?family=inter:400,500,600,700,800,900|poppins:500,600,700,800,900&display=swap"
+        href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap"
         rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -32,40 +33,26 @@
 
     <style>
         :root {
-            --auth-bg: #f6fbf8;
-            --auth-bg-soft: #f8fafc;
-            --auth-surface: rgba(255, 255, 255, .72);
-            --auth-border: rgba(203, 213, 225, .72);
-            --auth-text: #0f172a;
-            --auth-muted: #64748b;
-            --auth-primary: #059669;
-            --auth-primary-soft: rgba(16, 185, 129, .16);
-            --auth-sky: #0284c7;
-            --auth-sky-soft: rgba(14, 165, 233, .14);
-            --auth-shadow: 0 28px 90px rgba(15, 23, 42, .12);
-        }
-
-        html.dark {
-            --auth-bg: #07111f;
-            --auth-bg-soft: #0f172a;
-            --auth-surface: rgba(15, 23, 42, .72);
-            --auth-border: rgba(71, 85, 105, .72);
-            --auth-text: #f8fafc;
-            --auth-muted: #94a3b8;
-            --auth-primary: #34d399;
-            --auth-primary-soft: rgba(52, 211, 153, .14);
-            --auth-sky: #38bdf8;
-            --auth-sky-soft: rgba(56, 189, 248, .14);
-            --auth-shadow: 0 28px 95px rgba(0, 0, 0, .38);
+            --auth-bg: var(--ui-bg);
+            --auth-bg-soft: var(--ui-bg-soft);
+            --auth-surface: var(--ui-surface);
+            --auth-border: var(--ui-border);
+            --auth-text: var(--ui-text);
+            --auth-muted: var(--ui-muted);
+            --auth-primary: var(--ui-primary);
+            --auth-primary-soft: var(--ui-primary-soft);
+            --auth-sky: var(--ui-info);
+            --auth-sky-soft: var(--ui-info-soft);
+            --auth-shadow: var(--ui-shadow-lg);
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Figtree', sans-serif;
             color: var(--auth-text);
         }
 
         .font-display {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Figtree', sans-serif;
         }
 
         .auth-shell {

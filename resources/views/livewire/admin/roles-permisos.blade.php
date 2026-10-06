@@ -1,256 +1,55 @@
-<div class="space-y-6">
-    <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-8">
-        <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-primary);">Seguridad</p>
-        <h1 class="ui-title mt-2 text-3xl font-black">Roles y permisos</h1>
-        <p class="ui-muted mt-3 max-w-3xl">Gobernanza de acceso institucional. Toda solicitud de rol requiere evidencia y revisión independiente.</p>
-        @if(auth()->user()->can('roles.solicitudes.crear'))
-            <button type="button" wire:click="openRequest" class="ui-btn-primary mt-5">+ Solicitar nuevo rol</button>
-        @endif
+@php
+    $puedeEditar=auth()->user()->can('roles-permisos.gestionar')&&auth()->user()->can('roles.permisos.asignar');
+    $datosRoles=$roles->map(fn($r)=>['id'=>$r->id,'nombre'=>$r->name,'permisos'=>$r->permissions->pluck('name')->all()])->all();
+    $miAdministracion=$permisosCuenta->where('espacio','administrativo')->count();$miAula=$permisosCuenta->where('espacio','aula')->count();$porcentajeAdmin=$cuenta['total']?$miAdministracion/$cuenta['total']*100:0; $totalPermisos=$catalogoCompleto->count(); $maxCuentas=max(1,$roles->max('users_count'));$maxPermisos=max(1,$roles->max('permissions_count'));
+@endphp
+<div class="roles-pagina" x-data="rolesInstitucionales(@js($permisos->all()),@js($datosRoles),$wire.entangle('selectedPermissions'),@js(['motivos'=>\App\Support\SupportRolesInstitucionales::MOTIVOS,'ambitos'=>\App\Support\SupportRolesInstitucionales::AMBITOS,'minimo'=>now()->setTimezone(config('seguridad-accesos.zona_horaria'))->toDateString(),'maximo'=>$gestionActiva?->ffi_gea?->toDateString()??'']),@js($ventanas),@js($catalogoCompleto->all()),@js(['permisos'=>$permisosCuenta->pluck('name')->all(),'roles'=>auth()->user()->roles->modelKeys()]),$wire.entangle('apartado'))" x-on:roles-acceso-guardado.window="avisoAcceso($event.detail)" wire:key="roles-panel-{{ md5(json_encode($datosRoles)) }}">
+    <header class="ui-card roles-cabecera">
+        <div><p class="roles-kicker">Seguridad institucional</p><h1>Roles y permisos</h1><p class="ui-muted text-sm">Organiza quién puede hacer cada tarea, con accesos claros y vigencias respaldadas.</p></div>
+        <div class="roles-acciones">
+            @if(auth()->user()->can('roles.solicitudes.crear'))<button class="ui-btn ui-btn-secondary" type="button" x-on:click="abrirSolicitud()" :disabled="!!proceso"><i class="ph-duotone ph-user-plus" aria-hidden="true"></i>Solicitar rol</button>@endif
+            @if($puedePersonal)<button class="ui-btn ui-btn-secondary" type="button" x-on:click="apartado='usuarios'"><i class="ph-duotone ph-user-check" aria-hidden="true"></i>Asignar a usuario</button>@endif
+            @if($puedeEditar)<button class="ui-btn ui-btn-primary" type="button" x-on:click="abrirAcceso()" :disabled="!!proceso"><i class="ph-duotone ph-calendar-plus" aria-hidden="true"></i>Programar acceso</button>@endif
+        </div>
+    </header>
+    <section class="roles-graficos" aria-label="Resumen de permisos y cuentas por rol">
+        <article class="ui-card roles-grafico"><p class="roles-kicker">Capacidad de cada rol</p><h2>Permisos asignados</h2><p class="ui-muted">Cada barra cuenta permisos realmente guardados.</p><div class="roles-barras">@foreach($roles as $r)<button type="button" class="roles-barra" x-on:click="seleccionarRol({{ $r->id }})" aria-label="Consultar {{ $r->name }}: {{ $r->permissions_count }} permisos"><span>{{ $r->name }}</span><span class="roles-barra-pista"><i style="--avance:{{ $r->permissions_count/$maxPermisos*100 }}%" aria-hidden="true"></i></span><strong>{{ $r->permissions_count }}</strong></button>@endforeach</div></article>
+        <article class="ui-card roles-grafico roles-distribucion"><p class="roles-kicker">Tus tareas por espacio</p><h2>Administración y Aula virtual</h2><p class="ui-muted">Dónde se distribuyen los permisos de tu cuenta.</p><div class="roles-anillo" style="--porcentaje:{{ $porcentajeAdmin }}"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="roles-anillo-base" cx="60" cy="60" r="48" pathLength="100"/><circle class="roles-anillo-avance" cx="60" cy="60" r="48" pathLength="100" stroke-dasharray="{{ $porcentajeAdmin }} 100"/></svg><span><strong>{{ $cuenta['total'] }}</strong><small>permisos propios</small></span></div><div class="roles-distribucion-leyenda"><button type="button" x-on:click="cambiarEspacio('administrativo')"><i class="ph-duotone ph-buildings" aria-hidden="true"></i><span>Administración</span><strong>{{ $miAdministracion }}</strong></button><button type="button" x-on:click="cambiarEspacio('aula')"><i class="ph-duotone ph-chalkboard-teacher" aria-hidden="true"></i><span>Aula virtual</span><strong>{{ $miAula }}</strong></button></div></article>
+        <article class="ui-card roles-grafico roles-cuenta"><div class="roles-cuenta-identidad"><img src="{{ auth()->user()->profile_photo_url }}" alt="" width="42" height="42"><div><p class="roles-kicker">Tu cuenta</p><strong>{{ auth()->user()->persona?->nom_per ?? 'Tu cuenta institucional' }}</strong></div></div><button type="button" class="roles-total-grafico" x-on:click="apartado='catalogo'" aria-label="Ver los {{ $totalPermisos }} permisos del sistema"><span class="roles-anillo roles-anillo-total"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="roles-total-base" cx="60" cy="60" r="48" pathLength="100"/><circle class="roles-anillo-avance" cx="60" cy="60" r="48" pathLength="100" stroke-dasharray="{{ $totalPermisos?min(100,$cuenta['total']/$totalPermisos*100):0 }} 100"/></svg><span><strong>{{ $totalPermisos }}</strong><small>permisos del sistema</small></span></span><span class="roles-total-leyenda"><span><i class="ph-duotone ph-check-circle" aria-hidden="true"></i>{{ $cuenta['total'] }} en tu cuenta</span><span><i class="ph-duotone ph-minus-circle" aria-hidden="true"></i>{{ max(0,$totalPermisos-$cuenta['total']) }} fuera de tu cuenta</span></span><small>Explorar catálogo completo <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></small></button><p class="ui-muted text-xs">{{ $cuenta['permanentes'] }} permanentes · {{ $cuenta['temporales'] }} temporales adicionales</p><p class="roles-catalogo-total">{{ $totalPermisos }} en el catálogo · {{ $roles->count() }} roles · {{ $cuentasConRol }} cuentas con rol</p></article>
     </section>
+    <nav class="roles-navegacion" role="tablist" aria-label="Organización de accesos">
+        @foreach(['roles'=>['ph-users-three','Roles y permisos'],'catalogo'=>['ph-stack','Catálogo completo · '.$totalPermisos],'cuenta'=>['ph-identification-card','Mi cuenta · '.$cuenta['total'].' permisos'],'vigencias'=>['ph-calendar-check','Accesos y vigencias'],'solicitudes'=>['ph-file-pdf','Solicitudes']] as $id=>[$icono,$nombre])<button type="button" role="tab" :aria-selected="apartado==='{{ $id }}'" x-on:click="apartado='{{ $id }}'"><i class="ph-duotone {{ $icono }}" aria-hidden="true"></i>{{ $nombre }}</button>@endforeach
+        @if($puedePersonal)<button type="button" role="tab" :aria-selected="apartado==='usuarios'" x-on:click="apartado='usuarios'"><i class="ph-duotone ph-user-check" aria-hidden="true"></i>Por usuario</button>@endif
+    </nav>
+    <p role="status" class="roles-aviso" x-show="mensaje" x-text="mensaje" x-cloak></p>
+    <div class="roles-zona" x-show="apartado==='roles'">
+        <aside class="ui-card roles-lista" aria-label="Elegir un rol"><h2>¿Qué rol revisamos?</h2>@foreach($roles as $r)<button class="roles-elegir" type="button" x-on:click="seleccionarRol({{ $r->id }})" :disabled="!!proceso" aria-pressed="{{ $selectedRoleId===$r->id?'true':'false' }}"><i class="ph-duotone {{ $r->icono }}" aria-hidden="true"></i><span><strong>{{ $r->name }}</strong><small>{{ $r->permissions_count }} permisos · {{ $r->users_count }} cuentas</small></span></button>@endforeach</aside>
+        <section class="ui-card roles-trabajo" :aria-busy="proceso==='rol'">
+            <div class="roles-titulo"><i class="ph-duotone {{ $selectedRole?->icono }}" aria-hidden="true"></i><div><p class="roles-kicker">{{ in_array($selectedRole?->name,\App\Models\Oficial\Sistema\Role::INSTITUTIONAL,true)?'Rol institucional':'Rol complementario' }}</p><h2>{{ $selectedRole?->name }}</h2><p class="ui-muted">{{ $selectedRole?->descripcion }}</p></div><i x-show="proceso==='rol'" class="ph-duotone ph-spinner-gap roles-giro" aria-label="Consultando rol"></i>@include('livewire.admin.roles.modo-edicion')</div>
 
-    <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-7" aria-label="Jerarquía de acceso">
-        <h2 class="text-xl font-bold">Jerarquía de acceso</h2>
-        <p class="ui-muted mt-2">Para entrar en un workspace, la cuenta activa debe tener un único actor institucional. El rol reúne permisos; cada permiso habilita módulos o acciones. Los seis actores son funciones distintas, no una cadena de herencia de permisos.</p>
-        <ol class="mt-5 grid gap-3 md:grid-cols-4">
-            @foreach (['1. Cuenta activa', '2. Rol institucional', '3. Permisos asignados', '4. Módulos y acciones'] as $step)
-                <li class="ui-card-soft rounded-2xl p-4 font-semibold">{{ $step }}</li>
-            @endforeach
-        </ol>
-        @unless(auth()->user()->can('roles-permisos.gestionar') && auth()->user()->can('roles.permisos.asignar'))
-            <p class="ui-alert-warning mt-5" role="status">Consulta disponible con el permiso histórico. La edición de permisos requiere la autorización nueva y permanece deshabilitada.</p>
-        @endunless
-    </section>
-
-    <div class="grid gap-6 xl:grid-cols-[320px_1fr]">
-        <aside class="ui-card card-shadow rounded-[2rem] p-5" aria-label="Roles disponibles">
-            <h2 class="font-bold" style="color: var(--ui-text);">Roles</h2>
-            <div class="mt-4 space-y-2">
-                @foreach ($roles as $role)
-                    <button type="button" wire:click="$set('selectedRoleId', {{ $role->id }})"
-                        class="flex w-full items-center justify-between rounded-2xl border px-4 py-3 text-left transition"
-                        style="border-color: var(--ui-border); {{ $selectedRoleId === $role->id ? 'background: var(--ui-primary-soft); color: var(--ui-primary);' : 'color: var(--ui-text-soft);' }}">
-                        <span class="font-semibold">{{ $role->name }}</span>
-                        <span class="rounded-full px-2 py-1 text-xs" style="background: var(--ui-surface-muted);">{{ $role->users_count }}</span>
-                    </button>
-                @endforeach
+            @include('livewire.admin.roles.ventanas')
+            <div class="roles-herramientas"><nav class="roles-vistas" aria-label="Vista de permisos">@foreach(['lectura'=>['ph-list-bullets','Lectura'],'matriz'=>['ph-table','Matriz'],'selectores'=>['ph-check-square','Selección']] as $v=>[$i,$n])<button type="button" :aria-pressed="vista==='{{ $v }}'" x-on:click="vista='{{ $v }}';pagina=1"><i class="ph-duotone {{ $i }}" aria-hidden="true"></i>{{ $n }}</button>@endforeach</nav>
+            <nav class="roles-espacios" aria-label="Espacio de permisos"><button type="button" :aria-pressed="espacio==='administrativo'" x-on:click="cambiarEspacio('administrativo')"><i class="ph-duotone ph-buildings" aria-hidden="true"></i>Administración <span>{{ $permisos->where('espacio','administrativo')->count() }}</span></button><button type="button" :aria-pressed="espacio==='aula'" x-on:click="cambiarEspacio('aula')"><i class="ph-duotone ph-chalkboard-teacher" aria-hidden="true"></i>Aula virtual <span>{{ $permisos->where('espacio','aula')->count() }}</span></button></nav></div>
+            @include('livewire.admin.roles.cambios-permisos',['origenEdicion'=>'roles'])
+            <div class="roles-filtros"><label class="ui-label">Buscar una tarea<input class="ui-input" type="search" x-model.debounce.150ms="busqueda" x-on:input="pagina=1" placeholder="Consultar, registrar, aula…"></label><div x-show="espacio==='administrativo'"><x-selector-institucional enlace="dominio" identificador="roles-filtro-area" etiqueta="Área administrativa" :opciones="array_merge([['valor'=>'','etiqueta'=>'Todas las áreas']],$permisos->where('espacio','administrativo')->pluck('domain')->unique()->sort()->map(fn($d)=>['valor'=>$d,'etiqueta'=>$d])->values()->all())" /></div><div x-show="espacio==='aula'" x-cloak><x-selector-institucional enlace="tipoAula" identificador="roles-filtro-aula" etiqueta="Actividad del aula" :opciones="array_merge([['valor'=>'','etiqueta'=>'Todas las actividades']],$permisos->where('espacio','aula')->pluck('tipo_aula')->unique()->sort()->map(fn($d)=>['valor'=>$d,'etiqueta'=>$d])->values()->all())" /></div><x-selector-institucional enlace="estado" identificador="roles-filtro-permisos" etiqueta="Permisos del rol" :opciones="[['valor'=>'','etiqueta'=>'Todos'],['valor'=>'consulta','etiqueta'=>'Puede consultar'],['valor'=>'edicion','etiqueta'=>'Puede editar'],['valor'=>'entrada','etiqueta'=>'Entrada al módulo'],['valor'=>'operacion','etiqueta'=>'Otras operaciones'],['valor'=>'sin','etiqueta'=>'Sin permiso específico']]" /><button class="ui-btn ui-btn-secondary" type="button" x-on:click="limpiar()" aria-label="Limpiar filtros"><i class="ph-duotone ph-arrow-counter-clockwise" aria-hidden="true"></i></button></div>
+            <div x-show="vista==='lectura'" class="roles-lectura">
+                @foreach($dominios as $d)<x-plegable-institucional :etiqueta="$d" icono="ph-folder-open" :abierto="false" :data-area="$d" x-show="filtrados.some(p=>p.domain===$el.dataset.area)"><x-slot:contador><span x-text="filtrados.filter(p=>p.domain===@js($d)).length"></span> tareas · <span x-text="filtrados.filter(p=>p.domain===@js($d)&&seleccion.includes(p.name)).length"></span> asignadas</x-slot:contador><div class="roles-permisos"><template x-for="p in filtrados.filter(p=>p.domain===@js($d))" :key="p.name"><div class="roles-permiso"><input x-show="$wire.edicionPermisos&&!bloqueoAsignacion(p)" type="checkbox" :aria-label="'Asignar '+p.label+' · '+p.scope_label" :checked="seleccion.includes(p.name)" x-on:change="marcar(p.name)" :disabled="!$wire.edicionPermisos||!!proceso||!!bloqueoAsignacion(p)"><i x-show="!$wire.edicionPermisos||bloqueoAsignacion(p)" class="ph-duotone" :class="seleccion.includes(p.name)?'ph-check-circle':'ph-minus-circle'" aria-hidden="true"></i><div><button type="button" class="roles-detalle-enlace" x-on:click="permisoDetalle=p"><strong x-text="p.label"></strong><i class="ph-duotone ph-info" aria-hidden="true"></i><span class="sr-only">Ver detalles del permiso</span></button><small x-text="p.scope_label"></small><small x-text="nivelPermiso(p)"></small><small x-show="p.critical">Requiere autoridad elevada</small></div></div></template></div></x-plegable-institucional>@endforeach
             </div>
-        </aside>
-
-        <section class="ui-card card-shadow rounded-[2rem] p-5 sm:p-7">
-            <div class="ui-card-soft mb-6 rounded-2xl p-4 sm:p-5" aria-label="Ventanas originales del rol">
-                <h2 class="text-xl font-bold">Ventanas originales · {{ $selectedRole?->name }}</h2>
-                <p class="ui-muted mt-2 text-sm">{{ $roleWindows->count() }} ventanas del catálogo aprobado V001–V105. Rutas y estados tomados de la matriz de conciliación; PARCIAL o BLOQUEADA no significan certificación funcional ni autorizan accesos nuevos.</p>
-                <div class="mt-4 max-h-80 overflow-auto rounded-xl border" style="border-color: var(--ui-border);">
-                    <table class="w-full min-w-[800px] text-left text-sm">
-                        <thead style="background: var(--ui-surface-muted);"><tr><th class="px-3 py-2">ID</th><th class="px-3 py-2">Ventana original</th><th class="px-3 py-2">Estado</th><th class="px-3 py-2">Ruta actual</th><th class="px-3 py-2">Objetivo</th></tr></thead>
-                        <tbody>
-                            @foreach($roleWindows as $window)
-                                <tr class="border-t" style="border-color: var(--ui-border);">
-                                    <td class="px-3 py-2 font-bold">{{ $window['id'] }}</td>
-                                    <td class="px-3 py-2">{{ $window['name'] }}<span class="ui-muted block text-xs">{{ $window['system'] }} · histórica {{ $window['current_path'] }}</span></td>
-                                    <td class="px-3 py-2">{{ match($window['status']) { 'PARTIAL' => 'PARCIAL', 'BLOCKED_EXTERNALLY_DB' => 'BLOQUEADA POR BD', 'BLOCKED_EXTERNALLY_INSTITUTIONAL' => 'BLOQUEADA POR DECISIÓN', default => $window['status'] } }}</td>
-                                    <td class="px-3 py-2">{{ $window['runtime_path'] }}</td>
-                                    <td class="px-3 py-2">{{ $window['target_path'] }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                @if($legacyReadGrants->isNotEmpty())
-                    <h3 class="mt-5 font-bold">Lecturas habilitadas por permisos históricos</h3>
-                    <p class="ui-muted mt-1 text-sm">Compatibilidad de consulta calculada con los permisos que este rol tiene realmente en la base de datos. Las escrituras siguen sujetas a permisos propios.</p>
-                    <ul class="mt-3 grid gap-2 md:grid-cols-2">
-                        @foreach($legacyReadGrants as $grant)
-                            <li class="rounded-xl border px-3 py-2 text-sm" style="border-color: var(--ui-border);">
-                                <span class="font-semibold">{{ $grant['permission'] }}</span>
-                                <span class="ui-muted block">por {{ $grant['legacy'] }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </div>
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <label class="block w-full max-w-xl">
-                    <span class="sr-only">Buscar permisos</span>
-                    <input wire:model.live.debounce.250ms="search" type="search" placeholder="Buscar permiso..."
-                        class="w-full rounded-2xl border px-4 py-3" style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
-                </label>
-                <button type="button" wire:click="save" wire:confirm="¿Guardar estos cambios de permisos para todas las cuentas del rol? Los cambios sensibles quedarán registrados en Bitácora." wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))
-                    class="rounded-2xl px-5 py-3 font-semibold text-white disabled:opacity-60" style="background: var(--ui-primary);">
-                    Guardar cambios
-                </button>
-            </div>
-
-            @if (session('status')) <p role="status" class="ui-alert-success mt-4">{{ session('status') }}</p> @endif
-            <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                @foreach (['domain' => ['Dominio', $domains], 'action' => ['Acción', $actions], 'scope' => ['Alcance', $scopes]] as $filter => [$label, $options])
-                    <label class="ui-label">{{ $label }}
-                        <select class="ui-select" wire:model.live="{{ $filter }}"><option value="">Todos</option>
-                            @foreach ($options as $option)<option value="{{ $option }}">{{ str_replace('_', ' ', $option) }}</option>@endforeach
-                        </select>
-                    </label>
-                @endforeach
-                <label class="ui-label">Estado<select class="ui-select" wire:model.live="selection"><option value="">Todos</option><option value="selected">Seleccionados</option><option value="unselected">Sin seleccionar</option></select></label>
-            </div>
-            <div class="flex flex-wrap gap-3">
-                <button type="button" class="ui-btn-secondary" wire:click="selectVisible(true)" wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))>Seleccionar visibles</button>
-                <button type="button" class="ui-btn-secondary" wire:click="selectVisible(false)" wire:loading.attr="disabled" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))>Deseleccionar visibles</button>
-            </div>
-            <details class="ui-card-soft mt-4 p-4" @if(count($added) + count($removed)) open @endif>
-                <summary>Cambios pendientes: {{ count($added) }} agregados · {{ count($removed) }} retirados</summary>
-                @foreach (['Agregar' => $added, 'Retirar' => $removed] as $change => $names)
-                    @foreach ($names as $name)<p class="ui-muted mt-2 text-sm">{{ $change }}: {{ \App\Support\PermissionLabel::describe($name)['label'] }} <span class="break-all">({{ $name }})</span></p>@endforeach
-                @endforeach
-            </details>
-
-            @error('permissions')
-                <p class="mt-4 rounded-2xl px-4 py-3 text-sm" style="background: var(--ui-danger-soft); color: var(--ui-danger);">{{ $message }}</p>
-            @enderror
-
-            <div class="mt-6 space-y-6">
-                @forelse ($permissionGroups as $group => $permissions)
-                    <fieldset>
-                        <legend class="text-sm font-black tracking-wide" style="color: var(--ui-text);">{{ $group }}</legend>
-                        <div class="mt-3 grid gap-2 md:grid-cols-2 2xl:grid-cols-3">
-                            @foreach ($permissions as $permission)
-                                <label class="flex cursor-pointer items-start gap-3 rounded-2xl border p-3" style="border-color: var(--ui-border);">
-                                    <input type="checkbox" wire:model.live="selectedPermissions" value="{{ $permission->name }}" @disabled(!auth()->user()->can('roles-permisos.gestionar') || !auth()->user()->can('roles.permisos.asignar'))
-                                        class="mt-1 rounded" style="color: var(--ui-primary);">
-                                    @php($description = \App\Support\PermissionLabel::describe($permission->name))
-                                    <span class="min-w-0 text-sm" style="color: var(--ui-text-soft);">
-                                        <strong class="block">{{ $description['label'] }}</strong>
-                                        <span class="ui-muted block">Alcance: {{ $description['scope_label'] }}</span>
-                                        @if($description['critical'])<span class="ui-badge-warning">Permiso sensible</span>@endif
-                                        <details class="ui-muted text-xs"><summary>Identificador técnico</summary><span class="break-all">{{ $permission->name }}</span></details>
-                                    </span>
-                                </label>
-                            @endforeach
-                        </div>
-                    </fieldset>
-                @empty
-                    <p class="ui-muted py-10 text-center">No hay permisos que coincidan con la búsqueda.</p>
-                @endforelse
-            </div>
+            <div x-show="vista==='matriz'" x-cloak><p class="ui-muted text-xs">Compara los permisos guardados de todos los roles. La selección pendiente del rol actual se marca antes de guardar.</p><div class="roles-matriz-contenedor"><table class="roles-matriz"><caption class="sr-only">Matriz de tareas y roles</caption><thead><tr><th scope="col">Tarea y alcance</th>@foreach($roles as $r)<th scope="col">{{ $r->name }}</th>@endforeach</tr></thead><tbody><template x-for="p in visibles" :key="p.name"><tr><th scope="row"><button type="button" class="roles-detalle-enlace" x-on:click="permisoDetalle=p"><span x-text="p.label"></span><i class="ph-duotone ph-info" aria-hidden="true"></i></button><small x-text="p.scope_label"></small></th>@foreach($roles as $r)<td><span :class="nivelPermiso(p,{{ $r->id }}).startsWith('Consulta')?'roles-consulta':nivelPermiso(p,{{ $r->id }})==='Sin permiso'?'roles-no':'roles-si'"><i class="ph-duotone" :class="nivelPermiso(p,{{ $r->id }}).startsWith('Consulta')?'ph-eye':nivelPermiso(p,{{ $r->id }})==='Edición'?'ph-pencil-simple':nivelPermiso(p,{{ $r->id }})==='Sin permiso'?'ph-minus':'ph-check-circle'" aria-hidden="true"></i><span class="roles-nivel" x-text="nivelPermiso(p,{{ $r->id }})"></span></span></td>@endforeach</tr></template></tbody></table></div></div>
+            <div x-show="vista==='selectores'" x-cloak><p class="ui-muted text-xs mb-3">Selecciona las tareas necesarias. Activa Edición para modificar; Guardar aplica el cambio a las cuentas del rol.</p><div class="roles-permisos"><template x-for="p in visibles" :key="p.name"><label class="roles-permiso"><input x-show="$wire.edicionPermisos" x-cloak type="checkbox" :checked="seleccion.includes(p.name)" x-on:change="marcar(p.name)" :disabled="!$wire.edicionPermisos||!!proceso||@js(!$puedeEditar)"><span><strong x-text="p.label"></strong><small x-text="p.scope_label"></small><small x-show="p.critical">La autoridad elevada se valida al guardar.</small></span></label></template></div></div>
+            <div class="roles-vacio" x-show="!filtrados.length" x-cloak><i class="ph-duotone ph-magnifying-glass" aria-hidden="true"></i>No encontramos tareas con estos filtros. Prueba otra palabra o limpia la búsqueda.</div>
+            <div class="roles-paginacion" x-show="vista!=='lectura'&&filtrados.length"><p><span x-text="filtrados.length"></span> tareas · Página <span x-text="Math.min(pagina,paginas)"></span> de <span x-text="paginas"></span></p><div class="roles-acciones"><button type="button" class="ui-btn ui-btn-secondary" x-on:click="pagina=Math.max(1,pagina-1)" :disabled="pagina<=1">Anterior</button><button type="button" class="ui-btn ui-btn-secondary" x-on:click="pagina=Math.min(paginas,pagina+1)" :disabled="pagina>=paginas">Siguiente</button></div></div>
+            @unless($puedeEditar)<p class="roles-aviso mt-4">Puedes consultar la matriz. Para cambiarla necesitas autorización de administración y asignación de permisos.</p>@endunless
+            <x-plegable-institucional class="mt-4" compacto etiqueta="Cómo se interpreta este acceso" icono="ph-info" descripcion="Rol principal, consultas compatibles y límites de cada operación."><p class="ui-muted text-sm">Cada cuenta activa mantiene un único actor institucional. Los permisos habilitan tareas; el módulo comprueba también sus cursos, personas asignadas y ámbito de datos.</p>@if($legacyReadGrants->isNotEmpty())<p class="font-bold text-sm mt-3">Consultas que conserva este rol</p><ul class="roles-permisos mt-2">@foreach($legacyReadGrants as $p)<li class="roles-permiso text-xs"><i class="ph-duotone ph-eye" aria-hidden="true"></i>{{ \App\Support\PermissionLabel::describe($p)['label'] }}</li>@endforeach</ul>@endif</x-plegable-institucional>
         </section>
     </div>
-
-    @if(auth()->user()->can('roles.solicitudes.ver'))
-        <section class="ui-card card-shadow rounded-[2rem] p-5 sm:p-7" aria-label="Solicitudes de rol">
-            <h2 class="text-xl font-bold">Solicitudes recientes</h2>
-            <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                @forelse($requests as $request)
-                    <button type="button" wire:click="viewRequest({{ $request->id }})" class="ui-card-soft rounded-2xl p-4 text-left">
-                        <strong class="block">#{{ $request->id }} · {{ $request->requested_name }}</strong>
-                        <span class="ui-muted text-sm">{{ str_replace('_', ' ', $request->status) }} · {{ $request->created_at?->format('d/m/Y H:i') }}</span>
-                    </button>
-                @empty
-                    <p class="ui-muted">Aún no hay solicitudes.</p>
-                @endforelse
-            </div>
-        </section>
-    @endif
-
-    @if($showRequestModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-3 sm:p-6" style="background: rgba(0,0,0,.65);" role="presentation"
-            x-data x-init="$nextTick(() => $el.querySelector('input,button')?.focus())" x-on:keydown.escape.window="$wire.closeRequest()"
-            x-on:keydown.tab="let f=[...$el.querySelectorAll('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled])')].filter(e=>e.offsetParent!==null); if(!f.length)return; if($event.shiftKey && document.activeElement===f[0]){$event.preventDefault();f[f.length-1].focus()} else if(!$event.shiftKey && document.activeElement===f[f.length-1]){$event.preventDefault();f[0].focus()}">
-            <section class="ui-card card-shadow my-auto flex max-h-[92vh] w-full max-w-3xl flex-col rounded-[2rem]" role="dialog" aria-modal="true" aria-labelledby="request-title">
-                <header class="flex items-center justify-between border-b p-5" style="border-color: var(--ui-border);">
-                    <div><h2 id="request-title" class="text-xl font-black">Nueva solicitud de rol</h2><p class="ui-muted text-sm">Etapa {{ $requestStep }} de 5</p></div>
-                    <button type="button" wire:click="closeRequest" aria-label="Cerrar solicitud" class="ui-btn-secondary">Cerrar</button>
-                </header>
-                <div class="overflow-y-auto p-5 sm:p-7">
-                    <ol class="ui-muted mb-6 flex flex-wrap gap-2 text-xs" aria-label="Etapas">
-                        @foreach(['Autorización','Rol','Funciones','Permisos','Análisis'] as $i => $label)
-                            <li @if($requestStep === $i + 1) aria-current="step" @endif class="rounded-full px-3 py-1" style="background: var(--ui-surface-muted);">{{ $i + 1 }}. {{ $label }}</li>
-                        @endforeach
-                    </ol>
-                    @if($requestStep === 1)
-                        <h3 class="font-bold">Autorización institucional</h3>
-                        @if($authority['status'] === 'ACTIVO')
-                            <p class="ui-muted mt-2">Director actual: <strong>{{ $authority['name'] }}</strong> · Cargo: Director · Estado: Activo</p>
-                        @else
-                            <p role="alert" class="ui-alert-warning mt-2">{{ $authority['message'] }}</p>
-                        @endif
-                        <label for="role-document" class="ui-label mt-5 block">Documento autorizado (PDF, JPG o PNG; máximo 10 MB)</label>
-                        <input id="role-document" type="file" wire:model="document" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" class="ui-input w-full">
-                        @error('document')<p role="alert" class="text-sm" style="color: var(--ui-danger);">{{ $message }}</p>@enderror
-                        <p class="ui-muted mt-3 text-sm">El documento se guarda de forma privada. El análisis automático no está disponible; otro administrador deberá revisar la evidencia.</p>
-                    @elseif($requestStep === 2)
-                        <div class="space-y-4">
-                            <label class="ui-label block">Nombre propuesto <input type="text" wire:model="requestedName" class="ui-input w-full" maxlength="80"></label>@error('requestedName')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                            <label class="ui-label block">Justificación <textarea wire:model="justification" class="ui-input w-full" rows="3"></textarea></label>@error('justification')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                            <label class="ui-label block">Motivo institucional <textarea wire:model="institutionalReason" class="ui-input w-full" rows="3"></textarea></label>@error('institutionalReason')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                            <label class="ui-label block">Alcance requerido <input type="text" wire:model="requestedScope" class="ui-input w-full"></label>@error('requestedScope')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                        </div>
-                    @elseif($requestStep === 3)
-                        <label class="ui-label block">Funciones principales <textarea wire:model="functions" class="ui-input w-full" rows="6" placeholder="Describa tareas concretas y su relación con SAVP."></textarea></label>
-                        @error('functions')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                        <label class="ui-label mt-4 block">Observaciones <textarea wire:model="observations" class="ui-input w-full" rows="3"></textarea></label>
-                    @elseif($requestStep === 4)
-                        <p class="ui-muted mb-4">Seleccione únicamente los permisos imprescindibles. Los permisos críticos y globales se bloquean para roles nuevos.</p>
-                        @foreach($permissionGroups as $group => $permissions)
-                            <fieldset class="mb-5"><legend class="font-bold">{{ $group }}</legend><div class="mt-2 grid gap-2 sm:grid-cols-2">
-                                @foreach($permissions as $permission)
-                                    @php($label = \App\Support\PermissionLabel::describe($permission->name))
-                                    <label class="ui-card-soft flex gap-2 rounded-xl p-3 text-sm"><input type="checkbox" wire:model="requestedPermissions" value="{{ $permission->name }}"><span><strong>{{ $label['label'] }}</strong><span class="ui-muted block">Alcance: {{ $label['scope_label'] }}</span>@if($label['critical'])<span class="ui-badge-warning">Crítico</span>@endif</span></label>
-                                @endforeach
-                            </div></fieldset>
-                        @endforeach
-                        @error('requestedPermissions')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                    @else
-                        <h3 class="font-bold">Análisis institucional</h3>
-                        @if($governanceResult)
-                            <div class="ui-card-soft mt-3 rounded-2xl p-4" role="status"><strong>{{ $governanceResult['title'] }} · {{ str_replace('_', ' ', $governanceResult['status']) }}</strong><p class="mt-2">{{ $governanceResult['summary'] }}</p>
-                                @if($governanceResult['suggested_role'])<p class="mt-2">Rol existente sugerido: <strong>{{ $governanceResult['suggested_role'] }}</strong></p>@endif
-                                @foreach($governanceResult['reasons'] as $reason)<p class="mt-2 text-sm">{{ $reason }}</p>@endforeach
-                                @foreach($governanceResult['warnings'] as $warning)<p class="mt-2 text-sm">{{ $warning }}</p>@endforeach
-                            </div>
-                        @endif
-                        <p class="ui-muted mt-4 text-sm">El documento requerirá revisión independiente antes de que se pueda crear el rol. El análisis se repetirá al guardar y al crear.</p>
-                    @endif
-                </div>
-                <footer class="flex flex-wrap justify-end gap-2 border-t p-5" style="border-color: var(--ui-border);">
-                    @if($requestStep > 1)<button type="button" wire:click="$set('requestStep', {{ $requestStep - 1 }})" class="ui-btn-secondary">Anterior</button>@endif
-                    @if($requestStep < 5)<button type="button" wire:click="nextRequestStep" class="ui-btn-primary" @disabled($requestStep === 1 && $authority['status'] !== 'ACTIVO')>Continuar</button>
-                    @else
-                        <button type="button" wire:click="analyzeRequest" class="ui-btn-secondary">Reanalizar</button>
-                        <button type="button" wire:click="submitRequest" wire:loading.attr="disabled" class="ui-btn-primary" @disabled(($governanceResult['status'] ?? null) !== 'APTO')>Registrar solicitud</button>
-                    @endif
-                </footer>
-            </section>
-        </div>
-    @endif
-
-    @if($activeRequest)
-        <div class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-3 sm:p-6" style="background: rgba(0,0,0,.65);" role="presentation"
-            x-data x-init="$nextTick(() => $el.querySelector('button')?.focus())" x-on:keydown.escape.window="$wire.set('activeRequestId', null)"
-            x-on:keydown.tab="let f=[...$el.querySelectorAll('button:not([disabled]),input:not([disabled]),textarea:not([disabled]),a')].filter(e=>e.offsetParent!==null); if(!f.length)return; if($event.shiftKey && document.activeElement===f[0]){$event.preventDefault();f[f.length-1].focus()} else if(!$event.shiftKey && document.activeElement===f[f.length-1]){$event.preventDefault();f[0].focus()}">
-            <section class="ui-card card-shadow my-auto max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-[2rem] p-5 sm:p-7" role="dialog" aria-modal="true" aria-labelledby="detail-title">
-                <div class="flex justify-between gap-3"><h2 id="detail-title" class="text-xl font-black">Solicitud #{{ $activeRequest->id }} · {{ $activeRequest->requested_name }}</h2><button type="button" wire:click="$set('activeRequestId', null)" class="ui-btn-secondary" aria-label="Cerrar detalle">Cerrar</button></div>
-                <p class="ui-muted mt-2">Estado: {{ str_replace('_', ' ', $activeRequest->status) }}</p>
-                <dl class="mt-5 space-y-2 text-sm"><div><dt class="font-bold">Justificación</dt><dd>{{ $activeRequest->justification }}</dd></div><div><dt class="font-bold">Funciones</dt><dd>{{ $activeRequest->functions }}</dd></div><div><dt class="font-bold">Alcance</dt><dd>{{ $activeRequest->scope }}</dd></div><div><dt class="font-bold">Resultado</dt><dd>{{ $activeRequest->analysis_result['summary'] ?? 'Pendiente' }}</dd></div><div><dt class="font-bold">Documento</dt><dd>{{ $activeRequest->document_original_name }} · SHA-256 {{ $activeRequest->document_hash }}</dd></div></dl>
-                @if(auth()->user()->can('roles.documentos.ver'))<a href="{{ route('admin.roles-permisos.documento', $activeRequest) }}" class="ui-btn-secondary mt-4 inline-block">Descargar documento autorizado</a>@endif
-                @if(in_array($activeRequest->status, ['PENDIENTE_REVISION','REQUIERE_REVISION_REUSO']) && $activeRequest->requested_by === auth()->id() && auth()->user()->can('roles.solicitudes.cancelar'))
-                    <button type="button" wire:click="cancelRequest" wire:confirm="¿Cancelar esta solicitud?" class="ui-btn-secondary mt-4">Cancelar solicitud</button>
-                @endif
-                @if(in_array($activeRequest->status, ['PENDIENTE_REVISION','REQUIERE_REVISION_REUSO']) && auth()->user()->can('roles.solicitudes.analizar') && $activeRequest->requested_by !== auth()->id())
-                    @if($activeRequest->status === 'REQUIERE_REVISION_REUSO')<p role="alert" class="ui-alert-warning mt-4">Este documento ya se utilizó. Explique expresamente si su reutilización está autorizada.</p>@endif
-                    <div class="mt-5 space-y-2"><h3 class="font-bold">Revisión documental independiente</h3>
-                        <p class="ui-muted text-sm">Compruebe el documento original. La presencia visual de firma y sello no prueba su autenticidad.</p>
-                        <label class="block"><input type="checkbox" wire:model="documentReadable"> Documento legible</label>
-                        <label class="block"><input type="checkbox" wire:model="directorMatches"> Identidad del Director coincide con el actual</label>
-                        <label class="block"><input type="checkbox" wire:model="signaturePresent"> Presencia aparente de firma</label>
-                        <label class="block"><input type="checkbox" wire:model="sealPresent"> Presencia aparente de sello</label>
-                        <label class="ui-label block">Fundamento de la revisión<textarea wire:model="reviewNote" rows="3" class="ui-input w-full"></textarea></label>
-                        @error('review_note')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror
-                        <div class="flex flex-wrap gap-2"><button type="button" wire:click="reviewRequest(false)" wire:confirm="¿Rechazar esta solicitud?" class="ui-btn-secondary">Rechazar</button><button type="button" wire:click="reviewRequest(true)" wire:confirm="¿Confirma que revisó personalmente la evidencia?" class="ui-btn-primary">Aprobar revisión</button></div>
-                    </div>
-                @endif
-                @if($activeRequest->status === 'REVISADA' && auth()->user()->can('roles.crear'))
-                    <div class="mt-5"><button type="button" wire:click="createRole" wire:confirm="¿Crear el rol tras revalidar documento, autoridad, duplicidad y permisos?" class="ui-btn-primary">Crear rol institucional</button>@error('role_request')<p role="alert" class="text-sm text-red-600">{{ $message }}</p>@enderror</div>
-                @endif
-            </section>
-        </div>
-    @endif
+    <section class="ui-card roles-trabajo" x-show="apartado==='vigencias'" x-cloak>@include('livewire.admin.roles.vigencias')</section>
+    <section class="ui-card roles-trabajo" x-show="apartado==='cuenta'" x-cloak><div class="roles-titulo"><i class="ph-duotone ph-identification-card" aria-hidden="true"></i><div><p class="roles-kicker">Tu acceso personal</p><h2>{{ $cuenta['total'] }} permisos vigentes</h2><p class="ui-muted">Esta vista reúne los permisos de tus roles y los personales sin contarlos dos veces.</p></div></div>@foreach($permisosCuenta->groupBy('domain') as $area=>$tareas)<x-plegable-institucional class="mb-3" :etiqueta="$area" icono="ph-folder-open"><x-slot:contador>{{ $tareas->count() }} tareas</x-slot:contador><div class="roles-permisos">@foreach($tareas as $p)<div class="roles-permiso"><i class="ph-duotone ph-check-circle" aria-hidden="true"></i><span><strong>{{ $p['label'] }}</strong><small>{{ $p['scope_label'] }}</small></span></div>@endforeach</div></x-plegable-institucional>@endforeach</section>
+    <section class="ui-card roles-trabajo" x-show="apartado==='solicitudes'" x-cloak>@include('livewire.admin.roles.solicitudes')</section>
+    @if($puedePersonal)<section x-show="apartado==='usuarios'" x-cloak>@include('livewire.admin.roles.usuarios')</section>@endif
+    @include('livewire.admin.roles.catalogo')
+    @include('livewire.admin.roles.detalle-permiso')
+    @include('livewire.admin.roles.solicitud')
+    @include('livewire.admin.roles.acceso')
+    @include('livewire.admin.roles.revision')
 </div>

@@ -707,7 +707,7 @@ class SoporteDatosBolivia
                 return;
             }
 
-            $usuario = \App\Models\User::find($codUsu);
+            $usuario = \App\Models\Oficial\Sistema\User::find($codUsu);
             if ($usuario && ! $usuario->hasRole($role->name)) {
                 $usuario->assignRole($role->name);
             }

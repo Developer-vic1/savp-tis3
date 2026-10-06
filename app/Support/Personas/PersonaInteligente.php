@@ -36,6 +36,8 @@ class PersonaInteligente
 
     public const EDAD_MAXIMA_PERSONA = 120;
 
+    public const PATRON_NOMBRE = "/^[\\p{L}\\p{M}][\\p{L}\\p{M} .'’\\-]*$/u";
+
     public const TIPOS_VINCULACION = [
         'SOLO_PERSONA',
         'ESTUDIANTE',
@@ -193,6 +195,12 @@ class PersonaInteligente
         $advertencias = [];
         $sugerencias = [];
 
+        foreach (['nom_per' => 'El nombre', 'ape_pat_per' => 'El apellido paterno', 'ape_mat_per' => 'El apellido materno'] as $campo => $etiqueta) {
+            if ($this->tieneValor($datos[$campo] ?? null) && ! preg_match(self::PATRON_NOMBRE, $datos[$campo])) {
+                $bloqueos[] = $etiqueta.' solo admite letras, espacios, apóstrofes y guiones; no números.';
+            }
+        }
+
         if (! $modoTiempoReal || $this->tieneValor($datos['nom_per'])) {
             if (mb_strlen($datos['nom_per']) < 2) {
                 $bloqueos[] = 'El nombre debe tener al menos 2 caracteres.';
@@ -327,6 +335,10 @@ class PersonaInteligente
         }
 
         try {
+            if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', (string) $fechaNacimiento, $partes)
+                && ! checkdate((int) $partes[2], (int) $partes[3], (int) $partes[1])) {
+                throw new \InvalidArgumentException('Fecha inexistente.');
+            }
             $fecha = Carbon::parse($fechaNacimiento)->startOfDay();
 
             if ($fecha->greaterThan(now()->startOfDay())) {
@@ -425,22 +437,15 @@ class PersonaInteligente
         $personasPorNombre = collect();
 
         if (Schema::hasTable('persona')) {
-            if ($this->tieneValor($datos['ci_per']) && Schema::hasColumn('persona', 'ci_per')) {
+            if (preg_match('/^[0-9]{4,12}$/', $datos['ci_per']) && Schema::hasColumn('persona', 'ci_per')) {
                 $personasPorCi = DB::table('persona')
                     ->when($ignorarCodigo !== null, fn ($query) => $query->where('cod_per', '!=', $ignorarCodigo))
                     ->where('ci_per', $datos['ci_per'])
-                    ->when(Schema::hasColumn('persona', 'com_per') && $this->tieneValor($datos['com_per']), function ($query) use ($datos) {
-                        $query->where(function ($sub) use ($datos) {
-                            $sub->where('com_per', $datos['com_per'])
-                                ->orWhereNull('com_per')
-                                ->orWhere('com_per', '');
-                        });
-                    })
                     ->limit(5)
                     ->get();
             }
 
-            if ($this->tieneValor($datos['ema_per']) && Schema::hasColumn('persona', 'ema_per')) {
+            if (filter_var($datos['ema_per'], FILTER_VALIDATE_EMAIL) && Schema::hasColumn('persona', 'ema_per')) {
                 $personasPorCorreo = DB::table('persona')
                     ->when($ignorarCodigo !== null, fn ($query) => $query->where('cod_per', '!=', $ignorarCodigo))
                     ->whereRaw('LOWER(ema_per) = ?', [$datos['ema_per']])
@@ -451,6 +456,8 @@ class PersonaInteligente
             if (
                 mb_strlen($datos['nom_per']) >= 2
                 && mb_strlen($datos['ape_pat_per']) >= 2
+                && preg_match(self::PATRON_NOMBRE, $datos['nom_per'])
+                && preg_match(self::PATRON_NOMBRE, $datos['ape_pat_per'])
                 && Schema::hasColumn('persona', 'nom_per')
                 && Schema::hasColumn('persona', 'ape_pat_per')
             ) {
@@ -824,7 +831,11 @@ class PersonaInteligente
             'com_per' => $this->normalizarTextoMayuscula($datos['com_per'] ?? null),
             'exp_per' => $this->normalizarExpedido($datos['exp_per'] ?? null),
             'fec_nac_per' => $this->normalizarFecha($datos['fec_nac_per'] ?? null),
-            'gen_per' => $this->normalizarTextoMayuscula($datos['gen_per'] ?? null),
+            'gen_per' => match ($this->normalizarTextoMayuscula($datos['gen_per'] ?? null)) {
+                'M' => 'MASCULINO',
+                'F' => 'FEMENINO',
+                default => $this->normalizarTextoMayuscula($datos['gen_per'] ?? null),
+            },
             'tel_per' => $this->normalizarTelefono($datos['tel_per'] ?? null),
             'ema_per' => $this->normalizarCorreo($datos['ema_per'] ?? null),
             'dir_per' => $this->normalizarTextoBasico($datos['dir_per'] ?? null),
@@ -854,7 +865,8 @@ class PersonaInteligente
 
     public function normalizarCi(?string $ci): string
     {
-        return preg_replace('/\D+/', '', (string) $ci) ?: '';
+        // Quita separadores de presentación, pero conserva letras para poder rechazarlas.
+        return preg_replace('/[.\s]+/u', '', trim((string) $ci)) ?: '';
     }
 
     public function normalizarCorreo(?string $correo): ?string
@@ -876,6 +888,10 @@ class PersonaInteligente
     {
         if (! $this->tieneValor($fecha)) {
             return null;
+        }
+
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', trim($fecha))) {
+            return trim($fecha);
         }
 
         try {

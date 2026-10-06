@@ -6,4 +6,4 @@ Mis intereses usa Likert LOCAL 1–5 y tablas de orientación existentes; no es 
 
 Mi preparación muestra pendientes reales. Mi plan contiene AcademicPlan/AcademicGoalService/Policy y MIG-004: creación/edición con motivo, ID Locked, revisiones y dueño propio preparados; flag false impide consultar tabla/guardar. No se guardan metas en Tarea ni OrientacionRespuesta.
 
-Fuentes y asistente usan contrato real 1.0 del aporte, provenance validada y fallback sin inventar respuestas. No conservan preguntas/PII; no necesitan tabla Peter 3 preventiva. Mi futuro no presenta % de carrera fabricado. Servicio externo y QA científica aún pendientes.
+Fuentes y asistente usan contrato real 1.0 del aporte, provenance validada y fallback sin inventar respuestas. No conservan preguntas/PII; no necesitan tabla Aporte Ingenieril SAVP preventiva. Mi futuro no presenta % de carrera fabricado. Servicio externo y QA científica aún pendientes.

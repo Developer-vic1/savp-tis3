@@ -1,0 +1,460 @@
+- generic [ref=f1e3]:
+  - complementary "Navegación de Estudiante" [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - link "Logo de la Unidad Educativa Franz Tamayo N°3 Franz Tamayo N°3 SAVP · TIS 3" [ref=f1e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - img "Logo de la Unidad Educativa Franz Tamayo N°3" [ref=f1e8]
+        - generic [ref=f1e9]:
+          - generic [ref=f1e10]: Franz Tamayo N°3
+          - generic [ref=f1e11]: SAVP · TIS 3
+      - button "Contraer menú" [expanded] [ref=f1e12] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f1e13]: 
+      - text: 
+    - generic [ref=f1e14]:
+      - generic [aria-hidden] [ref=f1e16]: 
+      - generic [ref=f1e17]:
+        - generic [ref=f1e18]: Estudiante
+        - generic [ref=f1e19]: Espacio de trabajo institucional
+    - navigation "Módulos autorizados" [ref=f1e20]:
+      - generic [ref=f1e21]: Principal
+      - link "Inicio" [ref=f1e22] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - generic [aria-hidden] [ref=f1e24]: 
+      - region "Académico" [ref=f1e26]:
+        - button "Grupo Académico" [ref=f1e27] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f1e29]: 
+          - generic [ref=f1e30]: Académico
+          - generic [aria-hidden] [ref=f1e31]: 
+        - text:    
+      - region "Orientación" [ref=f1e32]:
+        - button "Grupo Orientación" [expanded] [ref=f1e33] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f1e35]: 
+          - generic [ref=f1e36]: Orientación
+          - generic [aria-hidden] [ref=f1e37]: 
+        - group "Grupo Orientación" [ref=f1e38]:
+          - link "Mis intereses" [ref=f1e39] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/intereses
+            - generic [aria-hidden] [ref=f1e41]: 
+          - link "Mi futuro académico" [ref=f1e43] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/futuro
+            - generic [aria-hidden] [ref=f1e45]: 
+          - link "Mi preparación" [ref=f1e47] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/preparacion
+            - generic [aria-hidden] [ref=f1e49]: 
+          - link "Mi plan" [ref=f1e51] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/plan
+            - generic [aria-hidden] [ref=f1e53]: 
+          - link "Fuentes académicas" [ref=f1e55] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/fuentes
+            - generic [aria-hidden] [ref=f1e57]: 
+          - link "Asistente de estudio" [ref=f1e59] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/asistente
+            - generic [aria-hidden] [ref=f1e61]: 
+    - generic [ref=f1e63]:
+      - link "Mi perfil" [ref=f1e64] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/user/profile
+        - generic [aria-hidden] [ref=f1e66]: 
+      - button "Cerrar sesión" [ref=f1e69] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f1e71]: 
+  - generic [ref=f1e73]:
+    - banner [ref=f1e74]:
+      - generic [ref=f1e76]:
+        - generic [ref=f1e77]: 02/10/2026
+        - generic [ref=f1e81]:
+          - generic [ref=f1e82]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f1e83]
+        - button "Notificaciones" [ref=f1e85] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f1e86] [cursor=pointer]
+        - button [ref=f1e90] [cursor=pointer]:
+          - generic [ref=f1e91]:
+            - img "Jose Luis Quispe Callisaya" [ref=f1e92]
+            - generic [ref=f1e93]:
+              - paragraph [ref=f1e94]: Jose Luis Quispe Callisaya
+              - paragraph [ref=f1e95]: Estudiante
+    - main [ref=f1e98]:
+      - generic [ref=f1e99]:
+        - generic [ref=f1e100]:
+          - generic [ref=f1e101]:
+            - generic [ref=f1e102]:
+              - generic [ref=f1e103]:
+                - generic [ref=f1e104]: Orientación académica y vocacional
+                - generic [ref=f1e105]: Perfil listo
+              - heading "Conoce tus intereses y explora tus opciones" [level=1] [ref=f1e106]
+              - paragraph [ref=f1e107]: El sistema analiza por separado tus intereses, tu preparación académica observada y la evidencia disponible. No predice tu éxito, no mide tu inteligencia y no decide una carrera por ti.
+            - generic [ref=f1e108]:
+              - generic [ref=f1e109]:
+                - generic [ref=f1e110]: Requisitos obligatorios
+                - generic [ref=f1e111]: 4/4
+              - paragraph [ref=f1e114]: 100% de los requisitos mínimos completados.
+          - navigation "Secciones de orientación" [ref=f1e115]:
+            - link "Perfil Revisa si tienes la información mínima para continuar." [ref=f1e116] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=perfil
+              - generic [ref=f1e118]:
+                - generic [ref=f1e119]: Perfil
+                - generic [ref=f1e120]: Revisa si tienes la información mínima para continuar.
+            - link "RIASEC Explora tus intereses mediante el cuestionario vocacional." [ref=f1e121] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=riasec
+              - generic [ref=f1e123]:
+                - generic [ref=f1e124]: RIASEC
+                - generic [ref=f1e125]: Explora tus intereses mediante el cuestionario vocacional.
+            - link "Análisis Consulta la evidencia académica y vocacional disponible." [ref=f1e126] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=analisis
+              - generic [ref=f1e128]:
+                - generic [ref=f1e129]: Análisis
+                - generic [ref=f1e130]: Consulta la evidencia académica y vocacional disponible.
+            - link "Fuentes Consulta información recuperada desde fuentes documentadas." [ref=f1e131] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=fuentes
+              - generic [ref=f1e133]:
+                - generic [ref=f1e134]: Fuentes
+                - generic [ref=f1e135]: Consulta información recuperada desde fuentes documentadas.
+            - link "Tutor Formula preguntas sobre carreras y evidencia disponible." [ref=f1e136] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=tutor
+              - generic [ref=f1e138]:
+                - generic [ref=f1e139]: Tutor
+                - generic [ref=f1e140]: Formula preguntas sobre carreras y evidencia disponible.
+        - generic [ref=f1e141]:
+          - generic [ref=f1e142]:
+            - generic [ref=f1e143]:
+              - paragraph [ref=f1e144]: Análisis multidimensional
+              - heading "Mi análisis y perfiles de carrera" [level=2] [ref=f1e145]
+              - paragraph [ref=f1e146]: La afinidad de intereses, la preparación académica y la cobertura de evidencia son dimensiones distintas. Una no sustituye a las otras.
+            - generic [ref=f1e147]: Perfil habilitado
+          - button "Actualizar análisis con mis datos" [ref=f1e150] [cursor=pointer]
+        - generic [ref=f1e152]:
+          - generic [ref=f1e153]:
+            - generic [ref=f1e154]:
+              - paragraph [ref=f1e155]: Cobertura de datos
+              - heading "Evidencia disponible de mi perfil" [level=2] [ref=f1e156]
+            - generic [ref=f1e157]: COMPLETE
+          - generic [ref=f1e158]:
+            - article [ref=f1e159]:
+              - generic [ref=f1e162]:
+                - heading "Datos académicos" [level=3] [ref=f1e163]
+                - generic [ref=f1e164]: Disponible
+            - article [ref=f1e165]:
+              - generic [ref=f1e168]:
+                - heading "Asistencia" [level=3] [ref=f1e169]
+                - generic [ref=f1e170]: Disponible
+            - article [ref=f1e171]:
+              - generic [ref=f1e174]:
+                - heading "Actividad de aprendizaje" [level=3] [ref=f1e175]
+                - generic [ref=f1e176]: Parcial
+            - article [ref=f1e177]:
+              - generic [ref=f1e180]:
+                - heading "Historia académica" [level=3] [ref=f1e181]
+                - generic [ref=f1e182]: Disponible
+            - article [ref=f1e183]:
+              - generic [ref=f1e186]:
+                - heading "Formación técnica BTH" [level=3] [ref=f1e187]
+                - generic [ref=f1e188]: Disponible
+            - article [ref=f1e189]:
+              - generic [ref=f1e192]:
+                - heading "Intereses declarados" [level=3] [ref=f1e193]
+                - generic [ref=f1e194]: Sin evidencia disponible
+          - paragraph [ref=f1e196]:
+            - strong [ref=f1e197]: "Importante:"
+            - text: un componente sin evidencia permanece como desconocido o no observado. No se interpreta como un desempeño de cero.
+        - region [ref=f1e198]:
+          - generic [ref=f1e199]:
+            - generic [ref=f1e200]:
+              - paragraph [ref=f1e201]: Comparativa completa
+              - heading "Opciones de carrera por dimensiones" [level=2] [ref=f1e202]
+              - paragraph [ref=f1e203]: "La tabla permite revisar todas las opciones en una sola vista. Las filas siguen el orden del catálogo: intereses, preparación, BTH y cobertura se leen por separado y no se convierten en un puesto ni en un porcentaje de compatibilidad."
+            - generic [ref=f1e204]: 3 de 7 opción(es) validadas
+          - generic [ref=f1e205]:
+            - generic [ref=f1e206]:
+              - generic [ref=f1e207]: Universidad
+              - combobox "Universidad" [ref=f1e208]:
+                - option "Todas las universidades" [selected]
+                - option "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz"
+                - option "Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Universidad Mayor de San Andrés, La Paz"
+                - option "Universidad Privada Boliviana - UPB, Campus La Paz"
+                - option "Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz"
+            - generic [ref=f1e209]:
+              - generic [ref=f1e210]: Área o carrera
+              - combobox "Área o carrera" [ref=f1e211]:
+                - option "Todas las áreas y carreras"
+                - option "Sistemas, informática y tecnología" [selected]
+                - option "Ingenieria de Sistemas · Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz"
+                - option "Ingeniería Ambiental · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Ingeniería Civil · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Ingeniería de Sistemas · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Psicología · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Ingeniería Civil · Universidad Mayor de San Andrés, La Paz"
+                - option "Ingenieria de Sistemas Computacionales · Universidad Privada Boliviana - UPB, Campus La Paz"
+                - option "Ingenieria de Sistemas e Innovacion Digital · Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz"
+            - generic [ref=f1e212]:
+              - button "Aplicar" [ref=f1e213] [cursor=pointer]
+              - link "Limpiar" [ref=f1e214] [cursor=pointer]:
+                - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=analisis
+          - table [ref=f1e216]:
+            - caption [ref=f1e217]: Comparativa completa de las opciones de carrera analizadas.
+            - rowgroup [ref=f1e218]:
+              - row [ref=f1e219]:
+                - columnheader "Opción" [ref=f1e220]
+                - columnheader "Intereses" [ref=f1e221]
+                - columnheader "Preparación observada" [ref=f1e222]
+                - columnheader "BTH relacionado" [ref=f1e223]
+                - columnheader "Cobertura de evidencia" [ref=f1e224]
+            - rowgroup [ref=f1e225]:
+              - row [ref=f1e226]:
+                - rowheader "Ingeniería de Sistemas Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f1e227]:
+                  - generic [ref=f1e228]: Ingeniería de Sistemas
+                  - generic [ref=f1e229]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Parcial" [ref=f1e230]
+                - cell [ref=f1e232]:
+                  - paragraph [ref=f1e233]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f1e234]: 1 área(s) de refuerzo señalada(s)
+                - cell "Disponible" [ref=f1e235]
+                - cell [ref=f1e237]:
+                  - paragraph [ref=f1e238]: 16 registros
+                  - paragraph [ref=f1e239]: 8 materias · 2 periodos
+              - row [ref=f1e240]:
+                - rowheader "Ingenieria de Sistemas e Innovacion Digital Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz" [ref=f1e241]:
+                  - generic [ref=f1e242]: Ingenieria de Sistemas e Innovacion Digital
+                  - generic [ref=f1e243]: Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz
+                - cell "Sin evidencia disponible" [ref=f1e244]
+                - cell [ref=f1e246]:
+                  - paragraph [ref=f1e247]: 0 de 0 relaciones documentadas
+                  - paragraph [ref=f1e248]: 0 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e249]
+                - cell [ref=f1e251]:
+                  - paragraph [ref=f1e252]: 16 registros
+                  - paragraph [ref=f1e253]: 8 materias · 2 periodos
+              - row [ref=f1e254]:
+                - rowheader "Ingenieria de Sistemas Computacionales Universidad Privada Boliviana - UPB, Campus La Paz" [ref=f1e255]:
+                  - generic [ref=f1e256]: Ingenieria de Sistemas Computacionales
+                  - generic [ref=f1e257]: Universidad Privada Boliviana - UPB, Campus La Paz
+                - cell "Sin evidencia disponible" [ref=f1e258]
+                - cell [ref=f1e260]:
+                  - paragraph [ref=f1e261]: 1 de 1 relaciones documentadas
+                  - paragraph [ref=f1e262]: 0 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e263]
+                - cell [ref=f1e265]:
+                  - paragraph [ref=f1e266]: 16 registros
+                  - paragraph [ref=f1e267]: 8 materias · 2 periodos
+          - paragraph [ref=f1e268]: "Lectura de estados: “Disponible” indica una relación documentada; “Parcial” conserva una relación con límites explícitos; “Insuficiente” y “Sin evidencia disponible” señalan información por revisar sin asumir bajo desempeño."
+        - generic [ref=f1e269]:
+          - generic [ref=f1e270]:
+            - generic [ref=f1e271]:
+              - paragraph [ref=f1e272]: Exploración académica
+              - heading "Perfiles de carrera analizados" [level=2] [ref=f1e273]
+            - generic [ref=f1e274]: 3 opciones visibles de 7 validadas
+          - generic [ref=f1e275]:
+            - region [ref=f1e276]:
+              - generic [ref=f1e277]:
+                - heading "Universidad Católica Boliviana San Pablo, Sede La Paz" [level=3] [ref=f1e278]
+                - generic [ref=f1e279]: 1 carrera(s) con corpus validado
+              - article [ref=f1e281]:
+                - generic [ref=f1e282]:
+                  - generic [ref=f1e283]:
+                    - paragraph [ref=f1e284]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                    - heading "Ingeniería de Sistemas" [level=3] [ref=f1e285]
+                  - generic [ref=f1e286]:
+                    - generic [ref=f1e287]: "Afinidad: Parcial"
+                    - generic [ref=f1e288]: "BTH: Disponible"
+                - generic [ref=f1e289]:
+                  - generic [ref=f1e290]:
+                    - heading "Afinidad de intereses" [level=4] [ref=f1e292]
+                    - paragraph [ref=f1e293]: Parcial
+                    - paragraph [ref=f1e294]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                    - generic [ref=f1e295]:
+                      - paragraph [ref=f1e296]: Fuente de la afinidad
+                      - generic [ref=f1e297]:
+                        - link "Ingeniería de Sistemas — Perfil Profesional y Áreas de Estudio" [ref=f1e298] [cursor=pointer]:
+                          - /url: https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/
+                        - code [ref=f1e299]: BO-UCB-LP-SIS-PROFILE-2026
+                      - generic [ref=f1e300]:
+                        - link "O*NET 31.0 Database and O*NET OnLine occupational profiles" [ref=f1e301] [cursor=pointer]:
+                          - /url: https://www.onetcenter.org/database.html
+                        - code [ref=f1e302]: USDOL-ETA-ONET-31-2026
+                  - generic [ref=f1e303]:
+                    - heading "Preparación académica" [level=4] [ref=f1e305]
+                    - paragraph [ref=f1e306]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                    - generic [ref=f1e307]:
+                      - paragraph [ref=f1e308]: Fuente de la preparación
+                      - generic [ref=f1e309]:
+                        - link "Reglamento del Bachillerato Técnico Humanístico (RM 0244/2023)" [ref=f1e310] [cursor=pointer]:
+                          - /url: https://www.minedu.gob.bo/files/documentos-normativos/reglamentos/2023/REGLAMENTO-BACHILLERATO_TECNICO_HUNISTICO_DEL_SUBSISTEMA_DE_EDUCACION_REGULAR_Y_SUBSISTEMA_DE_EDUCACION_ALTERNATIVA.pdf
+                        - code [ref=f1e311]: BO-ME-BTH-RM-0244-2023
+                      - generic [ref=f1e312]:
+                        - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e313] [cursor=pointer]:
+                          - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                        - code [ref=f1e314]: BO-ME-CURRICULO-BASE-2012
+                      - generic [ref=f1e315]:
+                        - link "Ingeniería de Sistemas — Malla Curricular, Gestión 2026" [ref=f1e316] [cursor=pointer]:
+                          - /url: https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/SIS-2026.pdf
+                        - code [ref=f1e317]: BO-UCB-LP-SIS-MALLA-2026
+                  - generic [ref=f1e318]:
+                    - heading "Cobertura de evidencia" [level=4] [ref=f1e320]
+                    - generic [ref=f1e321]:
+                      - generic [ref=f1e322]:
+                        - term [ref=f1e323]: Observaciones
+                        - definition [ref=f1e324]: "16"
+                      - generic [ref=f1e325]:
+                        - term [ref=f1e326]: Materias distintas
+                        - definition [ref=f1e327]: "8"
+                      - generic [ref=f1e328]:
+                        - term [ref=f1e329]: Periodos ordenados
+                        - definition [ref=f1e330]: "2"
+                - generic [ref=f1e331]:
+                  - group [ref=f1e332]:
+                    - generic "Evidencia y áreas de refuerzo" [ref=f1e333] [cursor=pointer]
+                  - group [ref=f1e334]:
+                    - generic "Fuentes y limitaciones" [ref=f1e335] [cursor=pointer]
+            - region [ref=f1e336]:
+              - generic [ref=f1e337]:
+                - heading "Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz" [level=3] [ref=f1e338]
+                - generic [ref=f1e339]: 1 carrera(s) con corpus validado
+              - article [ref=f1e341]:
+                - generic [ref=f1e342]:
+                  - generic [ref=f1e343]:
+                    - paragraph [ref=f1e344]: Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz
+                    - heading "Ingenieria de Sistemas e Innovacion Digital" [level=3] [ref=f1e345]
+                  - generic [ref=f1e346]:
+                    - generic [ref=f1e347]: "Afinidad: Sin evidencia disponible"
+                    - generic [ref=f1e348]: "BTH: Insuficiente"
+                - generic [ref=f1e349]:
+                  - generic [ref=f1e350]:
+                    - heading "Afinidad de intereses" [level=4] [ref=f1e352]
+                    - paragraph [ref=f1e353]: Sin evidencia disponible
+                    - paragraph [ref=f1e354]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                    - generic [ref=f1e355]:
+                      - paragraph [ref=f1e356]: Fuente de la afinidad
+                      - paragraph [ref=f1e357]: No existe crosswalk ocupacional documentado para esta opción.
+                  - generic [ref=f1e358]:
+                    - heading "Preparación académica" [level=4] [ref=f1e360]
+                    - paragraph [ref=f1e361]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                    - generic [ref=f1e362]:
+                      - paragraph [ref=f1e363]: Fuente de la preparación
+                      - paragraph [ref=f1e364]: No hay relación Bridge documentada para esta carrera.
+                  - generic [ref=f1e365]:
+                    - heading "Cobertura de evidencia" [level=4] [ref=f1e367]
+                    - generic [ref=f1e368]:
+                      - generic [ref=f1e369]:
+                        - term [ref=f1e370]: Observaciones
+                        - definition [ref=f1e371]: "16"
+                      - generic [ref=f1e372]:
+                        - term [ref=f1e373]: Materias distintas
+                        - definition [ref=f1e374]: "8"
+                      - generic [ref=f1e375]:
+                        - term [ref=f1e376]: Periodos ordenados
+                        - definition [ref=f1e377]: "2"
+                - generic [ref=f1e378]:
+                  - group [ref=f1e379]:
+                    - generic "Evidencia y áreas de refuerzo" [ref=f1e380] [cursor=pointer]
+                  - group [ref=f1e381]:
+                    - generic "Fuentes y limitaciones" [ref=f1e382] [cursor=pointer]
+            - region [ref=f1e383]:
+              - generic [ref=f1e384]:
+                - heading "Universidad Privada Boliviana - UPB, Campus La Paz" [level=3] [ref=f1e385]
+                - generic [ref=f1e386]: 1 carrera(s) con corpus validado
+              - article [ref=f1e388]:
+                - generic [ref=f1e389]:
+                  - generic [ref=f1e390]:
+                    - paragraph [ref=f1e391]: Universidad Privada Boliviana - UPB, Campus La Paz
+                    - heading "Ingenieria de Sistemas Computacionales" [level=3] [ref=f1e392]
+                  - generic [ref=f1e393]:
+                    - generic [ref=f1e394]: "Afinidad: Sin evidencia disponible"
+                    - generic [ref=f1e395]: "BTH: Insuficiente"
+                - generic [ref=f1e396]:
+                  - generic [ref=f1e397]:
+                    - heading "Afinidad de intereses" [level=4] [ref=f1e399]
+                    - paragraph [ref=f1e400]: Sin evidencia disponible
+                    - paragraph [ref=f1e401]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                    - generic [ref=f1e402]:
+                      - paragraph [ref=f1e403]: Fuente de la afinidad
+                      - paragraph [ref=f1e404]: No existe crosswalk ocupacional documentado para esta opción.
+                  - generic [ref=f1e405]:
+                    - heading "Preparación académica" [level=4] [ref=f1e407]
+                    - paragraph [ref=f1e408]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                    - generic [ref=f1e409]:
+                      - paragraph [ref=f1e410]: Fuente de la preparación
+                      - generic [ref=f1e411]:
+                        - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e412] [cursor=pointer]:
+                          - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                        - code [ref=f1e413]: BO-ME-CURRICULO-BASE-2012
+                      - generic [ref=f1e414]:
+                        - link "Ingenieria de Sistemas Computacionales - Malla Curricular" [ref=f1e415] [cursor=pointer]:
+                          - /url: https://drive.google.com/file/d/1-L3bgVEVb5RkkIMVGd04BXybMeNnIBa7/view?usp=sharing
+                        - code [ref=f1e416]: BO-UPB-LP-SISC-MALLA-2026
+                  - generic [ref=f1e417]:
+                    - heading "Cobertura de evidencia" [level=4] [ref=f1e419]
+                    - generic [ref=f1e420]:
+                      - generic [ref=f1e421]:
+                        - term [ref=f1e422]: Observaciones
+                        - definition [ref=f1e423]: "16"
+                      - generic [ref=f1e424]:
+                        - term [ref=f1e425]: Materias distintas
+                        - definition [ref=f1e426]: "8"
+                      - generic [ref=f1e427]:
+                        - term [ref=f1e428]: Periodos ordenados
+                        - definition [ref=f1e429]: "2"
+                - generic [ref=f1e430]:
+                  - group [ref=f1e431]:
+                    - generic "Evidencia y áreas de refuerzo" [ref=f1e432] [cursor=pointer]
+                  - group [ref=f1e433]:
+                    - generic "Fuentes y limitaciones" [active] [ref=f1e434] [cursor=pointer]
+                    - generic [ref=f1e468]:
+                      - generic [ref=f1e469]:
+                        - heading "Fuentes utilizadas" [level=4] [ref=f1e470]
+                        - list [ref=f1e471]:
+                          - listitem [ref=f1e472]:
+                            - paragraph [ref=f1e473]: Currículo Base del Sistema Educativo Plurinacional
+                            - generic [ref=f1e474]:
+                              - code [ref=f1e475]: BO-ME-CURRICULO-BASE-2012
+                              - generic [aria-hidden] [ref=f1e476]: ·
+                              - generic [ref=f1e477]: CORPUS_VALIDADO
+                            - link "Ver información oficial" [ref=f1e478] [cursor=pointer]:
+                              - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                          - listitem [ref=f1e479]:
+                            - paragraph [ref=f1e480]: Ingenieria de Sistemas Computacionales - Malla Curricular
+                            - generic [ref=f1e481]:
+                              - code [ref=f1e482]: BO-UPB-LP-SISC-MALLA-2026
+                              - generic [aria-hidden] [ref=f1e483]: ·
+                              - generic [ref=f1e484]: CORPUS_VALIDADO
+                            - link "Ver información oficial" [ref=f1e485] [cursor=pointer]:
+                              - /url: https://drive.google.com/file/d/1-L3bgVEVb5RkkIMVGd04BXybMeNnIBa7/view?usp=sharing
+                          - listitem [ref=f1e486]:
+                            - paragraph [ref=f1e487]: Ingenieria de Sistemas Computacionales - Perfil de programa
+                            - generic [ref=f1e488]:
+                              - code [ref=f1e489]: BO-UPB-LP-SISC-PROFILE-2026
+                              - generic [aria-hidden] [ref=f1e490]: ·
+                              - generic [ref=f1e491]: CORPUS_VALIDADO
+                            - link "Ver información oficial" [ref=f1e492] [cursor=pointer]:
+                              - /url: https://www.upb.edu/programas/pregrado/lp-ingenieria-de-sistemas-computacionales
+                      - generic [ref=f1e493]:
+                        - heading "Limitaciones" [level=4] [ref=f1e494]
+                        - list [ref=f1e495]:
+                          - listitem [ref=f1e496]: No se calcula score compuesto de afinidad, preparación o compatibilidad.
+                          - listitem [ref=f1e497]: La ausencia de evidencia se conserva como ausencia y nunca como cero.
+                          - listitem [ref=f1e498]: No se calculan brechas numéricas sin requisito cuantitativo documentado.
+        - region [ref=f1e435]:
+          - generic [ref=f1e438]:
+            - paragraph [ref=f1e439]: Capa informativa separada
+            - heading "Fuentes oficiales externas pendientes de validación local" [level=2] [ref=f1e440]
+            - paragraph [ref=f1e441]: Estas opciones se muestran para consulta. No modifican Recommendation V2, la afinidad ni la preparación hasta contar con snapshot, hash y corpus validados.
+          - article [ref=f1e443]:
+            - paragraph [ref=f1e444]: Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz
+            - heading "Ingenieria de Sistemas" [level=3] [ref=f1e445]
+            - generic [ref=f1e446]:
+              - generic [ref=f1e447]: FUENTE_OFICIAL_EXTERNA
+              - generic [ref=f1e448]: Excluida de recomendación
+            - generic [ref=f1e449]:
+              - paragraph [ref=f1e450]: Ingenieria de Sistemas - pagina oficial de licenciatura
+              - code [ref=f1e451]: BO-EMI-LP-SIS-PROFILE-EXTERNAL-2026
+              - link "Ver información oficial" [ref=f1e452] [cursor=pointer]:
+                - /url: https://emi.edu.bo/index.php/universidad/licenciatura/ingenieria-de-sistemas
+            - list [ref=f1e453]:
+              - listitem [ref=f1e454]: El dominio oficial respondio HTTP 403 desde https y http, con y sin www, durante la recuperacion local.
+              - listitem [ref=f1e455]: No existe snapshot local validado ni malla curricular recuperable para incorporarla al corpus o a Recommendation V2.
+              - listitem [ref=f1e456]: La informacion solo puede mostrarse como enlace oficial informativo hasta que una captura local sea validada.
+        - generic [ref=f1e460]:
+          - heading "Limitaciones del análisis" [level=2] [ref=f1e461]
+          - list [ref=f1e462]:
+            - listitem [ref=f1e463]: SAVP apoya la exploración y no decide una carrera.
+            - listitem [ref=f1e464]: La salida no estima probabilidad de éxito universitario.
+            - listitem [ref=f1e465]: V1 permanece como LEGACY_EXPERIMENTAL_BASELINE y no fundamenta las conclusiones V2.
+          - group [ref=f1e466]:
+            - generic "Trazabilidad técnica" [ref=f1e467] [cursor=pointer]

@@ -2,8 +2,8 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\UnidadClase;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\SeccionClase;
+use App\Models\Oficial\Sistema\User;
 use App\Services\RoleDashboardResolver;
 use Illuminate\Support\Facades\Schema;
 
@@ -11,7 +11,7 @@ class UnitContentService
 {
     public function available(): bool
     {
-        return config('features.curricular_units', false) && Schema::hasTable('unidades_clase');
+        return config('features.curricular_units', false) && Schema::hasTable('seccion_clase');
     }
 
     public function forCourse(User $user, string $course)
@@ -25,9 +25,9 @@ class UnitContentService
             return null;
         }
 
-        return UnidadClase::where('cod_cla', $course)->whereNull('archivada_at')
-            ->when($actor === 'Estudiante', fn ($q) => $q->where('publicada', true))
+        return SeccionClase::where('cod_cla', $course)->where('est_sec', 'ACTIVO')
+            ->when($actor === 'Estudiante', fn ($q) => $q->where('vis_sec', true))
             ->withCount(['materiales' => fn ($q) => $q->where('est_mat', 'ACTIVO'), 'tareas' => fn ($q) => $q->whereIn('est_tar', ['PUBLICADA', 'CERRADA'])])
-            ->orderBy('orden')->paginate(15, ['*'], 'unitsPage');
+            ->orderBy('ord_sec')->paginate(15, ['*'], 'unitsPage');
     }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PlantillaHoraria extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'plantilla_horaria';
 
     protected $primaryKey = 'cod_pho';
@@ -44,17 +47,6 @@ class PlantillaHoraria extends Model
     // ============================================================
     // GENERACIÓN DE CÓDIGO
     // ============================================================
-
-    protected static function booted(): void
-    {
-        static::creating(function (PlantillaHoraria $plantilla) {
-            if (! empty($plantilla->cod_pho)) {
-                return;
-            }
-
-            $plantilla->cod_pho = 'PHO_'.strtoupper(bin2hex(random_bytes(8)));
-        });
-    }
 
     // ============================================================
     // RELACIONES

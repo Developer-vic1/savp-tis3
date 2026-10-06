@@ -10,6 +10,9 @@ class CalendarController extends Controller
 {
     public function __invoke(Request $request, CalendarService $calendar)
     {
+        if (app(RoleDashboardResolver::class)->roleFor($request->user()) === 'Administrador') {
+            return view('admin.calendario-institucional');
+        }
         $filters = $request->validate(['from' => 'nullable|date', 'to' => 'nullable|date|after_or_equal:from', 'search' => 'nullable|string|max:100']);
         $rows = $calendar->query($request->user())->when($filters['from'] ?? null, fn ($q, $from) => $q->whereDate('fec_lim_tar', '>=', $from))
             ->when($filters['to'] ?? null, fn ($q, $to) => $q->whereDate('fec_lim_tar', '<=', $to))

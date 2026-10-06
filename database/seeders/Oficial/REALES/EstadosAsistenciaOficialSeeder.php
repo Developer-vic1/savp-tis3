@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\AulaVirtual\EstadoAsistencia;
+use App\Models\Oficial\Academico\EstadoAsistencia;
 use Illuminate\Database\Seeder;
 
 class EstadosAsistenciaOficialSeeder extends Seeder

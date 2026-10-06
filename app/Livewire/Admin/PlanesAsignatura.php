@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Asignatura;
-use App\Models\Curso;
-use App\Models\Docente;
-use App\Models\GestionAcademica;
-use App\Models\Paralelo;
-use App\Models\PlanAsignatura;
-use App\Models\Turno;
+use App\Models\Oficial\Academico\Asignatura;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\GestionAcademica;
+use App\Models\Oficial\Academico\Paralelo;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Academico\Turno;
 use App\Services\BitacoraService;
 use App\Support\Academico\PlanAsignaturaInteligente;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,6 +57,8 @@ class PlanesAsignatura extends Component
     {
         $plan = PlanAsignatura::findOrFail($codigo);
         $this->form = $plan->only(['cod_asi', 'cod_doc', 'cod_cur', 'cod_par', 'cod_tur', 'cod_gea', 'hor_pas', 'est_pas']);
+        $this->form['fii_pas'] = $plan->fii_pas?->format('Y-m-d');
+        $this->form['ffi_pas'] = $plan->ffi_pas?->format('Y-m-d');
         $this->seleccionado = $codigo;
         $this->editando = true;
         $this->analizar();
@@ -90,6 +92,8 @@ class PlanesAsignatura extends Component
             'form.cod_par' => ['required', 'exists:paralelo,cod_par'],
             'form.cod_tur' => ['required', 'exists:turno,cod_tur'],
             'form.cod_gea' => ['required', 'exists:gestion_academica,cod_gea'],
+            'form.fii_pas' => ['required', 'date_format:Y-m-d'],
+            'form.ffi_pas' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:form.fii_pas'],
             'form.hor_pas' => ['required', 'integer', 'min:1', 'max:40'],
             'form.est_pas' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])],
         ]);
@@ -98,9 +102,9 @@ class PlanesAsignatura extends Component
         if ($this->editando && $this->seleccionado) {
             $plan = PlanAsignatura::findOrFail($this->seleccionado);
             $anterior = $plan->toArray();
-            $plan->update($this->form);
+            $plan = app(\App\Services\PlanAcademicoService::class)->guardar($this->form, plan: $plan);
         } else {
-            $plan = PlanAsignatura::create($this->form);
+            $plan = app(\App\Services\PlanAcademicoService::class)->guardar($this->form);
         }
 
         BitacoraService::registrar(
@@ -169,7 +173,7 @@ class PlanesAsignatura extends Component
 
     private function limpiarFormulario(): void
     {
-        $this->form = ['cod_asi' => '', 'cod_doc' => '', 'cod_cur' => '', 'cod_par' => '', 'cod_tur' => '', 'cod_gea' => '', 'hor_pas' => 4, 'est_pas' => 'ACTIVO'];
+        $this->form = ['cod_asi' => '', 'cod_doc' => '', 'cod_cur' => '', 'cod_par' => '', 'cod_tur' => '', 'cod_gea' => '', 'fii_pas' => '', 'ffi_pas' => null, 'hor_pas' => 4, 'est_pas' => 'ACTIVO'];
         $this->analisis = [];
     }
 }

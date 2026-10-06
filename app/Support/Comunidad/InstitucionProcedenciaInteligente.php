@@ -2,7 +2,7 @@
 
 namespace App\Support\Comunidad;
 
-use App\Models\InstitucionProcedencia;
+use App\Models\Oficial\Academico\InstitucionProcedencia;
 use App\Support\CatalogoInteligenteBase;
 
 class InstitucionProcedenciaInteligente extends CatalogoInteligenteBase

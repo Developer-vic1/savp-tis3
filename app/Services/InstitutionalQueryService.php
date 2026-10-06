@@ -2,20 +2,21 @@
 
 namespace App\Services;
 
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\OrientacionResultado;
-use App\Models\Calificacion;
-use App\Models\Curso;
-use App\Models\Docente;
-use App\Models\Estudiante;
-use App\Models\GestionAcademica;
-use App\Models\InscripcionEstudiante;
-use App\Models\Paralelo;
-use App\Models\PlantillaHoraria;
-use App\Models\ReporteGenerado;
-use App\Models\Turno;
-use App\Models\User;
+use App\Models\Oficial\Academico\AsistenciaEstudiante;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\GestionAcademica;
+use App\Models\Oficial\Academico\GrupoAcademico;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\Paralelo;
+use App\Models\Oficial\Academico\PlantillaHoraria;
+use App\Models\Oficial\Academico\ReporteGenerado;
+use App\Models\Oficial\Academico\Turno;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionResultado;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -47,6 +48,14 @@ class InstitutionalQueryService
             abort_unless(in_array($area, ['estudiantes', 'cursos', 'inscripciones', 'rendimiento', 'asistencia', 'lms'], true), 403);
         }
         $permission = $workspace === 'secretaria' && $area === 'cursos' ? 'Cursos' : self::AREAS[$area][2];
+        if ($workspace === 'admin') {
+            $permission = match ($area) {
+                'cursos', 'lms' => 'cursos.ver.global',
+                'estudiantes' => 'estudiantes.ver.global',
+                'rendimiento' => 'calificaciones.ver.global',
+                default => $permission,
+            };
+        }
         abort_unless($user->can($permission), 403);
     }
 
@@ -88,9 +97,8 @@ class InstitutionalQueryService
                 'estudiantes' => $query->whereHas('inscripciones', fn ($q) => $q->where('cod_gea', $gestion)),
                 'inscripciones' => $query->where('cod_gea', $gestion),
                 'cursos' => null, // Se correlaciona con paralelo/turno en el mismo plan más abajo.
-                'rendimiento' => app(GradeService::class)->available() ? $query->whereHas('planAsignatura', fn ($q) => $q->where('cod_gea', $gestion)) : $query->whereRaw('1 = 0'),
-                'asistencia' => $query->whereHas('asistenciaClase.claseVirtual.planAsignatura', fn ($q) => $q->where('cod_gea', $gestion)),
-                'lms' => $query->whereHas('planAsignatura', fn ($q) => $q->where('cod_gea', $gestion)),
+                'rendimiento', 'lms' => $this->filtrarPlanes($query, fn ($q) => $q->deGestion($gestion)),
+                'asistencia' => $this->filtrarPlanes($query, fn ($q) => $q->deGestion($gestion), true),
                 default => null,
             };
         }
@@ -106,14 +114,14 @@ class InstitutionalQueryService
                 'cursos' => $query->where('cod_cur', $course),
                 'estudiantes' => $query->whereHas('inscripciones', fn ($q) => $q->where('cod_cur', $course)->when($gestion !== '', fn ($p) => $p->where('cod_gea', $gestion))),
                 'inscripciones' => $query->where('cod_cur', $course),
-                'rendimiento', 'lms' => $query->whereHas('planAsignatura', fn ($q) => $q->where('cod_cur', $course)),
-                'asistencia' => $query->whereHas('asistenciaClase.claseVirtual.planAsignatura', fn ($q) => $q->where('cod_cur', $course)),
+                'rendimiento', 'lms' => $this->filtrarPlanes($query, fn ($q) => $q->deCurso($course)),
+                'asistencia' => $this->filtrarPlanes($query, fn ($q) => $q->deCurso($course), true),
                 default => null,
             };
         }
         $studentFilter = $data['estudiante'] ?? '';
         if ($studentFilter !== '' && in_array($area, ['estudiantes', 'inscripciones', 'rendimiento', 'asistencia', 'orientacion'], true)) {
-            $query->where('cod_est', $studentFilter);
+            $area === 'rendimiento' ? $query->deEstudiante($studentFilter) : $query->where('cod_est', $studentFilter);
         }
         if ($regency) {
             if ($area === 'estudiantes') {
@@ -123,14 +131,13 @@ class InstitutionalQueryService
                 $query->where('est_ins', 'ACTIVA');
             }
             $access = app(RegencyAccessService::class);
-            $scope = fn ($q) => $access->constrain($q, $request->user(), 'plan_asignatura')->when($gestion !== '', fn ($p) => $p->where('cod_gea', $gestion));
+            $scope = fn ($q) => $access->constrain($q, $request->user(), $q->getModel()->getTable())->when($gestion !== '', fn ($p) => $p->deGestion($gestion));
             match ($area) {
                 'estudiantes' => $query->whereHas('inscripciones', fn ($q) => $access->constrain($q, $request->user(), 'inscripcion_estudiante')->where('est_ins', 'ACTIVA')->when($gestion !== '', fn ($p) => $p->where('cod_gea', $gestion))->when($course !== '', fn ($p) => $p->where('cod_cur', $course))),
                 'cursos' => null, // constrainCourseCatalog ya aplica el scope al plan filtrado.
                 'inscripciones' => $access->constrain($query, $request->user(), 'inscripcion_estudiante'),
-                'rendimiento' => app(GradeService::class)->available() ? $query->whereHas('planAsignatura', $scope) : $query->whereRaw('1 = 0'),
-                'asistencia' => $query->whereHas('asistenciaClase.claseVirtual.planAsignatura', $scope),
-                'lms' => $query->whereHas('planAsignatura', $scope),
+                'rendimiento', 'lms' => $this->filtrarPlanes($query, $scope),
+                'asistencia' => $this->filtrarPlanes($query, $scope, true),
                 default => abort(403),
             };
         }
@@ -158,18 +165,18 @@ class InstitutionalQueryService
         $dashboardRoute = $workspace.'.dashboard';
         $yearsQuery = GestionAcademica::orderByDesc('ani_gea');
         $coursesQuery = Curso::orderBy('nom_cur');
-        $coursesQuery->when($gestion !== '', fn ($q) => $q->whereHas('planesAsignatura', fn ($p) => $p->where('cod_gea', $gestion)));
+        $coursesQuery->when($gestion !== '', fn ($q) => $q->whereHas('planesAsignatura', fn ($p) => $p->deGestion($gestion)));
         if ($regency) {
             $access = app(RegencyAccessService::class);
             $yearsQuery->whereHas('planesAsignatura', fn ($q) => $access->constrain($q, $request->user(), 'plan_asignatura'));
-            $coursesQuery->whereHas('planesAsignatura', fn ($q) => $access->constrain($q, $request->user(), 'plan_asignatura')->when($gestion !== '', fn ($p) => $p->where('cod_gea', $gestion)));
+            $coursesQuery->whereHas('planesAsignatura', fn ($q) => $access->constrain($q, $request->user(), 'plan_asignatura')->when($gestion !== '', fn ($p) => $p->deGestion($gestion)));
         }
         $years = in_array($area, ['estudiantes', 'cursos', 'inscripciones', 'rendimiento', 'asistencia', 'lms'], true) ? $yearsQuery->get() : collect();
         $courses = in_array($area, ['estudiantes', 'cursos', 'inscripciones', 'rendimiento', 'asistencia', 'lms'], true) ? $coursesQuery->get() : collect();
         $levels = $parallels = $shifts = collect();
         if ($workspace === 'secretaria' && $area === 'cursos') {
             $levels = Curso::whereNotNull('niv_cur')->where('niv_cur', '!=', '')->distinct()->orderBy('niv_cur')->pluck('niv_cur');
-            $planContext = fn ($p) => $p->when($gestion !== '', fn ($q) => $q->where('cod_gea', $gestion));
+            $planContext = fn ($p) => $p->when($gestion !== '', fn ($q) => $q->deGestion($gestion));
             $parallels = Paralelo::whereHas('planesAsignatura', $planContext)->orderBy('nom_par')->get(['cod_par', 'nom_par']);
             $shifts = Turno::whereHas('planesAsignatura', $planContext)->orderBy('nom_tur')->get(['cod_tur', 'nom_tur']);
         }
@@ -186,7 +193,7 @@ class InstitutionalQueryService
             $query->whereHas('planesAsignatura', function ($plan) use ($filters, $regent) {
                 foreach (['gestion' => 'cod_gea', 'paralelo' => 'cod_par', 'turno' => 'cod_tur'] as $filter => $column) {
                     if (filled($filters[$filter] ?? null)) {
-                        $plan->where($column, $filters[$filter]);
+                        $plan->whereHas('grupoAcademico', fn ($grupo) => $grupo->where($column, $filters[$filter]));
                     }
                 }
                 if ($regent) {
@@ -213,9 +220,9 @@ class InstitutionalQueryService
         validator(['id' => $id, 'gestion' => $gestion], ['id' => ['required', 'string', 'max:20'], 'gestion' => ['nullable', 'string', 'max:20']])->validate();
         if ($area === 'cursos') {
             $record = Curso::select('cod_cur', 'nom_cur', 'niv_cur', 'est_cur')->findOrFail($id);
-            $offering = $record->planesAsignatura()
+            $offering = GrupoAcademico::where('cod_cur', $id)
                 ->when($gestion !== '', fn ($q) => $q->where('cod_gea', $gestion))
-                ->select('cod_cur', 'cod_gea', 'cod_par', 'cod_tur')->distinct()
+                ->select('cod_gac', 'cod_cur', 'cod_gea', 'cod_par', 'cod_tur')
                 ->with('gestionAcademica:cod_gea,ani_gea', 'paralelo:cod_par,nom_par', 'turno:cod_tur,nom_tur')
                 ->orderBy('cod_gea')->orderBy('cod_par')->orderBy('cod_tur')->limit(51)->get();
 
@@ -227,7 +234,16 @@ class InstitutionalQueryService
         $templates = PlantillaHoraria::where('cod_tur', $id)->orderBy('ord_pho')->limit(51)->get(['nom_pho', 'tip_pho', 'est_pho']);
 
         return ['title' => $record->nom_tur, 'fields' => ['Código' => $record->cod_tur, 'Inicio' => $record->hor_ini_tur, 'Fin' => $record->hor_fin_tur, 'Estado' => $record->est_tur],
-            'items' => $templates->take(50)->map(fn ($p) => implode(' · ',[$p->nom_pho, $p->tip_pho, $p->est_pho])),
+            'items' => $templates->take(50)->map(fn ($p) => implode(' · ', [$p->nom_pho, $p->tip_pho, $p->est_pho])),
             'itemsTitle' => 'Plantillas horarias registradas', 'truncated' => $templates->count() > 50];
+    }
+
+    private function filtrarPlanes(Builder $query, \Closure $filtro, bool $asistencia = false): Builder
+    {
+        if ($asistencia) {
+            return $query->whereHas('asistenciaClase.claseVirtual', fn ($clase) => $this->filtrarPlanes($clase, $filtro));
+        }
+
+        return $query->where(fn ($planes) => $planes->whereHas('planAsignatura', $filtro)->orWhereHas('planEspecialidad', $filtro));
     }
 }

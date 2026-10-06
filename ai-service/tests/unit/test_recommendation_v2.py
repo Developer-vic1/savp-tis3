@@ -29,9 +29,7 @@ def _request(name: str) -> AnalysisRequest:
 
 def test_v2_uses_record_area_independently_from_subject() -> None:
     relation = next(
-        item
-        for item in load_bridge().relations
-        if item.relation_id == "BR-MATH-SIS-ALGEBRA"
+        item for item in load_bridge().relations if item.relation_id == "BR-MATH-SIS-ALGEBRA"
     )
     record = AcademicRecord(
         subject="Asignatura Integrada",
@@ -45,9 +43,7 @@ def test_v2_does_not_create_composite_scores_or_numeric_requirements() -> None:
     request = _request("complete_profile.json")
     vocational = score_riasec(request.vocational) if request.vocational else None
     academic = (
-        build_academic_profile(request.academic, request.attendance)
-        if request.academic
-        else None
+        build_academic_profile(request.academic, request.attendance) if request.academic else None
     )
     result = build_career_evidence_profiles(request, vocational, academic)
     serialized = json.dumps(result.model_dump(mode="json"), ensure_ascii=False)
@@ -62,13 +58,32 @@ def test_v2_does_not_create_composite_scores_or_numeric_requirements() -> None:
         assert forbidden not in serialized
 
 
+def test_v2_exposes_traceable_academic_program_without_claiming_full_curriculum() -> None:
+    request = _request("complete_profile.json")
+    vocational = score_riasec(request.vocational) if request.vocational else None
+    academic = (
+        build_academic_profile(request.academic, request.attendance) if request.academic else None
+    )
+    result = build_career_evidence_profiles(request, vocational, academic)
+    systems = next(
+        profile for profile in result.profiles if profile.career_id == "BO-UCB-LP-ING-SISTEMAS"
+    )
+
+    assert systems.academic_program.duration == "9 semestres"
+    assert systems.academic_program.professional_profile
+    assert systems.academic_program.knowledge_areas
+    assert "Introducción a la Programación" in systems.academic_program.documented_subjects
+    assert systems.academic_program.curriculum_scope == "DOCUMENTED_INITIAL_SUBJECTS"
+    assert systems.academic_program.curriculum_status == "PARTIAL"
+    assert systems.academic_program.sources
+    assert all(source.reference for source in systems.academic_program.sources)
+
+
 def test_v2_missing_academic_evidence_remains_absent_not_zero() -> None:
     request = _request("insufficient_profile.json")
     vocational = score_riasec(request.vocational) if request.vocational else None
     academic = (
-        build_academic_profile(request.academic, request.attendance)
-        if request.academic
-        else None
+        build_academic_profile(request.academic, request.attendance) if request.academic else None
     )
     result = build_career_evidence_profiles(request, vocational, academic)
     assert result.profiles
@@ -85,15 +100,20 @@ def test_v2_uses_documented_occupational_crosswalk_without_composite_score() -> 
     result = build_career_evidence_profiles(request, vocational, academic)
     assert vocational is not None
     assert all(
-        profile.student_riasec_code == vocational.holland_code
-        for profile in result.profiles
+        profile.student_riasec_code == vocational.holland_code for profile in result.profiles
     )
-    assert all(
-        profile.riasec_reference_status
-        == "AVAILABLE_DOCUMENTED_OCCUPATIONAL_CROSSWALK"
-        for profile in result.profiles
-    )
-    assert all(profile.vocational_interest_relation.evidence for profile in result.profiles)
+    by_career = {profile.career_id: profile for profile in result.profiles}
+    new_without_crosswalk = {
+        "BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL",
+        "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES",
+    }
+    for career_id, profile in by_career.items():
+        if career_id in new_without_crosswalk:
+            assert profile.riasec_reference_status == "UNAVAILABLE_PENDING_OCCUPATIONAL_CROSSWALK"
+            assert profile.vocational_interest_relation.evidence == []
+        else:
+            assert profile.riasec_reference_status == "AVAILABLE_DOCUMENTED_OCCUPATIONAL_CROSSWALK"
+            assert profile.vocational_interest_relation.evidence
 
 
 def test_v2_without_crosswalk_marks_riasec_career_relation_unavailable() -> None:
@@ -111,13 +131,11 @@ def test_v2_without_crosswalk_marks_riasec_career_relation_unavailable() -> None
         ),
     )
     assert all(
-        profile.riasec_reference_status
-        == "UNAVAILABLE_PENDING_OCCUPATIONAL_CROSSWALK"
+        profile.riasec_reference_status == "UNAVAILABLE_PENDING_OCCUPATIONAL_CROSSWALK"
         for profile in result.profiles
     )
     assert all(
-        profile.vocational_interest_relation.status == "UNAVAILABLE"
-        for profile in result.profiles
+        profile.vocational_interest_relation.status == "UNAVAILABLE" for profile in result.profiles
     )
 
 
@@ -177,12 +195,9 @@ def test_v2_insufficient_bridge_relation_never_becomes_strong_evidence() -> None
         ),
     )
     systems = next(
-        profile
-        for profile in result.profiles
-        if profile.career_id == "BO-UCB-LP-ING-SISTEMAS"
+        profile for profile in result.profiles if profile.career_id == "BO-UCB-LP-ING-SISTEMAS"
     )
     assert systems.technical_relation.status == "INSUFFICIENT"
     assert all(
-        item.relation_status == "INSUFFICIENT_EVIDENCE"
-        for item in systems.technical_evidence
+        item.relation_status == "INSUFFICIENT_EVIDENCE" for item in systems.technical_evidence
     )

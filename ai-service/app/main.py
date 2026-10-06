@@ -9,6 +9,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import Response
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from app import __version__
 from app.api.v1 import analysis, health, knowledge, tutor
@@ -19,6 +20,57 @@ from app.contracts.errors import DomainError, ErrorBody, ErrorCode, ErrorEnvelop
 logger = logging.getLogger("savp-ai")
 
 
+class RequestBodyLimitMiddleware:
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        body = bytearray()
+        while True:
+            message = await receive()
+            if message["type"] == "http.disconnect":
+                return
+            chunk = message.get("body", b"")
+            if len(body) + len(chunk) > 65_536:
+                request = Request(scope)
+                request.state.trace_id = str(uuid4())
+                response = _error_response(
+                    request,
+                    ErrorCode.INVALID_REQUEST,
+                    "La solicitud supera el tamaño permitido.",
+                    413,
+                )
+                _security_headers(response, request.state.trace_id)
+                await response(scope, receive, send)
+                return
+            body.extend(chunk)
+            if not message.get("more_body", False):
+                break
+
+        replayed = False
+
+        async def replay() -> Message:
+            nonlocal replayed
+            if not replayed:
+                replayed = True
+                return {"type": "http.request", "body": bytes(body), "more_body": False}
+            return await receive()
+
+        await self.app(scope, replay, send)
+
+
+def _security_headers(response: Response, trace_id: str) -> None:
+    response.headers["X-Trace-Id"] = trace_id
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+
+
 class TraceIdMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self,
@@ -27,8 +79,22 @@ class TraceIdMiddleware(BaseHTTPMiddleware):
     ) -> Response:
         request.state.trace_id = str(uuid4())
         started = perf_counter()
-        response = await call_next(request)
-        response.headers["X-Trace-Id"] = request.state.trace_id
+        content_length = request.headers.get("content-length")
+        try:
+            oversized = content_length is not None and int(content_length) > 65_536
+        except ValueError:
+            oversized = True
+        response: Response
+        if oversized:
+            response = _error_response(
+                request,
+                ErrorCode.INVALID_REQUEST,
+                "La solicitud supera el tamaño permitido.",
+                413,
+            )
+        else:
+            response = await call_next(request)
+        _security_headers(response, request.state.trace_id)
         response.headers["Server-Timing"] = f"app;dur={(perf_counter() - started) * 1000:.3f}"
         return response
 
@@ -54,10 +120,12 @@ def _error_response(
 app = FastAPI(
     title="SAVP AI Service",
     version=__version__,
-    docs_url="/docs",
+    docs_url=None,
     redoc_url=None,
+    openapi_url=None,
 )
 app.add_middleware(TraceIdMiddleware)
+app.add_middleware(RequestBodyLimitMiddleware)
 app.include_router(health.router)
 app.include_router(analysis.router)
 app.include_router(knowledge.router)

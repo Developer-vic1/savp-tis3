@@ -2,6 +2,7 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HorarioBloque extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'horario_bloque';
 
     protected $primaryKey = 'cod_hbl';
@@ -42,9 +45,6 @@ class HorarioBloque extends Model
     protected static function booted(): void
     {
         static::creating(function (HorarioBloque $bloque) {
-            if (empty($bloque->cod_hbl)) {
-                $bloque->cod_hbl = 'HBL_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (empty($bloque->est_hbl)) {
                 $bloque->est_hbl = 'ACTIVO';

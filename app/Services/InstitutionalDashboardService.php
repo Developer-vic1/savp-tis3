@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Calificacion;
-use App\Models\Curso;
-use App\Models\Docente;
-use App\Models\GestionAcademica;
-use App\Models\InscripcionEstudiante;
-use App\Models\Persona;
-use App\Models\User;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\GestionAcademica;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Sistema\User;
 
 class InstitutionalDashboardService
 {
@@ -40,7 +40,7 @@ class InstitutionalDashboardService
         if ($user->can('cursos.ver.institucional')) {
             $courses = Curso::where('est_cur', 'ACTIVO');
             if ($actor === 'Regente') {
-                $courses->whereHas('planesAsignatura', fn ($q) => app(RegencyAccessService::class)->constrain($q, $user, 'plan_asignatura')->when($gestion, fn ($p) => $p->where('cod_gea', $gestion->cod_gea)));
+                $courses->whereHas('planesAsignatura', fn ($q) => app(RegencyAccessService::class)->constrain($q, $user, 'plan_asignatura')->when($gestion, fn ($p) => $p->deGestion($gestion->cod_gea)));
             }
             $metrics['cursos_activos'] = $courses->count();
         }
@@ -49,7 +49,7 @@ class InstitutionalDashboardService
                 $metrics['docentes_activos'] = Docente::where('est_doc', 'ACTIVO')->count();
             }
             if ($user->can('calificaciones.ver.institucional')) {
-                $metrics['calificaciones_registradas'] = Calificacion::where('est_cal', 'ACTIVO')->count();
+                $metrics['calificaciones_registradas'] = Calificacion::whereIn('est_cal', ['VIGENTE', 'RECTIFICADA'])->count();
             }
         }
         if ($actor === 'Secretaria') {

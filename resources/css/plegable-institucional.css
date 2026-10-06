@@ -1,0 +1,24 @@
+/* Una presentación compartida; los módulos conservan sus contenidos y condiciones. */
+details.ui-plegable{min-width:0;padding:0;border:1px solid var(--ui-border);border-radius:.85rem;background:var(--ui-surface);color:var(--ui-text);transition:border-color .18s}
+details.ui-plegable>summary.ui-plegable-resumen{display:flex;align-items:center;justify-content:flex-start;gap:.8rem;min-height:3.4rem;padding:.8rem 1rem;list-style:none;cursor:pointer;font-size:.82rem;font-weight:650;color:var(--ui-text);border-radius:inherit;transition:background .18s}
+details.ui-plegable>summary.ui-plegable-resumen::-webkit-details-marker{display:none}
+details.ui-plegable>summary.ui-plegable-resumen::marker{content:''}
+details.ui-plegable>summary.ui-plegable-resumen:hover,details.ui-plegable[open]>summary.ui-plegable-resumen{background:var(--ui-primary-soft)}
+details.ui-plegable[open]{border-color:var(--ui-primary-border)}
+details.ui-plegable[open]>summary.ui-plegable-resumen{border-bottom:1px solid var(--ui-primary-border);border-radius:.85rem .85rem 0 0}
+details.ui-plegable>summary.ui-plegable-resumen:focus-visible{outline:3px solid var(--ui-primary);outline-offset:2px}
+.ui-plegable-resumen>.ui-plegable-icono{display:grid;place-items:center;flex:0 0 2.35rem;height:2.35rem;margin:0;border-radius:.7rem;background:var(--ui-primary-soft);color:var(--ui-primary);font-size:1.2rem}
+.ui-plegable-resumen>.ui-plegable-texto{flex:1;min-width:0;margin:0;color:var(--ui-text)}
+.ui-plegable-texto>.ui-plegable-titulo{display:block;margin:0;line-height:1.45;font:inherit;overflow-wrap:anywhere;color:var(--ui-text)}
+.ui-plegable-texto>.ui-plegable-descripcion,.ui-plegable-titulo>small{display:block;margin:.2rem 0 0;font-size:.75rem;font-weight:400;line-height:1.45;color:var(--ui-muted)}
+.ui-plegable-resumen>.ui-plegable-contador{flex-shrink:0;max-width:35%;margin:0;padding:.3rem .55rem;border:1px solid var(--ui-primary-border);border-radius:.6rem;color:var(--ui-primary);background:var(--ui-primary-soft);font-size:.72rem;font-weight:650;overflow-wrap:anywhere}
+.ui-plegable-resumen>.ui-plegable-flecha{flex-shrink:0;margin:0;color:var(--ui-primary);font-size:1rem;transition:transform .2s}
+.ui-plegable[open]>.ui-plegable-resumen>.ui-plegable-flecha{transform:rotate(180deg)}
+details.ui-plegable>.ui-plegable-contenido{min-width:0;padding:1rem}
+details.ui-plegable[open]>.ui-plegable-contenido{animation:ui-desplegar .18s ease-out}
+details.ui-plegable-compacto>summary.ui-plegable-resumen{gap:.6rem;min-height:2.75rem;padding:.55rem .7rem;font-size:.75rem}
+.ui-plegable-compacto>.ui-plegable-resumen>.ui-plegable-icono{flex-basis:1.85rem;height:1.85rem;font-size:1rem;border-radius:.55rem}
+details.ui-plegable-compacto>.ui-plegable-contenido{padding:.75rem}
+@keyframes ui-desplegar{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:500px){details.ui-plegable>summary.ui-plegable-resumen{gap:.55rem;padding:.65rem .75rem}.ui-plegable-resumen>.ui-plegable-icono{flex-basis:2rem;height:2rem}.ui-plegable-resumen>.ui-plegable-contador{font-size:.68rem}.ui-plegable-texto>.ui-plegable-descripcion{font-size:.72rem}details.ui-plegable>.ui-plegable-contenido{padding:.75rem}}
+@media(prefers-reduced-motion:reduce){details.ui-plegable,details.ui-plegable>summary.ui-plegable-resumen,.ui-plegable-resumen>.ui-plegable-flecha{transition:none}details.ui-plegable[open]>.ui-plegable-contenido{animation:none}}

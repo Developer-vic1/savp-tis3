@@ -1733,6 +1733,7 @@
                                             <div>
                                                 <label class="ui-label">Fecha de inscripción</label>
                                                 <input type="date" wire:model.live="formInscripcion.fei_ins" class="ui-input">
+                                                @if($modoFormulario === 'editar')<label class="ui-label mt-3">Fecha efectiva del cambio de contexto<input type="date" wire:model.live="formInscripcion.fii_ivg" class="ui-input"></label><p class="ui-help">Necesaria al cambiar grupo o especialidad. Cierra el intervalo anterior y conserva sus notas y actividades.</p>@endif
                                                 @error('formInscripcion.fei_ins')
                                                     <p class="ui-error">{{ $message }}</p>
                                                 @enderror
@@ -2046,6 +2047,16 @@
 
                                             <div class="mt-5">
                                                 <label class="ui-label">Observación de especialidad</label>
+                                                @if(!empty($formInscripcion['cod_esp_tec']))
+                                                    <label class="ui-label">Grupo técnico oficial</label>
+                                                    <select wire:model.live="formInscripcion.cod_gac_tecnico" class="ui-select">
+                                                        <option value="">Seleccionar grupo oficial</option>
+                                                        @foreach($gruposTecnicos as $grupoTecnico)
+                                                            <option value="{{ $grupoTecnico->cod_gac }}">{{ $grupoTecnico->curso?->nom_cur }} {{ $grupoTecnico->paralelo?->nom_par }} — {{ $grupoTecnico->turno?->nom_tur }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('formInscripcion.cod_gac_tecnico')<p class="ui-error">{{ $message }}</p>@enderror
+                                                @endif
                                                 <textarea
                                                     wire:model.live.debounce.900ms="formInscripcion.obs_esp_tec_ins"
                                                     rows="3"

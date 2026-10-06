@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Authorization;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;

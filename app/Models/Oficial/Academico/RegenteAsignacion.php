@@ -2,7 +2,7 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\Soporte\CodigoInstitucional;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

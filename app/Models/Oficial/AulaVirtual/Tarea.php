@@ -4,12 +4,15 @@ namespace App\Models\Oficial\AulaVirtual;
 
 use App\Models\Oficial\Academico\Docente;
 use App\Models\Oficial\Academico\PeriodoEvaluacion;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tarea extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'tarea';
 
     protected $primaryKey = 'cod_tar';
@@ -58,9 +61,6 @@ class Tarea extends Model
     protected static function booted(): void
     {
         static::creating(function (Tarea $tarea) {
-            if (! $tarea->cod_tar) {
-                $tarea->cod_tar = 'TAR_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (! $tarea->fec_pub_tar && $tarea->est_tar === 'PUBLICADA') {
                 $tarea->fec_pub_tar = now();
@@ -161,6 +161,11 @@ class Tarea extends Model
     public function puedeRecibirEntregas(): bool
     {
         if (! $this->estaPublicada()) {
+            return false;
+        }
+
+        if (($this->ape_tar && now()->lessThan($this->ape_tar))
+            || ($this->cor_tar && now()->greaterThanOrEqualTo($this->cor_tar))) {
             return false;
         }
 

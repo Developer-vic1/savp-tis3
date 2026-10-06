@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\PlanEspecialidad;
+use App\Models\Oficial\Academico\PlanEspecialidad;
 use Illuminate\Database\Seeder;
 
 class PlanesEspecialidadOficialesSeeder extends Seeder

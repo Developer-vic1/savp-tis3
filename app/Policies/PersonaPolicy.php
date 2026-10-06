@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Persona;
-use App\Models\User;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Sistema\User;
 use App\Services\RoleDashboardResolver;
 
 class PersonaPolicy

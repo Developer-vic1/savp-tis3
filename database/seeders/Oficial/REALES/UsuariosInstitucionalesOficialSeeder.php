@@ -2,8 +2,8 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Persona;
-use App\Models\User;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Sistema\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;

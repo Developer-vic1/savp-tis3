@@ -1,36 +1,20 @@
-# Arquitectura del tutor basado en evidencia
-
-Flujo operativo:
+# Arquitectura del tutor de conocimiento
 
 ```text
 POST /api/v1/tutor/query
   -> validación estricta y allowlist de contexto
-  -> retrieval E5 + BM25 + RRF (8 candidatos, 5 evidencias)
-  -> control conservador de suficiencia
-  -> cuarentena de evidencia con instrucciones maliciosas
-  -> StructuredAnswerProvider
-  -> Local LLM opcional; ante error, fallback estructurado
-  -> respuesta, citas, advertencias, versiones y trace_id
+  -> clasificación: saludo, capacidades o consulta de conocimiento
+  -> BM25 local sobre corpus validado (cuando corresponde)
+  -> filtrado por institución/carrera y diversidad de fuentes
+  -> control conservador de suficiencia y cuarentena de evidencia
+  -> respuesta estructurada con citas o petición clara de una fuente
 ```
 
-El proveedor estructurado es determinista y extractivo. No elige carreras, no convierte afinidad
-en probabilidad, no interpreta RIASEC como inteligencia y se abstiene si la evidencia es
-insuficiente. Las citas solo pueden usar `source_id` presentes en el contexto recuperado.
+El servicio no ejecuta modelos de IA. Los saludos y capacidades se definen en
+`ai-service/data/tutor/conversation_catalog.json`; el resto de respuestas parte exclusivamente de
+los documentos validados del corpus. El historial corto solo aclara una pregunta de seguimiento y
+el contexto académico o estudiantil se limita a campos permitidos.
 
-## Evaluación de prompts
-
-`scripts/evaluate_prompts.py` ejecuta 13 escenarios y guarda
-`data/evaluation/prompt_results.json`. Resultado del 2026-09-29:
-
-- 13/13 escenarios aprobados;
-- cumplimiento de esquema 1.0000;
-- precisión y soporte de citas 1.0000;
-- afirmaciones no sustentadas 0.0000 en este conjunto;
-- exactitud de abstención/rechazo 1.0000;
-- éxito de prompt injection 0.0000 en este conjunto.
-
-Tres escenarios adversariales inyectan instrucciones dentro de la evidencia recuperada, incluido
-escape de delimitadores. El texto se pone en cuarentena y no se refleja en la respuesta.
-
-Estas tasas describen el benchmark versionado, no una garantía universal contra alucinación o
-ataques. Nuevas familias de ataque, idiomas y codificaciones deben incorporarse continuamente.
+El tutor no elige carreras, no interpreta RIASEC como inteligencia y no transforma afinidad en una
+probabilidad de éxito. Cuando no existe evidencia utilizable, responde que el conocimiento debe
+agregarse o la consulta debe precisarse, sin completar información por conjetura.

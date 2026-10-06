@@ -1,4 +1,4 @@
-# Recuperación semántica — PETER 3
+# Recuperación semántica — Aporte Ingenieril SAVP
 
 Fase 2.1 revalidada el 2026-10-01. Los modelos vigentes son
 `intfloat/multilingual-e5-small` y

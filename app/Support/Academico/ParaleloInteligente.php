@@ -28,6 +28,11 @@ class ParaleloInteligente
         $original = trim((string) $entrada);
         $normalizado = self::normalizar($original);
 
+        // La normalización no convierte texto arbitrario o símbolos en una letra válida.
+        if ($original !== '' && preg_match('/^(?:(?:paralelo|grupo|secci[oó]n)\s*[:\-]?\s*)?(?:[a-z]|[uú]nic[oa])$/iu', $original) !== 1) {
+            return self::respuestaBloqueada($original, $normalizado, 'No reconocemos un paralelo en esta entrada. Usa una sola letra (A, B, C…) o Único. Conservamos lo escrito para que puedas corregirlo.');
+        }
+
         if ($normalizado === '') {
             return self::respuestaBase(
                 valido: false,
@@ -221,10 +226,10 @@ class ParaleloInteligente
 
         if (self::esNombreInstitucionalPosible($normalizado)) {
             return [
-                'puede_redactarse' => true,
+                'puede_redactarse' => false,
                 'nombre_sugerido' => self::formatearNombre($original),
-                'estado_inteligente' => self::ESTADO_REQUIERE_REVISION,
-                'mensaje' => 'El nombre parece institucional, pero no corresponde al formato estándar de paralelos. Requiere revisión antes de consolidarse.',
+                'estado_inteligente' => self::ESTADO_BLOQUEADO,
+                'mensaje' => 'Esta denominación no identifica un paralelo. Usa una letra o Único; el tipo de organización se documenta por separado.',
                 'confianza' => 70,
             ];
         }

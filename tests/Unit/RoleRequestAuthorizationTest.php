@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\InstitutionalAuthorityService;
 use App\Services\InstitutionalDocumentAnalyzer;
 use App\Services\RoleRequestService;

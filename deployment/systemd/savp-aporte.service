@@ -1,0 +1,33 @@
+[Unit]
+Description=SAVP servicio privado de conocimiento y tutor
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=exec
+User=www-data
+Group=www-data
+WorkingDirectory=/srv/savp/current/ai-service
+Environment=SAVP_AI_ENV=production
+Environment=SAVP_AI_PORT=8001
+Environment=SAVP_AI_SOURCE_INTAKE_PATH=/var/lib/savp-aporte/source_intake.json
+EnvironmentFile=/etc/savp/aporte.env
+StateDirectory=savp-aporte
+StateDirectoryMode=0700
+ExecStartPre=/srv/savp/current/ai-service/.venv/bin/python scripts/verify_sources.py
+ExecStart=/srv/savp/current/ai-service/.venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port ${SAVP_AI_PORT} --workers 1 --limit-concurrency 32 --backlog 64 --timeout-keep-alive 5
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/savp-aporte
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\ReporteGenerado;
-use App\Models\User;
+use App\Models\Oficial\Academico\ReporteGenerado;
+use App\Models\Oficial\Sistema\User;
 use App\Support\PrivateFilePath;
 use Illuminate\Database\Eloquent\Builder;
 

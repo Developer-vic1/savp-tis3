@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 
 class AulaVirtualEntregaPolicy

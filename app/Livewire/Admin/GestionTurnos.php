@@ -2087,21 +2087,7 @@ class GestionTurnos extends Component
 
     private function generarCodigo(string $tabla, string $columna, string $prefijo): string
     {
-        $ultimo = DB::table($tabla)
-            ->where($columna, 'like', "{$prefijo}_%")
-            ->orderByDesc($columna)
-            ->value($columna);
-
-        $numero = $ultimo
-            ? (int) str_replace("{$prefijo}_", '', $ultimo)
-            : 0;
-
-        do {
-            $numero++;
-            $codigo = $prefijo . '_' . str_pad((string) $numero, 4, '0', STR_PAD_LEFT);
-        } while (DB::table($tabla)->where($columna, $codigo)->exists());
-
-        return $codigo;
+        return \App\Support\Modelos\FormatoCodigoInstitucional::siguiente(DB::connection(), $tabla);
     }
 
     private function filtrarColumnas(string $tabla, array $datos): array
@@ -2232,92 +2218,11 @@ class GestionTurnos extends Component
         ?array $valoresAnteriores = null,
         ?array $valoresNuevos = null
     ): void {
-        try {
-            if (class_exists(\Spatie\Activitylog\Facades\Activity::class)) {
-                activity()
-                    ->performedOn($this->tablaExiste($tabla) ? DB::table($tabla)->where('cod_' . substr($tabla, 0, 3), $registro)->first() : null)
-                    ->causedBy(auth()->user())
-                    ->withProperties([
-                        'modulo' => 'Gestión de Turnos',
-                        'tabla' => $tabla,
-                        'registro' => $registro,
-                        'descripcion' => $descripcion,
-                    ])
-                    ->log($accion . ' - ' . $descripcion);
-            }
-        } catch (Throwable) {
-            //
-        }
-
-        if (! $this->tablaExiste('bitacora')) {
-            return;
-        }
-
-        try {
-            $columnas = Schema::getColumnListing('bitacora');
-            $request = request();
-            $usuario = auth()->user();
-            $payload = [];
-
-            if (in_array('cod_bit', $columnas, true)) {
-                $payload['cod_bit'] = $this->generarCodigo('bitacora', 'cod_bit', 'BIT');
-            }
-            if (in_array('acc_bit', $columnas, true)) {
-                $payload['acc_bit'] = $accion;
-            }
-            if (in_array('tab_bit', $columnas, true)) {
-                $payload['tab_bit'] = $tabla;
-            }
-            if (in_array('reg_bit', $columnas, true)) {
-                $payload['reg_bit'] = $registro;
-            }
-            if (in_array('cod_usu', $columnas, true)) {
-                $payload['cod_usu'] = $usuario?->cod_usu ?? auth()->id();
-            }
-            if (in_array('rol_bit', $columnas, true)) {
-                $payload['rol_bit'] = $usuario?->getRoleNames()?->first() ?? 'Sin rol';
-            }
-            if (in_array('fec_bit', $columnas, true)) {
-                $payload['fec_bit'] = now();
-            }
-            if (in_array('mod_bit', $columnas, true)) {
-                $payload['mod_bit'] = 'Gestión de Turnos';
-            }
-            if (in_array('nom_reg_bit', $columnas, true)) {
-                $payload['nom_reg_bit'] = $nombreVisible ?: $registro;
-            }
-            if (in_array('des_bit', $columnas, true)) {
-                $payload['des_bit'] = $descripcion;
-            }
-            if (in_array('niv_bit', $columnas, true)) {
-                $payload['niv_bit'] = $nivel;
-            }
-            if (in_array('res_bit', $columnas, true)) {
-                $payload['res_bit'] = 'EXITOSO';
-            }
-            if (in_array('ip_bit', $columnas, true)) {
-                $payload['ip_bit'] = $request?->ip() ?? '127.0.0.1';
-            }
-            if (in_array('age_bit', $columnas, true)) {
-                $payload['age_bit'] = $request?->userAgent() ?? 'SAVP-TIS3';
-            }
-            if (in_array('rut_bit', $columnas, true)) {
-                $payload['rut_bit'] = $request?->path() ?? 'livewire';
-            }
-            if (in_array('met_bit', $columnas, true)) {
-                $payload['met_bit'] = $request?->method() ?? 'POST';
-            }
-            if (in_array('val_ant_bit', $columnas, true) && $valoresAnteriores !== null) {
-                $payload['val_ant_bit'] = json_encode($valoresAnteriores, JSON_UNESCAPED_UNICODE);
-            }
-            if (in_array('val_nue_bit', $columnas, true) && $valoresNuevos !== null) {
-                $payload['val_nue_bit'] = json_encode($valoresNuevos, JSON_UNESCAPED_UNICODE);
-            }
-
-            DB::table('bitacora')->insert($payload);
-        } catch (Throwable) {
-            //
-        }
+        \App\Services\BitacoraService::registrar(
+            accion: $accion, tabla: $tabla, registro: $registro, modulo: 'Gestión de Turnos',
+            nombreRegistro: $nombreVisible, descripcion: $descripcion, nivel: $nivel,
+            valoresAnteriores: $valoresAnteriores, valoresNuevos: $valoresNuevos
+        );
     }
 
     // ============================================================

@@ -1,173 +1,127 @@
 <?php
-
 namespace App\Services;
 
-use App\Models\Role;
-use App\Models\RoleRequest;
-use App\Models\User;
+use App\Models\Oficial\Sistema\{SolicitudRol,Role,User};
+use App\Models\Oficial\Academico\GestionAcademica;
 use App\Support\InstitutionalRoleGovernance;
+use App\Support\SupportRolesInstitucionales as SupportRol;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{DB,Schema,Storage};
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\PermissionRegistrar;
 
 class RoleRequestService
 {
-    public function __construct(private InstitutionalRoleGovernance $governance, private InstitutionalAuthorityService $authority, private InstitutionalDocumentAnalyzer $analyzer) {}
-
-    public function authorize(User $actor, string $permission): void
+    public function __construct(private InstitutionalRoleGovernance $governance,private InstitutionalAuthorityService $authority,private InstitutionalDocumentAnalyzer $analyzer){}
+    public function authorize(User $actor,string $permission): void
     {
-        if ((new RoleDashboardResolver)->roleFor($actor) !== 'Administrador' || ! $actor->can('roles-permisos.gestionar') || ! $actor->can($permission)) {
-            throw new AuthorizationException('No tiene autorización para esta operación de gobernanza.');
-        }
+        if((new RoleDashboardResolver)->roleFor($actor)!=='Administrador'||!$actor->can('roles-permisos.gestionar')||!$actor->can($permission))throw new AuthorizationException('No tienes autorización para esta operación.');
     }
-
-    public function analyze(array $data): array
+    public function disponible():bool{return Schema::hasTable('solicitud_rol')&&Schema::hasTable('solicitud_rol_permiso');}
+    private function preparar():void
     {
-        return $this->governance->analyze(
-            $data['requested_name'], $data['justification'], $data['functions'], $data['requested_permissions'],
-            Role::query()->where('guard_name', 'web')->pluck('name')->all(),
-            Permission::query()->where('guard_name', 'web')->pluck('name')->all(),
-        );
+        if(!$this->disponible()||!Schema::hasTable('bitacora'))throw ValidationException::withMessages(['role_request'=>'Falta aplicar la migración de gobernanza revisada. Tus datos de consulta se conservan.']);
     }
-
-    public function submit(User $actor, array $data, UploadedFile $file): RoleRequest
+    public function analyze(array $data):array
     {
-        $this->authorize($actor, 'roles.solicitudes.crear');
-        $authority = $this->authority->current();
-        if ($authority['status'] !== 'ACTIVO') {
-            throw ValidationException::withMessages(['document' => $authority['message']]);
-        }
-        $analysis = $this->analyze($data);
-        if ($analysis['status'] !== 'APTO') {
-            throw ValidationException::withMessages(['requested_name' => $analysis['summary']]);
-        }
-
-        // MIME se determina por contenido; el nombre original solo se conserva como metadato.
-        $mime = $file->getMimeType();
-        $extension = strtolower($file->getClientOriginalExtension());
-        $types = ['application/pdf' => 'pdf', 'image/jpeg' => 'jpg', 'image/png' => 'png'];
-        if (! isset($types[$mime]) || ! in_array($extension, $mime === 'image/jpeg' ? ['jpg', 'jpeg'] : [$types[$mime]], true)
-            || $file->getSize() < 1 || $file->getSize() > 10 * 1024 * 1024) {
-            throw ValidationException::withMessages(['document' => 'Adjunte un PDF, JPG o PNG válido de hasta 10 MB.']);
-        }
-        $hash = hash_file('sha256', $file->getRealPath());
-        $reuse = RoleRequest::query()->where('document_hash', $hash)->exists();
-        $path = $file->storeAs('role-requests', bin2hex(random_bytes(20)).'.'.$types[$mime], 'local');
-        if (! $path) {
-            throw ValidationException::withMessages(['document' => 'No se pudo guardar el documento privado.']);
-        }
+        return $this->governance->analyze($data['requested_name'],$data['justification'],$data['functions'],$data['requested_permissions'],
+            Role::where('guard_name','web')->pluck('name')->all(),Permission::where('guard_name','web')->pluck('name')->all());
+    }
+    private function contexto():array
+    {
+        $gestiones=GestionAcademica::where('est_gea','ACTIVO')->get();$a=$this->authority->current();
+        if($gestiones->count()!==1||$a['status']!=='ACTIVO')throw ValidationException::withMessages(['role_request'=>'Necesitamos una gestión activa única y un Director activo identificado para revisar la carta.']);
+        return [$gestiones->first(),$a];
+    }
+    private function validarDatos(array $data):array
+    {
+        validator($data,['requested_name'=>'required|string|max:80','motivo_tipo'=>'required|string','institutional_reason'=>'nullable|string|max:2000','responsabilidades'=>'required|array|max:7','responsabilidades.*'=>'string'])->validate();
+        SupportRol::comprobarTexto((string)($data['requested_name']??''),'requested_name',4,true);
+        $data['institutional_reason']=SupportRol::motivo('solicitud',(string)($data['motivo_tipo']??''),(string)($data['institutional_reason']??''),'institutional_reason');
+        $data['justification']=$data['institutional_reason'];
+        $data['functions']=SupportRol::funciones($data['responsabilidades']??[]);
+        return validator($data,[
+            'motivo_tipo'=>['required',\Illuminate\Validation\Rule::in(array_keys(SupportRol::MOTIVOS['solicitud']))],
+            'responsabilidades'=>'required|array|min:1|max:7','responsabilidades.*'=>['required','string','distinct',\Illuminate\Validation\Rule::in(array_keys(SupportRol::RESPONSABILIDADES))],
+            'requested_name'=>'required|string|min:4|max:80','justification'=>'required|string|min:30|max:2000',
+            'institutional_reason'=>'required|string|min:20|max:2000','functions'=>'required|string|min:30|max:3000',
+            'scope'=>['required',\Illuminate\Validation\Rule::in(SupportRol::AMBITOS)],'observations'=>'nullable|string|max:2000',
+            'requested_permissions'=>'required|array|min:1|max:150','requested_permissions.*'=>'string|distinct',
+        ])->validate();
+    }
+    public function comprobarDocumento(User $actor,array $data,UploadedFile $file):array
+    {
+        $this->authorize($actor,'roles.solicitudes.crear');$data=$this->validarDatos($data);
+        validator(['document'=>$file],['document'=>'required|file|max:8192|mimes:pdf|extensions:pdf'])->validate();
+        [$g,$a]=$this->contexto();
+        return $this->analyzer->leerAutorizacion($file->getRealPath(),$data['requested_name'],$a['name'],$g->ani_gea);
+    }
+    public function submit(User $actor,array $data,UploadedFile $file):SolicitudRol
+    {
+        $this->authorize($actor,'roles.solicitudes.crear');$this->preparar();$data=$this->validarDatos($data);
+        $lectura=$this->comprobarDocumento($actor,$data,$file);$ruta=null;
         try {
-            return DB::transaction(function () use ($actor, $data, $file, $path, $hash, $mime, $analysis, $authority, $reuse) {
-                $request = RoleRequest::create([
-                    ...$data, 'analysis_result' => $analysis, 'status' => $reuse ? 'REQUIERE_REVISION_REUSO' : 'PENDIENTE_REVISION',
-                    'requested_by' => $actor->cod_usu, 'director_id' => $authority['director']->cod_dir,
-                    'document_path' => $path, 'document_hash' => $hash,
-                    'document_original_name' => mb_substr(basename(str_replace('\\', '/', $file->getClientOriginalName())), 0, 255),
-                    'document_mime' => $mime, 'document_size' => $file->getSize(),
-                ]);
-                $request->update(['document_analysis' => $this->analyzer->analyze($request)]);
-                BitacoraService::registrar('CREAR_SOLICITUD_ROL', 'role_requests', (string) $request->id, 'Roles y Permisos', $request->requested_name,
-                    'Solicitud documental recibida; pendiente de revisión independiente.', valoresNuevos: ['hash' => $hash, 'estado' => $request->status]);
-                BitacoraService::registrar('DOCUMENTO_ASOCIADO', 'role_requests', (string) $request->id, 'Roles y Permisos', $request->requested_name,
-                    'Documento privado asociado.', valoresNuevos: ['hash' => $hash]);
-
-                return $request;
-            });
-        } catch (\Throwable $e) {
-            Storage::disk('local')->delete($path);
-            throw $e;
-        }
+            return DB::transaction(function()use($actor,$data,$file,$lectura,&$ruta){
+                app(RolePermissionService::class)->lockRoles();$operador=User::lockForUpdate()->findOrFail($actor->getKey());$this->authorize($operador,'roles.solicitudes.crear');
+                [$g,$a]=$this->contexto();$analisis=$this->analyze($data);
+                if($analisis['reasons']||$analisis['blocked_permissions'])throw ValidationException::withMessages(['role_request'=>$analisis['summary']]);
+                foreach($data['requested_permissions'] as $p)if(!$operador->getAllPermissions()->contains('name',$p))throw ValidationException::withMessages(['role_request'=>'No puedes solicitar autoridad superior a tus permisos permanentes.']);
+                $ruta=$file->store('gobernanza/cartas','local');
+                if(!$ruta)throw ValidationException::withMessages(['document'=>'No pudimos guardar la evidencia. Vuelve a intentarlo.']);
+                $s=SolicitudRol::create(['cod_gea'=>$g->getKey(),'cod_usu_solicitante'=>$actor->getKey(),'cod_usu_director'=>$a['director']->persona->usuario->getKey(),
+                    'nombre'=>$data['requested_name'],'justificacion'=>$data['justification'],'motivo'=>$data['institutional_reason'],'funciones'=>$data['functions'],
+                    'alcance'=>$data['scope'],'observaciones'=>$data['observations']??null,'documento_ruta'=>$ruta,'documento_sha256'=>$lectura['sha256'],
+                    'analisis'=>['gobernanza'=>$analisis,'documento'=>$lectura],'estado'=>$lectura['coherente']?'PENDIENTE':'RECHAZADA','nota_revision'=>$lectura['coherente']?null:implode(' ',$lectura['errores'])]);
+                $s->permisos()->attach(Permission::where('guard_name','web')->whereIn('name',$data['requested_permissions'])->pluck('id'));
+                BitacoraService::registrar(accion:$lectura['coherente']?'SOLICITAR_ROL':'SOLICITUD_ROL_PDF_RECHAZADO',tabla:'solicitud_rol',registro:$s->getKey(),modulo:'Roles y Permisos',descripcion:$s->motivo,
+                    resultado:$lectura['coherente']?'EXITOSO':'BLOQUEADO',valoresNuevos:['sha256'=>$lectura['sha256'],'analisis'=>$lectura,'nombre'=>$s->nombre]);
+                return $s;
+            },3);
+        }catch(\Throwable $e){if($ruta)Storage::disk('local')->delete($ruta);throw $e;}
     }
-
-    public function cancel(User $actor, int $id): void
+    public function cancel(User $actor,string $id):void
     {
-        $this->authorize($actor, 'roles.solicitudes.cancelar');
-        DB::transaction(function () use ($actor, $id) {
-            $request = RoleRequest::query()->lockForUpdate()->findOrFail($id);
-            if ($request->requested_by !== $actor->cod_usu || ! in_array($request->status, ['PENDIENTE_REVISION', 'REQUIERE_REVISION_REUSO'], true)) {
-                throw ValidationException::withMessages(['role_request' => 'Solo el solicitante puede cancelar una solicitud pendiente.']);
-            }
-            $request->update(['status' => 'CANCELADA']);
-            BitacoraService::registrar('CANCELAR_SOLICITUD_ROL', 'role_requests', (string) $request->id, 'Roles y Permisos', $request->requested_name,
-                'El solicitante canceló la solicitud.', valoresNuevos: ['estado' => 'CANCELADA', 'hash' => $request->document_hash]);
+        $this->authorize($actor,'roles.solicitudes.cancelar');$this->preparar();
+        DB::transaction(function()use($actor,$id){
+            app(RolePermissionService::class)->lockRoles();
+            $operador=User::lockForUpdate()->findOrFail($actor->getKey());$this->authorize($operador,'roles.solicitudes.cancelar');
+            $s=SolicitudRol::lockForUpdate()->findOrFail($id);abort_unless($s->cod_usu_solicitante===$actor->getKey()&&in_array($s->estado,['PENDIENTE','REVISADA'],true),403);
+            $s->update(['estado'=>'CANCELADA']);BitacoraService::registrar(accion:'CANCELAR_SOLICITUD_ROL',tabla:'solicitud_rol',registro:$id,modulo:'Roles y Permisos',descripcion:'El solicitante canceló su petición. Se conserva la carta.');
         });
     }
-
-    public function review(User $actor, int $id, bool $approved, string $note, bool $directorMatches, bool $readable, bool $signaturePresent, bool $sealPresent): RoleRequest
+    public function review(User $actor,string $id,bool $approved,string $note,bool $directorMatches,bool $readable,bool $signaturePresent,bool $sealPresent):void
     {
-        $this->authorize($actor, 'roles.solicitudes.analizar');
-        if (mb_strlen(trim($note)) < 20) {
-            throw ValidationException::withMessages(['review_note' => 'Explique la revisión en al menos 20 caracteres.']);
-        }
-
-        return DB::transaction(function () use ($actor, $id, $approved, $note, $directorMatches, $readable, $signaturePresent, $sealPresent) {
-            $request = RoleRequest::query()->lockForUpdate()->findOrFail($id);
-            if (! in_array($request->status, ['PENDIENTE_REVISION', 'REQUIERE_REVISION_REUSO'], true) || $request->requested_by === $actor->cod_usu) {
-                throw ValidationException::withMessages(['review_note' => 'La solicitud no admite esta revisión o usted es quien la presentó.']);
-            }
-            $authority = $this->authority->current();
-            if ($authority['status'] !== 'ACTIVO' || $authority['director']->cod_dir !== $request->director_id) {
-                throw ValidationException::withMessages(['review_note' => 'La autoridad institucional cambió o no es única.']);
-            }
-            if ($approved && (! $directorMatches || ! $readable || ! $signaturePresent || ! $sealPresent)) {
-                throw ValidationException::withMessages(['review_note' => 'Para aprobar, verifique legibilidad, identidad del Director y presencia de firma y sello.']);
-            }
-            if ($approved && $request->status === 'REQUIERE_REVISION_REUSO' && ! preg_match('/reutiliz|mismo documento|uso anterior/iu', $note)) {
-                throw ValidationException::withMessages(['review_note' => 'Explique expresamente la reutilización de esta autorización.']);
-            }
-            $request->update(['status' => $approved ? 'REVISADA' : 'RECHAZADA', 'reviewed_by' => $actor->cod_usu,
-                'reviewed_at' => now(), 'review_note' => $note,
-                'document_analysis' => array_merge($request->document_analysis ?? [], [
-                    'manual_review' => ['director_matches' => $directorMatches, 'document_readable' => $readable,
-                        'signature_present' => $signaturePresent, 'seal_present' => $sealPresent, 'reviewed_by' => $actor->cod_usu],
-                ])]);
-            BitacoraService::registrar($approved ? 'ANALIZAR_SOLICITUD_ROL' : 'RECHAZAR_SOLICITUD_ROL', 'role_requests', (string) $request->id,
-                'Roles y Permisos', $request->requested_name, $note, valoresNuevos: ['estado' => $request->status, 'hash' => $request->document_hash]);
-
-            return $request;
+        $this->authorize($actor,'roles.solicitudes.analizar');$this->preparar();validator(['nota'=>$note],['nota'=>'required|string|min:20|max:2000'])->validate();
+        SupportRol::comprobarTexto($note,'nota');
+        DB::transaction(function()use($actor,$id,$approved,$note,$directorMatches,$readable,$signaturePresent,$sealPresent){
+            app(RolePermissionService::class)->lockRoles();
+            $operador=User::lockForUpdate()->findOrFail($actor->getKey());$this->authorize($operador,'roles.solicitudes.analizar');
+            $s=SolicitudRol::lockForUpdate()->findOrFail($id);abort_unless($s->estado==='PENDIENTE'&&$s->cod_usu_solicitante!==$actor->getKey(),403);
+            if($approved){if(!$directorMatches||!$readable||!$signaturePresent||!$sealPresent)throw ValidationException::withMessages(['role_request'=>'Verifica la carta, el Director, la firma y su autenticidad antes de aprobar.']);$this->revalidarDocumento($s);}
+            $s->update(['estado'=>$approved?'REVISADA':'RECHAZADA','cod_usu_revisor'=>$actor->getKey(),'nota_revision'=>$note,'revisada_en'=>now()]);
+            BitacoraService::registrar(accion:$approved?'REVISAR_SOLICITUD_ROL':'RECHAZAR_SOLICITUD_ROL',tabla:'solicitud_rol',registro:$id,modulo:'Roles y Permisos',descripcion:$note);
         });
     }
-
-    public function createRole(User $actor, int $id): Role
+    private function revalidarDocumento(SolicitudRol $s):void
     {
-        $this->authorize($actor, 'roles.crear');
-        $this->authorize($actor, 'roles.permisos.asignar');
-
-        return DB::transaction(function () use ($actor, $id) {
-            $this->authorize($actor, 'roles.crear');
-            $this->authorize($actor, 'roles.permisos.asignar');
-            $request = RoleRequest::query()->lockForUpdate()->findOrFail($id);
-            if ($request->status !== 'REVISADA' || ! $request->reviewed_by || $request->reviewed_by === $request->requested_by) {
-                throw ValidationException::withMessages(['role_request' => 'La solicitud necesita revisión documental independiente.']);
-            }
-            $authority = $this->authority->current();
-            if ($authority['status'] !== 'ACTIVO' || $authority['director']->cod_dir !== $request->director_id) {
-                throw ValidationException::withMessages(['role_request' => 'La autoridad institucional cambió.']);
-            }
-            $review = $request->document_analysis['manual_review'] ?? [];
-            foreach (['director_matches', 'document_readable', 'signature_present', 'seal_present'] as $key) {
-                if (($review[$key] ?? false) !== true) {
-                    throw ValidationException::withMessages(['role_request' => 'La revisión documental está incompleta.']);
-                }
-            }
-            if (! Storage::disk('local')->exists($request->document_path) || hash_file('sha256', Storage::disk('local')->path($request->document_path)) !== $request->document_hash) {
-                throw ValidationException::withMessages(['role_request' => 'El documento ya no está disponible o fue alterado.']);
-            }
-            $analysis = $this->analyze($request->only(['requested_name', 'justification', 'functions', 'requested_permissions']));
-            if ($analysis['status'] !== 'APTO') {
-                throw ValidationException::withMessages(['role_request' => $analysis['summary']]);
-            }
-            $role = app(RolePermissionService::class)->createApprovedRole($request->requested_name, $analysis['allowed_permissions'], $actor);
-            $request->update(['status' => 'CREADA', 'created_role_id' => $role->id, 'analysis_result' => $analysis]);
-            BitacoraService::registrar('CREAR_ROL', 'roles', (string) $role->id, 'Roles y Permisos', $role->name,
-                'Rol creado desde solicitud validada.', valoresNuevos: ['solicitud' => $request->id, 'permisos' => $analysis['allowed_permissions'], 'hash' => $request->document_hash]);
-            app(PermissionRegistrar::class)->forgetCachedPermissions();
-
-            return $role;
-        });
+        [$g,$a]=$this->contexto();
+        if($g->getKey()!==$s->cod_gea||$a['director']->persona->usuario->getKey()!==$s->cod_usu_director)throw ValidationException::withMessages(['role_request'=>'La gestión o el Director cambió. Presenta una carta vigente.']);
+        if(!Storage::disk('local')->exists($s->documento_ruta)||hash_file('sha256',Storage::disk('local')->path($s->documento_ruta))!==$s->documento_sha256)throw ValidationException::withMessages(['document'=>'La evidencia no coincide con la carta presentada.']);
+        $lectura=$this->analyzer->leerAutorizacion(Storage::disk('local')->path($s->documento_ruta),$s->nombre,$a['name'],$g->ani_gea);
+        if(!$lectura['coherente'])throw ValidationException::withMessages(['document'=>$lectura['errores']]);
+    }
+    public function createRole(User $actor,string $id):Role
+    {
+        $this->authorize($actor,'roles.crear');$this->preparar();
+        return DB::transaction(function()use($actor,$id){
+            app(RolePermissionService::class)->lockRoles();$operador=User::lockForUpdate()->findOrFail($actor->getKey());$this->authorize($operador,'roles.crear');
+            $s=SolicitudRol::with('permisos')->lockForUpdate()->findOrFail($id);abort_unless($s->estado==='REVISADA'&&$s->cod_usu_revisor&&$s->cod_usu_solicitante!==$s->cod_usu_revisor,409);
+            $this->revalidarDocumento($s);$r=$this->analyze(['requested_name'=>$s->nombre,'justification'=>$s->justificacion,'functions'=>$s->funciones,'requested_permissions'=>$s->permisos->pluck('name')->all()]);
+            if($r['reasons']||$r['blocked_permissions'])throw ValidationException::withMessages(['role_request'=>$r['summary']]);
+            $role=app(RolePermissionService::class)->createApprovedRole($s->nombre,$s->permisos->pluck('name')->all(),$operador);
+            $s->update(['estado'=>'CREADA','role_id'=>$role->getKey(),'creada_en'=>now()]);
+            BitacoraService::registrar(accion:'CREAR_ROL_RESPALDADO',tabla:'solicitud_rol',registro:$id,modulo:'Roles y Permisos',descripcion:$s->motivo,valoresNuevos:['role_id'=>$role->getKey(),'revisor'=>$s->cod_usu_revisor,'sha256'=>$s->documento_sha256]);return $role;
+        },3);
     }
 }

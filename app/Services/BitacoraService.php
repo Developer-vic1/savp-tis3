@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Bitacora;
+use App\Models\Oficial\Academico\Bitacora;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 

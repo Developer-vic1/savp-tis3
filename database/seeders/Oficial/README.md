@@ -1,5 +1,9 @@
 # HISTORIAL ESTUDIANTIL 2020–2026
 
+> **Estado actual:** el historial ya reside en `SAVPTIS3-OFICIAL`. Los comandos de reconstrucción de este documento describen la carga inicial y sirven únicamente para una base aislada de prueba. No volver a ejecutar `migrate:fresh` ni el seeder masivo contra la base institucional. Consulta [la operación vigente](../../../docs/sistema/03-DATOS-Y-OPERACION.md).
+
+Para agentes y reconstrucción con los comandos normales, consultar [GUIA_AGENTES.md](GUIA_AGENTES.md): requisitos, conteos SQL actuales, orden `migrate:fresh` → `db:seed`, evidencias y reglas que deben conservarse.
+
 Los archivos están dentro del proyecto. `DatabaseSeeder` invoca `Oficial/HistorialInstitucionalSeeder`, que carga seis fases por gestión: gestión/calendario, inscripciones, aula virtual, asistencias, orientación y cierre. Las carpetas numéricas contienen closures PHP cargadas explícitamente; no usan namespaces PSR-4 numéricos.
 
 ## Organización

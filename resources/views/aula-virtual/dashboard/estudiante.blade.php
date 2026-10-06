@@ -14,7 +14,7 @@
 
     <div class="space-y-8">
         @can('Orientacion_Academica_Profesional')
-            <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Mi orientación</h2><p class="ui-subtitle mt-2">Revisa tu perfil, completa tus intereses y explora carreras con evidencia.</p><a class="ui-btn-primary mt-4 inline-flex" href="{{ route('aula-virtual.estudiante.orientacion.peter3') }}">Ver el estado de mi perfil</a></section>
+            <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Mi orientación</h2><p class="ui-subtitle mt-2">Revisa tu perfil, completa tus intereses y explora carreras con evidencia.</p><a class="ui-btn-primary mt-4 inline-flex" href="{{ route('aula-virtual.estudiante.orientacion.aporte') }}">Ver el estado de mi perfil</a></section>
         @endcan
         <section class="rounded-lg border p-6 shadow-sm" style="background: var(--ui-surface); border-color: var(--ui-border);">
             <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -126,7 +126,7 @@
                     <div class="mt-5 flex flex-wrap gap-2">
                         <livewire:aula-virtual.orientacion.explorador-vocacional :auto-open="false" />
                         @include('aula-virtual.componentes.icon-action-button', [
-                            'href' => route('aula-virtual.estudiante.orientacion.peter3'),
+                            'href' => route('aula-virtual.estudiante.orientacion.aporte'),
                             'icon' => 'entrar',
                             'label' => 'Ver orientación',
                             'variant' => 'secondary',

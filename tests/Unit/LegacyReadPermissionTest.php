@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Support\LegacyReadPermission;
 use Mockery;
 use Tests\TestCase;

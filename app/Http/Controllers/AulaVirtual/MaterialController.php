@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
-use App\Models\AulaVirtual\MaterialClase;
+use App\Models\Oficial\AulaVirtual\MaterialClase;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\MaterialService;
 use Illuminate\Http\Request;

@@ -1,4 +1,5 @@
 <div class="space-y-6">
+    @if(!($configuracion['documentado']??false))
     <section class="ui-card rounded-[2rem] p-6 sm:p-8">
         <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
@@ -27,11 +28,15 @@
     <section class="ui-card rounded-[2rem] p-5">
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto]">
             <input wire:model.live.debounce.350ms="search" class="ui-input" placeholder="Buscar por código, nombre o descripción...">
+            @if($configuracion['documentado']??false)
+                <x-selector-institucional modelo="estado" identificador="especialidades-estado" etiqueta="Vigencia" :opciones="[['valor'=>'','etiqueta'=>'Todas'],['valor'=>'ACTIVO','etiqueta'=>'Vigentes'],['valor'=>'INACTIVO','etiqueta'=>'Retiradas']]" />
+            @else
             <select wire:model.live="estado" class="ui-input">
                 <option value="">Todos los estados</option>
                 <option value="ACTIVO">Activos</option>
                 <option value="INACTIVO">Inactivos</option>
             </select>
+            @endif
             @foreach($filtrosAdicionales as $indice => $filtro)
                 <select wire:model.live="extraFiltro{{ $indice + 1 }}" class="ui-input">
                     <option value="">{{ $filtro['etiqueta'] }}</option>
@@ -93,7 +98,8 @@
         <div class="border-t p-4" style="border-color: var(--ui-border)">{{ $registros->links() }}</div>
     </section>
 
-    @if ($modalFormulario)
+    @endif
+    @if ($modalFormulario && !($configuracion['documentado']??false))
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" wire:click.self="cerrarFormulario">
             <section class="ui-card max-h-[92vh] w-full max-w-4xl overflow-y-auto rounded-[2rem] p-6 sm:p-8">
                 <div class="flex items-start justify-between gap-4">
@@ -199,7 +205,7 @@
         </div>
     @endif
 
-    @if ($modalDetalle)
+    @if ($modalDetalle && !($configuracion['documentado']??false))
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" wire:click.self="cerrarDetalle">
             <section class="ui-card w-full max-w-2xl rounded-[2rem] p-6 sm:p-8">
                 <div class="flex justify-between gap-4">

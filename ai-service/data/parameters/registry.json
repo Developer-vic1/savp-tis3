@@ -190,7 +190,7 @@
       "unit": "enum_policy",
       "method": "Directriz metodológica de desacoplamiento de dimensiones de evidencia independientes",
       "source_ids": [
-        "PETER3-V2-FOUNDATION-2026"
+        "APORTE-V2-FOUNDATION-2026"
       ],
       "scope": "Recommendation V2",
       "version": "2.0.0",
@@ -208,7 +208,7 @@
       "unit": "enum_policy",
       "method": "Preservación de la ausencia de evidencia como dato desconocido o no observado",
       "source_ids": [
-        "PETER3-V2-FOUNDATION-2026"
+        "APORTE-V2-FOUNDATION-2026"
       ],
       "scope": "Recommendation V2",
       "version": "2.0.0",
@@ -226,7 +226,7 @@
       "unit": "huggingface_model_id",
       "method": "Benchmark empírico en dataset oficial de consultas (nDCG@5, Recall@5, MRR)",
       "source_ids": [
-        "PETER3-RETRIEVAL-BENCHMARK-2026"
+        "APORTE-RETRIEVAL-BENCHMARK-2026"
       ],
       "scope": "Semantic Indexing y RAG",
       "version": "1.2.0",
@@ -316,7 +316,7 @@
       "unit": "caracteres",
       "method": "Configuración reproducible del pipeline de ingesta basada en caracteres",
       "source_ids": [
-        "PETER3-ARCHITECTURE-2026"
+        "APORTE-ARCHITECTURE-2026"
       ],
       "scope": "Chunking del corpus",
       "version": "1.0.0",
@@ -334,7 +334,7 @@
       "unit": "caracteres",
       "method": "Configuración reproducible del pipeline de ingesta basada en caracteres",
       "source_ids": [
-        "PETER3-ARCHITECTURE-2026"
+        "APORTE-ARCHITECTURE-2026"
       ],
       "scope": "Chunking del corpus",
       "version": "1.0.0",
@@ -352,7 +352,7 @@
       "unit": "chunks",
       "method": "Evaluación de trade-off entre cobertura de contexto y ventana de tokens",
       "source_ids": [
-        "PETER3-RETRIEVAL-BENCHMARK-2026"
+        "APORTE-RETRIEVAL-BENCHMARK-2026"
       ],
       "scope": "Knowledge Search y Tutor Context",
       "version": "1.0.0",
@@ -370,7 +370,7 @@
       "unit": "temperatura",
       "method": "Determinismo estricto para anclaje a fuentes y reproducibilidad de citas",
       "source_ids": [
-        "PETER3-PROMPT-GOVERNANCE-2026"
+        "APORTE-PROMPT-GOVERNANCE-2026"
       ],
       "scope": "Tutor LLM Provider",
       "version": "1.0.0",
@@ -388,7 +388,7 @@
       "unit": "tokens",
       "method": "Restricción de concisión para respuestas explicativas concisas",
       "source_ids": [
-        "PETER3-PROMPT-GOVERNANCE-2026"
+        "APORTE-PROMPT-GOVERNANCE-2026"
       ],
       "scope": "Tutor LLM Provider",
       "version": "1.0.0",
@@ -441,7 +441,7 @@
       "value": 0.72,
       "unit": "score_rrf_normalizado",
       "method": "Guardrail operativo conservador del retrieval; no es probabilidad ni confidence calibrada",
-      "source_ids": ["PETER3-RETRIEVAL-BENCHMARK-2026"],
+      "source_ids": ["APORTE-RETRIEVAL-BENCHMARK-2026"],
       "scope": "Detección de evidencia insuficiente",
       "version": "1.0.0",
       "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
@@ -455,7 +455,7 @@
       "value": 0.2,
       "unit": "proporción",
       "method": "Guardrail léxico operativo para abstención",
-      "source_ids": ["PETER3-RETRIEVAL-BENCHMARK-2026"],
+      "source_ids": ["APORTE-RETRIEVAL-BENCHMARK-2026"],
       "scope": "Detección de evidencia insuficiente",
       "version": "1.0.0",
       "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
@@ -469,7 +469,7 @@
       "value": 650,
       "unit": "caracteres",
       "method": "Límite operativo reproducible de contexto, medido en caracteres y no tokens",
-      "source_ids": ["PETER3-ARCHITECTURE-2026"],
+      "source_ids": ["APORTE-ARCHITECTURE-2026"],
       "scope": "Knowledge evidence y tutor",
       "version": "1.0.0",
       "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
@@ -483,7 +483,7 @@
       "value": 8,
       "unit": "chunks",
       "method": "Configuración operativa del servicio de tutor",
-      "source_ids": ["PETER3-ARCHITECTURE-2026"],
+      "source_ids": ["APORTE-ARCHITECTURE-2026"],
       "scope": "Tutor retrieval",
       "version": "1.0.0",
       "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
@@ -497,7 +497,7 @@
       "value": 20260928,
       "unit": "entero",
       "method": "Configuración operativa de reproducibilidad cuando el runtime la soporta",
-      "source_ids": ["PETER3-PROMPT-GOVERNANCE-2026"],
+      "source_ids": ["APORTE-PROMPT-GOVERNANCE-2026"],
       "scope": "Tutor LLM Provider",
       "version": "1.0.0",
       "review_status": "ACTIVE_ENGINEERING_CONFIGURATION",
@@ -512,7 +512,7 @@
       "unit": "segundos",
       "method": "Prevención de bloqueos indefinidos en llamadas remotas",
       "source_ids": [
-        "PETER3-ARCHITECTURE-2026"
+        "APORTE-ARCHITECTURE-2026"
       ],
       "scope": "Servicios FastAPI",
       "version": "1.0.0",

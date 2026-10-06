@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\AulaVirtual\Tarea;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 
 class AulaVirtualTareaPolicy

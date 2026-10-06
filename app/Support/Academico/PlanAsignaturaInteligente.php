@@ -2,7 +2,7 @@
 
 namespace App\Support\Academico;
 
-use App\Models\PlanAsignatura;
+use App\Models\Oficial\Academico\PlanAsignatura;
 
 class PlanAsignaturaInteligente
 {
@@ -16,15 +16,20 @@ class PlanAsignaturaInteligente
         if ($faltantes === []) {
             $duplicado = PlanAsignatura::query()
                 ->when($ignorarCodigo, fn ($q) => $q->where('cod_pas', '!=', $ignorarCodigo))
-                ->where(function ($q) use ($datos, $relaciones) {
-                foreach ($relaciones as $campo) {
-                    $q->where($campo, $datos[$campo]);
-                }
-            })
+                ->where('cod_asi', $datos['cod_asi'])->where('cod_doc', $datos['cod_doc'])
+                ->where('fii_pas', $datos['fii_pas'] ?? null)
+                ->whereHas('grupoAcademico', function ($grupo) use ($datos) {
+                    foreach (['cod_cur', 'cod_par', 'cod_tur', 'cod_gea'] as $campo) {
+                        $grupo->where($campo, $datos[$campo]);
+                    }
+                })
                 ->exists();
         }
 
         $bloqueos = [];
+        if (empty($datos['fii_pas'])) {
+            $bloqueos[] = 'Indica la fecha efectiva de inicio de la asignación.';
+        }
         if ($faltantes !== []) {
             $bloqueos[] = 'Faltan relaciones académicas obligatorias.';
         }

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\InstitucionProcedencia as InstitucionModel;
+use App\Models\Oficial\Academico\InstitucionProcedencia as InstitucionModel;
 use App\Support\Comunidad\InstitucionProcedenciaInteligente;
 use Illuminate\Validation\Rule;
 

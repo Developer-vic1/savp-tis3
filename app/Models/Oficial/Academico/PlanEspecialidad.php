@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Models\Oficial\Academico;
 
 use App\Models\Oficial\AulaVirtual\ClaseVirtual;
-use App\Models\Soporte\CodigoInstitucional;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Support\Modelos\ContextoGrupoAcademico;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Modelo del contrato canónico; atributos históricos redundantes permanecen en Legado. */
+/** Modelo único de la tabla oficial; atributos y relaciones del contrato canónico. */
 class PlanEspecialidad extends Model
 {
     use CodigoInstitucional;
+    use ContextoGrupoAcademico;
 
     protected $table = 'plan_especialidad';
 
@@ -42,6 +44,11 @@ class PlanEspecialidad extends Model
     public function especialidadTecnica(): BelongsTo
     {
         return $this->belongsTo(EspecialidadTecnica::class, 'cod_esp', 'cod_esp');
+    }
+
+    public function especialidad(): BelongsTo
+    {
+        return $this->especialidadTecnica();
     }
 
     public function docente(): BelongsTo

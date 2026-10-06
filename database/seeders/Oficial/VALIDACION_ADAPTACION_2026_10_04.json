@@ -1,0 +1,125 @@
+{
+  "fecha_verificacion": "2026-10-04T16:42:45.1007425-04:00",
+  "auditoria_modelos": {
+    "sin_modelo": [],
+    "solo_lectura": true,
+    "modelos": 104,
+    "tablas": 104,
+    "errores": []
+  },
+  "phpunit": {
+    "aserciones": 76,
+    "puerto": 5543,
+    "pruebas": 13,
+    "archivo": "tests/Feature/Authorization/AcademicContextTest.php",
+    "resultado": "CORRECTO",
+    "rollback": true
+  },
+  "comprobaciones_escritura": [
+    {
+      "caso": "PK compuesta: actualización, refresh y delete afectan una sola fila",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "USU automático conserva roles Spatie y formato de seis posiciones",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Catálogo PAR sin guion bajo y consecutivo mínimo de tres posiciones",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Código AUL supera 999999 sin truncamiento",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "BIT usa secuencia y permite rollback sin reutilizar número",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Plan académico usa cod_gac sin duplicar curso, turno ni gestión",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Plan rechaza fecha de inicio ausente",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Nota oficial histórica conserva inscripción, fecha efectiva y permiso",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Nota nueva rechaza fecha académica ausente",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Sesión de asistencia usa detalle oficial, fecha y bloque",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Regencia rechaza vínculo inexistente sin consultar tabla regente",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Comparación de matriz REAL con RolSeeder vigente, solo fixture",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Notas técnicas: política reconoce PES y conserva especialidad y fecha",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Consulta institucional: filtros de año, curso y estudiante en PAS/PES",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Asistencia: rectificación usa sesión, bloque y membresía histórica",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Tarea: corrección permite otro intento sin modificar la entrega anterior",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Tarea: apertura futura y cierre exacto impiden entregas",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Reporte RIASEC usa resultados registrados y no deriva intereses de notas",
+      "resultado": "CORRECTO"
+    },
+    {
+      "caso": "Inscripción activa nueva crea trayecto regular y membresías sin duplicar estudiante",
+      "resultado": "CORRECTO"
+    }
+  ],
+  "concurrencia": {
+    "caso": "Dos conexiones concurrentes crean seis códigos PAR únicos sin colisiones",
+    "resultado": "CORRECTO",
+    "registros": 6
+  },
+  "respaldo_nativo": {
+    "resultado": "CORRECTO",
+    "puerto": 5543,
+    "tablas_restauradas": 104,
+    "migraciones_restauradas": 109,
+    "dato_sintetico_conservado": true,
+    "base_institucional_modificada": false
+  },
+  "reconstruccion": {
+    "comando": "php artisan migrate:fresh",
+    "opciones": [],
+    "entorno": "PostgreSQL aislado 5543",
+    "base": "savp_fresh_solo_6c690a72",
+    "exit_code": 0,
+    "tablas": 104,
+    "migraciones": 109,
+    "estudiantes": 0,
+    "usuarios": 0,
+    "segundos": 18.31,
+    "base_institucional_modificada": false,
+    "ejecuciones_correctas": 2,
+    "primera_segundos": 9.44,
+    "segunda_segundos": 8.87
+  }
+}

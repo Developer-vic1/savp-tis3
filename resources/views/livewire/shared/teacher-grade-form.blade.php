@@ -6,6 +6,7 @@
         <div class="grid gap-4 md:grid-cols-2">
             <label class="ui-label">Estudiante inscrito<select wire:model.live="form.cod_est" class="ui-select" required @disabled($gradeId)><option value="">Seleccionar estudiante</option>@foreach($students as $student)<option value="{{ $student->cod_est }}">{{ $student->persona?->nom_per }} {{ $student->persona?->ape_pat_per }} · {{ $student->cod_est }}</option>@endforeach</select></label>
             <label class="ui-label">Periodo<select wire:model.live="form.cod_pev" class="ui-select" required @disabled($gradeId)><option value="">Seleccionar periodo</option>@foreach($periods as $period)<option value="{{ $period->cod_pev }}">{{ $period->nom_pev }}</option>@endforeach</select></label>
+            <label class="ui-label">Fecha académica efectiva<input wire:model.live="form.fea_cal" type="date" class="ui-input" required></label>
             <label class="ui-label">Nota sobre 100<input wire:model.live.debounce.500ms="form.not_cal" type="number" min="0" max="100" step="0.01" class="ui-input" required></label>
             <label class="ui-label">Observación<input wire:model.live.debounce.500ms="form.obs_cal" maxlength="255" class="ui-input"></label>
         </div>

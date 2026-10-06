@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\PlanAsignatura;
+use App\Models\Oficial\Academico\PlanAsignatura;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

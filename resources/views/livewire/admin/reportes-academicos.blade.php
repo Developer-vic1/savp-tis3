@@ -20,7 +20,7 @@
                     </svg>
                     PDF General
                 </a>
-                <a href="{{ route('admin.reportes.calificaciones.pdf') }}"
+                <a href="{{ route('admin.reportes.calificaciones.pdf', array_filter(['gestion' => $gestionFiltro, 'periodo' => $periodoFiltro, 'asignatura' => $asignaturaFiltro, 'estudiante' => $estudianteFiltro, 'especialidad' => $especialidadFiltro])) }}"
                    class="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                    style="background:#047857;"
                    title="Descargar Reporte de Calificaciones en PDF"
@@ -86,7 +86,7 @@
                 </div>
             </div>
             <p class="text-xs mb-4" style="color:var(--ui-muted)">Listado completo de calificaciones activas con desempeño, notas máximas/mínimas y observaciones.</p>
-            <a href="{{ route('admin.reportes.calificaciones.pdf') }}"
+            <a href="{{ route('admin.reportes.calificaciones.pdf', array_filter(['gestion' => $gestionFiltro, 'periodo' => $periodoFiltro, 'asignatura' => $asignaturaFiltro, 'estudiante' => $estudianteFiltro, 'especialidad' => $especialidadFiltro])) }}"
                class="inline-flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90"
                style="background:#047857;"
                title="Descargar PDF Calificaciones" aria-label="Descargar PDF Calificaciones">
@@ -239,6 +239,7 @@
     </section>
 
     <section class="ui-card rounded-[2rem] p-5">
+        <label class="ui-label">Gestión<select wire:model.live="gestionFiltro" class="ui-select mb-3"><option value="">Todo el historial</option>@foreach($gestiones as $gestion)<option value="{{ $gestion->cod_gea }}">{{ $gestion->ani_gea }}</option>@endforeach</select></label>
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-[repeat(5,minmax(0,1fr))_auto]">
             <select wire:model.live="periodoFiltro" class="ui-input">
                 <option value="">Todos los periodos</option>
@@ -360,7 +361,7 @@
                         @php($persona = $item->estudiante?->persona)
                         <tr class="hover:bg-[var(--ui-surface-muted)]">
                             <td class="px-5 py-4 text-sm font-bold" style="color: var(--ui-text)">{{ trim(($persona?->nom_per ?? '').' '.($persona?->ape_pat_per ?? '').' '.($persona?->ape_mat_per ?? '')) }}</td>
-                            <td class="px-5 py-4 text-sm" style="color: var(--ui-muted)">{{ $item->estudiante?->especialidad?->nom_esp ?? 'Sin especialidad' }}</td>
+                            <td class="px-5 py-4 text-sm" style="color: var(--ui-muted)">{{ $item->planEspecialidad?->especialidad?->nom_esp ?? 'Sin especialidad' }}</td>
                             <td class="px-5 py-4 text-sm" style="color: var(--ui-text)">{{ $item->asignatura?->nom_asi }}</td>
                             <td class="px-5 py-4 text-sm" style="color: var(--ui-muted)">{{ $item->periodoEvaluacion?->nom_pev }}</td>
                             <td class="px-5 py-4 text-lg font-black" style="color: var(--ui-primary)">{{ number_format($item->not_cal, 2) }}</td>
@@ -373,4 +374,5 @@
             </table>
         </div>
     </section>
+    <div class="mt-4">{{ $calificaciones->links() }}</div>
 </div>

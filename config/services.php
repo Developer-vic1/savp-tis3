@@ -41,20 +41,25 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
-    'peter3' => [
+    'aporte_ingenieril' => [
         // Solo se habilita tras aprobar el contrato y el entorno de integración.
-        'enabled' => env('PETER3_ENABLED', false),
-        'url' => env('PETER3_BASE_URL', env('PETER3_API_URL')),
-        'connect_timeout' => (int) env('PETER3_CONNECT_TIMEOUT', 3),
-        'timeout' => (int) env('PETER3_REQUEST_TIMEOUT', env('PETER3_TIMEOUT', 10)),
-        'cold_start_timeout' => (int) env('PETER3_COLD_START_TIMEOUT', 90),
-        'version' => env('PETER3_API_VERSION', 'v1'),
-        'key' => env('PETER3_API_KEY'),
+        'enabled' => env('APORTE_INGENIERIL_ENABLED', false),
+        'url' => env('APORTE_INGENIERIL_BASE_URL'),
+        'connect_timeout' => (int) env('APORTE_INGENIERIL_CONNECT_TIMEOUT', 3),
+        'timeout' => (int) env('APORTE_INGENIERIL_REQUEST_TIMEOUT', 10),
+        'cold_start_timeout' => (int) env('APORTE_INGENIERIL_COLD_START_TIMEOUT', 90),
+        'version' => env('APORTE_INGENIERIL_API_VERSION', 'v1'),
+        'key' => env('APORTE_INGENIERIL_API_KEY'),
+        'allowed_hosts' => array_values(array_filter(array_map(
+            'trim',
+            explode(',', env('APORTE_INGENIERIL_ALLOWED_HOSTS', '127.0.0.1,localhost,::1'))
+        ))),
         'paths' => [
-            'health' => env('PETER3_HEALTH_PATH', '/health'),
-            'analysis' => env('PETER3_ANALYSIS_PATH'),
-            'knowledge' => env('PETER3_KNOWLEDGE_PATH'),
-            'tutor' => env('PETER3_TUTOR_PATH'),
+            'health' => env('APORTE_INGENIERIL_HEALTH_PATH', '/health'),
+            'analysis' => env('APORTE_INGENIERIL_ANALYSIS_PATH'),
+            'knowledge' => env('APORTE_INGENIERIL_KNOWLEDGE_PATH'),
+            'knowledge_governance' => env('APORTE_INGENIERIL_KNOWLEDGE_GOVERNANCE_PATH'),
+            'tutor' => env('APORTE_INGENIERIL_TUTOR_PATH'),
         ],
     ],
 

@@ -1,0 +1,25 @@
+{
+  "registry_version": "1.0.0",
+  "retrieved_at": "2026-10-01",
+  "purpose": "Fuentes informativas externas separadas del corpus validado y de Recommendation V2.",
+  "entries": [
+    {
+      "external_id": "BO-EMI-LP-SIS-PROFILE-EXTERNAL-2026",
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "institution": "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz",
+      "title": "Ingenieria de Sistemas - pagina oficial de licenciatura",
+      "country": "Bolivia",
+      "url": "https://emi.edu.bo/index.php/universidad/licenciatura/ingenieria-de-sistemas",
+      "official": true,
+      "retrieval_attempted_at": "2026-10-01T19:38:00-04:00",
+      "snapshot_status": "UNAVAILABLE_AT_RETRIEVAL",
+      "http_status": 403,
+      "recommendation_eligible": false,
+      "limitations": [
+        "El dominio oficial respondio HTTP 403 desde https y http, con y sin www, durante la recuperacion local.",
+        "No existe snapshot local validado ni malla curricular recuperable para incorporarla al corpus o a Recommendation V2.",
+        "La informacion solo puede mostrarse como enlace oficial informativo hasta que una captura local sea validada."
+      ]
+    }
+  ]
+}

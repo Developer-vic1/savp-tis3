@@ -2,7 +2,7 @@
 
 namespace App\Support\Comunidad;
 
-use App\Models\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante;
 use App\Support\CatalogoInteligenteBase;
 
 class TipoVinculacionEstudianteInteligente extends CatalogoInteligenteBase

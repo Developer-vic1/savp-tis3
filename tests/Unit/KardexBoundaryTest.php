@@ -3,8 +3,8 @@
 namespace Tests\Unit;
 
 use App\Contracts\KardexRepository;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Policies\KardexPolicy;
 use App\Services\AcademicAccessService;
 use App\Services\Kardex\KardexService;

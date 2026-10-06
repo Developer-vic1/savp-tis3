@@ -1,4 +1,4 @@
-# Auditoría técnica de PETER 3 — Fase 2.1
+# Auditoría técnica de Aporte Ingenieril SAVP — Fase 2.1
 
 Fecha: 2026-10-01. Rama `work/peter3-mejoras-fase2`. Alcance:
 `ai-service/**` y `docs/peter3/**`. Checkpoint de partida:

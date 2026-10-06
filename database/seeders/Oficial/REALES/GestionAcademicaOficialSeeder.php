@@ -2,9 +2,9 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\ConfiguracionCalendarioGestion;
-use App\Models\GestionAcademica;
-use App\Models\PeriodoEvaluacion;
+use App\Models\Oficial\Academico\ConfiguracionCalendarioGestion;
+use App\Models\Oficial\Academico\GestionAcademica;
+use App\Models\Oficial\Academico\PeriodoEvaluacion;
 use Illuminate\Database\Seeder;
 
 class GestionAcademicaOficialSeeder extends Seeder

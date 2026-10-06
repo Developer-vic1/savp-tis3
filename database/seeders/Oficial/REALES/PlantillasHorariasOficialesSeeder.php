@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\PlantillaHoraria;
+use App\Models\Oficial\Academico\PlantillaHoraria;
 use Illuminate\Database\Seeder;
 
 class PlantillasHorariasOficialesSeeder extends Seeder

@@ -2,8 +2,8 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Horario;
-use App\Models\HorarioDetalle;
+use App\Models\Oficial\Academico\Horario;
+use App\Models\Oficial\Academico\HorarioDetalle;
 use Illuminate\Database\Seeder;
 
 class HorarioDetalleOficialSeeder extends Seeder

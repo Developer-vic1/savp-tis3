@@ -47,8 +47,7 @@ class GeneradorZipReportesService
         // ── 2. Reporte Calificaciones ─────────────────────────────────────────
         try {
             $datos = $this->datosAcademico->obtener();
-            $archivosTemp['academicos']['02-reporte-calificaciones.pdf']
-                = $this->mpdf->generarCalificaciones($datos);
+            $archivosTemp['academicos'] = array_merge($archivosTemp['academicos'] ?? [], $this->mpdf->generarCalificacionesPorPartes($datos));
         } catch (\Throwable $e) {
             $observaciones[] = 'Reporte calificaciones: '.'No disponible.';
         }

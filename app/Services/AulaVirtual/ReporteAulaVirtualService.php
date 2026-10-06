@@ -2,7 +2,7 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
 
 class ReporteAulaVirtualService
 {

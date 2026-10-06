@@ -4,7 +4,7 @@
 
 Estado verificable: 91 PARTIAL; 10 BLOCKED_EXTERNALLY_DB; 4 BLOCKED_EXTERNALLY_INSTITUTIONAL; 0 PASS. Una frontera de disponibilidad no cuenta como CRUD. Calendarios/unidades combinan reutilización actual y componentes nuevos pendientes: no se bloquea la ventana entera si existe utilidad con schema actual. Fuentes/tutor tienen fallback y contratos, sin respuesta científica real certificada.
 
-Seis migrations físicamente preparadas y sintaxis válida, sin ejecución; informe específico 25. Código útil añadido sin tablas nuevas: calendarios de tareas, consulta de gestión, documentación privada, reportes Secretaria/Regente, curso/estudiante contextuales, filtros, políticas de entregas y perfiles, HTTP Peter 3 y estados UX comunes.
+Seis migrations físicamente preparadas y sintaxis válida, sin ejecución; informe específico 25. Código útil añadido sin tablas nuevas: calendarios de tareas, consulta de gestión, documentación privada, reportes Secretaria/Regente, curso/estudiante contextuales, filtros, políticas de entregas y perfiles, HTTP Aporte Ingenieril SAVP y estados UX comunes.
 
 No se declara IMPLEMENTACIÓN INTEGRAL FINALIZADA: faltan trabajo interno enumerado y pruebas completas en entorno autorizado. La meta de PARTIAL=0 debe conseguirse terminando y probando, no renombrando estados.
 

@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\RoleDashboardResolver;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +25,7 @@ final class WorkspaceNavigation
         'Planes de asignatura' => 'ph-notepad',
         'Calendario' => 'ph-calendar-dots',
         'LMS institucional' => 'ph-book-open',
+        'Rendimiento de estudiantes' => 'ph-chart-line-up',
         'LMS' => 'ph-book-open',
         'Periodos' => 'ph-calendar-check',
         'Calificaciones' => 'ph-exam',
@@ -36,6 +37,7 @@ final class WorkspaceNavigation
         'Reportes' => 'ph-chart-bar',
         'Bitácora' => 'ph-scroll',
         'Documentación' => 'ph-file-text',
+        'Documentación institucional' => 'ph-file-text',
         'Cuentas operativas' => 'ph-user-focus',
         'Procedencia' => 'ph-buildings',
         'Vinculación' => 'ph-arrows-left-right',
@@ -44,6 +46,7 @@ final class WorkspaceNavigation
         'Orientación' => 'ph-compass',
         'Mis grados' => 'ph-squares-four',
         'Mis cursos' => 'ph-book-open',
+        'Gestión de cursos autorizada' => 'ph-squares-four',
         'Mis materias' => 'ph-books',
         'Mi progreso' => 'ph-chart-line-up',
         'Mi asistencia' => 'ph-calendar-check',
@@ -53,6 +56,7 @@ final class WorkspaceNavigation
         'Mi plan' => 'ph-target',
         'Fuentes académicas' => 'ph-books',
         'Asistente de estudio' => 'ph-sparkle',
+        'Conocimiento universitario' => 'ph-brain',
     ];
 
     private const GROUP_ICONS = [
@@ -67,10 +71,12 @@ final class WorkspaceNavigation
     ];
 
     private const ACTIVE_ALIASES = [
+        'admin.rendimiento-estudiantes' => ['admin.consulta'],
         'docente.cursos' => ['aula-virtual.docente.cursos', 'aula-virtual.docente.curso', 'docente.curso', 'docente.cursos.calificaciones'],
         'estudiante.materias' => ['aula-virtual.estudiante.asignaturas', 'aula-virtual.estudiante.curso', 'estudiante.materia'],
         'estudiante.asistencia' => ['aula-virtual.estudiante.asistencia'],
-        'estudiante.intereses' => ['aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados', 'aula-virtual.estudiante.orientacion.peter3', 'aula-virtual.estudiante.orientacion.peter3.score', 'aula-virtual.estudiante.orientacion.peter3.analysis', 'aula-virtual.estudiante.orientacion.peter3.query'],
+        'estudiante.intereses' => ['estudiante.intereses.guardar', 'estudiante.intereses.analizar', 'aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados', 'aula-virtual.estudiante.orientacion.aporte', 'aula-virtual.estudiante.orientacion.aporte.score', 'aula-virtual.estudiante.orientacion.aporte.analysis', 'aula-virtual.estudiante.orientacion.aporte.query'],
+        'estudiante.asistente' => ['estudiante.asistente.query', 'estudiante.asistente.reset'],
     ];
 
     public static function groupIcon(string $group): string
@@ -106,8 +112,16 @@ final class WorkspaceNavigation
     public function for(User $user): array
     {
         $actor = app(RoleDashboardResolver::class)->roleFor($user);
+        return array_values(array_filter($this->catalogo($actor), fn ($link) =>
+            $link['permission'] === null || $user->can($link['permission'])));
+    }
+
+    /** Catálogo de navegación real, sin confundirlo con una concesión de acceso. */
+    public function catalogo(?string $actor): array
+    {
         $items = match ($actor) {
             'Administrador' => [
+                ['Documentación institucional', 'documentacion.institucional', null, 'Administración'],
                 ['Personas', 'admin.gestion-personas', 'Registro_Personas', 'Administración'],
                 ['Usuarios', 'admin.gestion-usuarios', 'Gestion_Usuarios', 'Administración'],
                 ['Personal institucional', 'admin.personal-institucional', 'Personal_Institucional', 'Administración'],
@@ -122,7 +136,7 @@ final class WorkspaceNavigation
                 ['Especialidades técnicas', 'admin.especialidades-tecnicas', 'Especialidades_Tecnicas', 'Gestión académica'],
                 ['Planes de asignatura', 'admin.planes-asignatura', 'Planes_Asignatura', 'Gestión académica'],
                 ['Calendario', 'admin.calendario', 'Gestion_Academica', 'Gestión académica'],
-                ['LMS institucional', 'admin.consulta', 'cursos.ver.institucional', 'Académico'],
+                ['Rendimiento de estudiantes', 'admin.rendimiento-estudiantes', 'calificaciones.ver.global', 'Académico'],
                 ['Periodos', 'admin.periodo-evaluacion', 'Periodo_Evaluacion', 'Gestión académica'],
                 ['Calificaciones', 'admin.calificaciones', 'Calificaciones', 'Académico'],
                 ['Roles y permisos', 'admin.roles-permisos', 'roles-permisos.ver', 'Seguridad'],
@@ -130,6 +144,7 @@ final class WorkspaceNavigation
                 ['Reportes académicos', 'admin.reportes-academicos', 'Reportes_Academicos', 'Reportes'],
                 ['Reportes administrativos', 'admin.reportes-administrativos', 'Reportes_Administrativos', 'Reportes'],
                 ['Bitácora', 'admin.bitacora', 'Bitacora', 'Seguridad'],
+                ['Conocimiento universitario', 'conocimiento.fuentes.index', 'conocimiento.ver', 'Seguridad'],
             ],
             'Secretaria' => [
                 ['Personas', 'secretaria.personas', 'Registro_Personas', 'Administración'],
@@ -147,6 +162,7 @@ final class WorkspaceNavigation
             ],
             'Director', 'Regente' => $this->institutional($actor),
             'Docente' => [
+                ['Gestión de cursos autorizada', 'docente.gestion-cursos', 'cursos.gestionar.global', 'Administración'],
                 ['Mis cursos', 'docente.cursos', 'Aula_Virtual_Docente', 'Académico'],
                 ['Calendario', 'docente.calendario', 'Calendario_Aula', 'Académico'],
                 ['Orientación', 'aula-virtual.docente.orientacion.seguimiento', 'Orientacion_Academica_Profesional', 'Seguimiento'],
@@ -158,11 +174,11 @@ final class WorkspaceNavigation
                 ['Mi asistencia', 'estudiante.asistencia', 'Asistencia_Aula', 'Académico'],
                 ['Calendario', 'estudiante.calendario', 'Calendario_Aula', 'Académico'],
                 ['Mis intereses', 'estudiante.intereses', 'Orientacion_Academica_Profesional', 'Orientación'],
-                ['Mi futuro académico', 'estudiante.area', 'Orientacion_Academica_Profesional', 'Orientación', ['area' => 'futuro']],
-                ['Mi preparación', 'estudiante.area', 'Perfil_Academico', 'Orientación', ['area' => 'preparacion']],
-                ['Mi plan', 'estudiante.area', 'Perfil_Academico', 'Orientación', ['area' => 'plan']],
+                ['Mi futuro académico', 'estudiante.futuro', 'Orientacion_Academica_Profesional', 'Orientación'],
+                ['Mi preparación', 'estudiante.preparacion', 'Perfil_Academico', 'Orientación'],
+                ['Mi plan', 'estudiante.plan', 'Perfil_Academico', 'Orientación'],
                 ['Fuentes académicas', 'estudiante.area', 'Materiales_Aula', 'Orientación', ['area' => 'fuentes']],
-                ['Asistente de estudio', 'estudiante.area', 'Perfil_Academico', 'Orientación', ['area' => 'asistente']],
+                ['Asistente de estudio', 'estudiante.asistente', 'Orientacion_Academica_Profesional', 'Orientación'],
             ],
             default => [],
         };
@@ -170,7 +186,7 @@ final class WorkspaceNavigation
         $links = [];
         foreach ($items as $item) {
             [$label, $route, $permission, $group] = $item;
-            if (! Route::has($route) || ! $user->can($permission)) {
+            if (! Route::has($route)) {
                 continue;
             }
             $params = $item[4] ?? [];
@@ -199,12 +215,14 @@ final class WorkspaceNavigation
             $extra[] = ['Reportes de mis grados', 'regencia.reportes', 'reportes.ver.institucional', 'Reportes'];
         }
         if ($actor === 'Director') {
+            $extra[] = ['Documentación institucional', 'documentacion.institucional', null, 'Consulta y seguimiento'];
             $areas = [...$areas,
                 ['Docentes', 'docentes', 'Docentes'],
                 ['Orientación', 'orientacion', 'orientacion.ver.institucional'],
                 ['Reportes', 'reportes', 'reportes.ver.institucional'],
                 ['Gestión académica', 'gestion', 'Gestion_Academica'],
             ];
+            $extra[] = ['Conocimiento universitario', 'conocimiento.fuentes.index', 'conocimiento.ver', 'Consulta y seguimiento'];
         }
 
         return [...array_map(fn ($item) => [$item[0], $route, $item[2], 'Consulta y seguimiento', ['area' => $item[1]]], $areas), ...$extra];

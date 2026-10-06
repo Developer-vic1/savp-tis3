@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\AulaVirtual;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EntregaArchivo extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'entrega_archivo';
 
     protected $primaryKey = 'cod_ent_arc';
@@ -31,15 +34,6 @@ class EntregaArchivo extends Model
     protected $casts = [
         'tam_arc' => 'integer',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (EntregaArchivo $entregaArchivo) {
-            if (! $entregaArchivo->cod_ent_arc) {
-                $entregaArchivo->cod_ent_arc = 'ENTA_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function entrega(): BelongsTo
     {

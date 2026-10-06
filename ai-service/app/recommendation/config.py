@@ -143,15 +143,21 @@ def load_bridge() -> Bridge:
 @lru_cache(maxsize=1)
 def load_recommendation_criteria() -> RecommendationCriteria:
     criteria = RecommendationCriteria.model_validate(_read_json(CRITERIA_PATH))
-    career_ids = {career.career_id for career in load_career_catalog().careers}
-    if set(criteria.career_profiles) != career_ids:
-        raise ValueError("los perfiles de criterios deben coincidir con el catálogo")
+    eligible_career_ids = {
+        career.career_id
+        for career in load_career_catalog().careers
+        if career.recommendation_eligible
+    }
+    unknown_criteria_careers = set(criteria.career_profiles) - eligible_career_ids
+    if unknown_criteria_careers:
+        raise ValueError(
+            "los criterios V1 contienen carreras desconocidas o no elegibles: "
+            f"{sorted(unknown_criteria_careers)}"
+        )
     relations = {relation.relation_id: relation for relation in load_bridge().relations}
     for career_id, profile in criteria.career_profiles.items():
         for requirement in profile.requirements:
             relation = relations.get(requirement.relation_id)
             if relation is None or career_id not in relation.career_ids:
-                raise ValueError(
-                    f"relación {requirement.relation_id} no aplica a {career_id}"
-                )
+                raise ValueError(f"relación {requirement.relation_id} no aplica a {career_id}")
     return criteria

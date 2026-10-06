@@ -1,564 +1,182 @@
 @extends('layouts.app')
-
-@section('title', 'Dashboard Administrador')
+@section('title', 'Panel administrativo | SAVP')
 
 @section('content')
-    <div class="space-y-6">
-
-        {{-- ENCABEZADO COMPACTO --}}
-        <section class="ui-card card-shadow rounded-[2rem] p-6 sm:p-7">
-            <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-                <div class="min-w-0">
-                    <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 ring-1"
-                        style="background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);">
-                        <span class="h-2 w-2 rounded-full" style="background: var(--ui-primary);"></span>
-                        <p class="text-sm font-semibold uppercase tracking-[0.18em]">
-                            Panel administrativo
-                        </p>
-                    </div>
-
-                    <h2 class="ui-title mt-3 text-3xl font-black tracking-tight">
-                        @php
-                            $horaActual = date('H');
-                            $saludo = 'Buen día';
-                            if ($horaActual >= 12 && $horaActual < 18) {
-                                $saludo = 'Buena tarde';
-                            } elseif ($horaActual >= 18) {
-                                $saludo = 'Buenas noches';
-                            }
-                        @endphp
-                        {{ $saludo }}, {{ $nombreCompleto ?: 'Administrador' }}
-                    </h2>
-
-                    <p class="ui-muted mt-3 max-w-2xl text-sm leading-6">
-                        Revisa indicadores, alertas y estado académico-administrativo de la plataforma.
-                    </p>
-                </div>
-
-                <div class="grid gap-3 sm:grid-cols-3 xl:min-w-[430px]">
-                    <div class="ui-card-soft px-4 py-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="h-4 w-4" style="color: var(--ui-primary);" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em]"
-                                style="color: var(--ui-muted);">
-                                Rol
-                            </p>
-                        </div>
-                        <p class="mt-2 text-sm font-bold" style="color: var(--ui-text);">
-                            {{ app(\App\Services\RoleDashboardResolver::class)->roleFor(Auth::user()) ?? 'Revisión requerida' }}
-                        </p>
-                    </div>
-
-                    <div class="ui-card-soft px-4 py-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="h-4 w-4" style="color: var(--ui-info);" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                    d="M6.75 3v2.25m10.5-2.25v2.25M3.75 8.25h16.5M5.25 5.25h13.5A1.5 1.5 0 0 1 20.25 6.75v12A1.5 1.5 0 0 1 18.75 20.25H5.25A1.5 1.5 0 0 1 3.75 18.75v-12A1.5 1.5 0 0 1 5.25 5.25Z" />
-                            </svg>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em]"
-                                style="color: var(--ui-muted);">
-                                Gestión actual
-                            </p>
-                        </div>
-                        <p class="mt-2 text-sm font-bold" style="color: var(--ui-text);">
-                            {{ $gestionActual }}
-                        </p>
-                    </div>
-
-                    <div class="ui-card-soft px-4 py-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="h-4 w-4" style="color: var(--ui-violet);" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                    d="M12 6v6l4 2M21 12A9 9 0 1 1 3 12a9 9 0 0 1 18 0Z" />
-                            </svg>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em]"
-                                style="color: var(--ui-muted);">
-                                Periodos habilitados
-                            </p>
-                        </div>
-                        <p class="mt-2 text-sm font-bold" style="color: var(--ui-primary);">
-                            {{ $periodoActual }}
-                        </p>
-                    </div>
-                </div>
+@php
+    $nombreSaludo = trim(explode(' ', trim(Auth::user()->persona?->nom_per ?? 'Administrador'))[0]);
+    $saludo = $fechaControl->hour < 12 ? 'Buen día' : ($fechaControl->hour < 18 ? 'Buenas tardes' : 'Buenas noches');
+    $iconos = ['users' => 'ph-users', 'academic-cap' => 'ph-student', 'user-group' => 'ph-chalkboard-teacher',
+        'clipboard-document' => 'ph-clipboard-text', 'wrench-screwdriver' => 'ph-wrench', 'calendar-days' => 'ph-calendar-dots'];
+    $rolesOrdenados = collect($chartRoles)->sortDesc()->all();
+    $rolesEquipo = collect($rolesOrdenados)->except('Estudiante')->all();
+    $vistasRoles = [];
+    if (array_sum($rolesEquipo) > 0) {
+        $vistasRoles[] = ['etiqueta' => 'Equipo institucional', 'datos' => $rolesEquipo];
+    }
+    $vistasRoles[] = ['etiqueta' => 'Todos los roles', 'datos' => $rolesOrdenados];
+    $vistasInscripciones = [['etiqueta' => 'Por curso', 'datos' => $chartInscripciones]];
+    if ($chartTurnos !== []) {
+        $vistasInscripciones[] = ['etiqueta' => 'Por turno', 'datos' => $chartTurnos];
+    }
+    $rangoPeriodo = $periodoActual['rango'] ? explode(' / ', $periodoActual['rango']) : [];
+    $fechasPeriodo = count($rangoPeriodo) === 2
+        ? \Carbon\Carbon::parse($rangoPeriodo[0])->format('d/m').' — '.\Carbon\Carbon::parse($rangoPeriodo[1])->format('d/m/Y')
+        : null;
+    $nombrePeriodo = $periodoActual['estado'] === 'SIN_FECHAS' ? 'Calendario no disponible' : $periodoActual['nombre'];
+    $graficos = [
+        ['id' => 'chartRoles', 'titulo' => 'Roles de la comunidad', 'categoria' => 'Comunidad institucional', 'datos' => $chartRoles, 'vistas' => $vistasRoles,
+            'descripcion' => 'Equipo y estudiantes por separado. Una cuenta puede tener varios roles.', 'tipo' => 'bar', 'horizontal' => true, 'color' => '--ui-primary', 'unidad' => 'asignaciones'],
+        ['id' => 'chartEspecialidades', 'titulo' => 'Estudiantes por especialidad', 'categoria' => 'Formación técnica', 'datos' => $chartEspecialidades,
+            'descripcion' => 'Las seis especialidades con más estudiantes activos.', 'tipo' => 'bar', 'horizontal' => true, 'color' => '--ui-info', 'unidad' => 'estudiantes'],
+        ['id' => 'chartInscripciones', 'titulo' => 'Distribución de inscripciones', 'categoria' => 'Gestión '.$gestionActual, 'datos' => $chartInscripciones, 'vistas' => $vistasInscripciones,
+            'descripcion' => count($vistasInscripciones) > 1 ? 'Inscripciones activas por curso o turno en esta gestión.' : 'Inscripciones activas por curso en esta gestión.', 'tipo' => 'bar', 'color' => '--ui-violet', 'unidad' => 'inscripciones'],
+    ];
+@endphp
+<div class="admin-dashboard" data-admin-dashboard>
+    <section class="ui-card admin-hero" aria-labelledby="admin-title">
+        <div>
+            <p class="ui-kicker">Panel administrativo</p>
+            <h1 id="admin-title" class="ui-title admin-hero-title mt-2 font-extrabold">{{ $saludo }}, {{ $nombreSaludo }}</h1>
+            <p class="ui-muted mt-3 text-sm leading-6">Una mirada a la comunidad educativa, su actividad y los pendientes que necesitan tu atención.</p>
+        </div>
+        <dl class="admin-hero-context">
+            <div class="ui-card-soft p-4">
+                <dt class="ui-muted flex items-center gap-2 text-xs font-semibold"><i class="ph-duotone ph-calendar-blank text-lg" aria-hidden="true"></i> Gestión académica</dt>
+                <dd class="ui-title mt-2 font-bold">{{ $gestionActual }}</dd>
+                @if($gestion)<dd class="ui-muted mt-1 text-xs">{{ \Carbon\Carbon::parse($gestion->fii_gea)->format('d/m') }} — {{ \Carbon\Carbon::parse($gestion->ffi_gea)->format('d/m/Y') }}</dd>@endif
             </div>
-        </section>
+            <div class="ui-card-soft p-4">
+                <dt class="ui-muted flex items-center gap-2 text-xs font-semibold"><i class="ph-duotone ph-clock text-lg" aria-hidden="true"></i> Periodo académico</dt>
+                <dd class="ui-title mt-2 font-bold">{{ $nombrePeriodo }}</dd>
+                <dd class="ui-muted mt-1 text-xs">{{ $fechasPeriodo ?? 'Revisa las fechas de la gestión' }}</dd>
+            </div>
+        </dl>
+    </section>
 
-        {{-- MÉTRICAS PRINCIPALES --}}
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-            @foreach ($resumen as $item)
-                @php
-                    $iconClasses = [
-                        'users' => 'background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);',
-                        'academic-cap' => 'background: var(--ui-info-soft); color: var(--ui-info); --tw-ring-color: var(--ui-info-border);',
-                        'user-group' => 'background: var(--ui-violet-soft); color: var(--ui-violet); --tw-ring-color: var(--ui-violet-border);',
-                        'clipboard-document' => 'background: var(--ui-warning-soft); color: var(--ui-warning); --tw-ring-color: var(--ui-warning-border);',
-                        'wrench-screwdriver' => 'background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);',
-                        'calendar-days' => 'background: var(--ui-info-soft); color: var(--ui-info); --tw-ring-color: var(--ui-info-border);',
-                    ];
+    @if($resumenPersonas)<section class="ui-card admin-personas-resumen" aria-label="Personas y cuentas de acceso"><div><i class="ph-duotone ph-identification-card" aria-hidden="true"></i><p><strong>{{ number_format($resumenPersonas['total'],0,',','.') }}</strong> personas registradas <span>{{ number_format($resumenPersonas['activas'],0,',','.') }} registros de persona vigentes</span></p></div><p><strong>{{ $resumenPersonas['con_cuenta'] }}</strong> con cuenta · <strong>{{ $resumenPersonas['sin_cuenta'] }}</strong> sin cuenta de acceso</p><a href="{{ route('admin.gestion-personas') }}" class="ui-btn ui-btn-secondary">Consultar personas</a></section>@endif
+    <section class="admin-metrics" aria-label="Indicadores institucionales">
+        @forelse($resumen as $item)
+            <article class="ui-card ui-card-hover admin-metric">
+                <div class="flex items-center justify-between gap-2">
+                    <h2 class="ui-muted text-xs font-semibold">{{ $item['label'] }}</h2>
+                    <i class="ph-duotone {{ $iconos[$item['icon']] ?? 'ph-chart-bar' }} text-2xl" style="color: var(--ui-primary)" aria-hidden="true"></i>
+                </div>
+                <p class="ui-title mt-3 text-3xl font-extrabold tabular-nums">{{ is_numeric($item['value']) ? number_format($item['value'], 0, ',', '.') : $item['value'] }}</p>
+                <p class="ui-muted metric-description mt-2 text-xs leading-5">{{ $item['desc'] }}</p>
+                <a href="{{ route($item['route']) }}" class="mt-4 inline-flex min-h-8 items-center gap-1 text-xs font-semibold" style="color: var(--ui-primary)">Ver {{ mb_strtolower($item['label']) }} <i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a>
+            </article>
+        @empty
+            <p class="ui-alert-info">No hay indicadores disponibles con los permisos de esta cuenta.</p>
+        @endforelse
+    </section>
 
-                    $icons = [
-                        'users' => '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.162-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.106a6.375 6.375 0 0 1 12.75 0Zm-3.75-11.25a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>',
-                        'academic-cap' => '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.26 10.147 12 5.625l7.74 4.522L12 14.67l-7.74-4.523Z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5.25 11.25v4.875c0 .621.504 1.125 1.125 1.125h11.25c.621 0 1.125-.504 1.125-1.125V11.25M12 14.625V21"/></svg>',
-                        'user-group' => '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M18 18.72a9.094 9.094 0 0 0 3.75-1.32 4.5 4.5 0 0 0-7.5-3.35M6 18.72a9.094 9.094 0 0 1-3.75-1.32 4.5 4.5 0 0 1 7.5-3.35M15 7.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm-9 3a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5Zm12 0a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5Zm-9 5.25h6A3.75 3.75 0 0 1 18.75 19.5v.75H5.25v-.75A3.75 3.75 0 0 1 9 15.75Z"/></svg>',
-                        'clipboard-document' => '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12.75 11.25 15 15 9.75M6.75 3.75h10.5A2.25 2.25 0 0 1 19.5 6v12A2.25 2.25 0 0 1 17.25 20.25H6.75A2.25 2.25 0 0 1 4.5 18V6A2.25 2.25 0 0 1 6.75 3.75Z"/></svg>',
-                        'wrench-screwdriver' => '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.83-5.83M11.42 15.17 5.86 20.73a2.121 2.121 0 0 1-3-3l5.56-5.56M11.42 15.17l3.75-3.75M8.25 8.25l-2.5-2.5L3 8.5 5.5 11l2.75-2.75Zm8.25-2.25 1.5-1.5 1.5 1.5-1.5 1.5-1.5-1.5Z"/></svg>',
-                        'calendar-days' => '<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6.75 3v2.25m10.5-2.25v2.25M3.75 8.25h16.5M5.25 5.25h13.5A1.5 1.5 0 0 1 20.25 6.75v12A1.5 1.5 0 0 1 18.75 20.25H5.25A1.5 1.5 0 0 1 3.75 18.75v-12A1.5 1.5 0 0 1 5.25 5.25Z"/></svg>',
-                    ];
-                @endphp
-
-                <article class="ui-card ui-card-hover rounded-[1.8rem] p-5">
-                    <div class="flex items-center justify-between gap-3">
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.16em]" style="color: var(--ui-muted);">
-                            {{ $item['label'] }}
-                        </p>
-
-                        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl ring-1"
-                            style="{{ $iconClasses[$item['icon']] ?? 'background: var(--ui-surface-muted); color: var(--ui-muted); --tw-ring-color: var(--ui-border);' }}">
-                            {!! $icons[$item['icon']] ?? '' !!}
-                        </span>
+    <section aria-labelledby="distribucion-title">
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h2 id="distribucion-title" class="ui-title text-lg font-bold">Así se distribuye la comunidad</h2>
+            <button type="button" class="admin-chart-replay" data-replay-charts><i class="ph-duotone ph-play-circle text-lg" aria-hidden="true"></i> Repetir animación</button>
+        </div>
+        <div class="admin-charts">
+            @foreach($graficos as $grafico)
+                <article class="ui-card admin-chart-card" aria-labelledby="{{ $grafico['id'] }}-title">
+                    <div class="admin-chart-heading">
+                        <p class="ui-kicker" style="color: var({{ $grafico['color'] }})">{{ $grafico['categoria'] }}</p>
+                        <h3 id="{{ $grafico['id'] }}-title" class="ui-title mt-2 text-lg font-bold">{{ $grafico['titulo'] }}</h3>
+                        <p class="ui-muted mt-2 text-sm leading-5">{{ $grafico['descripcion'] }}</p>
                     </div>
-
-                    <p class="mt-4 text-3xl font-black" style="color: var(--ui-text);">
-                        {{ $item['value'] }}
-                    </p>
-
-                    <p class="mt-2 text-sm leading-6" style="color: var(--ui-muted);">
-                        {{ $item['desc'] }}
-                    </p>
-
-                    <div class="mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold ring-1"
-                        style="background: var(--ui-surface-muted); color: var(--ui-muted); --tw-ring-color: var(--ui-border);">
-                        <span class="h-1.5 w-1.5 rounded-full" style="background: var(--ui-primary);"></span>
-                        <a href="{{ route($item['route']) }}" class="underline">Abrir {{ $item['label'] }}</a>
+                    <div class="admin-chart-controls" @if(count($grafico['vistas'] ?? []) > 1) role="group" aria-label="Vista de {{ $grafico['titulo'] }}" @endif>
+                        @if(count($grafico['vistas'] ?? []) > 1)
+                            @foreach($grafico['vistas'] as $indice => $vista)
+                                <button type="button" data-chart-view="{{ $grafico['id'] }}" data-view-index="{{ $indice }}" aria-controls="{{ $grafico['id'] }}" aria-pressed="{{ $indice === 0 ? 'true' : 'false' }}">{{ $vista['etiqueta'] }}</button>
+                            @endforeach
+                        @endif
                     </div>
+                    @if(array_sum($grafico['datos']) > 0)
+                        <div class="admin-chart-plot">
+                            <canvas id="{{ $grafico['id'] }}" role="img" aria-label="{{ $grafico['titulo'] }}. Los valores están disponibles debajo del gráfico."></canvas>
+                        </div>
+                        <x-plegable-institucional class="admin-chart-details" icono="ph-list-numbers" :compacto="true"><x-slot:titulo>Consultar valores</x-slot:titulo>
+                            @foreach($grafico['vistas'] ?? [['etiqueta' => $grafico['titulo'], 'datos' => $grafico['datos']]] as $indice => $vista)
+                                <dl class="admin-chart-values" data-chart-values="{{ $grafico['id'] }}" data-view-index="{{ $indice }}" @if($indice !== 0) hidden @endif aria-label="{{ $vista['etiqueta'] }}">
+                                    @foreach($vista['datos'] as $nombre => $cantidad)<div><dt>{{ $nombre }}</dt><dd>{{ number_format($cantidad, 0, ',', '.') }}</dd></div>@endforeach
+                                </dl>
+                            @endforeach
+                        </x-plegable-institucional>
+                    @else
+                        <div class="admin-chart-plot admin-chart-empty"><i class="ph-duotone ph-chart-bar" aria-hidden="true"></i><p class="ui-muted text-sm">Sin datos disponibles en tu ámbito.</p></div>
+                    @endif
+                    @if($grafico['id'] === 'chartRoles' && isset($chartRoles['Estudiante']))
+                        <p class="admin-chart-student-total"><span>Rol estudiantil</span><strong>{{ number_format($chartRoles['Estudiante'], 0, ',', '.') }} asignaciones</strong></p>
+                    @endif
                 </article>
             @endforeach
-        </section>
+        </div>
+    </section>
 
-        {{-- GRÁFICOS --}}
-        <section class="grid gap-6 xl:grid-cols-3">
-            <div class="ui-card rounded-[2rem] p-6 sm:p-8">
-                <div class="mb-4">
-                    <p class="ui-kicker">
-                        Distribución de usuarios
-                    </p>
-                    <h3 class="ui-title mt-2 text-xl font-black">
-                        Usuarios por rol
-                    </h3>
-                    <p class="ui-muted mt-2 text-sm leading-6">
-                        Predomina el acceso estudiantil dentro de la plataforma institucional.
-                    </p>
-                </div>
-
-                <div class="rounded-2xl p-3" style="background: var(--ui-surface-soft);">
-                    <canvas id="chartRoles" height="220"></canvas>
-                </div>
+    <section class="admin-activity-grid" aria-label="Actividad y seguimiento">
+        <div class="ui-card rounded-2xl p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div><p class="ui-kicker">Actividad reciente</p><h2 class="ui-title mt-2 text-lg font-bold">Lo último en la institución</h2></div>
+                @can('Bitacora')<a href="{{ route('admin.bitacora') }}" class="text-sm font-semibold" style="color: var(--ui-primary)">Ver bitácora <i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></a>@endcan
             </div>
-
-            <div class="ui-card rounded-[2rem] p-6 sm:p-8">
-                <div class="mb-4">
-                    <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-info);">
-                        Distribución académica
-                    </p>
-                    <h3 class="ui-title mt-2 text-xl font-black">
-                        Estudiantes por especialidad
-                    </h3>
-                    <p class="ui-muted mt-2 text-sm leading-6">
-                        Distribución actual de estudiantes por especialidad técnica.
-                    </p>
-                </div>
-
-                <div class="rounded-2xl p-3" style="background: var(--ui-surface-soft);">
-                    <canvas id="chartEspecialidades" height="220"></canvas>
-                </div>
-            </div>
-
-            <div class="ui-card rounded-[2rem] p-6 sm:p-8">
-                <div class="mb-4">
-                    <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-violet);">
-                        Inscripciones
-                    </p>
-                    <h3 class="ui-title mt-2 text-xl font-black">
-                        Distribución por curso
-                    </h3>
-                    <p class="ui-muted mt-2 text-sm leading-6">
-                        Carga de inscripciones según el nivel académico actual.
-                    </p>
-                </div>
-
-                <div class="rounded-2xl p-3" style="background: var(--ui-surface-soft);">
-                    <canvas id="chartInscripciones" height="220"></canvas>
-                </div>
-            </div>
-        </section>
-
-        {{-- ACTIVIDAD Y ALERTAS --}}
-        <section class="grid gap-6 xl:grid-cols-[1.2fr_.8fr]">
-            <div class="ui-card rounded-[2rem] p-6 sm:p-8">
-                <p class="ui-kicker">
-                    Actividad reciente
-                </p>
-                <h3 class="ui-title mt-2 text-2xl font-black">
-                    Últimos movimientos del sistema
-                </h3>
-
-                <div class="mt-6 space-y-4">
-                    @forelse ($actividadReciente as $item)
+            <ol class="mt-3">
+                @forelse($actividadReciente as $item)
+                    <li class="admin-activity-item">
+                        <span class="admin-activity-icon {{ $item['color'] }}"><i class="ph-duotone {{ $item['icono'] }} text-xl" aria-hidden="true"></i></span>
+                        <div class="min-w-0 flex-1">
+                            <p class="ui-title text-sm font-semibold break-words">{{ $item['titulo'] }}</p>
+                            <p class="ui-muted mt-1 text-sm leading-5 break-words">{{ $item['detalle'] }}</p>
+                            <div class="ui-muted mt-2 flex flex-wrap items-center gap-2 text-xs"><span class="{{ $item['color'] }}">{{ $item['resultado'] }}</span><time title="{{ $item['fecha_completa'] }}">{{ $item['fecha'] }}</time></div>
+                        </div>
+                    </li>
+                @empty
+                    <li class="ui-card-soft mt-3 p-4 ui-muted text-sm">No hay actividad disponible para esta cuenta. Los próximos eventos aparecerán aquí.</li>
+                @endforelse
+            </ol>
+        </div>
+        <div class="space-y-5">
+            <div class="ui-card rounded-2xl p-5">
+                <p class="ui-kicker" style="color: var(--ui-warning)">Seguimiento institucional</p>
+                <h2 class="ui-title mt-2 text-lg font-bold">Pendientes de revisión</h2>
+                <div class="mt-4 space-y-3">
+                    @forelse($alertas as $alerta)
                         <div class="ui-card-soft p-4">
-                            <div class="flex gap-4">
-                                <div
-                                    class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1 {{ $item['color'] }}">
-                                    <span class="text-lg">{{ $item['icono'] }}</span>
-                                </div>
-
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                        <p class="text-sm font-semibold" style="color: var(--ui-text);">
-                                            {{ $item['titulo'] }}
-                                        </p>
-                                        <span
-                                            class="inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-medium ring-1"
-                                            style="background: var(--ui-surface-muted); color: var(--ui-muted); --tw-ring-color: var(--ui-border);">
-                                            {{ $item['fecha'] }}
-                                        </span>
-                                    </div>
-
-                                    <p class="mt-2 text-sm leading-6" style="color: var(--ui-muted);">
-                                        {{ $item['detalle'] }}
-                                    </p>
-                                </div>
-                            </div>
+                            <div class="flex items-start justify-between gap-3"><p class="ui-title text-sm font-semibold">{{ $alerta['titulo'] }}</p><span class="ui-badge-warning shrink-0 tabular-nums">{{ $alerta['valor'] }}</span></div>
+                            <p class="ui-muted mt-2 text-sm leading-5">{{ $alerta['descripcion'] }}</p>
                         </div>
                     @empty
-                        <div class="ui-alert-info">
-                            No hay actividad reciente registrada.
-                        </div>
+                        <p class="ui-muted text-sm">No hay indicadores de seguimiento disponibles para esta cuenta.</p>
                     @endforelse
                 </div>
             </div>
-
-            <div class="space-y-6">
-                <div class="ui-card rounded-[2rem] p-6 sm:p-8">
-                    <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-danger);">
-                        Alertas y pendientes
-                    </p>
-                    <h3 class="ui-title mt-2 text-2xl font-black">
-                        Elementos que requieren revisión
-                    </h3>
-
-                    <div class="mt-6 space-y-4">
-                        @forelse ($alertas as $alerta)
-                            <div class="rounded-2xl border p-4 {{ $alerta['color'] }}">
-                                <div class="flex items-start justify-between gap-4">
-                                    <div>
-                                        <p class="text-sm font-semibold" style="color: var(--ui-text);">
-                                            {{ $alerta['titulo'] }}
-                                        </p>
-                                        <p class="mt-2 text-sm leading-6" style="color: var(--ui-muted);">
-                                            {{ $alerta['descripcion'] }}
-                                        </p>
-                                    </div>
-
-                                    <div class="flex h-12 min-w-[48px] items-center justify-center rounded-2xl text-lg font-black ring-1"
-                                        style="background: var(--ui-surface); color: var(--ui-text); --tw-ring-color: var(--ui-border);">
-                                        {{ $alerta['valor'] }}
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="ui-alert-success">
-                                No existen alertas críticas pendientes.
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-
-                <div
-                    class="overflow-hidden rounded-[2rem] bg-gradient-to-br from-emerald-600 to-sky-600 p-6 text-white shadow-2xl shadow-emerald-500/20 sm:p-8">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-100">
-                                Estado actual
-                            </p>
-                            <h3 class="mt-2 text-2xl font-black">
-                                {{ $gestionActual }}
-                            </h3>
-                        </div>
-
-                        <div class="rounded-2xl bg-white/10 p-3 ring-1 ring-white/10">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                    d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div class="mt-5 space-y-3 text-sm">
-                        <div
-                            class="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10">
-                            <span class="text-white/80">Periodo activo</span>
-                            <span class="font-semibold">{{ $periodoActual }}</span>
-                        </div>
-
-                        <div
-                            class="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10">
-                            <span class="text-white/80">Estado del sistema</span>
-                            <span class="font-semibold">{{ $estadoSistema }}</span>
-                        </div>
-
-                        <div
-                            class="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/10">
-                            <span class="text-white/80">Fecha de control</span>
-                            <span class="font-semibold">{{ now()->format('d/m/Y') }}</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="ui-card admin-state rounded-2xl p-5">
+                <p class="ui-kicker">Contexto de la gestión</p>
+                <h2 class="ui-title mt-2 text-lg font-bold">{{ $gestionActual }}</h2>
+                <div class="admin-state-row"><span>Periodo académico</span><strong>{{ $nombrePeriodo }}</strong></div>
+                <p class="ui-muted mt-2 text-xs leading-5">{{ $fechasPeriodo ? 'Calendario de la gestión: '.$fechasPeriodo.'.' : 'Revisa el calendario y las fechas de la gestión.' }}</p>
+                <div class="admin-state-row"><span>Sesión</span><strong>{{ $estadoSistema }}</strong></div>
+                <div class="admin-state-row"><span>Fecha de consulta</span><strong>{{ $fechaControl->format('d/m/Y') }}</strong></div>
+                @can('Gestion_Academica')<a class="mt-3 inline-flex items-center gap-2 text-sm font-semibold" style="color: var(--ui-primary)" href="{{ route('admin.gestion-academica') }}">Revisar planificación <i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a>@endcan
             </div>
-        </section>
+        </div>
+    </section>
 
-        {{-- RESUMEN ESTRUCTURAL --}}
-        <section class="ui-card rounded-[2rem] p-6 sm:p-8">
-            <div class="flex flex-col gap-2">
-                <p class="text-sm font-semibold uppercase tracking-[0.18em]" style="color: var(--ui-info);">
-                    Estructura académica
-                </p>
-                <h3 class="ui-title text-2xl font-black">
-                    Resumen estructural del sistema
-                </h3>
-                <p class="ui-muted text-sm leading-7">
-                    Estado general de la configuración académica e institucional cargada en la plataforma.
-                </p>
-            </div>
-
-            <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                @foreach ($estructuraAcademica as $item)
-                    <div class="ui-card-soft p-5">
-                        <div class="flex items-center justify-between gap-3">
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.16em]" style="color: var(--ui-muted);">
-                                {{ $item['label'] }}
-                            </p>
-                            <span
-                                class="inline-flex rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ring-1"
-                                style="background: var(--ui-primary-soft); color: var(--ui-primary); --tw-ring-color: var(--ui-primary-border);">
-                                Configurado
-                            </span>
-                        </div>
-
-                        <p class="mt-4 text-3xl font-black" style="color: var(--ui-text);">
-                            {{ $item['value'] }}
-                        </p>
-                    </div>
-                @endforeach
-            </div>
-        </section>
-    </div>
+    <section class="ui-card rounded-2xl p-5" aria-labelledby="estructura-title">
+        <p class="ui-kicker">Organización académica</p>
+        <h2 id="estructura-title" class="ui-title mt-2 text-lg font-bold">La base de la planificación</h2>
+        <p class="ui-muted mt-2 text-sm">Catálogos activos que sostienen las inscripciones y los horarios. Cada acceso permite revisar su configuración.</p>
+        <div class="admin-structure mt-4">
+            @forelse($estructuraAcademica as $item)
+                <a href="{{ route($item['route']) }}" class="ui-card-soft ui-card-hover">
+                    <div class="flex items-center justify-between gap-2"><h3 class="ui-title text-sm font-semibold">{{ $item['label'] }}</h3><i class="ph-duotone {{ $item['icono'] }} text-xl" style="color: var(--ui-primary)" aria-hidden="true"></i></div>
+                    <p class="ui-title mt-2 text-2xl font-extrabold tabular-nums">{{ $item['value'] }}</p>
+                    <p class="ui-muted mt-2 text-xs leading-5">{{ $item['value'] > 0 ? $item['descripcion'] : 'Sin registros activos. Revisa este catálogo.' }}</p>
+                    <span class="mt-3 inline-flex items-center gap-1 text-xs font-semibold" style="color: var(--ui-primary)">Revisar <i class="ph-duotone ph-arrow-up-right" aria-hidden="true"></i></span>
+                </a>
+            @empty
+                <p class="ui-muted text-sm">No hay catálogos disponibles con los permisos de esta cuenta.</p>
+            @endforelse
+        </div>
+    </section>
+    <script type="application/json" data-admin-chart-config>@json($graficos)</script>
+</div>
 @endsection
-
-@push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const chartRoles = document.getElementById('chartRoles');
-            const chartEspecialidades = document.getElementById('chartEspecialidades');
-            const chartInscripciones = document.getElementById('chartInscripciones');
-
-            const getChartTheme = () => {
-                const styles = getComputedStyle(document.documentElement);
-
-                return {
-                    text: styles.getPropertyValue('--ui-text').trim(),
-                    muted: styles.getPropertyValue('--ui-muted').trim(),
-                    border: styles.getPropertyValue('--ui-border').trim(),
-                    primary: styles.getPropertyValue('--ui-primary').trim(),
-                    info: styles.getPropertyValue('--ui-info').trim(),
-                    violet: styles.getPropertyValue('--ui-violet').trim(),
-                    warning: styles.getPropertyValue('--ui-warning').trim(),
-                    danger: styles.getPropertyValue('--ui-danger').trim(),
-                    surface: styles.getPropertyValue('--ui-surface').trim(),
-                };
-            };
-
-            let chartRolesInstance = null;
-            let chartEspecialidadesInstance = null;
-            let chartInscripcionesInstance = null;
-
-            const renderCharts = () => {
-                if (!window.Chart) {
-                    console.warn('Chart.js no está disponible. Verifica resources/js/app.js');
-                    return;
-                }
-
-                const theme = getChartTheme();
-
-                if (chartRolesInstance) chartRolesInstance.destroy();
-                if (chartEspecialidadesInstance) chartEspecialidadesInstance.destroy();
-                if (chartInscripcionesInstance) chartInscripcionesInstance.destroy();
-
-                if (chartRoles) {
-                    chartRolesInstance = new Chart(chartRoles, {
-                        type: 'doughnut',
-                        data: {
-                            labels: @json(array_keys($chartRoles)),
-                            datasets: [{
-                                data: @json(array_values($chartRoles)),
-                                backgroundColor: [
-                                    theme.primary,
-                                    theme.info,
-                                    theme.violet,
-                                    theme.warning,
-                                    theme.danger,
-                                    theme.muted,
-                                ],
-                                borderColor: theme.surface,
-                                borderWidth: 3,
-                                hoverOffset: 8,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                    labels: {
-                                        color: theme.muted,
-                                        usePointStyle: true,
-                                        pointStyle: 'circle',
-                                        padding: 18,
-                                        font: {
-                                            size: 12,
-                                            weight: '600',
-                                        },
-                                    },
-                                },
-                            },
-                            cutout: '68%',
-                        }
-                    });
-                }
-
-                if (chartEspecialidades) {
-                    chartEspecialidadesInstance = new Chart(chartEspecialidades, {
-                        type: 'bar',
-                        data: {
-                            labels: @json(array_keys($chartEspecialidades)),
-                            datasets: [{
-                                label: 'Estudiantes',
-                                data: @json(array_values($chartEspecialidades)),
-                                backgroundColor: theme.info,
-                                borderRadius: 10,
-                                maxBarThickness: 44,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: false,
-                                },
-                            },
-                            scales: {
-                                x: {
-                                    ticks: {
-                                        color: theme.muted,
-                                    },
-                                    grid: {
-                                        display: false,
-                                    },
-                                    border: {
-                                        color: theme.border,
-                                    },
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        color: theme.muted,
-                                        precision: 0,
-                                    },
-                                    grid: {
-                                        color: theme.border,
-                                    },
-                                    border: {
-                                        color: theme.border,
-                                    },
-                                },
-                            },
-                        }
-                    });
-                }
-
-                if (chartInscripciones) {
-                    chartInscripcionesInstance = new Chart(chartInscripciones, {
-                        type: 'line',
-                        data: {
-                            labels: @json(array_keys($chartInscripciones)),
-                            datasets: [{
-                                label: 'Inscripciones',
-                                data: @json(array_values($chartInscripciones)),
-                                borderColor: theme.violet,
-                                backgroundColor: theme.violet,
-                                tension: 0.35,
-                                fill: false,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    display: true,
-                                    labels: {
-                                        color: theme.muted,
-                                        usePointStyle: true,
-                                        font: {
-                                            size: 12,
-                                            weight: '600',
-                                        },
-                                    },
-                                },
-                            },
-                            scales: {
-                                x: {
-                                    ticks: {
-                                        color: theme.muted,
-                                    },
-                                    grid: {
-                                        display: false,
-                                    },
-                                    border: {
-                                        color: theme.border,
-                                    },
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        color: theme.muted,
-                                        precision: 0,
-                                    },
-                                    grid: {
-                                        color: theme.border,
-                                    },
-                                    border: {
-                                        color: theme.border,
-                                    },
-                                },
-                            },
-                        }
-                    });
-                }
-            };
-
-            renderCharts();
-
-            window.addEventListener('theme-changed', () => {
-                renderCharts();
-            });
-        });
-    </script>
-@endpush

@@ -4,7 +4,7 @@ Comando completo probado: `php artisan migrate:fresh --seed` en la nueva base au
 
 Los correos de acceso están normalizados a minúsculas para Fortify. Además de la ejecución integral, una prueba independiente creó las 612 cuentas y comprobó sus 612 contraseñas con el callback real de Fortify, en otra base aislada y con rollback. Véase CORREOS_Y_AUTENTICACION_FORTIFY.json.
 
-El administrador oficial se conserva como PER_0001 / USU_0001. El seeder REALES/ADMINISTRADOR/AdministradorSistemaSeeder.php actualiza únicamente los datos confirmados por su titular, conserva la cuenta existente y hereda los 35 permisos del rol Administrador sin modificar el catálogo. Su autenticación se comprueba con el callback real de Fortify; la prueba aislada de dos ejecuciones confirmó idempotencia y ausencia de duplicados.
+El administrador oficial se conserva como PER_0001 / USU_0001. El seeder REALES/ADMINISTRADOR/AdministradorSistemaSeeder.php actualiza únicamente los datos confirmados por su titular y conserva la cuenta existente. La reconciliación posterior autorizada mediante `RolSeeder` deja 74 permisos en su rol. Su autenticación se comprueba con el callback real de Fortify; dos ejecuciones aisladas confirmaron idempotencia y ausencia de duplicados. Los conteos siguientes corresponden al cierre de seeders; la instantánea posterior está en CONTEO_ACTUAL_2026_10_04.json y los cambios administrativos se explican en GUIA_AGENTES.md.
 
 | Gestion | Nuevos | Inscritos | Tareas | Entregas | Notas tareas | Notas trimestrales | Asistencias | Cierres anuales |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|

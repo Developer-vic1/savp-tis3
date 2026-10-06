@@ -1,63 +1,20 @@
-<div class="space-y-5">
-    <section class="ui-card rounded-[2rem] p-6 sm:p-8">
-        <p class="ui-kicker">Comunidad educativa</p>
-        <h1 class="ui-title mt-2 text-3xl font-black">Gestión de Docentes</h1>
-        <p class="ui-muted mt-2 max-w-3xl text-sm leading-6">
-            Este módulo reutiliza la gestión institucional existente para evitar duplicar personas, docentes y asignaciones académicas.
-        </p>
+<div class="docentes-pagina" x-data="docentesInstitucionalPage($wire.entangle('vistaActiva').live)">
+    <header class="ui-card docentes-cabecera">
+        <div class="docentes-identidad"><span class="docentes-emblema"><i class="ph-duotone ph-chalkboard-teacher" aria-hidden="true"></i></span><div><p class="ui-kicker">Comunidad docente · Gestión {{ $nombreGestion }}</p><h1 class="ui-title text-2xl font-extrabold mt-2">Docentes</h1><p class="ui-muted text-sm mt-2">Conoce quién enseña cada materia, cómo se distribuyen sus horas y dónde desarrolla sus clases.</p></div></div>
+        <div class="personas-acciones"><button type="button" class="ui-btn ui-btn-secondary" x-on:click="indicadores=!indicadores" :aria-expanded="indicadores"><i class="ph-duotone ph-chart-pie-slice" aria-hidden="true"></i>Indicadores</button>@can('Personal_Institucional')<a class="ui-btn ui-btn-primary" href="{{ route('admin.personal-institucional') }}"><i class="ph-duotone ph-user-gear" aria-hidden="true"></i>Gestionar personal</a>@endcan</div>
+    </header>
+    <section class="ui-card docentes-cifras" aria-label="Resumen académico de la gestión">@foreach([['chalkboard-teacher',$resumen['total'],'Docentes registrados'],['books',$resumen['con_carga'],'Con carga asignada'],['clock',$resumen['horas'],'Horas académicas'],['users-three',$resumen['grupos'],'Cursos y paralelos atendidos']] as [$icono,$valor,$titulo])<div><i class="ph-duotone ph-{{ $icono }}" aria-hidden="true"></i><strong>{{ $valor }}</strong><span>{{ $titulo }}</span></div>@endforeach</section>
+    @include('livewire.admin.docentes.indicadores')
+    @include('livewire.admin.docentes.filtros')
+    <section class="docentes-resultados" x-ref="resultados" aria-label="Directorio docente"><x-estado-carga-institucional objetivo="search,gestion,materia,curso,carga,acceso,perfil,orden,perPage,gotoPage,limpiarFiltros" mensaje="Actualizando docentes…" /><div class="docentes-resultados-titulo"><div><h2 class="ui-title font-bold">{{ $materia ?: 'Directorio docente' }}</h2><p class="ui-muted text-xs mt-1" role="status" aria-live="polite">{{ $docentes->total() }} {{ $docentes->total()===1?'docente coincide':'docentes coinciden' }} · Gestión {{ $nombreGestion }}</p></div><span class="ui-muted text-xs">{{ $curso }}</span></div>
+    @include('livewire.admin.docentes.resultados')
     </section>
-    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        @foreach([
-            'Docentes registrados' => $metricasDocentes['total'],
-            'Docentes activos' => $metricasDocentes['activos'],
-            'Asignaciones académicas' => $metricasDocentes['carga'],
-            'Especialidades por completar' => $metricasDocentes['incompletos'],
-        ] as $label => $value)
-            <article class="ui-card rounded-[1.6rem] p-5">
-                <p class="ui-kicker">{{ $label }}</p>
-                <p class="mt-3 text-3xl font-black" style="color: var(--ui-primary)">{{ $value }}</p>
-            </article>
-        @endforeach
-    </section>
-    <section class="ui-card rounded-[2rem] p-5">
-        <div class="grid gap-3 md:grid-cols-[1fr_240px_auto_auto]">
-            <input wire:model.live.debounce.350ms="search" class="ui-input" placeholder="Buscar docente, CI o especialidad...">
-            <select wire:model.live="estado" class="ui-input">
-                <option value="">Todos los estados</option>
-                <option value="ACTIVO">Activos</option>
-                <option value="INACTIVO">Inactivos</option>
-            </select>
-            <button wire:click="limpiarFiltros" class="ui-btn-secondary">Limpiar</button>
-            @can('Personal_Institucional')
-                <a href="{{ route('admin.personal-institucional') }}" class="ui-btn-primary">Gestionar personal</a>
-            @endcan
-        </div>
-    </section>
-
-    <section class="ui-card overflow-hidden rounded-[2rem]">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-[var(--ui-border)]">
-                <thead style="background: var(--ui-surface-muted)">
-                    <tr>@foreach(['Docente', 'CI', 'Especialidad profesional', 'Carga académica', 'Completitud', 'Estado'] as $label)<th class="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.12em]" style="color: var(--ui-muted)">{{ $label }}</th>@endforeach</tr>
-                </thead>
-                <tbody class="divide-y divide-[var(--ui-border)]">
-                    @forelse($docentes as $docente)
-                        @php($persona = $docente->personalInstitucional?->persona)
-                        @php($analisisDocente = $soporteDocente->analizarEspecialidad($docente->esp_doc))
-                        <tr class="hover:bg-[var(--ui-surface-muted)]">
-                            <td class="px-5 py-4 text-sm font-black" style="color: var(--ui-text)">{{ trim(($persona?->nom_per ?? '').' '.($persona?->ape_pat_per ?? '').' '.($persona?->ape_mat_per ?? '')) ?: 'Sin persona vinculada' }}</td>
-                            <td class="px-5 py-4 text-sm" style="color: var(--ui-muted)">{{ $persona?->ci_per ?? 'Sin registro' }}</td>
-                            <td class="px-5 py-4 text-sm" style="color: var(--ui-text)">{{ $docente->esp_doc ?: 'Por completar' }}</td>
-                            <td class="px-5 py-4"><span class="ui-badge-info">{{ $docente->plan_asignaturas_count }} asignaciones</span></td>
-                            <td class="px-5 py-4"><span class="{{ $analisisDocente['puede_guardar'] ? 'ui-badge-success' : 'ui-badge-warning' }}" title="Indicador preventivo local de especialidad; no mide desempeño académico">{{ $analisisDocente['completitud'] }}%</span><span class="ui-muted block text-xs">{{ $analisisDocente['estado_especialidad'] }}</span></td>
-                            <td class="px-5 py-4"><span class="{{ $docente->est_doc === 'ACTIVO' ? 'ui-badge-success' : 'ui-badge-warning' }}">{{ $docente->est_doc }}</span></td>
-                        </tr>
-                    @empty
-                        <tr><td colspan="6" class="px-6 py-16 text-center"><p class="text-lg font-black" style="color: var(--ui-text)">No existen docentes para los filtros aplicados</p><p class="mt-2 text-sm" style="color: var(--ui-muted)">La vinculación se gestiona desde Personal Institucional por un usuario autorizado.</p></td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        <div class="border-t p-4" style="border-color: var(--ui-border)">{{ $docentes->links() }}</div>
-    </section>
+    {{ $docentes->onEachSide(1)->links('vendor.livewire.paginacion-institucional',['cantidad'=>$perPage,'entidad'=>'docentes','singular'=>'docente']) }}
+    <p wire:loading wire:target="abrirFicha" class="ui-muted text-sm" role="status">Cargando información docente…</p>
+    @if($ficha)
+        @if($seccion==='horario') @include('livewire.admin.docentes.horario')
+        @elseif($seccion==='asignaciones') @include('livewire.admin.docentes.carga')
+        @else @include('livewire.admin.docentes.ficha') @endif
+    @endif
+    @if($modalEditar && $docenteDetalle)@include('livewire.admin.personal.editar-perfil')@endif
 </div>

@@ -4,6 +4,7 @@ from typing import Any, cast
 
 from app.knowledge.registry import (
     known_evidence_reference_ids,
+    known_external_information_ids,
     load_reference_registry,
     load_source_manifest,
 )
@@ -37,14 +38,23 @@ def test_reference_registry_locations_and_namespaces() -> None:
 
 def test_all_governed_source_ids_resolve() -> None:
     known = known_evidence_reference_ids()
+    known_external = known_external_information_ids()
     used: set[str] = set()
 
     bridge = _read("data/bridge/secondary_university_v2.json")
     for relation in bridge["relations"]:
         used.update((relation["source_secondary"], relation["source_university"]))
 
+    catalog = _read("data/catalog/careers.json")
+    for career in catalog["careers"]:
+        career_sources = set(career.get("source_ids", []))
+        if career.get("recommendation_eligible", True):
+            used.update(career_sources)
+            assert career_sources <= known
+        else:
+            assert career_sources <= known_external
+
     for path, collection in (
-        ("data/catalog/careers.json", "careers"),
         ("data/crosswalk/career_occupation_v1.json", "relations"),
         ("data/parameters/registry.json", "parameters"),
     ):
@@ -92,9 +102,7 @@ def test_retrieval_dataset_splits_and_chunk_labels_are_consistent() -> None:
         relevant_sources = set(item["relevant_source_ids"])
         relevant_chunks = set(item["relevant_chunk_ids"])
         assert relevant_chunks <= source_by_chunk.keys()
-        assert {source_by_chunk[chunk_id] for chunk_id in relevant_chunks} <= (
-            relevant_sources
-        )
+        assert {source_by_chunk[chunk_id] for chunk_id in relevant_chunks} <= (relevant_sources)
         if item["category"] == "NO_ANSWER":
             assert not relevant_sources
             assert not relevant_chunks

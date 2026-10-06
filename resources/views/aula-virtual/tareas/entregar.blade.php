@@ -6,7 +6,8 @@
 @section('content')
     @php
         $estado = $entrega ? $entrega->est_ent : 'PENDIENTE';
-        $bloqueado = ! $tarea->puedeRecibirEntregas() || in_array($estado, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO', 'ANULADO'], true);
+        $nuevoIntento = $entrega && $estado !== 'PENDIENTE' && $estado !== 'ANULADO' && $entrega->int_ent !== null && $entrega->int_ent < ($tarea->int_tar ?? 1);
+        $bloqueado = ! $tarea->puedeRecibirEntregas() || $estado === 'ANULADO' || ($entrega && $estado !== 'PENDIENTE' && ! $nuevoIntento);
         $textoEstado = match($estado) {
             'ENTREGADO' => 'Enviado',
             'ENTREGADO_TARDE' => 'Enviado tarde',
@@ -24,7 +25,7 @@
                     {{ session('status') == 'Entrega guardada.' ? 'Tarea enviada correctamente' : session('status') }}
                 </div>
             @endif
-            <p class="ui-kicker">{{ $tarea->claseVirtual?->planAsignatura?->asignatura?->nom_asi }}</p>
+            <p class="ui-kicker">{{ $tarea->claseVirtual?->planAsignatura?->asignatura?->nom_asi ?? $tarea->claseVirtual?->planEspecialidad?->especialidad?->nom_esp }}</p>
             <h2 class="ui-title mt-2 text-2xl font-black">{{ $tarea->tit_tar }}</h2>
             <p class="ui-subtitle mt-4 whitespace-pre-line text-sm leading-7">{{ $tarea->des_tar ?: 'Instrucciones registradas por el docente.' }}</p>
             <dl class="mt-5 grid gap-3 sm:grid-cols-2">
@@ -61,7 +62,8 @@
 
             <form method="POST" action="{{ route('aula-virtual.estudiante.tareas.entregas.store', $tarea->cod_tar) }}" enctype="multipart/form-data" class="mt-4 space-y-4">
                 @csrf
-                <textarea name="tex_ent" rows="6" class="ui-textarea" placeholder="Respuesta o comentario" {{ $bloqueado ? 'disabled' : '' }}>{{ old('tex_ent', $entrega->tex_ent ?? '') }}</textarea>
+                <p class="ui-muted text-sm">Intento {{ $nuevoIntento ? $entrega->int_ent + 1 : ($entrega->int_ent ?? 1) }} de {{ $tarea->int_tar ?? 1 }}. Los intentos anteriores conservan sus archivos y calificaciones.</p>
+                <textarea name="tex_ent" rows="6" class="ui-textarea" placeholder="Respuesta o comentario" {{ $bloqueado ? 'disabled' : '' }}>{{ old('tex_ent', $nuevoIntento ? '' : ($entrega->tex_ent ?? '')) }}</textarea>
                 @if(!$bloqueado)
                     @include('aula-virtual.componentes.file-upload-box', ['name' => 'archivo'])
                 @endif

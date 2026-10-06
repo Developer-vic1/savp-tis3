@@ -1,6 +1,6 @@
 > **Nota histórica (2026-09-30):** Este documento describe la línea base de esa fecha. El estado vigente de corpus, FAISS y gates está en `FINAL_STATUS.md`.
 
-# Handoff técnico PETER 3
+# Handoff técnico Aporte Ingenieril SAVP
 
 Estado: 2026-09-29.
 

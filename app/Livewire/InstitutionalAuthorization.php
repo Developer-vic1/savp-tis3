@@ -63,6 +63,10 @@ class InstitutionalAuthorization extends ComponentHook
     {
         $user = auth()->user();
         $name = class_basename($this->component);
+        if ($name === 'GestionCurso' && $this->component instanceof \App\Livewire\Admin\GestionCurso) {
+            \App\Support\AccesoGestionCursos::autorizar();
+            return;
+        }
         if (str_starts_with($this->component::class, 'App\\Livewire\\AulaVirtual\\')) {
             $actor = $user ? app(RoleDashboardResolver::class)->roleFor($user) : null;
             $student = in_array($name, ['DashboardEstudiante', 'MisAsignaturasEstudiante', 'CursoDetalleEstudiante', 'EntregarTarea', 'MiAsistenciaEstudiante', 'OrientacionEstudiante', 'ResultadoOrientacion', 'ExploradorVocacional'], true);

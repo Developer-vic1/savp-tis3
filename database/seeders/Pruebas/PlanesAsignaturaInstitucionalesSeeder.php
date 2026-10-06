@@ -2,13 +2,13 @@
 
 namespace Database\Seeders\Pruebas;
 
-use App\Models\Asignatura;
-use App\Models\Curso;
-use App\Models\Docente;
-use App\Models\GestionAcademica;
-use App\Models\Paralelo;
-use App\Models\PlanAsignatura;
-use App\Models\Turno;
+use App\Models\Oficial\Academico\Asignatura;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\GestionAcademica;
+use App\Models\Oficial\Academico\Paralelo;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Academico\Turno;
 use Illuminate\Database\Seeder;
 
 class PlanesAsignaturaInstitucionalesSeeder extends Seeder

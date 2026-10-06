@@ -74,12 +74,12 @@ El p95 semántico de DEV incluye carga inicial fría. No se eliminó ni se prese
 
 VERIFY RETRIEVAL: PASS, exit 0. Un PASS de procedencia/integridad no demuestra retrieval perfecto: Recall@1 = 0.3810 y puede faltar evidencia.
 
-## Gates Peter 3 y Laravel
+## Gates Aporte Ingenieril SAVP y Laravel
 
 | Campo | Resultado |
 |---|---|
 | VERIFY SOURCES / CORPUS / E5 / MiniLM | PASS; hashes, 773 IDs y filas/dimensión comprobados |
-| VERIFY PETER3 | PASS, exit 0; log local verify-peter3-release.log |
+| VERIFY Aporte Ingenieril SAVP | PASS, exit 0; log local verify-peter3-release.log |
 | PYTEST | 132 passed, 1 skipped (OCR real opt-in RUN_REAL_OCR no habilitado), 0 failed |
 | COVERAGE | 91%; mínimo 90% satisfecho. No se repite el 92% histórico |
 | RUFF | PASS |
@@ -108,7 +108,7 @@ Antes: 1 low, 2 moderate, 6 high, 2 critical. Clasificación runtime/build/dev, 
 
 | Campo solicitado | Resultado / evidencia |
 |---|---|
-| PETER3 CLIENT / HEALTH | PASS, cliente existente ampliado y Uvicorn por socket 127.0.0.1:8001 |
+| Aporte Ingenieril SAVP CLIENT / HEALTH | PASS, cliente existente ampliado y Uvicorn por socket 127.0.0.1:8001 |
 | RIASEC INSTRUMENT / SCORE | PASS, 30 ítems oficiales; raw 1–5; score único en Python |
 | PRECHECK | PASS, análisis bloqueado antes de network si faltan obligatorios; BTH no aplica no bloquea |
 | ANALYSIS V2 | PASS, snapshot COMPLETE, pseudónimo validado y input_hash |

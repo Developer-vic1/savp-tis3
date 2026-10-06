@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\Curso;
-use App\Models\Turno;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Turno;
 use App\Services\InstitutionalQueryService;
 use Tests\TestCase;
 

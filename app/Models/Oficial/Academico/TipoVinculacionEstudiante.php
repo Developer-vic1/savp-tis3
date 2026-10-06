@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class TipoVinculacionEstudiante extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'tipo_vinculacion_estudiante';
 
     protected $primaryKey = 'cod_tve';
@@ -21,16 +24,6 @@ class TipoVinculacionEstudiante extends Model
         'des_tve', // Descripción tipo vinculación
         'est_tve', // Estado tipo vinculación
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($tipo) {
-
-            if (! $tipo->cod_tve) {
-                $tipo->cod_tve = 'TVE_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

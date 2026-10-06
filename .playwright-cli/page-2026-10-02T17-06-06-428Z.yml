@@ -1,0 +1,253 @@
+- main [ref=e2]:
+  - paragraph [ref=e3]: "Vista de prueba aislada: fuentes reales, sin sesión institucional ni escrituras. No envíe propuestas desde esta demostración."
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - paragraph [ref=e8]: Aporte Ingenieril · Administrador
+          - heading "Gestión inteligente del conocimiento" [level=1] [ref=e9]
+          - paragraph [ref=e10]: Analiza páginas universitarias bolivianas antes de incorporarlas. El sistema revisa dominio, institución, finalidad académica, formato, fecha y duplicidad; ninguna fuente pasa directamente al corpus.
+        - button "Cómo funciona" [ref=e11]
+      - generic [ref=e12]:
+        - article [ref=e13]:
+          - paragraph [ref=e14]: Fuentes activas
+          - paragraph [ref=e15]: "16"
+        - article [ref=e16]:
+          - paragraph [ref=e17]: En revisión
+          - paragraph [ref=e18]: "0"
+        - article [ref=e19]:
+          - paragraph [ref=e20]: Universidades verificadas
+          - paragraph [ref=e21]: "5"
+      - generic [ref=e22]:
+        - generic [ref=e23]: Acceso restringido
+        - generic [ref=e24]: Revisión obligatoria
+        - generic [ref=e25]: Incorporación supervisada
+    - region "Progreso de incorporación" [ref=e26]:
+      - generic [ref=e27]:
+        - article [ref=e28]:
+          - text: "1"
+          - generic [ref=e29]:
+            - paragraph [ref=e30]: Completar ficha
+            - paragraph [ref=e31]: Describa universidad, fuente y aporte.
+        - article [ref=e32]:
+          - text: "2"
+          - generic [ref=e33]:
+            - paragraph [ref=e34]: Analizar fuente
+            - paragraph [ref=e35]: Revise controles y corrija observaciones.
+        - article [ref=e36]:
+          - text: "3"
+          - generic [ref=e37]:
+            - paragraph [ref=e38]: Enviar a revisión
+            - paragraph [ref=e39]: Administración revisa antes de la ingesta.
+    - generic [ref=e40]:
+      - generic [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - paragraph [ref=e44]: Nueva fuente
+            - heading "Ficha documental" [level=2] [ref=e45]
+            - paragraph [ref=e46]: Complete los campos y ejecute el análisis antes de enviar.
+          - generic [ref=e47]:
+            - text: "País fijo: Bolivia"
+            - button "Ver casos de prueba" [ref=e48]
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - text: Título oficial de la fuente *
+            - textbox "Título oficial de la fuente * Use el título publicado por la universidad." [ref=e51]:
+              - /placeholder: Ej. Ingeniería de Sistemas — Malla Curricular 2026
+            - text: Use el título publicado por la universidad.
+          - generic [ref=e52]:
+            - text: Universidad declarada *
+            - combobox "Universidad declarada * Use el nombre oficial o una sigla registrada. La sede se indica aparte." [ref=e53]
+            - text: Use el nombre oficial o una sigla registrada. La sede se indica aparte.
+          - generic [ref=e54]:
+            - text: Tipo documental *
+            - combobox "Tipo documental * El tipo debe coincidir con el documento enlazado." [ref=e55]:
+              - option "Seleccione" [selected]
+              - option "Malla o plan curricular PDF"
+              - option "Página oficial de carrera"
+              - option "Reglamento oficial PDF"
+              - option "Otra página universitaria oficial"
+            - text: El tipo debe coincidir con el documento enlazado.
+          - generic [ref=e56]:
+            - text: URL HTTPS oficial *
+            - 'textbox "URL HTTPS oficial * Ejemplo: https://www.upb.edu/programas/pregrado. No use IP ni credenciales." [ref=e57]':
+              - /placeholder: https://universidad.edu.bo/carrera-o-documento.pdf
+            - text: "Ejemplo: https://www.upb.edu/programas/pregrado. No use IP ni credenciales."
+          - generic [ref=e58]:
+            - text: Alcance académico *
+            - textbox "Alcance académico * Indique carrera, malla, perfil o requisito cubierto.0 / 500" [ref=e59]:
+              - /placeholder: Carrera, programa, requisitos, perfil o malla que cubre la fuente
+            - generic [ref=e60]: Indique carrera, malla, perfil o requisito cubierto.0 / 500
+          - generic [ref=e61]:
+            - text: Sede o campus *
+            - textbox "Sede o campus * Indique la sede a la que aplica la fuente." [ref=e62]:
+              - /placeholder: La Paz, Cochabamba, Nacional...
+            - text: Indique la sede a la que aplica la fuente.
+          - generic [ref=e63]:
+            - text: Ciudad *
+            - textbox "Ciudad * Ciudad boliviana asociada a la publicación." [ref=e64]:
+              - /placeholder: La Paz
+            - text: Ciudad boliviana asociada a la publicación.
+          - generic [ref=e65]:
+            - text: Fecha o gestión de publicación
+            - textbox "Fecha o gestión de publicación Opcional. Año, año-mes o fecha completa; no invente una fecha." [ref=e66]:
+              - /placeholder: 2026 o 2026-03
+            - text: Opcional. Año, año-mes o fecha completa; no invente una fecha.
+          - generic [ref=e67]:
+            - text: Versión o gestión *
+            - 'textbox "Versión o gestión * Ejemplo: Gestión 2026, versión 2 o vigente." [ref=e68]':
+              - /placeholder: Gestión 2026
+            - text: "Ejemplo: Gestión 2026, versión 2 o vigente."
+          - generic [ref=e69]:
+            - text: ¿Qué conocimiento aportará? *
+            - textbox "¿Qué conocimiento aportará? * Explique el valor concreto para investigación o acompañamiento.0 / 1000" [ref=e70]:
+              - /placeholder: Explique cómo mejora la investigación, comparación o preparación académica
+            - generic [ref=e71]: Explique el valor concreto para investigación o acompañamiento.0 / 1000
+          - generic [ref=e72]:
+            - text: Limitaciones conocidas
+            - textbox "Limitaciones conocidas Una limitación por línea; máximo 10 líneas útiles.0 / 2000" [ref=e73]:
+              - /placeholder: "Una limitación por línea: no incluye costos, no define admisión, vigencia por confirmar..."
+            - generic [ref=e74]: Una limitación por línea; máximo 10 líneas útiles.0 / 2000
+          - generic [ref=e75]:
+            - button "Limpiar" [ref=e76]
+            - button "Analizar fuente" [ref=e77]
+            - button "Enviar a revisión" [disabled] [ref=e79]
+      - complementary [ref=e80]:
+        - generic [ref=e81]:
+          - paragraph [ref=e82]: Soporte inteligente
+          - heading "Revisión en tiempo real" [level=2] [ref=e83]
+          - generic [ref=e84]:
+            - generic [ref=e85]: Preparación de la ficha20%
+            - paragraph [ref=e86]: 1 de 5 controles listos
+          - generic [ref=e87]:
+            - generic [ref=e89]:
+              - paragraph [ref=e90]: Ficha completa
+              - paragraph [ref=e91]: Complete los campos marcados con asterisco.
+            - generic [ref=e93]:
+              - paragraph [ref=e94]: URL segura
+              - paragraph [ref=e95]: "Ejemplo: https://www.upb.edu/programas/pregrado. No use IP ni credenciales."
+            - generic [ref=e97]:
+              - paragraph [ref=e98]: Universidad y dominio
+              - paragraph [ref=e99]: Use el nombre oficial o una sigla registrada. La sede se indica aparte.
+            - generic [ref=e101]:
+              - paragraph [ref=e102]: Fecha y limitaciones
+              - paragraph [ref=e103]: Datos coherentes; los campos opcionales pueden quedar vacíos.
+            - generic [ref=e105]:
+              - paragraph [ref=e106]: Aporte explicado
+              - paragraph [ref=e107]: Describa el conocimiento concreto que sumará a la investigación.
+        - generic [ref=e108]:
+          - paragraph [ref=e109]: Antes de analizar
+          - heading "Qué debe ocurrir" [level=2] [ref=e110]
+          - list [ref=e111]:
+            - listitem [ref=e112]: La universidad y el dominio deben coincidir exactamente.
+            - listitem [ref=e113]: Una fuente extranjera, IP o URL con credenciales debe bloquearse.
+            - listitem [ref=e114]: "El resultado no incorpora datos: sólo habilita revisión humana."
+        - generic [ref=e115]:
+          - heading "Flujo de incorporación" [level=2] [ref=e116]
+          - list [ref=e117]:
+            - listitem [ref=e118]: 1Validar dominio oficial boliviano.
+            - listitem [ref=e119]: 2Registrar propuesta visible solo para Director y Administrador.
+            - listitem [ref=e120]: 3Revisar y aprobar la propuesta desde Administración.
+            - listitem [ref=e121]: 4Descargar una instantánea local, verificar SHA-256 y reconstruir el corpus BM25.
+    - generic [ref=e122]:
+      - generic [ref=e123]:
+        - generic [ref=e124]:
+          - paragraph [ref=e125]: Corpus validado
+          - heading "Fuentes activas" [level=2] [ref=e126]
+        - searchbox "Buscar fuentes activas" [ref=e127]
+      - generic [ref=e128]:
+        - article [ref=e129]:
+          - text: VALID
+          - heading "Currículo Base del Sistema Educativo Plurinacional" [level=3] [ref=e130]
+          - paragraph [ref=e131]: Ministerio de Educación del Estado Plurinacional de Bolivia
+          - button "Ver trazabilidad" [ref=e132]
+        - article [ref=e133]:
+          - text: VALID
+          - heading "Reglamento del Bachillerato Técnico Humanístico (RM 0244/2023)" [level=3] [ref=e134]
+          - paragraph [ref=e135]: Ministerio de Educación del Estado Plurinacional de Bolivia
+          - button "Ver trazabilidad" [ref=e136]
+        - article [ref=e137]:
+          - text: VALID
+          - heading "Ingeniería de Sistemas — Malla Curricular, Gestión 2026" [level=3] [ref=e138]
+          - paragraph [ref=e139]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e140]
+        - article [ref=e141]:
+          - text: VALID
+          - heading "Ingeniería de Sistemas — Perfil Profesional y Áreas de Estudio" [level=3] [ref=e142]
+          - paragraph [ref=e143]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e144]
+        - article [ref=e145]:
+          - text: VALID
+          - heading "Psicología — Malla Curricular, Gestión 2026" [level=3] [ref=e146]
+          - paragraph [ref=e147]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e148]
+        - article [ref=e149]:
+          - text: VALID
+          - heading "Psicología — Perfil Profesional y Áreas de Estudio" [level=3] [ref=e150]
+          - paragraph [ref=e151]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e152]
+        - article [ref=e153]:
+          - text: VALID
+          - heading "Ingeniería Civil — Malla Curricular, Gestión 2026" [level=3] [ref=e154]
+          - paragraph [ref=e155]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e156]
+        - article [ref=e157]:
+          - text: VALID
+          - heading "Ingeniería Civil — Perfil Profesional y Áreas de Estudio" [level=3] [ref=e158]
+          - paragraph [ref=e159]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e160]
+        - article [ref=e161]:
+          - text: VALID
+          - heading "Ingeniería Ambiental — Malla Curricular, Gestión 2026" [level=3] [ref=e162]
+          - paragraph [ref=e163]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e164]
+        - article [ref=e165]:
+          - text: VALID
+          - heading "Ingeniería Ambiental — Perfil Profesional y Áreas de Estudio" [level=3] [ref=e166]
+          - paragraph [ref=e167]: Universidad Católica Boliviana San Pablo, Sede La Paz
+          - button "Ver trazabilidad" [ref=e168]
+        - article [ref=e169]:
+          - text: VALID
+          - heading "Reglamento de Evaluación del Desarrollo Curricular del Subsistema de Educación Regular" [level=3] [ref=e170]
+          - paragraph [ref=e171]: Ministerio de Educación del Estado Plurinacional de Bolivia
+          - button "Ver trazabilidad" [ref=e172]
+        - article [ref=e173]:
+          - text: VALID
+          - heading "Carrera de Ingeniería Civil — Nuevo Plan de Estudios 2023" [level=3] [ref=e174]
+          - paragraph [ref=e175]: Universidad Mayor de San Andrés, Facultad de Ingeniería
+          - button "Ver trazabilidad" [ref=e176]
+        - article [ref=e177]:
+          - text: VALID
+          - heading "Ingenieria de Sistemas e Innovacion Digital - Perfil y areas de formacion" [level=3] [ref=e178]
+          - paragraph [ref=e179]: Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz
+          - button "Ver trazabilidad" [ref=e180]
+        - article [ref=e181]:
+          - text: VALID
+          - heading "Ingenieria de Sistemas e Innovacion Digital - Malla Curricular" [level=3] [ref=e182]
+          - paragraph [ref=e183]: Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz
+          - button "Ver trazabilidad" [ref=e184]
+        - article [ref=e185]:
+          - text: VALID
+          - heading "Ingenieria de Sistemas Computacionales - Perfil de programa" [level=3] [ref=e186]
+          - paragraph [ref=e187]: Universidad Privada Boliviana - UPB, Campus La Paz
+          - button "Ver trazabilidad" [ref=e188]
+        - article [ref=e189]:
+          - text: VALID
+          - heading "Ingenieria de Sistemas Computacionales - Malla Curricular" [level=3] [ref=e190]
+          - paragraph [ref=e191]: Universidad Privada Boliviana - UPB, Campus La Paz
+          - button "Ver trazabilidad" [ref=e192]
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - paragraph [ref=e195]: Gobierno documental
+        - heading "Cola de incorporación" [level=2] [ref=e196]
+      - table [ref=e198]:
+        - rowgroup [ref=e199]:
+          - row [ref=e200]:
+            - columnheader "Fuente" [ref=e201]
+            - columnheader "Universidad" [ref=e202]
+            - columnheader "Tipo" [ref=e203]
+            - columnheader "Estado" [ref=e204]
+            - columnheader "Acción" [ref=e205]
+        - rowgroup [ref=e206]:
+          - row [ref=e207]:
+            - cell "No hay fuentes nuevas en revisión." [ref=e208]

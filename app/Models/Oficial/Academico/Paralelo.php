@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Paralelo extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'paralelo';
 
     protected $primaryKey = 'cod_par';
@@ -21,15 +24,6 @@ class Paralelo extends Model
         'nom_par',
         'est_par',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($paralelo) {
-            if (! $paralelo->cod_par) {
-                $paralelo->cod_par = 'PAR_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function inscripciones()
     {

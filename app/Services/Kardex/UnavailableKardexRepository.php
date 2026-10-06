@@ -3,8 +3,8 @@
 namespace App\Services\Kardex;
 
 use App\Contracts\KardexRepository;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 
 class UnavailableKardexRepository implements KardexRepository
 {

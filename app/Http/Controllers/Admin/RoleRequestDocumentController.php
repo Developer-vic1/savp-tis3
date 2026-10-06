@@ -3,20 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\RoleRequest;
 use App\Services\RoleRequestService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class RoleRequestDocumentController extends Controller
 {
-    public function __invoke(Request $request, RoleRequest $roleRequest, RoleRequestService $service)
+    public function __invoke(Request $request, string $roleRequest, RoleRequestService $service)
     {
         $service->authorize($request->user(), 'roles.documentos.ver');
-        abort_unless(Storage::disk('local')->exists($roleRequest->document_path), 404);
-        $extension = match ($roleRequest->document_mime) { 'application/pdf' => 'pdf', 'image/jpeg' => 'jpg', 'image/png' => 'png', default => null };
-        abort_unless($extension, 404);
-        return Storage::disk('local')->download($roleRequest->document_path, 'autorizacion-'.$roleRequest->id.'.'.$extension,
-            ['Content-Type' => $roleRequest->document_mime, 'X-Content-Type-Options' => 'nosniff', 'Cache-Control' => 'private, no-store']);
+        abort_unless($service->disponible(),404);
+        $s=\App\Models\Oficial\Sistema\SolicitudRol::findOrFail($roleRequest);
+        $storage=\Illuminate\Support\Facades\Storage::disk('local');
+        abort_unless($storage->exists($s->documento_ruta),404);
+        abort_unless(hash_file('sha256',$storage->path($s->documento_ruta))===$s->documento_sha256,409);
+        return response()->file($storage->path($s->documento_ruta),['Content-Type'=>'application/pdf','Content-Disposition'=>'inline; filename="autorizacion-rol.pdf"','Cache-Control'=>'private, no-store','X-Content-Type-Options'=>'nosniff']);
     }
 }

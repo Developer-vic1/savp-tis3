@@ -1,41 +1,41 @@
 {
-  "measured_at": "2026-10-01T18:42:59.399317+00:00",
+  "measured_at": "2026-10-02T03:12:04.278653+00:00",
   "environment": "in-process FastAPI TestClient on Windows; 8 RIASEC requests, 4 workers",
   "results": {
     "riasec_instrument": {
       "status": 200,
-      "latency_ms": 21.309,
-      "trace_id": "cfa0bc87-59ab-42a9-8307-eacbd7546496"
+      "latency_ms": 18.711,
+      "trace_id": "de31515a-8bc9-424c-a962-a8358b67583c"
     },
     "health": {
       "status": 200,
-      "latency_ms": 4.31,
-      "trace_id": "1e93bf7b-8be8-46d1-8e3f-c427a49f8a56"
+      "latency_ms": 3.235,
+      "trace_id": "713e9560-3b05-40f3-83b3-b73303a6ade2"
     },
     "riasec_score": {
       "status": 200,
-      "latency_ms": 6.307,
-      "trace_id": "f80603ad-e993-411a-a475-045c42e84f29"
+      "latency_ms": 6.228,
+      "trace_id": "56a78fac-c617-49f2-b322-efcbdabc29b2"
     },
     "analysis_v2": {
       "status": 200,
-      "latency_ms": 21.87,
-      "trace_id": "446380ce-6683-4bd2-940a-a8bff23bf538"
+      "latency_ms": 30.626,
+      "trace_id": "2adad07d-de7b-49e2-9401-67cb3ab4907d"
     },
     "knowledge": {
       "status": 200,
-      "latency_ms": 29452.957,
-      "trace_id": "744e7110-d069-47bb-a782-a61116a981a5"
+      "latency_ms": 22160.131,
+      "trace_id": "f059a4a5-1466-4522-af68-33e904032b51"
     },
     "tutor": {
       "status": 200,
-      "latency_ms": 46.63,
-      "trace_id": "389acaf6-ce1a-4512-8015-8a01244c213e"
+      "latency_ms": 57.09,
+      "trace_id": "1c5420fd-608b-49a2-a057-ad384842c2b5"
     },
     "concurrent_riasec": {
       "requests": 8,
       "passed": 8,
-      "median_ms": 13.87
+      "median_ms": 15.166
     }
   },
   "status": "PASS"

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\Shared\InstitutionalRecordDrawer;
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\InstitutionalQueryService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;

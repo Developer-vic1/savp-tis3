@@ -3,12 +3,15 @@
 namespace App\Models\Oficial\Academico;
 
 use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class GestionAcademica extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'gestion_academica';
 
     protected $primaryKey = 'cod_gea';
@@ -24,16 +27,6 @@ class GestionAcademica extends Model
         'ffi_gea', // Fecha fin gestión
         'est_gea', // Estado gestión académica
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($gestion) {
-
-            if (! $gestion->cod_gea) {
-                $gestion->cod_gea = 'GEA_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

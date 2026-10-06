@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Livewire\Shared\InstitutionalQuery;
-use App\Models\Curso;
-use App\Models\User;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Sistema\User;
 use App\Services\InstitutionalQueryService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Livewire;

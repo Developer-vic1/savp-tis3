@@ -1,78 +1,51 @@
-<div class="space-y-6">
-    @if(!$ready)<p class="ui-alert-warning">La escritura de notas oficiales requiere aplicar el esquema de historial por gestión, pendiente de autorización. Los históricos sin asignación quedan en solo lectura.</p>@endif
-    @if($errors->any())<div role="alert" class="ui-alert-danger">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
-    <section class="ui-card rounded-[2rem] p-6 sm:p-8">
-        <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div><p class="ui-kicker">Evaluación académica</p><h1 class="ui-title mt-2 text-3xl font-black">Calificaciones</h1><p class="ui-muted mt-2 max-w-3xl text-sm leading-6">Registra notas sobre 100, identifica riesgo académico y fortalezas para la orientación estudiantil.</p></div>
-            <div class="flex gap-3"><button wire:click="abrirCrear" class="ui-btn-primary" @disabled(!$ready)>Nueva calificación</button></div>
+<div class="resultados-pagina space-y-5" x-data="paginacionInstitucional()">
+    <section class="ui-card resultados-cabecera">
+        <div><p class="ui-kicker">Resultados y seguimiento institucional</p><h1 class="ui-title mt-2 text-3xl font-black">Calificaciones y comparativas</h1><p class="ui-muted mt-2 text-sm">Compara grados, períodos y gestiones. Consulta la trayectoria individual cuando necesites profundizar.</p></div>
+        <div class="flex flex-wrap items-center gap-3"><span class="ui-badge-info"><i class="ph-duotone ph-eye" aria-hidden="true"></i> Consulta académica</span><button class="ui-btn-secondary" wire:click="descargarReporte" wire:loading.attr="disabled"><i class="ph-duotone ph-download-simple" aria-hidden="true"></i> Exportar seguimiento</button></div>
+    </section>
+    @if($resumen->sinteticas)<div class="ui-alert-warning" role="note"><strong>Datos de validación identificados.</strong> {{ (int)$resumen->sinteticas }} notas de esta consulta están marcadas como sintéticas en sus observaciones. Los gráficos incluyen esos registros de prueba y no acreditan resultados oficiales de estudiantes.</div>@endif
+    <section class="resultados-indicadores" aria-label="Resumen de estudiantes">
+        @foreach([['total','Estudiantes inscritos','ph-student','primary'],['evaluados','Con notas registradas','ph-notebook','info'],['promedio','Promedio observado / 100','ph-chart-bar','primary'],['riesgo','Con alguna nota ≤ 50','ph-warning','danger']] as [$clave,$titulo,$icono,$color])
+        <article class="ui-card p-5"><div class="flex items-center justify-between gap-2"><span class="ui-muted text-xs font-bold">{{ $titulo }}</span><i class="ph-duotone {{ $icono }} text-xl" style="color:var(--ui-{{ $color }})" aria-hidden="true"></i></div><strong class="mt-3 block text-3xl" style="color:var(--ui-{{ $color }})">{{ $clave==='promedio' ? ($resumen->promedio === null ? 'Sin datos' : number_format($resumen->promedio,2)) : (int)$resumen->$clave }}</strong></article>
+        @endforeach
+    </section>
+    <section class="ui-card p-5" aria-label="Filtros del seguimiento">
+        <div class="resultados-filtros">
+            <x-selector-institucional modelo="gestionFiltro" identificador="resultados-gestion" etiqueta="Gestión" :opciones="$years->map(fn($g)=>['valor'=>$g->cod_gea,'etiqueta'=>'Gestión '.$g->ani_gea.' · '.$g->est_gea])->all()" />
+            <x-selector-institucional modelo="gradoFiltro" identificador="resultados-grado" etiqueta="Grado" :opciones="array_merge([['valor'=>'','etiqueta'=>'Todos los grados']],$cursos->map(fn($c)=>['valor'=>$c->cod_cur,'etiqueta'=>$c->nom_cur])->all())" />
+            <x-selector-institucional modelo="periodoFiltro" identificador="resultados-periodo" etiqueta="Período evaluado" :opciones="array_merge([['valor'=>'','etiqueta'=>'Todos los períodos']],$periodos->map(fn($p)=>['valor'=>$p->cod_pev,'etiqueta'=>$p->nom_pev])->all())" />
+            <x-selector-institucional modelo="seguimiento" identificador="resultados-seguimiento" etiqueta="Prioridad de seguimiento" :opciones="[['valor'=>'','etiqueta'=>'Todos los estudiantes'],['valor'=>'riesgo','etiqueta'=>'Con notas de 50 o menos'],['valor'=>'sin_notas','etiqueta'=>'Sin notas registradas'],...($puedeVerOrientacion ? [['valor'=>'sin_analisis','etiqueta'=>'Sin estudio del aporte']] : []),['valor'=>'retirados','etiqueta'=>'Inscripción retirada']]" />
         </div>
+        <div class="mt-4 flex flex-wrap items-end gap-3"><label class="flex-1 min-w-0"><span class="ui-label">Buscar estudiante · filtra todas las vistas</span><input class="ui-input mt-2" wire:model.live.debounce.350ms="search" placeholder="Ej.: apellido o nombre del estudiante" maxlength="120" /></label><button class="ui-btn-secondary" wire:click="limpiarFiltros">Limpiar filtros</button></div>
+        <p class="ui-help mt-3">{{ (int)$resumen->evaluados }} estudiantes con notas de {{ (int)$resumen->total }} inscritos. Promedio de promedios individuales: {{ $resumen->promedio === null ? 'sin datos' : number_format($resumen->promedio,2).' / 100' }}. Una nota baja requiere seguimiento; no acredita reprobación anual.</p>
     </section>
-
-    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <article class="ui-card rounded-[1.6rem] p-5"><p class="ui-kicker">Promedio de notas filtradas</p><p class="mt-3 text-3xl font-black" style="color: var(--ui-primary)">{{ $metricas['promedio'] === null ? 'Sin datos' : number_format($metricas['promedio'], 2) }}</p></article>
-        <article class="ui-card rounded-[1.6rem] p-5"><p class="ui-kicker">En riesgo</p><p class="mt-3 text-3xl font-black" style="color: var(--ui-danger)">{{ $metricas['riesgo'] }}</p></article>
-        <article class="ui-card rounded-[1.6rem] p-5"><p class="ui-kicker">Destacadas</p><p class="mt-3 text-3xl font-black" style="color: var(--ui-success)">{{ $metricas['destacadas'] }}</p></article>
-        <article class="ui-card rounded-[1.6rem] p-5"><p class="ui-kicker">Menor promedio</p><p class="mt-3 text-lg font-black" style="color: var(--ui-warning)">{{ $metricas['menor']['nombre'] ?? 'Sin datos' }}</p><p class="mt-1 text-sm" style="color: var(--ui-muted)">{{ $metricas['menor']['promedio'] ?? 0 }}</p></article>
-    </section>
-
-    <section class="ui-card rounded-[2rem] p-5"><label class="ui-label">Gestión<select wire:model.live="gestionFiltro" class="ui-select" @disabled(!$ready)><option value="">Todas las gestiones e históricos</option>@foreach($years as $year)<option value="{{ $year->cod_gea }}">{{ $year->ani_gea }}</option>@endforeach</select></label><p class="ui-help">Los indicadores resumen las notas activas de los filtros seleccionados.</p>
-        <div class="grid gap-3 xl:grid-cols-[1fr_230px_260px_200px_auto]">
-            <input wire:model.live.debounce.350ms="search" class="ui-input" placeholder="Buscar estudiante o asignatura...">
-            <select wire:model.live="periodoFiltro" class="ui-input"><option value="">Todos los periodos</option>@foreach($periodos as $item)<option value="{{ $item->cod_pev }}">{{ $item->nom_pev }}</option>@endforeach</select>
-            <select wire:model.live="asignaturaFiltro" class="ui-input"><option value="">Todas las asignaturas</option>@foreach($asignaturas as $item)<option value="{{ $item->cod_asi }}">{{ $item->nom_asi }}</option>@endforeach</select>
-            <select wire:model.live="estado" class="ui-input"><option value="">Todos los estados</option><option>ACTIVO</option><option>INACTIVO</option><option>ANULADO</option></select>
-            <button wire:click="limpiarFiltros" class="ui-btn-secondary">Limpiar</button>
+    <nav class="resultados-vistas ui-card p-3" aria-label="Vistas de resultados">
+        @foreach(['comparativas'=>['ph-chart-bar','Comparativas','Grados, períodos y gestiones'], 'proyecto'=>['ph-path','Proyecto y estudios','Cobertura y evidencia del aporte'], 'estudiantes'=>['ph-magnifying-glass','Consulta de estudiantes','Buscar un caso y ver su trayectoria']] as $key=>[$icono,$titulo,$descripcion])
+        <button class="resultados-vista {{ $vista===$key ? 'resultados-vista-activa' : '' }}" wire:click="$set('vista','{{ $key }}')" aria-pressed="{{ $vista===$key ? 'true':'false' }}"><i class="ph-duotone {{ $icono }} text-2xl" aria-hidden="true"></i><span><strong>{{ $titulo }}</strong><small>{{ $descripcion }}</small></span></button>
+        @endforeach
+    </nav>
+    @include('livewire.admin.calificaciones-destacados')
+    @if($vista==='comparativas')
+        @include('livewire.admin.calificaciones-comparativas')
+    @elseif($vista==='proyecto')
+        @include('livewire.admin.calificaciones-proyecto')
+    @endif
+    @if($puedeVerOrientacion)
+    <x-plegable-institucional etiqueta="Intereses RIASEC del grupo" descripcion="Distribución de perfiles registrados; no es un ranking de aptitud" icono="ph-compass">
+        <div class="resultados-periodos">@forelse($perfiles as $perfil)<article><p class="flex justify-between text-sm"><strong>{{ $perfil->perfil_predominante }}</strong><span>{{ $perfil->estudiantes }} estudiantes</span></p><div class="resultados-pista mt-2"><span class="resultados-barra" style="width:{{ 100*$perfil->estudiantes/max(1,$perfiles->sum('estudiantes')) }}%;background:var(--ui-info)"></span></div></article>@empty<p class="ui-muted">Sin perfiles RIASEC consolidados en esta consulta.</p>@endforelse</div><p class="ui-help mt-4">R: Realista · I: Investigador · A: Artístico · S: Social · E: Emprendedor · C: Convencional. Cada estudiante se cuenta una vez, con el último intento de esta gestión.</p>
+    </x-plegable-institucional>
+    @endif
+    <section class="ui-card p-5" aria-labelledby="consulta-estudiantes-titulo">
+        <div class="flex flex-wrap justify-between gap-3"><div><p class="ui-kicker">Consulta específica</p><h2 id="consulta-estudiantes-titulo" class="ui-title mt-2 font-black">Estudiantes de esta consulta</h2><p class="ui-help mt-2">Usa la búsqueda y los filtros superiores. Abre una trayectoria para revisar notas y estudios guardados.</p></div><span class="ui-badge-info">{{ (int)$resumen->total }} inscripciones</span></div>
+        <div class="overflow-x-auto mt-5" tabindex="0" role="region" aria-label="Consulta de estudiantes">
+            <table class="w-full text-sm resultados-tabla resultados-tabla-consulta"><caption class="sr-only">Seguimiento individual de la gestión seleccionada</caption><thead><tr><th scope="col">Estudiante</th><th scope="col">Grado / paralelo</th><th scope="col">Promedio / 100</th><th scope="col">Notas ≤ 50</th>@if($puedeVerOrientacion)<th scope="col">Estudio del aporte</th>@endif<th scope="col">Cierre oficial</th><th scope="col">Trayectoria</th></tr></thead><tbody>
+            @forelse($estudiantes as $e)<tr wire:key="resultado-{{ $e->cod_ins }}"><td><strong>{{ trim($e->nom_per.' '.$e->ape_pat_per.' '.$e->ape_mat_per) }}</strong><p class="ui-help">{{ $e->cod_est }} · {{ $e->est_ins }}</p></td><td>{{ $e->nom_cur }}<p class="ui-help">{{ $e->nom_par ?? 'Sin paralelo' }}</p></td><td>{{ $e->promedio===null ? 'Sin notas' : number_format($e->promedio,2) }}<p class="ui-help">{{ $e->notas }} notas</p></td><td><span class="{{ $e->bajas ? 'ui-badge-warning' : 'ui-badge' }}">{{ $e->notas ? $e->bajas : 'Sin notas' }}</span></td>@if($puedeVerOrientacion)<td>{{ $e->analisis ? 'Guardado' : ($e->riasec ? 'RIASEC completo · estudio pendiente' : 'RIASEC pendiente') }}</td>@endif<td>{{ $e->retenido ? 'Retenido' : ($e->promovido ? 'Promovido / egresado' : 'Sin cierre registrado') }}</td><td><button class="ui-btn-secondary" wire:click="verEstudiante('{{ $e->cod_ins }}')" aria-label="Ver trayectoria de {{ trim($e->nom_per.' '.$e->ape_pat_per.' '.$e->ape_mat_per) }}">Ver trayectoria</button></td></tr>@empty<tr><td colspan="{{ $puedeVerOrientacion ? 7 : 6 }}" class="py-8">No hay estudiantes con estos filtros. Ajusta la gestión o limpia la búsqueda.</td></tr>@endforelse
+            </tbody></table>
         </div>
+        <div class="mt-5">{{ $estudiantes->onEachSide(1)->links('vendor.livewire.paginacion-institucional', ['cantidad'=>$perPage,'entidad'=>'estudiantes','singular'=>'estudiante']) }}</div>
     </section>
-
-    <section class="ui-card overflow-hidden rounded-[2rem]">
-        <div class="overflow-x-auto"><table class="min-w-full divide-y divide-[var(--ui-border)]">
-            <thead style="background: var(--ui-surface-muted)"><tr>@foreach(['Estudiante','Gestión y curso','Asignatura','Periodo','Nota','Desempeño','Estado','Acciones'] as $label)<th class="px-5 py-4 text-left text-xs font-black uppercase tracking-[0.12em]" style="color: var(--ui-muted)">{{ $label }}</th>@endforeach</tr></thead>
-            <tbody class="divide-y divide-[var(--ui-border)]">
-                @forelse($calificaciones as $calificacion)
-                    @php($p=$calificacion->estudiante?->persona)
-                    @php($desempeno=$soporte->clasificar((float)$calificacion->not_cal))
-                    <tr class="hover:bg-[var(--ui-surface-muted)]">
-                        <td class="px-5 py-4 text-sm font-bold" style="color: var(--ui-text)">{{ trim(($p?->nom_per ?? '').' '.($p?->ape_pat_per ?? '').' '.($p?->ape_mat_per ?? '')) }}</td>
-                        <td class="px-5 py-4 text-sm">{{ $calificacion->planAsignatura?->gestionAcademica?->ani_gea ?? 'Histórico sin contexto' }} · {{ $calificacion->planAsignatura?->curso?->nom_cur }} {{ $calificacion->planAsignatura?->paralelo?->nom_par }}</td><td class="px-5 py-4 text-sm" style="color: var(--ui-text)">{{ $calificacion->asignatura?->nom_asi }}</td>
-                        <td class="px-5 py-4 text-sm" style="color: var(--ui-muted)">{{ $calificacion->periodoEvaluacion?->nom_pev }}</td>
-                        <td class="px-5 py-4 text-xl font-black" style="color: var(--ui-primary)">{{ number_format($calificacion->not_cal, 2) }}</td>
-                        <td class="px-5 py-4"><span class="{{ $desempeno === 'Destacado' ? 'ui-badge-success' : ($desempeno === 'En riesgo' ? 'ui-badge-danger' : 'ui-badge-info') }}">{{ $desempeno }}</span></td>
-                        <td class="px-5 py-4"><span class="{{ $calificacion->est_cal === 'ACTIVO' ? 'ui-badge-success' : 'ui-badge-warning' }}">{{ $calificacion->est_cal }}</span></td>
-                        <td class="px-5 py-4">@if($calificacion->cod_pas)<div class="flex gap-2"><button wire:click="abrirEditar('{{ $calificacion->cod_cal }}')" class="ui-btn-secondary">Editar</button><button wire:click="cambiarEstado('{{ $calificacion->cod_cal }}')" class="ui-btn-secondary">{{ $calificacion->est_cal === 'ACTIVO' ? 'Anular' : 'Activar' }}</button></div>@else Histórico de solo lectura @endif</td>
-                    </tr>
-                @empty
-                    <tr><td colspan="8" class="px-6 py-16 text-center"><p class="text-lg font-black" style="color: var(--ui-text)">Aún no existen calificaciones registradas</p><p class="mt-2 text-sm" style="color: var(--ui-muted)">Registra notas para habilitar indicadores académicos y vocacionales.</p></td></tr>
-                @endforelse
-            </tbody>
-        </table></div>
-        <div class="border-t p-4" style="border-color: var(--ui-border)">{{ $calificaciones->links() }}</div>
-    </section>
-
-    @if($modalFormulario)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4" wire:click.self="cerrarFormulario">
-            <section class="ui-card max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-[2rem] p-6 sm:p-8">
-                <div class="flex justify-between gap-4"><div><p class="ui-kicker">Vista previa académica</p><h2 class="ui-title mt-2 text-2xl font-black">{{ $editando ? 'Editar calificación' : 'Nueva calificación' }}</h2></div><button wire:click="cerrarFormulario" class="ui-btn-secondary">Cerrar</button></div>
-                <div class="mt-6 grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
-                    <div class="space-y-4">
-                        <label><span class="ui-label">Estudiante</span><select wire:model.live="form.cod_est" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($estudiantes as $item)@php($p=$item->persona)<option value="{{ $item->cod_est }}">{{ trim(($p?->ape_pat_per ?? '').' '.($p?->ape_mat_per ?? '').' '.($p?->nom_per ?? '')) }}</option>@endforeach</select></label>
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <label><span class="ui-label">Asignación y gestión</span><select wire:model.live="form.cod_pas" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($plans as $item)<option value="{{ $item->cod_pas }}">{{ $item->gestionAcademica?->ani_gea }} · {{ $item->curso?->nom_cur }} {{ $item->paralelo?->nom_par }} · {{ $item->asignatura?->nom_asi }} ({{ $item->cod_pas }})</option>@endforeach</select></label>
-                            <label><span class="ui-label">Periodo</span><select wire:model.live="form.cod_pev" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($periodos as $item)<option value="{{ $item->cod_pev }}">{{ $item->nom_pev }}</option>@endforeach</select></label>
-                            <label><span class="ui-label">Nota sobre 100</span><input type="number" min="0" max="100" step="0.01" wire:model.live="form.not_cal" class="ui-input mt-2"></label>
-                            <label><span class="ui-label">Estado</span><select wire:model.live="form.est_cal" class="ui-input mt-2"><option>ACTIVO</option><option>INACTIVO</option><option>ANULADO</option></select></label>
-                        </div>
-                        <label><span class="ui-label">Observación</span><textarea rows="4" wire:model.live="form.obs_cal" class="ui-input mt-2"></textarea></label>
-                        <label><span class="ui-label">Motivo de rectificación (obligatorio en periodos cerrados o cambios de estado)</span><textarea rows="2" maxlength="1000" wire:model="form.motivo" class="ui-input mt-2"></textarea></label>
-                    </div>
-                    <aside class="space-y-4">
-                        <div class="ui-card-soft p-5"><p class="ui-kicker">Completitud</p><p class="mt-2 text-3xl font-black" style="color: var(--ui-primary)">{{ $analisis['completitud'] ?? 0 }}%</p></div>
-                        <div class="ui-card-soft p-5"><p class="ui-kicker">Desempeño calculado</p><p class="mt-2 text-xl font-black" style="color: {{ ($analisis['riesgo'] ?? false) ? 'var(--ui-danger)' : 'var(--ui-success)' }}">{{ $analisis['desempeno'] ?? 'Sin nota' }}</p><button wire:click="aplicarObservacion" class="ui-btn-secondary mt-4 w-full">Usar observación sugerida</button></div>
-                        <x-asistencia-inteligente :analisis="$analisis" :mostrar-completitud="false" />
-                    </aside>
-                </div>
-                <div class="mt-6 flex justify-end gap-3"><button wire:click="cerrarFormulario" class="ui-btn-secondary">Cancelar</button><button wire:click="guardar" class="ui-btn-primary" @disabled(!($analisis['puede_guardar'] ?? false))>Guardar calificación</button></div>
-            </section>
-        </div>
+    <div wire:loading.delay class="ui-alert-info" role="status">Actualizando resultados…</div>
+    @if($detalle)
+        @include('livewire.admin.calificaciones-trayectoria')
     @endif
 </div>

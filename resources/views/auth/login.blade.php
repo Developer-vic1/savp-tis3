@@ -1,9 +1,9 @@
 <x-guest-layout>
-    <x-authentication-card>
+    <x-authentication-card class="login-composition">
         <x-slot name="logo">
-            <div class="text-center">
+            <div class="login-brand text-center">
                 <div
-                    class="relative mx-auto flex h-24 w-24 items-center justify-center rounded-[1.7rem] bg-white shadow-[0_24px_60px_rgba(16,185,129,0.18)] ring-4 ring-white/70 dark:bg-slate-900 dark:ring-slate-700/80">
+                    class="login-brand-logo relative mx-auto flex h-24 w-24 items-center justify-center rounded-[1.7rem] bg-white shadow-[0_24px_60px_rgba(16,185,129,0.18)] ring-4 ring-white/70 dark:bg-slate-900 dark:ring-slate-700/80">
                     <img src="{{ asset('image/LOGO FT3 A.jpg') }}" alt="Logo Franz Tamayo N°3"
                         class="h-16 w-16 rounded-2xl object-contain">
 
@@ -13,7 +13,7 @@
                         class="absolute -bottom-1 -left-1 h-3 w-3 rounded-full bg-emerald-300 shadow-lg shadow-emerald-300/60 animate-pulse"></span>
                 </div>
 
-                <div class="mt-4">
+                <div class="login-brand-name mt-4">
                     <p class="font-display text-base font-black text-slate-950 dark:text-white">
                         Franz Tamayo N°3
                     </p>
@@ -25,12 +25,55 @@
         </x-slot>
 
         <style>
+            .auth-shell,
+            .slot-wrap {
+                min-height: 100svh;
+            }
+
+            .slot-wrap {
+                padding: 1rem;
+            }
+
+            .login-composition {
+                max-width: 36rem;
+            }
+
+            .login-composition > div:first-child {
+                margin-bottom: 1rem;
+            }
+
+            .login-brand {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+                text-align: left;
+            }
+
+            .login-brand-logo {
+                width: 3.5rem;
+                height: 3.5rem;
+                margin: 0;
+                border-radius: 1.1rem;
+                flex-shrink: 0;
+            }
+
+            .login-brand-logo img {
+                width: 2.75rem;
+                height: 2.75rem;
+            }
+
+            .login-brand-name {
+                margin-top: 0;
+            }
+
             .login-stage {
                 position: relative;
                 overflow: hidden;
                 border-radius: 2.2rem;
                 width: min(100%, 46rem);
-                min-height: 620px;
+                min-height: 0;
+                padding: 1.5rem 2rem;
                 background:
                     radial-gradient(circle at top left, rgba(16, 185, 129, 0.18), transparent 30%),
                     radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 30%),
@@ -39,6 +82,101 @@
                 box-shadow:
                     0 28px 90px rgba(15, 23, 42, 0.14),
                     0 10px 28px rgba(15, 23, 42, 0.08);
+            }
+
+            .login-intro {
+                text-align: center;
+            }
+
+            .login-access-label {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 2.8rem;
+                margin-bottom: .75rem;
+                padding-inline: 3rem;
+            }
+
+            .login-access-label > div {
+                margin-bottom: 0;
+            }
+
+            .login-intro h1 {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+
+            .login-intro p {
+                margin-top: .5rem;
+                line-height: 1.5;
+            }
+
+            .login-messages {
+                margin-top: 1.25rem;
+            }
+
+            #loginForm > :not([hidden]) ~ :not([hidden]) {
+                margin-top: 1rem;
+            }
+
+            .login-input {
+                min-height: 3rem;
+                padding-block: .625rem;
+            }
+
+            #loginBtn {
+                min-height: 3rem;
+                padding-block: .625rem;
+            }
+
+            #togglePassword {
+                width: 3rem;
+                min-height: 3rem;
+                justify-content: center;
+                padding: 0;
+                border-radius: .75rem;
+            }
+
+            #togglePassword:focus-visible {
+                outline: 2px solid var(--ui-primary);
+                outline-offset: -4px;
+            }
+
+            #togglePassword .ph-duotone {
+                font-size: 1.375rem;
+            }
+
+            #remember_me {
+                color: var(--ui-primary);
+            }
+
+            .login-footer {
+                margin-top: 1.25rem;
+                padding-top: 1rem;
+            }
+
+            @media (max-width: 639px) {
+                .login-stage {
+                    padding: 1.25rem;
+                    border-radius: 1.5rem;
+                }
+
+                .login-access-label {
+                    padding-inline: 2.75rem;
+                }
+
+                .login-access-label > div {
+                    font-size: .625rem;
+                    letter-spacing: .1em;
+                }
+            }
+
+            @media (max-width: 379px) {
+                .login-access-label {
+                    margin-top: 3rem;
+                    padding-inline: 0;
+                    min-height: 0;
+                }
             }
 
             html.dark .login-stage {
@@ -146,7 +284,8 @@
             }
 
             .login-input.input-invalid {
-                border-color: rgb(248 113 113) !important;
+                border-color: var(--ui-danger) !important;
+                box-shadow: 0 0 0 3px var(--ui-danger-soft);
             }
 
             .login-btn {
@@ -355,11 +494,13 @@
             <div class="shine-line"></div>
 
             <div class="relative z-10">
-                <div class="fade-up">
-                    <div
-                        class="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700 shadow-sm dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
-                        <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        Acceso institucional
+                <div class="login-intro fade-up">
+                    <div class="login-access-label">
+                        <div
+                            class="mx-auto mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white/80 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700 shadow-sm dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Acceso institucional
+                        </div>
                     </div>
 
                     <h1 class="text-center text-4xl font-black tracking-tight text-slate-950 dark:text-white">
@@ -367,17 +508,11 @@
                     </h1>
 
                     <p class="mx-auto mt-3 max-w-lg text-center text-base leading-7 text-slate-600 dark:text-slate-300">
-                        Inicia sesión para acceder al sistema de la
-                        <span class="font-bold text-emerald-700 dark:text-emerald-300">
-                            Unidad Educativa Franz Tamayo N°3
-                        </span>.
+                        Inicia sesión con tu cuenta institucional.
                     </p>
                 </div>
 
-                <div class="fade-up delay-2 mt-7">
-                    <x-validation-errors
-                        class="mb-4 hidden rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-200" />
-
+                <div class="login-messages fade-up delay-2 mt-7">
                     @session('status')
                         <script>
                             document.addEventListener('DOMContentLoaded', function () {
@@ -393,17 +528,13 @@
                     @endsession
 
                     @if ($errors->any())
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'No se pudo iniciar sesión',
-                                    text: @json($errors->first()),
-                                    confirmButtonText: 'Entendido',
-                                    confirmButtonColor: '#dc2626'
-                                });
-                            });
-                        </script>
+                        <p id="loginServerError" role="alert"
+                            class="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-200">
+                            {{ $errors->first() }} Revisa tus datos e inténtalo de nuevo.
+                            @if (session()->has('acceso_intentos_restantes'))
+                                <span class="mt-1 block font-bold">Te quedan {{ session('acceso_intentos_restantes') }} intentos antes de una pausa de seguridad.</span>
+                            @endif
+                        </p>
                     @endif
                 </div>
 
@@ -416,7 +547,7 @@
                             Correo electrónico
                         </label>
 
-                        <div class="relative">
+                        <div class="login-field-control relative">
                             <span
                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 dark:text-slate-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -429,11 +560,12 @@
 
                             <x-input id="email"
                                 class="login-input mt-1 block w-full rounded-2xl border-slate-300 bg-white/95 py-4 pl-11 pr-4 text-base text-slate-800 placeholder-slate-400 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder-slate-500"
-                                type="email" name="email" value="" required autofocus autocomplete="username"
+                                type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
+                                aria-describedby="emailError" aria-invalid="false"
                                 inputmode="email" maxlength="120" placeholder="usuario@gmail.com" />
                         </div>
 
-                        <p id="emailError" class="mt-2 hidden text-xs font-bold text-rose-500 dark:text-rose-300">
+                        <p id="emailError" role="alert" class="mt-2 hidden text-xs font-bold text-rose-500 dark:text-rose-300">
                             Ingresa un correo válido, por ejemplo: usuario@gmail.com
                         </p>
                     </div>
@@ -443,7 +575,7 @@
                             Contraseña
                         </label>
 
-                        <div class="relative">
+                        <div class="login-field-control relative">
                             <span
                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 dark:text-slate-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
@@ -457,32 +589,31 @@
                             <x-input id="password"
                                 class="login-input mt-1 block w-full rounded-2xl border-slate-300 bg-white/95 py-4 pl-11 pr-12 text-base text-slate-800 placeholder-slate-400 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder-slate-500"
                                 type="password" name="password" required autocomplete="current-password"
+                                aria-describedby="passwordError" aria-invalid="false"
                                 placeholder="Ingresa tu contraseña" />
 
                             <button type="button" id="togglePassword"
                                 class="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 transition hover:text-emerald-600 dark:text-slate-500 dark:hover:text-emerald-300"
-                                aria-label="Mostrar u ocultar contraseña">
-                                <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                    fill="currentColor">
-                                    <path
-                                        d="M10 3c4.5 0 8.27 2.94 9.54 7-.68 2.16-2.02 4-3.83 5.32A9.96 9.96 0 0110 17c-4.5 0-8.27-2.94-9.54-7C1.73 5.94 5.5 3 10 3zm0 3.5A3.5 3.5 0 1013.5 10 3.5 3.5 0 0010 6.5z" />
-                                </svg>
-
-                                <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" class="hidden h-5 w-5"
-                                    viewBox="0 0 20 20" fill="currentColor">
-                                    <path
-                                        d="M3.28 2.22a.75.75 0 10-1.06 1.06l1.65 1.65A10.94 10.94 0 00.46 10 10.94 10.94 0 002 12.55a10.52 10.52 0 003.12 2.88 10.85 10.85 0 004.88 1.12c1.37 0 2.68-.24 3.9-.68l2.82 2.82a.75.75 0 001.06-1.06L3.28 2.22zM10 6.5c.54 0 1.04.12 1.49.33l-4.66 4.66A3.5 3.5 0 0110 6.5zM10 14a3.5 3.5 0 01-2.02-.64l4.88-4.88A3.5 3.5 0 0110 14z" />
-                                </svg>
+                                aria-label="Mostrar contraseña" aria-pressed="false" aria-controls="password"
+                                title="Mostrar contraseña">
+                                <i id="eyeOpen" class="ph-duotone ph-eye" aria-hidden="true"></i>
+                                <i id="eyeClosed" class="ph-duotone ph-eye-slash hidden" aria-hidden="true"></i>
                             </button>
                         </div>
+                        <p id="passwordError" role="alert" class="mt-2 hidden text-xs font-bold text-rose-500 dark:text-rose-300">
+                            Ingresa tu contraseña para continuar.
+                        </p>
                     </div>
 
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <label for="remember_me"
                             class="flex items-center text-sm font-medium text-slate-600 dark:text-slate-300">
-                            <x-checkbox id="remember_me" name="remember"
+                            <input type="hidden" name="remember" value="0" hidden>
+                            <x-checkbox id="remember_me" name="remember" value="1" :checked="(bool) old('remember', true)"
+                                aria-describedby="rememberHelp"
                                 class="rounded border-slate-300 text-emerald-600 shadow-sm focus:ring-emerald-500 dark:border-slate-600 dark:bg-slate-900" />
                             <span class="ms-2">Recordarme</span>
+                            <span id="rememberHelp" class="sr-only">Mantiene tu sesión en este dispositivo. No controla el guardado de contraseñas del navegador.</span>
                         </label>
 
                         @if (Route::has('password.request'))
@@ -493,10 +624,16 @@
                         @endif
                     </div>
 
+                    <div id="loginCooldown" class="hidden rounded-2xl border p-3 text-sm"
+                        style="border-color: var(--ui-warning-border); background: var(--ui-warning-soft); color: var(--ui-text);">
+                        <p id="loginCooldownMessage" role="status">Hagamos una pausa antes de volver a intentar.</p>
+                        <p class="mt-1 font-bold" aria-live="off">Podrás continuar en <span id="loginCooldownSeconds">0</span> segundos.</p>
+                    </div>
+
                     <div class="fade-up delay-4 pt-1">
                         <x-button id="loginBtn"
                             class="group login-btn flex w-full items-center justify-center gap-2 rounded-2xl border-0 bg-gradient-to-r from-emerald-600 via-emerald-500 to-sky-600 px-5 py-4 text-base font-black tracking-wide text-white shadow-lg shadow-emerald-500/25 transition hover:from-emerald-700 hover:via-emerald-600 hover:to-sky-700 disabled:cursor-not-allowed disabled:opacity-50"
-                            disabled>
+                            aria-label="Ingresar al sistema">
                             <span>Ingresar al sistema</span>
 
                             <svg xmlns="http://www.w3.org/2000/svg"
@@ -510,7 +647,7 @@
                     </div>
                 </form>
 
-                <div class="mt-7 border-t border-slate-200/80 pt-5 text-center dark:border-slate-700/70">
+                <div class="login-footer mt-7 border-t border-slate-200/80 pt-5 text-center dark:border-slate-700/70">
                     <p class="text-sm leading-6 text-slate-500 dark:text-slate-400">
                         Acceso exclusivo para usuarios autorizados del sistema institucional.
                     </p>
@@ -527,36 +664,94 @@
 
                 const emailInput = document.getElementById('email');
                 const emailError = document.getElementById('emailError');
+                const passwordError = document.getElementById('passwordError');
                 const loginBtn = document.getElementById('loginBtn');
                 const loginForm = document.getElementById('loginForm');
                 const themeToggle = document.getElementById('loginThemeToggle');
+                const politica = @json(config('seguridad-acceso'));
+                const pausaServidor = @json(max(0, (int) session('acceso_bloqueado_hasta', 0) - now()->timestamp));
+                const servidorHasta = Date.now() + pausaServidor * 1000;
+                const cooldown = document.getElementById('loginCooldown');
+                const cooldownMessage = document.getElementById('loginCooldownMessage');
+                const cooldownSeconds = document.getElementById('loginCooldownSeconds');
+                let guardado = {};
+                try { guardado = JSON.parse(sessionStorage.getItem('savp-acceso-incompleto') || '{}'); } catch (_) {}
+                const pausa = window.crearPausaAcceso(politica, guardado);
+                let enviando = false;
+                let ultimaPausa = 0;
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+                const fieldAnimations = new Map();
+                let attempted = false;
+
+                function actualizarPausa() {
+                    const segundos = Math.max(pausa.restantes(), Math.ceil((servidorHasta - Date.now()) / 1000), 0);
+                    cooldown.classList.toggle('hidden', segundos === 0);
+                    cooldownSeconds.textContent = segundos;
+                    if (segundos > 0 && ultimaPausa === 0) {
+                        cooldownMessage.textContent = 'Hiciste varios intentos seguidos. Espera un momento y revisa tus datos.';
+                    }
+                    if (segundos === 0 && ultimaPausa > 0) {
+                        cooldownMessage.textContent = 'Ya puedes volver a intentar.';
+                    }
+                    ultimaPausa = segundos;
+                    loginBtn.disabled = segundos > 0 || enviando;
+                    loginBtn.setAttribute('aria-disabled', String(segundos > 0 || enviando));
+                    loginBtn.querySelector('span').textContent = enviando ? 'Ingresando…' : segundos > 0 ? `Espera ${segundos} s` : 'Ingresar al sistema';
+                    return segundos;
+                }
+
+                function guardarPausa() {
+                    try { sessionStorage.setItem('savp-acceso-incompleto', JSON.stringify(pausa.estado())); } catch (_) {}
+                }
+
+                function shakeField(input) {
+                    const control = input.closest('.login-field-control');
+                    if (!control || reducedMotion.matches) return;
+                    fieldAnimations.get(control)?.cancel();
+                    const animation = control.animate([
+                        { transform: 'translateX(0)' },
+                        { transform: 'translateX(-5px)' },
+                        { transform: 'translateX(5px)' },
+                        { transform: 'translateX(-4px)' },
+                        { transform: 'translateX(4px)' },
+                        { transform: 'translateX(0)' }
+                    ], { duration: 360, easing: 'ease-in-out' });
+                    fieldAnimations.set(control, animation);
+                }
+
+                reducedMotion.addEventListener('change', () => {
+                    if (reducedMotion.matches) {
+                        fieldAnimations.forEach(animation => animation.cancel());
+                    }
+                });
 
                 function validateEmail(email) {
                     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
                 }
 
                 function updateFormState() {
-                    if (!emailInput || !passwordInput || !loginBtn || !emailError) return;
+                    if (!emailInput || !passwordInput || !loginBtn || !emailError || !passwordError) return;
 
                     const emailValue = emailInput.value.trim();
-                    const passwordValue = passwordInput.value.trim();
+                    const passwordValue = passwordInput.value;
 
                     const isEmailValid = validateEmail(emailValue);
                     const hasPassword = passwordValue.length > 0;
 
                     emailInput.classList.remove('input-valid', 'input-invalid');
 
-                    if (emailValue.length === 0) {
-                        emailError.classList.add('hidden');
-                    } else if (isEmailValid) {
-                        emailInput.classList.add('input-valid');
-                        emailError.classList.add('hidden');
-                    } else {
-                        emailInput.classList.add('input-invalid');
-                        emailError.classList.remove('hidden');
-                    }
-
-                    loginBtn.disabled = !(isEmailValid && hasPassword);
+                    const emailInvalid = !isEmailValid && (attempted || emailValue.length > 0);
+                    const passwordInvalid = !hasPassword && attempted;
+                    emailInput.classList.toggle('input-valid', isEmailValid);
+                    emailInput.classList.toggle('input-invalid', emailInvalid);
+                    passwordInput.classList.toggle('input-invalid', passwordInvalid);
+                    emailInput.setAttribute('aria-invalid', String(emailInvalid));
+                    passwordInput.setAttribute('aria-invalid', String(passwordInvalid));
+                    emailError.textContent = emailValue.length === 0
+                        ? 'Ingresa tu correo electrónico para continuar.'
+                        : 'Revisa el correo, por ejemplo: usuario@gmail.com';
+                    emailError.classList.toggle('hidden', !emailInvalid);
+                    passwordError.classList.toggle('hidden', !passwordInvalid);
                 }
 
                 function toggleTheme() {
@@ -585,6 +780,9 @@
                         const isPassword = passwordInput.getAttribute('type') === 'password';
 
                         passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                        togglePassword.setAttribute('aria-pressed', String(isPassword));
+                        togglePassword.setAttribute('aria-label', isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña');
+                        togglePassword.title = isPassword ? 'Ocultar contraseña' : 'Mostrar contraseña';
 
                         if (eyeOpen && eyeClosed) {
                             eyeOpen.classList.toggle('hidden');
@@ -604,29 +802,53 @@
                 }
 
                 updateFormState();
+                actualizarPausa();
+                let temporizadorPausa = window.setInterval(actualizarPausa, 500);
+                window.addEventListener('pagehide', () => window.clearInterval(temporizadorPausa));
+                window.addEventListener('pageshow', () => {
+                    enviando = false;
+                    loginForm.removeAttribute('aria-busy');
+                    window.clearInterval(temporizadorPausa);
+                    temporizadorPausa = window.setInterval(actualizarPausa, 500);
+                    actualizarPausa();
+                });
 
                 @if ($errors->any())
-                    if (emailInput) emailInput.value = '';
-                    if (passwordInput) passwordInput.value = '';
-                    updateFormState();
+                    if (passwordInput) shakeField(passwordInput);
                 @endif
 
                 if (loginForm && loginBtn) {
                     loginForm.addEventListener('submit', function (event) {
+                        if (actualizarPausa() > 0 || enviando) {
+                            event.preventDefault();
+                            return;
+                        }
                         const emailValue = emailInput ? emailInput.value.trim() : '';
-                        const passwordValue = passwordInput ? passwordInput.value.trim() : '';
+                        const passwordValue = passwordInput ? passwordInput.value : '';
 
                         const isEmailValid = validateEmail(emailValue);
                         const hasPassword = passwordValue.length > 0;
 
                         if (!isEmailValid || !hasPassword) {
                             event.preventDefault();
+                            attempted = true;
                             updateFormState();
+                            if (!isEmailValid) shakeField(emailInput);
+                            if (!hasPassword) shakeField(passwordInput);
+                            (!isEmailValid ? emailInput : passwordInput).focus();
+                            pausa.registrarFallo();
+                            guardarPausa();
+                            actualizarPausa();
                             return;
                         }
 
+                        loginForm.setAttribute('aria-busy', 'true');
+                        enviando = true;
+                        pausa.reiniciar();
+                        guardarPausa();
                         loginBtn.disabled = true;
                         loginBtn.setAttribute('aria-disabled', 'true');
+                        loginBtn.querySelector('span').textContent = 'Ingresando…';
                     });
                 }
             });

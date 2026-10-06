@@ -1,35 +1,5 @@
 @extends('layouts.app')
-
-@section('title', 'Gestión de Estudiantes')
-
+@section('title', 'Gestión de estudiantes')
 @section('content')
-    <div class="space-y-6">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-                <div class="flex flex-wrap items-center gap-2 text-sm font-semibold">
-                    <a href="{{ route('dashboard') }}"
-                        class="text-[var(--ui-muted)] transition hover:text-[var(--ui-primary)]">
-                        Inicio
-                    </a>
-
-                    <span class="text-[var(--ui-muted)]">/</span>
-
-                    <span class="text-[var(--ui-primary)]">
-                        Estudiantes
-                    </span>
-                </div>
-
-                <h1 class="mt-2 text-3xl font-black tracking-tight text-[var(--ui-text)] sm:text-4xl">
-                    Gestión de Estudiantes
-                </h1>
-
-                <p class="mt-2 max-w-3xl text-sm leading-7 text-[var(--ui-muted)]">
-                    Administra matrícula, inscripción, especialidad técnica y seguimiento académico-administrativo
-                    de los estudiantes registrados en la institución.
-                </p>
-            </div>
-        </div>
-
-        @livewire('admin.gestion-estudiantes')
-    </div>
+    @livewire('admin.gestion-estudiantes')
 @endsection

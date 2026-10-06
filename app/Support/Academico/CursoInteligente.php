@@ -30,6 +30,10 @@ class CursoInteligente
             );
         }
 
+        if (str_contains($normalizado, 'primaria')) {
+            return self::respuestaBase(false, $original, $normalizado, 'Este colegio tiene habilitado el catálogo de secundaria. La apertura de otro nivel requiere un trámite institucional independiente.');
+        }
+
         $ordenesDetectados = self::detectarOrdenes($normalizado);
 
         if (count($ordenesDetectados) === 0) {
@@ -59,7 +63,7 @@ class CursoInteligente
                 valido: true,
                 entradaOriginal: $original,
                 entradaNormalizada: $normalizado,
-                mensaje: 'Curso interpretado correctamente.',
+                mensaje: $orden>6?'Grado adicional reconocido. Requiere autorización expresa y fundamento normativo para la gestión solicitada.':'Curso interpretado correctamente.',
                 ordenesDetectados: $ordenesDetectados
             ),
             $curso,
@@ -73,12 +77,12 @@ class CursoInteligente
 
     public static function desdeOrden(int $orden): array
     {
-        if ($orden < 1 || $orden > 6) {
+        if ($orden < 1 || $orden > 20) {
             return self::respuestaBase(
                 valido: false,
                 entradaOriginal: (string) $orden,
                 entradaNormalizada: (string) $orden,
-                mensaje: 'El curso institucional debe estar entre 1ro y 6to de Secundaria.'
+                mensaje: 'Escribe un orden académico de 1 a 20. Los grados adicionales requieren una autorización expresa.'
             );
         }
 
@@ -87,7 +91,7 @@ class CursoInteligente
                 valido: true,
                 entradaOriginal: (string) $orden,
                 entradaNormalizada: (string) $orden,
-                mensaje: 'Curso seleccionado desde catálogo institucional.',
+                mensaje: $orden>6?'Grado adicional reconocido; la autorización todavía debe revisarse.':'Curso seleccionado desde catálogo institucional.',
                 ordenesDetectados: [$orden]
             ),
             self::cursoOficial($orden),
@@ -108,16 +112,21 @@ class CursoInteligente
             4 => '4to de Secundaria',
             5 => '5to de Secundaria',
             6 => '6to de Secundaria',
+            7 => '7mo de Secundaria',
+            8 => '8vo de Secundaria',
+            9 => '9no de Secundaria',
+            10 => '10mo de Secundaria',
         ];
 
         return [
             'orden' => $orden,
-            'nombre' => $nombres[$orden] ?? "{$orden}to de Secundaria",
+            'nombre' => $nombres[$orden] ?? "{$orden}° de Secundaria",
+            'extraordinario' => $orden>6,
             'nivel' => self::nivelPorOrden($orden),
             'descripcion' => self::descripcionPorOrden($orden),
-            'categoria' => $orden <= 3 ? 'Formación general' : 'Formación técnica especializada',
-            'requiere_plan_especialidad' => $orden >= 4,
-            'requiere_horario_tecnico' => $orden >= 4,
+            'categoria' => $orden>6?'Ampliación por autorizar':($orden <= 3 ? 'Formación general' : 'Formación técnica especializada'),
+            'requiere_plan_especialidad' => $orden >= 4 && $orden<=6,
+            'requiere_horario_tecnico' => $orden >= 4 && $orden<=6,
         ];
     }
 
@@ -143,7 +152,7 @@ class CursoInteligente
             4 => 'Curso correspondiente al cuarto año de secundaria, orientado al fortalecimiento académico y al desarrollo de la especialización técnica.',
             5 => 'Curso correspondiente al quinto año de secundaria, orientado a la profundización académica, técnica y preparación progresiva para el egreso.',
             6 => 'Curso correspondiente al sexto año de secundaria, orientado a la consolidación académica, técnica y cierre formativo de la etapa secundaria.',
-            default => 'Curso oficial de secundaria registrado en el catálogo académico institucional.',
+            default => 'Grado adicional solicitado. Su incorporación y organización requieren autorización expresa para la gestión correspondiente.',
         };
     }
 
@@ -155,7 +164,7 @@ class CursoInteligente
             'Estudiantes inscritos',
         ];
 
-        if ($orden >= 4) {
+        if ($orden >= 4 && $orden<=6) {
             $relaciones[] = 'Plan de Especialidad';
             $relaciones[] = 'Bloques técnicos por turno';
         }
@@ -171,7 +180,8 @@ class CursoInteligente
             $advertencias[] = 'No se escribió “secundaria”, pero el sistema asumirá que corresponde al nivel secundario.';
         }
 
-        if ($orden >= 4 && ! str_contains($texto, 'tecn') && ! str_contains($texto, 'especial')) {
+        if($orden>6)$advertencias[]='Este grado está fuera del catálogo ordinario actual. La autoridad debe comprobar el fundamento normativo de su ampliación; no se asigna un tramo técnico automáticamente.';
+        if ($orden >= 4 && $orden<=6 && ! str_contains($texto, 'tecn') && ! str_contains($texto, 'especial')) {
             $advertencias[] = 'El curso pertenece al tramo de especialización técnica; recuerda configurar Plan de Especialidad.';
         }
 
@@ -243,6 +253,9 @@ class CursoInteligente
 
         $detectados = [];
 
+        $adicionales=[7=>'septimo|septima|siete',8=>'octavo|octava|ocho',9=>'noveno|novena|nueve',10=>'decimo|decima|diez',11=>'undecimo|once',12=>'duodecimo|doce'];
+        foreach(range(7,20) as $n)$patrones[$n]=['/\b'.$n.'\s*(?:mo|vo|no|ro|do|to|°|º)?\b/u', '/\b(?:'.($adicionales[$n]??'orden-no-expresado').')\b/u'];
+
         foreach ($patrones as $orden => $regexList) {
             foreach ($regexList as $regex) {
                 if (preg_match($regex, $texto)) {
@@ -264,6 +277,7 @@ class CursoInteligente
     ): array {
         return [
             'valido' => $valido,
+            'extraordinario' => false,
             'entrada_original' => $entradaOriginal,
             'entrada_normalizada' => $entradaNormalizada,
             'mensaje' => $mensaje,

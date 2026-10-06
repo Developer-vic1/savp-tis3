@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\Soporte\CodigoInstitucional;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Support\Modelos\CodigoInstitucional;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-/** Modelo del contrato canónico; atributos históricos redundantes permanecen en Legado. */
+/** Modelo único de la tabla oficial; atributos y relaciones del contrato canónico. */
 class Calificacion extends Model
 {
     use CodigoInstitucional;
@@ -27,12 +30,14 @@ class Calificacion extends Model
         'cod_pes',
         'cod_pev',
         'not_cal',
+        'fea_cal',
         'obs_cal',
         'est_cal',
     ];
 
     protected $casts = [
         'not_cal' => 'decimal:2',
+        'fea_cal' => 'date',
     ];
 
     public function inscripcionEstudiante(): BelongsTo
@@ -53,5 +58,35 @@ class Calificacion extends Model
     public function periodoEvaluacion(): BelongsTo
     {
         return $this->belongsTo(PeriodoEvaluacion::class, 'cod_pev', 'cod_pev');
+    }
+
+    public function estudiante(): HasOneThrough
+    {
+        return $this->hasOneThrough(Estudiante::class, InscripcionEstudiante::class, 'cod_ins', 'cod_est', 'cod_ins', 'cod_est');
+    }
+
+    public function asignatura(): HasOneThrough
+    {
+        return $this->hasOneThrough(Asignatura::class, PlanAsignatura::class, 'cod_pas', 'cod_asi', 'cod_pas', 'cod_asi');
+    }
+
+    public function getCodEstAttribute(): ?string
+    {
+        return $this->estudiante?->cod_est;
+    }
+
+    public function getCodAsiAttribute(): ?string
+    {
+        return $this->asignatura?->cod_asi;
+    }
+
+    public function scopeDeEstudiante(Builder $query, string $estudiante): Builder
+    {
+        return $query->whereHas('inscripcionEstudiante', fn (Builder $inscripcion) => $inscripcion->where('cod_est', $estudiante));
+    }
+
+    public function scopeDeAsignatura(Builder $query, string $asignatura): Builder
+    {
+        return $query->whereHas('planAsignatura', fn (Builder $plan) => $plan->where('cod_asi', $asignatura));
     }
 }

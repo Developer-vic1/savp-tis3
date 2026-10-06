@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HorarioDetalle extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'horario_detalle';
 
     protected $primaryKey = 'cod_hde';
@@ -41,9 +44,6 @@ class HorarioDetalle extends Model
     protected static function booted(): void
     {
         static::creating(function (HorarioDetalle $detalle) {
-            if (empty($detalle->cod_hde)) {
-                $detalle->cod_hde = 'HDE_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (empty($detalle->est_hde)) {
                 $detalle->est_hde = 'ACTIVO';

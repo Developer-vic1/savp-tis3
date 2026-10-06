@@ -1271,7 +1271,7 @@ class AsignaturaInteligente
                 ? 'Asignatura redactada formalmente por el motor inteligente a partir de una entrada informal.'
                 : 'Asignatura propuesta fuera del catálogo base. Debe validarse académicamente antes de consolidarse como materia institucional.',
             'palabras_clave' => self::extraerPalabrasClave($nombreSugerido),
-            'carreras_relacionadas' => self::sugerirCarreras($nombreSugerido),
+            'carreras_relacionadas' => [],
         ];
 
         return array_merge(
@@ -1635,6 +1635,11 @@ class AsignaturaInteligente
         return 'ASI';
     }
 
+    public static function siglaCompatible(string $nombre, string $sigla): bool
+    {
+        return mb_strtoupper(trim($sigla)) === self::generarSigla($nombre);
+    }
+
     public static function sugerirHoras(string $nombre): int
     {
         $normalizado = self::normalizar($nombre);
@@ -1817,7 +1822,7 @@ class AsignaturaInteligente
 
         foreach (self::catalogo() as $asignatura) {
             if (
-                self::calcularSimilitud($normalizado, $asignatura['nombre']) >= 60
+                self::calcularSimilitud($normalizado, $asignatura['nombre']) >= 88
                 || self::coincideConAsignatura($normalizado, $asignatura)
             ) {
                 $carreras = array_merge($carreras, $asignatura['carreras_relacionadas']);
@@ -1834,7 +1839,7 @@ class AsignaturaInteligente
             } elseif (self::contieneAlguna($normalizado, ['dibujo', 'diseno', 'arte', 'visual'])) {
                 $carreras = ['Diseño Gráfico', 'Arquitectura', 'Comunicación Visual'];
             } else {
-                $carreras = ['Orientación vocacional pendiente de validación'];
+                $carreras = [];
             }
         }
 
@@ -1963,8 +1968,7 @@ class AsignaturaInteligente
                 if (
                     mb_strlen($normalizado) >= 4
                     && (
-                        str_contains($normalizado, $claveNormalizada)
-                        || str_contains($claveNormalizada, $normalizado)
+                        $normalizado === $claveNormalizada
                     )
                 ) {
                     $similitudPalabras = max($similitudPalabras, 92);
@@ -2008,8 +2012,7 @@ class AsignaturaInteligente
             if (
                 mb_strlen($normalizado) >= 4
                 && (
-                    str_contains($normalizado, $claveNormalizada)
-                    || str_contains($claveNormalizada, $normalizado)
+                    $normalizado === $claveNormalizada
                 )
             ) {
                 return true;

@@ -2,20 +2,20 @@
 
 namespace App\Services\Reportes;
 
-use App\Models\Asignatura;
-use App\Models\Bitacora;
-use App\Models\Curso;
-use App\Models\Docente;
-use App\Models\EspecialidadTecnica;
-use App\Models\Estudiante;
-use App\Models\InscripcionEstudiante;
-use App\Models\InstitucionProcedencia;
-use App\Models\Paralelo;
-use App\Models\PeriodoEvaluacion;
-use App\Models\PersonalInstitucional;
-use App\Models\TipoVinculacionEstudiante;
-use App\Models\Turno;
-use App\Models\User;
+use App\Models\Oficial\Academico\Asignatura;
+use App\Models\Oficial\Academico\Bitacora;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\EspecialidadTecnica;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\InstitucionProcedencia;
+use App\Models\Oficial\Academico\Paralelo;
+use App\Models\Oficial\Academico\PeriodoEvaluacion;
+use App\Models\Oficial\Academico\PersonalInstitucional;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\Turno;
+use App\Models\Oficial\Sistema\User;
 
 class DatosReporteAdministrativoService
 {

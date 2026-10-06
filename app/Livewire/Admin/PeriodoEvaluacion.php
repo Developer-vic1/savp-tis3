@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\PeriodoEvaluacion as PeriodoModel;
+use App\Models\Oficial\Academico\PeriodoEvaluacion as PeriodoModel;
 use App\Support\Academico\PeriodoEvaluacionInteligente;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +17,7 @@ class PeriodoEvaluacion extends CatalogoInstitucional
     protected function relacionConteo(): ?string { return 'calificaciones'; }
     protected function camposBusqueda(): array { return ['cod_pev', 'nom_pev']; }
     protected function camposFormulario(): array { return ['nom_pev' => '', 'ord_pev' => 1, 'est_pev' => 'ACTIVO']; }
-    protected function reglas(): array { return ['form.nom_pev' => ['required', 'string', 'min:4', 'max:100'], 'form.ord_pev' => ['required', 'integer', 'min:1', 'max:20'], 'form.est_pev' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])]]; }
+    protected function reglas(): array { return ['form.nom_pev' => ['required', 'string', 'min:4', 'max:100'], 'form.ord_pev' => ['required', 'integer', 'min:1', 'max:3'], 'form.est_pev' => ['required', Rule::in(['ACTIVO', 'INACTIVO'])]]; }
     protected function vista(): string { return 'livewire.admin.periodo-evaluacion'; }
     protected function configuracion(): array
     {
@@ -30,7 +30,7 @@ class PeriodoEvaluacion extends CatalogoInstitucional
             'estado' => 'est_pev',
             'relacion' => 'calificaciones_count',
             'relacion_etiqueta' => 'Calificaciones vinculadas',
-            'columnas' => ['cod_pev' => 'Código', 'nom_pev' => 'Periodo', 'ord_pev' => 'Orden', 'est_pev' => 'Estado'],
+            'columnas' => ['nom_pev' => 'Periodo', 'ord_pev' => 'Orden', 'est_pev' => 'Estado'],
         ];
     }
 }

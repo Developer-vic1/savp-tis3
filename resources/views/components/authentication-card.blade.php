@@ -1,4 +1,4 @@
-<div class="w-full max-w-[46rem]">
+<div {{ $attributes->merge(['class' => 'w-full max-w-[46rem]']) }}>
     @isset($logo)
         <div class="mb-5">
             {{ $logo }}

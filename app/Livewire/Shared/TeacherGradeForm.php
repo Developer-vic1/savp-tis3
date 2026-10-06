@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Shared;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\GradeService;
 use App\Services\RoleDashboardResolver;
 use Livewire\Attributes\Locked;
@@ -14,7 +14,7 @@ class TeacherGradeForm extends Component
     #[Locked]
     public string $curso;
 
-    public array $form = ['cod_est' => '', 'cod_pev' => '', 'not_cal' => null, 'obs_cal' => ''];
+    public array $form = ['cod_est' => '', 'cod_pev' => '', 'fea_cal' => '', 'not_cal' => null, 'obs_cal' => ''];
 
     #[Locked]
     public array $analisis = [];
@@ -55,6 +55,7 @@ class TeacherGradeForm extends Component
         $grade = app(GradeService::class)->teacherGrade($this->actor(), $this->curso, $id);
         $this->gradeId = $grade->cod_cal;
         $this->form = $grade->only(['cod_est', 'cod_pev', 'not_cal', 'obs_cal']);
+        $this->form['fea_cal'] = $grade->fea_cal?->format('Y-m-d');
         $this->resetValidation();
         $this->analizar();
     }
@@ -63,7 +64,7 @@ class TeacherGradeForm extends Component
     {
         $this->actor();
         $this->gradeId = null;
-        $this->form = ['cod_est' => '', 'cod_pev' => '', 'not_cal' => null, 'obs_cal' => ''];
+        $this->form = ['cod_est' => '', 'cod_pev' => '', 'fea_cal' => '', 'not_cal' => null, 'obs_cal' => ''];
         $this->analisis = [];
         $this->resetValidation();
     }
@@ -87,11 +88,12 @@ class TeacherGradeForm extends Component
         $data = $this->validate([
             'form.cod_est' => ['required', 'string', 'max:20'], 'form.cod_pev' => ['required', 'string', 'max:20'],
             'form.not_cal' => ['required', 'numeric', 'between:0,100'], 'form.obs_cal' => ['nullable', 'string', 'max:255'],
+            'form.fea_cal' => ['required', 'date_format:Y-m-d'],
         ])['form'];
         $service = app(GradeService::class);
         $context = $service->teacherContext($this->actor(), $this->curso);
         $grade = $this->gradeId ? $service->teacherGrade($this->actor(), $this->curso, $this->gradeId) : null;
-        $service->save($this->actor(), $context['course']->cod_pas, $data['cod_est'], $data['cod_pev'], (float) $data['not_cal'], $data['obs_cal'] ?? null, $grade);
+        $service->save($this->actor(), $context['course']->cod_pas ?? $context['course']->cod_pes, $data['cod_est'], $data['cod_pev'], (float) $data['not_cal'], $data['obs_cal'] ?? null, $grade, fechaAcademica: $data['fea_cal']);
         session()->flash('status', $grade ? 'Nota oficial revisada para la gestión de esta asignación.' : 'Nota oficial registrada para la gestión de esta asignación.');
         $this->redirectRoute('docente.cursos.calificaciones', $this->curso);
     }

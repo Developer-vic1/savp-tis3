@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\Shared\AcademicPlan;
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Mockery;

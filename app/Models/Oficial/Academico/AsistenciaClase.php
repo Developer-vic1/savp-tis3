@@ -3,13 +3,16 @@
 namespace App\Models\Oficial\Academico;
 
 use App\Models\Oficial\AulaVirtual\ClaseVirtual;
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AsistenciaClase extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'asistencia_clase';
 
     protected $primaryKey = 'cod_asi_cla';
@@ -43,15 +46,6 @@ class AsistenciaClase extends Model
         'hor_ini_asi_cla' => 'datetime:H:i',
         'hor_fin_asi_cla' => 'datetime:H:i',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (AsistenciaClase $asistenciaClase) {
-            if (! $asistenciaClase->cod_asi_cla) {
-                $asistenciaClase->cod_asi_cla = 'ASIC_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function claseVirtual(): BelongsTo
     {

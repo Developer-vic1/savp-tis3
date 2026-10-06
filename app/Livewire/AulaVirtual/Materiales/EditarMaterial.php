@@ -2,7 +2,7 @@
 
 namespace App\Livewire\AulaVirtual\Materiales;
 
-use App\Models\AulaVirtual\MaterialClase;
+use App\Models\Oficial\AulaVirtual\MaterialClase;
 use App\Services\AulaVirtual\MaterialService;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;

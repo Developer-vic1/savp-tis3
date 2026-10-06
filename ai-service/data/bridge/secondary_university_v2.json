@@ -354,6 +354,26 @@
         "El perfil técnico medio se orienta a prácticas de campo operativas; la ingeniería ambiental formula proyectos de tratamiento y modelación matemática."
       ],
       "version": "2.0.0"
+    },
+    {
+      "relation_id": "BR2-MATH-SISC-UPB",
+      "secondary_content": "Matematica de Educacion Secundaria Comunitaria Productiva",
+      "secondary_competency": "Razonamiento matematico, algebra, funciones y analisis cuantitativo",
+      "competency": "razonamiento matematico, algebra y funciones",
+      "university_knowledge": "algebra lineal y matematica para ingenieria",
+      "initial_subject": "Algebra Lineal / Matematicas para Ingenieria I",
+      "career_ids": [
+        "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES"
+      ],
+      "source_secondary": "BO-ME-CURRICULO-BASE-2012",
+      "source_university": "BO-UPB-LP-SISC-MALLA-2026",
+      "relation_status": "DOCUMENT_SUPPORTED_INFERENCE",
+      "evidence_label": "INFERENCIA DOCUMENTADA",
+      "justification": "La malla UPB de Sistemas Computacionales incluye Algebra Lineal y Matematicas para Ingenieria I en el primer semestre; el Curriculo Base documenta los saberes matematicos escolares que sirven de antecedente, sin afirmar equivalencia curricular.",
+      "limitations": [
+        "La relacion identifica continuidad tematica; no convalida materias ni garantiza preparacion suficiente."
+      ],
+      "version": "2.0.0"
     }
   ]
 }

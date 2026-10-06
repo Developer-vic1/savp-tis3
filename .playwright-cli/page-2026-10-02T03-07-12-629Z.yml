@@ -1,0 +1,699 @@
+- generic [ref=f1e3]:
+  - complementary "Navegación de Estudiante" [ref=f1e4]:
+    - generic [ref=f1e5]:
+      - link "Logo de la Unidad Educativa Franz Tamayo N°3 Franz Tamayo N°3 SAVP · TIS 3" [ref=f1e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - img "Logo de la Unidad Educativa Franz Tamayo N°3" [ref=f1e8]
+        - generic [ref=f1e9]:
+          - generic [ref=f1e10]: Franz Tamayo N°3
+          - generic [ref=f1e11]: SAVP · TIS 3
+      - button "Contraer menú" [expanded] [ref=f1e12] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f1e13]: 
+      - text: 
+    - generic [ref=f1e14]:
+      - generic [aria-hidden] [ref=f1e16]: 
+      - generic [ref=f1e17]:
+        - generic [ref=f1e18]: Estudiante
+        - generic [ref=f1e19]: Espacio de trabajo institucional
+    - navigation "Módulos autorizados" [ref=f1e20]:
+      - generic [ref=f1e21]: Principal
+      - link "Inicio" [ref=f1e22] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - generic [aria-hidden] [ref=f1e24]: 
+      - region "Académico" [ref=f1e26]:
+        - button "Grupo Académico" [ref=f1e27] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f1e29]: 
+          - generic [ref=f1e30]: Académico
+          - generic [aria-hidden] [ref=f1e31]: 
+        - text:    
+      - region "Orientación" [ref=f1e32]:
+        - button "Grupo Orientación" [expanded] [ref=f1e33] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f1e35]: 
+          - generic [ref=f1e36]: Orientación
+          - generic [aria-hidden] [ref=f1e37]: 
+        - group "Grupo Orientación" [ref=f1e38]:
+          - link "Mis intereses" [ref=f1e39] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/intereses
+            - generic [aria-hidden] [ref=f1e41]: 
+          - link "Mi futuro académico" [ref=f1e43] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/futuro
+            - generic [aria-hidden] [ref=f1e45]: 
+          - link "Mi preparación" [ref=f1e47] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/preparacion
+            - generic [aria-hidden] [ref=f1e49]: 
+          - link "Mi plan" [ref=f1e51] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/plan
+            - generic [aria-hidden] [ref=f1e53]: 
+          - link "Fuentes académicas" [ref=f1e55] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/fuentes
+            - generic [aria-hidden] [ref=f1e57]: 
+          - link "Asistente de estudio" [ref=f1e59] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/asistente
+            - generic [aria-hidden] [ref=f1e61]: 
+    - generic [ref=f1e63]:
+      - link "Mi perfil" [ref=f1e64] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/user/profile
+        - generic [aria-hidden] [ref=f1e66]: 
+      - button "Cerrar sesión" [ref=f1e69] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f1e71]: 
+  - generic [ref=f1e73]:
+    - banner [ref=f1e74]:
+      - generic [ref=f1e76]:
+        - generic [ref=f1e77]: 02/10/2026
+        - generic [ref=f1e81]:
+          - generic [ref=f1e82]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f1e83]
+        - button "Notificaciones" [ref=f1e85] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f1e86] [cursor=pointer]
+        - button [ref=f1e90] [cursor=pointer]:
+          - generic [ref=f1e91]:
+            - img "Jose Luis Quispe Callisaya" [ref=f1e92]
+            - generic [ref=f1e93]:
+              - paragraph [ref=f1e94]: Jose Luis Quispe Callisaya
+              - paragraph [ref=f1e95]: Estudiante
+    - main [ref=f1e98]:
+      - generic [ref=f1e99]:
+        - generic [ref=f1e100]:
+          - generic [ref=f1e101]:
+            - generic [ref=f1e102]:
+              - generic [ref=f1e103]:
+                - generic [ref=f1e104]: Orientación académica y vocacional
+                - generic [ref=f1e105]: Perfil listo
+              - heading "Conoce tus intereses y explora tus opciones" [level=1] [ref=f1e106]
+              - paragraph [ref=f1e107]: El sistema analiza por separado tus intereses, tu preparación académica observada y la evidencia disponible. No predice tu éxito, no mide tu inteligencia y no decide una carrera por ti.
+            - generic [ref=f1e108]:
+              - generic [ref=f1e109]:
+                - generic [ref=f1e110]: Requisitos obligatorios
+                - generic [ref=f1e111]: 4/4
+              - paragraph [ref=f1e114]: 100% de los requisitos mínimos completados.
+          - navigation "Secciones de orientación" [ref=f1e115]:
+            - link "Perfil Revisa si tienes la información mínima para continuar." [ref=f1e116] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=perfil
+              - generic [ref=f1e118]:
+                - generic [ref=f1e119]: Perfil
+                - generic [ref=f1e120]: Revisa si tienes la información mínima para continuar.
+            - link "RIASEC Explora tus intereses mediante el cuestionario vocacional." [ref=f1e121] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=riasec
+              - generic [ref=f1e123]:
+                - generic [ref=f1e124]: RIASEC
+                - generic [ref=f1e125]: Explora tus intereses mediante el cuestionario vocacional.
+            - link "Análisis Consulta la evidencia académica y vocacional disponible." [ref=f1e126] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=analisis
+              - generic [ref=f1e128]:
+                - generic [ref=f1e129]: Análisis
+                - generic [ref=f1e130]: Consulta la evidencia académica y vocacional disponible.
+            - link "Fuentes Consulta información recuperada desde fuentes documentadas." [ref=f1e131] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=fuentes
+              - generic [ref=f1e133]:
+                - generic [ref=f1e134]: Fuentes
+                - generic [ref=f1e135]: Consulta información recuperada desde fuentes documentadas.
+            - link "Tutor Formula preguntas sobre carreras y evidencia disponible." [ref=f1e136] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=tutor
+              - generic [ref=f1e138]:
+                - generic [ref=f1e139]: Tutor
+                - generic [ref=f1e140]: Formula preguntas sobre carreras y evidencia disponible.
+        - generic [ref=f1e141]:
+          - generic [ref=f1e142]:
+            - generic [ref=f1e143]:
+              - paragraph [ref=f1e144]: Análisis multidimensional
+              - heading "Mi análisis y perfiles de carrera" [level=2] [ref=f1e145]
+              - paragraph [ref=f1e146]: La afinidad de intereses, la preparación académica y la cobertura de evidencia son dimensiones distintas. Una no sustituye a las otras.
+            - generic [ref=f1e147]: Perfil habilitado
+          - button "Actualizar análisis con mis datos" [ref=f1e150] [cursor=pointer]
+        - generic [ref=f1e152]:
+          - generic [ref=f1e153]:
+            - generic [ref=f1e154]:
+              - paragraph [ref=f1e155]: Cobertura de datos
+              - heading "Evidencia disponible de mi perfil" [level=2] [ref=f1e156]
+            - generic [ref=f1e157]: COMPLETE
+          - generic [ref=f1e158]:
+            - article [ref=f1e159]:
+              - generic [ref=f1e162]:
+                - heading "Datos académicos" [level=3] [ref=f1e163]
+                - generic [ref=f1e164]: Disponible
+            - article [ref=f1e165]:
+              - generic [ref=f1e168]:
+                - heading "Asistencia" [level=3] [ref=f1e169]
+                - generic [ref=f1e170]: Disponible
+            - article [ref=f1e171]:
+              - generic [ref=f1e174]:
+                - heading "Actividad de aprendizaje" [level=3] [ref=f1e175]
+                - generic [ref=f1e176]: Parcial
+            - article [ref=f1e177]:
+              - generic [ref=f1e180]:
+                - heading "Historia académica" [level=3] [ref=f1e181]
+                - generic [ref=f1e182]: Disponible
+            - article [ref=f1e183]:
+              - generic [ref=f1e186]:
+                - heading "Formación técnica BTH" [level=3] [ref=f1e187]
+                - generic [ref=f1e188]: Disponible
+            - article [ref=f1e189]:
+              - generic [ref=f1e192]:
+                - heading "Intereses declarados" [level=3] [ref=f1e193]
+                - generic [ref=f1e194]: Sin evidencia disponible
+          - paragraph [ref=f1e196]:
+            - strong [ref=f1e197]: "Importante:"
+            - text: un componente sin evidencia permanece como desconocido o no observado. No se interpreta como un desempeño de cero.
+        - region [ref=f1e198]:
+          - generic [ref=f1e199]:
+            - generic [ref=f1e200]:
+              - paragraph [ref=f1e201]: Comparativa completa
+              - heading "Opciones de carrera por dimensiones" [level=2] [ref=f1e202]
+              - paragraph [ref=f1e203]: "La tabla permite revisar todas las opciones en una sola vista. Las filas siguen el orden del catálogo: intereses, preparación, BTH y cobertura se leen por separado y no se convierten en un puesto ni en un porcentaje de compatibilidad."
+            - generic [ref=f1e204]: 7 de 7 opción(es) validadas
+          - generic [ref=f1e205]:
+            - generic [ref=f1e206]:
+              - generic [ref=f1e207]: Universidad
+              - combobox "Universidad" [ref=f1e208]:
+                - option "Todas las universidades" [selected]
+                - option "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz"
+                - option "Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Universidad Mayor de San Andrés, La Paz"
+                - option "Universidad Privada Boliviana - UPB, Campus La Paz"
+                - option "Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz"
+            - generic [ref=f1e209]:
+              - generic [ref=f1e210]: Área o carrera
+              - combobox "Área o carrera" [ref=f1e211]:
+                - option "Sistemas, informática y tecnología" [selected]
+                - option "Ingenieria de Sistemas · Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz"
+                - option "Ingeniería Ambiental · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Ingeniería Civil · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Ingeniería de Sistemas · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Psicología · Universidad Católica Boliviana San Pablo, Sede La Paz"
+                - option "Ingeniería Civil · Universidad Mayor de San Andrés, La Paz"
+                - option "Ingenieria de Sistemas Computacionales · Universidad Privada Boliviana - UPB, Campus La Paz"
+                - option "Ingenieria de Sistemas e Innovacion Digital · Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz"
+            - button "Aplicar" [ref=f1e213] [cursor=pointer]
+          - table [ref=f1e215]:
+            - caption [ref=f1e216]: Comparativa completa de las opciones de carrera analizadas.
+            - rowgroup [ref=f1e217]:
+              - row [ref=f1e218]:
+                - columnheader "Opción" [ref=f1e219]
+                - columnheader "Intereses" [ref=f1e220]
+                - columnheader "Preparación observada" [ref=f1e221]
+                - columnheader "BTH relacionado" [ref=f1e222]
+                - columnheader "Cobertura de evidencia" [ref=f1e223]
+            - rowgroup [ref=f1e224]:
+              - row [ref=f1e225]:
+                - rowheader "Ingeniería Ambiental Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f1e226]:
+                  - generic [ref=f1e227]: Ingeniería Ambiental
+                  - generic [ref=f1e228]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Parcial" [ref=f1e229]
+                - cell [ref=f1e231]:
+                  - paragraph [ref=f1e232]: 2 de 4 relaciones documentadas
+                  - paragraph [ref=f1e233]: 2 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e234]
+                - cell [ref=f1e236]:
+                  - paragraph [ref=f1e237]: 16 registros
+                  - paragraph [ref=f1e238]: 8 materias · 2 periodos
+              - row [ref=f1e239]:
+                - rowheader "Ingeniería Civil Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f1e240]:
+                  - generic [ref=f1e241]: Ingeniería Civil
+                  - generic [ref=f1e242]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Disponible" [ref=f1e243]
+                - cell [ref=f1e245]:
+                  - paragraph [ref=f1e246]: 3 de 4 relaciones documentadas
+                  - paragraph [ref=f1e247]: 1 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e248]
+                - cell [ref=f1e250]:
+                  - paragraph [ref=f1e251]: 16 registros
+                  - paragraph [ref=f1e252]: 8 materias · 2 periodos
+              - row [ref=f1e253]:
+                - rowheader "Ingeniería de Sistemas Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f1e254]:
+                  - generic [ref=f1e255]: Ingeniería de Sistemas
+                  - generic [ref=f1e256]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Parcial" [ref=f1e257]
+                - cell [ref=f1e259]:
+                  - paragraph [ref=f1e260]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f1e261]: 1 área(s) de refuerzo señalada(s)
+                - cell "Disponible" [ref=f1e262]
+                - cell [ref=f1e264]:
+                  - paragraph [ref=f1e265]: 16 registros
+                  - paragraph [ref=f1e266]: 8 materias · 2 periodos
+              - row [ref=f1e267]:
+                - rowheader "Psicología Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f1e268]:
+                  - generic [ref=f1e269]: Psicología
+                  - generic [ref=f1e270]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Disponible" [ref=f1e271]
+                - cell [ref=f1e273]:
+                  - paragraph [ref=f1e274]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f1e275]: 1 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e276]
+                - cell [ref=f1e278]:
+                  - paragraph [ref=f1e279]: 16 registros
+                  - paragraph [ref=f1e280]: 8 materias · 2 periodos
+              - row [ref=f1e281]:
+                - rowheader "Ingeniería Civil Universidad Mayor de San Andrés, La Paz" [ref=f1e282]:
+                  - generic [ref=f1e283]: Ingeniería Civil
+                  - generic [ref=f1e284]: Universidad Mayor de San Andrés, La Paz
+                - cell "Disponible" [ref=f1e285]
+                - cell [ref=f1e287]:
+                  - paragraph [ref=f1e288]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f1e289]: 1 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e290]
+                - cell [ref=f1e292]:
+                  - paragraph [ref=f1e293]: 16 registros
+                  - paragraph [ref=f1e294]: 8 materias · 2 periodos
+              - row [ref=f1e295]:
+                - rowheader "Ingenieria de Sistemas e Innovacion Digital Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz" [ref=f1e296]:
+                  - generic [ref=f1e297]: Ingenieria de Sistemas e Innovacion Digital
+                  - generic [ref=f1e298]: Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz
+                - cell "Sin evidencia disponible" [ref=f1e299]
+                - cell [ref=f1e301]:
+                  - paragraph [ref=f1e302]: 0 de 0 relaciones documentadas
+                  - paragraph [ref=f1e303]: 0 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e304]
+                - cell [ref=f1e306]:
+                  - paragraph [ref=f1e307]: 16 registros
+                  - paragraph [ref=f1e308]: 8 materias · 2 periodos
+              - row [ref=f1e309]:
+                - rowheader "Ingenieria de Sistemas Computacionales Universidad Privada Boliviana - UPB, Campus La Paz" [ref=f1e310]:
+                  - generic [ref=f1e311]: Ingenieria de Sistemas Computacionales
+                  - generic [ref=f1e312]: Universidad Privada Boliviana - UPB, Campus La Paz
+                - cell "Sin evidencia disponible" [ref=f1e313]
+                - cell [ref=f1e315]:
+                  - paragraph [ref=f1e316]: 1 de 1 relaciones documentadas
+                  - paragraph [ref=f1e317]: 0 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f1e318]
+                - cell [ref=f1e320]:
+                  - paragraph [ref=f1e321]: 16 registros
+                  - paragraph [ref=f1e322]: 8 materias · 2 periodos
+          - paragraph [ref=f1e323]: "Lectura de estados: “Disponible” indica una relación documentada; “Parcial” conserva una relación con límites explícitos; “Insuficiente” y “Sin evidencia disponible” señalan información por revisar sin asumir bajo desempeño."
+        - generic [ref=f1e324]:
+          - generic [ref=f1e325]:
+            - generic [ref=f1e326]:
+              - paragraph [ref=f1e327]: Exploración académica
+              - heading "Perfiles de carrera analizados" [level=2] [ref=f1e328]
+            - generic [ref=f1e329]: 7 opciones visibles de 7 validadas
+          - generic [ref=f1e330]:
+            - region [ref=f1e331]:
+              - generic [ref=f1e332]:
+                - heading "Universidad Católica Boliviana San Pablo, Sede La Paz" [level=3] [ref=f1e333]
+                - generic [ref=f1e334]: 4 carrera(s) con corpus validado
+              - generic [ref=f1e335]:
+                - article [ref=f1e336]:
+                  - generic [ref=f1e337]:
+                    - generic [ref=f1e338]:
+                      - paragraph [ref=f1e339]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                      - heading "Ingeniería Ambiental" [level=3] [ref=f1e340]
+                    - generic [ref=f1e341]:
+                      - generic [ref=f1e342]: "Afinidad: Parcial"
+                      - generic [ref=f1e343]: "BTH: Insuficiente"
+                  - generic [ref=f1e344]:
+                    - generic [ref=f1e345]:
+                      - heading "Afinidad de intereses" [level=4] [ref=f1e347]
+                      - paragraph [ref=f1e348]: Parcial
+                      - paragraph [ref=f1e349]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                      - generic [ref=f1e350]:
+                        - paragraph [ref=f1e351]: Fuente de la afinidad
+                        - generic [ref=f1e352]:
+                          - link "Ingeniería Ambiental — Perfil Profesional y Áreas de Estudio" [ref=f1e353] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/pregrado/ingenieria-ambiental/
+                          - code [ref=f1e354]: BO-UCB-LP-IAM-PROFILE-2026
+                        - generic [ref=f1e355]:
+                          - link "O*NET 31.0 Database and O*NET OnLine occupational profiles" [ref=f1e356] [cursor=pointer]:
+                            - /url: https://www.onetcenter.org/database.html
+                          - code [ref=f1e357]: USDOL-ETA-ONET-31-2026
+                    - generic [ref=f1e358]:
+                      - heading "Preparación académica" [level=4] [ref=f1e360]
+                      - paragraph [ref=f1e361]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                      - generic [ref=f1e362]:
+                        - paragraph [ref=f1e363]: Fuente de la preparación
+                        - generic [ref=f1e364]:
+                          - link "Reglamento del Bachillerato Técnico Humanístico (RM 0244/2023)" [ref=f1e365] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/documentos-normativos/reglamentos/2023/REGLAMENTO-BACHILLERATO_TECNICO_HUNISTICO_DEL_SUBSISTEMA_DE_EDUCACION_REGULAR_Y_SUBSISTEMA_DE_EDUCACION_ALTERNATIVA.pdf
+                          - code [ref=f1e366]: BO-ME-BTH-RM-0244-2023
+                        - generic [ref=f1e367]:
+                          - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e368] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                          - code [ref=f1e369]: BO-ME-CURRICULO-BASE-2012
+                        - generic [ref=f1e370]:
+                          - link "Ingeniería Ambiental — Malla Curricular, Gestión 2026" [ref=f1e371] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/wp-content/uploads/2025/12/IAM-2026.pdf
+                          - code [ref=f1e372]: BO-UCB-LP-IAM-MALLA-2026
+                    - generic [ref=f1e373]:
+                      - heading "Cobertura de evidencia" [level=4] [ref=f1e375]
+                      - generic [ref=f1e376]:
+                        - generic [ref=f1e377]:
+                          - term [ref=f1e378]: Observaciones
+                          - definition [ref=f1e379]: "16"
+                        - generic [ref=f1e380]:
+                          - term [ref=f1e381]: Materias distintas
+                          - definition [ref=f1e382]: "8"
+                        - generic [ref=f1e383]:
+                          - term [ref=f1e384]: Periodos ordenados
+                          - definition [ref=f1e385]: "2"
+                  - generic [ref=f1e386]:
+                    - group [ref=f1e387]:
+                      - generic "Evidencia y áreas de refuerzo" [ref=f1e388] [cursor=pointer]
+                    - group [ref=f1e389]:
+                      - generic "Fuentes y limitaciones" [ref=f1e390] [cursor=pointer]
+                - article [ref=f1e391]:
+                  - generic [ref=f1e392]:
+                    - generic [ref=f1e393]:
+                      - paragraph [ref=f1e394]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                      - heading "Ingeniería Civil" [level=3] [ref=f1e395]
+                    - generic [ref=f1e396]:
+                      - generic [ref=f1e397]: "Afinidad: Disponible"
+                      - generic [ref=f1e398]: "BTH: Insuficiente"
+                  - generic [ref=f1e399]:
+                    - generic [ref=f1e400]:
+                      - heading "Afinidad de intereses" [level=4] [ref=f1e402]
+                      - paragraph [ref=f1e403]: Disponible
+                      - paragraph [ref=f1e404]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                      - generic [ref=f1e405]:
+                        - paragraph [ref=f1e406]: Fuente de la afinidad
+                        - generic [ref=f1e407]:
+                          - link "Ingeniería Civil — Perfil Profesional y Áreas de Estudio" [ref=f1e408] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/pregrado/ingenieria-civil/
+                          - code [ref=f1e409]: BO-UCB-LP-CIV-PROFILE-2026
+                        - generic [ref=f1e410]:
+                          - link "O*NET 31.0 Database and O*NET OnLine occupational profiles" [ref=f1e411] [cursor=pointer]:
+                            - /url: https://www.onetcenter.org/database.html
+                          - code [ref=f1e412]: USDOL-ETA-ONET-31-2026
+                    - generic [ref=f1e413]:
+                      - heading "Preparación académica" [level=4] [ref=f1e415]
+                      - paragraph [ref=f1e416]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                      - generic [ref=f1e417]:
+                        - paragraph [ref=f1e418]: Fuente de la preparación
+                        - generic [ref=f1e419]:
+                          - link "Reglamento del Bachillerato Técnico Humanístico (RM 0244/2023)" [ref=f1e420] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/documentos-normativos/reglamentos/2023/REGLAMENTO-BACHILLERATO_TECNICO_HUNISTICO_DEL_SUBSISTEMA_DE_EDUCACION_REGULAR_Y_SUBSISTEMA_DE_EDUCACION_ALTERNATIVA.pdf
+                          - code [ref=f1e421]: BO-ME-BTH-RM-0244-2023
+                        - generic [ref=f1e422]:
+                          - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e423] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                          - code [ref=f1e424]: BO-ME-CURRICULO-BASE-2012
+                        - generic [ref=f1e425]:
+                          - link "Ingeniería Civil — Malla Curricular, Gestión 2026" [ref=f1e426] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/CIV-2026.pdf
+                          - code [ref=f1e427]: BO-UCB-LP-CIV-MALLA-2026
+                    - generic [ref=f1e428]:
+                      - heading "Cobertura de evidencia" [level=4] [ref=f1e430]
+                      - generic [ref=f1e431]:
+                        - generic [ref=f1e432]:
+                          - term [ref=f1e433]: Observaciones
+                          - definition [ref=f1e434]: "16"
+                        - generic [ref=f1e435]:
+                          - term [ref=f1e436]: Materias distintas
+                          - definition [ref=f1e437]: "8"
+                        - generic [ref=f1e438]:
+                          - term [ref=f1e439]: Periodos ordenados
+                          - definition [ref=f1e440]: "2"
+                  - generic [ref=f1e441]:
+                    - group [ref=f1e442]:
+                      - generic "Evidencia y áreas de refuerzo" [ref=f1e443] [cursor=pointer]
+                    - group [ref=f1e444]:
+                      - generic "Fuentes y limitaciones" [ref=f1e445] [cursor=pointer]
+                - article [ref=f1e446]:
+                  - generic [ref=f1e447]:
+                    - generic [ref=f1e448]:
+                      - paragraph [ref=f1e449]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                      - heading "Ingeniería de Sistemas" [level=3] [ref=f1e450]
+                    - generic [ref=f1e451]:
+                      - generic [ref=f1e452]: "Afinidad: Parcial"
+                      - generic [ref=f1e453]: "BTH: Disponible"
+                  - generic [ref=f1e454]:
+                    - generic [ref=f1e455]:
+                      - heading "Afinidad de intereses" [level=4] [ref=f1e457]
+                      - paragraph [ref=f1e458]: Parcial
+                      - paragraph [ref=f1e459]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                      - generic [ref=f1e460]:
+                        - paragraph [ref=f1e461]: Fuente de la afinidad
+                        - generic [ref=f1e462]:
+                          - link "Ingeniería de Sistemas — Perfil Profesional y Áreas de Estudio" [ref=f1e463] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/
+                          - code [ref=f1e464]: BO-UCB-LP-SIS-PROFILE-2026
+                        - generic [ref=f1e465]:
+                          - link "O*NET 31.0 Database and O*NET OnLine occupational profiles" [ref=f1e466] [cursor=pointer]:
+                            - /url: https://www.onetcenter.org/database.html
+                          - code [ref=f1e467]: USDOL-ETA-ONET-31-2026
+                    - generic [ref=f1e468]:
+                      - heading "Preparación académica" [level=4] [ref=f1e470]
+                      - paragraph [ref=f1e471]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                      - generic [ref=f1e472]:
+                        - paragraph [ref=f1e473]: Fuente de la preparación
+                        - generic [ref=f1e474]:
+                          - link "Reglamento del Bachillerato Técnico Humanístico (RM 0244/2023)" [ref=f1e475] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/documentos-normativos/reglamentos/2023/REGLAMENTO-BACHILLERATO_TECNICO_HUNISTICO_DEL_SUBSISTEMA_DE_EDUCACION_REGULAR_Y_SUBSISTEMA_DE_EDUCACION_ALTERNATIVA.pdf
+                          - code [ref=f1e476]: BO-ME-BTH-RM-0244-2023
+                        - generic [ref=f1e477]:
+                          - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e478] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                          - code [ref=f1e479]: BO-ME-CURRICULO-BASE-2012
+                        - generic [ref=f1e480]:
+                          - link "Ingeniería de Sistemas — Malla Curricular, Gestión 2026" [ref=f1e481] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/SIS-2026.pdf
+                          - code [ref=f1e482]: BO-UCB-LP-SIS-MALLA-2026
+                    - generic [ref=f1e483]:
+                      - heading "Cobertura de evidencia" [level=4] [ref=f1e485]
+                      - generic [ref=f1e486]:
+                        - generic [ref=f1e487]:
+                          - term [ref=f1e488]: Observaciones
+                          - definition [ref=f1e489]: "16"
+                        - generic [ref=f1e490]:
+                          - term [ref=f1e491]: Materias distintas
+                          - definition [ref=f1e492]: "8"
+                        - generic [ref=f1e493]:
+                          - term [ref=f1e494]: Periodos ordenados
+                          - definition [ref=f1e495]: "2"
+                  - generic [ref=f1e496]:
+                    - group [ref=f1e497]:
+                      - generic "Evidencia y áreas de refuerzo" [ref=f1e498] [cursor=pointer]
+                    - group [ref=f1e499]:
+                      - generic "Fuentes y limitaciones" [ref=f1e500] [cursor=pointer]
+                - article [ref=f1e501]:
+                  - generic [ref=f1e502]:
+                    - generic [ref=f1e503]:
+                      - paragraph [ref=f1e504]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                      - heading "Psicología" [level=3] [ref=f1e505]
+                    - generic [ref=f1e506]:
+                      - generic [ref=f1e507]: "Afinidad: Disponible"
+                      - generic [ref=f1e508]: "BTH: Insuficiente"
+                  - generic [ref=f1e509]:
+                    - generic [ref=f1e510]:
+                      - heading "Afinidad de intereses" [level=4] [ref=f1e512]
+                      - paragraph [ref=f1e513]: Disponible
+                      - paragraph [ref=f1e514]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                      - generic [ref=f1e515]:
+                        - paragraph [ref=f1e516]: Fuente de la afinidad
+                        - generic [ref=f1e517]:
+                          - link "Psicología — Perfil Profesional y Áreas de Estudio" [ref=f1e518] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/pregrado/psicologia/
+                          - code [ref=f1e519]: BO-UCB-LP-PSI-PROFILE-2026
+                        - generic [ref=f1e520]:
+                          - link "O*NET 31.0 Database and O*NET OnLine occupational profiles" [ref=f1e521] [cursor=pointer]:
+                            - /url: https://www.onetcenter.org/database.html
+                          - code [ref=f1e522]: USDOL-ETA-ONET-31-2026
+                    - generic [ref=f1e523]:
+                      - heading "Preparación académica" [level=4] [ref=f1e525]
+                      - paragraph [ref=f1e526]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                      - generic [ref=f1e527]:
+                        - paragraph [ref=f1e528]: Fuente de la preparación
+                        - generic [ref=f1e529]:
+                          - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e530] [cursor=pointer]:
+                            - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                          - code [ref=f1e531]: BO-ME-CURRICULO-BASE-2012
+                        - generic [ref=f1e532]:
+                          - link "Psicología — Malla Curricular, Gestión 2026" [ref=f1e533] [cursor=pointer]:
+                            - /url: https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/PSI-2026.pdf
+                          - code [ref=f1e534]: BO-UCB-LP-PSI-MALLA-2026
+                    - generic [ref=f1e535]:
+                      - heading "Cobertura de evidencia" [level=4] [ref=f1e537]
+                      - generic [ref=f1e538]:
+                        - generic [ref=f1e539]:
+                          - term [ref=f1e540]: Observaciones
+                          - definition [ref=f1e541]: "16"
+                        - generic [ref=f1e542]:
+                          - term [ref=f1e543]: Materias distintas
+                          - definition [ref=f1e544]: "8"
+                        - generic [ref=f1e545]:
+                          - term [ref=f1e546]: Periodos ordenados
+                          - definition [ref=f1e547]: "2"
+                  - generic [ref=f1e548]:
+                    - group [ref=f1e549]:
+                      - generic "Evidencia y áreas de refuerzo" [ref=f1e550] [cursor=pointer]
+                    - group [ref=f1e551]:
+                      - generic "Fuentes y limitaciones" [ref=f1e552] [cursor=pointer]
+            - region [ref=f1e553]:
+              - generic [ref=f1e554]:
+                - heading "Universidad Mayor de San Andrés, La Paz" [level=3] [ref=f1e555]
+                - generic [ref=f1e556]: 1 carrera(s) con corpus validado
+              - article [ref=f1e558]:
+                - generic [ref=f1e559]:
+                  - generic [ref=f1e560]:
+                    - paragraph [ref=f1e561]: Universidad Mayor de San Andrés, La Paz
+                    - heading "Ingeniería Civil" [level=3] [ref=f1e562]
+                  - generic [ref=f1e563]:
+                    - generic [ref=f1e564]: "Afinidad: Disponible"
+                    - generic [ref=f1e565]: "BTH: Insuficiente"
+                - generic [ref=f1e566]:
+                  - generic [ref=f1e567]:
+                    - heading "Afinidad de intereses" [level=4] [ref=f1e569]
+                    - paragraph [ref=f1e570]: Disponible
+                    - paragraph [ref=f1e571]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                    - generic [ref=f1e572]:
+                      - paragraph [ref=f1e573]: Fuente de la afinidad
+                      - generic [ref=f1e574]:
+                        - link "Carrera de Ingeniería Civil — Nuevo Plan de Estudios 2023" [ref=f1e575] [cursor=pointer]:
+                          - /url: https://ingenieriacivil.umsa.bo/documents/1745551/9098109/NUEVO%2BPLAN%2BDE%2BESTUDIOS%2B2023.pdf/c6b244fb-a759-ed77-3bd0-e8585934f6ae
+                        - code [ref=f1e576]: BO-UMSA-LP-CIV-PLAN-2023
+                      - generic [ref=f1e577]:
+                        - link "O*NET 31.0 Database and O*NET OnLine occupational profiles" [ref=f1e578] [cursor=pointer]:
+                          - /url: https://www.onetcenter.org/database.html
+                        - code [ref=f1e579]: USDOL-ETA-ONET-31-2026
+                  - generic [ref=f1e580]:
+                    - heading "Preparación académica" [level=4] [ref=f1e582]
+                    - paragraph [ref=f1e583]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                    - generic [ref=f1e584]:
+                      - paragraph [ref=f1e585]: Fuente de la preparación
+                      - generic [ref=f1e586]:
+                        - link "Reglamento del Bachillerato Técnico Humanístico (RM 0244/2023)" [ref=f1e587] [cursor=pointer]:
+                          - /url: https://www.minedu.gob.bo/files/documentos-normativos/reglamentos/2023/REGLAMENTO-BACHILLERATO_TECNICO_HUNISTICO_DEL_SUBSISTEMA_DE_EDUCACION_REGULAR_Y_SUBSISTEMA_DE_EDUCACION_ALTERNATIVA.pdf
+                        - code [ref=f1e588]: BO-ME-BTH-RM-0244-2023
+                      - generic [ref=f1e589]:
+                        - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e590] [cursor=pointer]:
+                          - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                        - code [ref=f1e591]: BO-ME-CURRICULO-BASE-2012
+                      - generic [ref=f1e592]:
+                        - link "Carrera de Ingeniería Civil — Nuevo Plan de Estudios 2023" [ref=f1e593] [cursor=pointer]:
+                          - /url: https://ingenieriacivil.umsa.bo/documents/1745551/9098109/NUEVO%2BPLAN%2BDE%2BESTUDIOS%2B2023.pdf/c6b244fb-a759-ed77-3bd0-e8585934f6ae
+                        - code [ref=f1e594]: BO-UMSA-LP-CIV-PLAN-2023
+                  - generic [ref=f1e595]:
+                    - heading "Cobertura de evidencia" [level=4] [ref=f1e597]
+                    - generic [ref=f1e598]:
+                      - generic [ref=f1e599]:
+                        - term [ref=f1e600]: Observaciones
+                        - definition [ref=f1e601]: "16"
+                      - generic [ref=f1e602]:
+                        - term [ref=f1e603]: Materias distintas
+                        - definition [ref=f1e604]: "8"
+                      - generic [ref=f1e605]:
+                        - term [ref=f1e606]: Periodos ordenados
+                        - definition [ref=f1e607]: "2"
+                - generic [ref=f1e608]:
+                  - group [ref=f1e609]:
+                    - generic "Evidencia y áreas de refuerzo" [ref=f1e610] [cursor=pointer]
+                  - group [ref=f1e611]:
+                    - generic "Fuentes y limitaciones" [ref=f1e612] [cursor=pointer]
+            - region [ref=f1e613]:
+              - generic [ref=f1e614]:
+                - heading "Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz" [level=3] [ref=f1e615]
+                - generic [ref=f1e616]: 1 carrera(s) con corpus validado
+              - article [ref=f1e618]:
+                - generic [ref=f1e619]:
+                  - generic [ref=f1e620]:
+                    - paragraph [ref=f1e621]: Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz
+                    - heading "Ingenieria de Sistemas e Innovacion Digital" [level=3] [ref=f1e622]
+                  - generic [ref=f1e623]:
+                    - generic [ref=f1e624]: "Afinidad: Sin evidencia disponible"
+                    - generic [ref=f1e625]: "BTH: Insuficiente"
+                - generic [ref=f1e626]:
+                  - generic [ref=f1e627]:
+                    - heading "Afinidad de intereses" [level=4] [ref=f1e629]
+                    - paragraph [ref=f1e630]: Sin evidencia disponible
+                    - paragraph [ref=f1e631]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                    - generic [ref=f1e632]:
+                      - paragraph [ref=f1e633]: Fuente de la afinidad
+                      - paragraph [ref=f1e634]: No existe crosswalk ocupacional documentado para esta opción.
+                  - generic [ref=f1e635]:
+                    - heading "Preparación académica" [level=4] [ref=f1e637]
+                    - paragraph [ref=f1e638]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                    - generic [ref=f1e639]:
+                      - paragraph [ref=f1e640]: Fuente de la preparación
+                      - paragraph [ref=f1e641]: No hay relación Bridge documentada para esta carrera.
+                  - generic [ref=f1e642]:
+                    - heading "Cobertura de evidencia" [level=4] [ref=f1e644]
+                    - generic [ref=f1e645]:
+                      - generic [ref=f1e646]:
+                        - term [ref=f1e647]: Observaciones
+                        - definition [ref=f1e648]: "16"
+                      - generic [ref=f1e649]:
+                        - term [ref=f1e650]: Materias distintas
+                        - definition [ref=f1e651]: "8"
+                      - generic [ref=f1e652]:
+                        - term [ref=f1e653]: Periodos ordenados
+                        - definition [ref=f1e654]: "2"
+                - generic [ref=f1e655]:
+                  - group [ref=f1e656]:
+                    - generic "Evidencia y áreas de refuerzo" [ref=f1e657] [cursor=pointer]
+                  - group [ref=f1e658]:
+                    - generic "Fuentes y limitaciones" [ref=f1e659] [cursor=pointer]
+            - region [ref=f1e660]:
+              - generic [ref=f1e661]:
+                - heading "Universidad Privada Boliviana - UPB, Campus La Paz" [level=3] [ref=f1e662]
+                - generic [ref=f1e663]: 1 carrera(s) con corpus validado
+              - article [ref=f1e665]:
+                - generic [ref=f1e666]:
+                  - generic [ref=f1e667]:
+                    - paragraph [ref=f1e668]: Universidad Privada Boliviana - UPB, Campus La Paz
+                    - heading "Ingenieria de Sistemas Computacionales" [level=3] [ref=f1e669]
+                  - generic [ref=f1e670]:
+                    - generic [ref=f1e671]: "Afinidad: Sin evidencia disponible"
+                    - generic [ref=f1e672]: "BTH: Insuficiente"
+                - generic [ref=f1e673]:
+                  - generic [ref=f1e674]:
+                    - heading "Afinidad de intereses" [level=4] [ref=f1e676]
+                    - paragraph [ref=f1e677]: Sin evidencia disponible
+                    - paragraph [ref=f1e678]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                    - generic [ref=f1e679]:
+                      - paragraph [ref=f1e680]: Fuente de la afinidad
+                      - paragraph [ref=f1e681]: No existe crosswalk ocupacional documentado para esta opción.
+                  - generic [ref=f1e682]:
+                    - heading "Preparación académica" [level=4] [ref=f1e684]
+                    - paragraph [ref=f1e685]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                    - generic [ref=f1e686]:
+                      - paragraph [ref=f1e687]: Fuente de la preparación
+                      - generic [ref=f1e688]:
+                        - link "Currículo Base del Sistema Educativo Plurinacional" [ref=f1e689] [cursor=pointer]:
+                          - /url: https://www.minedu.gob.bo/files/publicaciones/curricula/Curriculo-Final.pdf
+                        - code [ref=f1e690]: BO-ME-CURRICULO-BASE-2012
+                      - generic [ref=f1e691]:
+                        - link "Ingenieria de Sistemas Computacionales - Malla Curricular" [ref=f1e692] [cursor=pointer]:
+                          - /url: https://drive.google.com/file/d/1-L3bgVEVb5RkkIMVGd04BXybMeNnIBa7/view?usp=sharing
+                        - code [ref=f1e693]: BO-UPB-LP-SISC-MALLA-2026
+                  - generic [ref=f1e694]:
+                    - heading "Cobertura de evidencia" [level=4] [ref=f1e696]
+                    - generic [ref=f1e697]:
+                      - generic [ref=f1e698]:
+                        - term [ref=f1e699]: Observaciones
+                        - definition [ref=f1e700]: "16"
+                      - generic [ref=f1e701]:
+                        - term [ref=f1e702]: Materias distintas
+                        - definition [ref=f1e703]: "8"
+                      - generic [ref=f1e704]:
+                        - term [ref=f1e705]: Periodos ordenados
+                        - definition [ref=f1e706]: "2"
+                - generic [ref=f1e707]:
+                  - group [ref=f1e708]:
+                    - generic "Evidencia y áreas de refuerzo" [ref=f1e709] [cursor=pointer]
+                  - group [ref=f1e710]:
+                    - generic "Fuentes y limitaciones" [ref=f1e711] [cursor=pointer]
+        - region [ref=f1e712]:
+          - generic [ref=f1e715]:
+            - paragraph [ref=f1e716]: Capa informativa separada
+            - heading "Fuentes oficiales externas pendientes de validación local" [level=2] [ref=f1e717]
+            - paragraph [ref=f1e718]: Estas opciones se muestran para consulta. No modifican Recommendation V2, la afinidad ni la preparación hasta contar con snapshot, hash y corpus validados.
+          - article [ref=f1e720]:
+            - paragraph [ref=f1e721]: Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz
+            - heading "Ingenieria de Sistemas" [level=3] [ref=f1e722]
+            - generic [ref=f1e723]:
+              - generic [ref=f1e724]: FUENTE_OFICIAL_EXTERNA
+              - generic [ref=f1e725]: Excluida de recomendación
+            - generic [ref=f1e726]:
+              - paragraph [ref=f1e727]: Ingenieria de Sistemas - pagina oficial de licenciatura
+              - code [ref=f1e728]: BO-EMI-LP-SIS-PROFILE-EXTERNAL-2026
+              - link "Ver información oficial" [ref=f1e729] [cursor=pointer]:
+                - /url: https://emi.edu.bo/index.php/universidad/licenciatura/ingenieria-de-sistemas
+            - list [ref=f1e730]:
+              - listitem [ref=f1e731]: El dominio oficial respondio HTTP 403 desde https y http, con y sin www, durante la recuperacion local.
+              - listitem [ref=f1e732]: No existe snapshot local validado ni malla curricular recuperable para incorporarla al corpus o a Recommendation V2.
+              - listitem [ref=f1e733]: La informacion solo puede mostrarse como enlace oficial informativo hasta que una captura local sea validada.
+        - generic [ref=f1e737]:
+          - heading "Limitaciones del análisis" [level=2] [ref=f1e738]
+          - list [ref=f1e739]:
+            - listitem [ref=f1e740]: SAVP apoya la exploración y no decide una carrera.
+            - listitem [ref=f1e741]: La salida no estima probabilidad de éxito universitario.
+            - listitem [ref=f1e742]: V1 permanece como LEGACY_EXPERIMENTAL_BASELINE y no fundamenta las conclusiones V2.
+          - group [ref=f1e743]:
+            - generic "Trazabilidad técnica" [ref=f1e744] [cursor=pointer]

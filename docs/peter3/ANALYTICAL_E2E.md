@@ -1,6 +1,6 @@
 > **Nota histórica (2026-09-30):** Este documento describe la línea base de esa fecha. El estado vigente de corpus, FAISS y gates está en `FINAL_STATUS.md`.
 
-# E2E integral de PETER 3
+# E2E integral de Aporte Ingenieril SAVP
 
 `tests/integration/test_peter3_full_e2e.py` recorre sin stubs:
 

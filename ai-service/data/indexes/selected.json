@@ -1,24 +1,24 @@
 {
   "selection_version": "retrieval-selection-phase2.1",
-  "dataset_version": "retrieval-bo-dev-v2.0.0",
+  "dataset_version": "retrieval-bo-dev-v2.1.0",
   "model_id": "intfloat/multilingual-e5-small",
   "index_directory": "data/indexes/intfloat__multilingual_e5_small",
   "selection_rule": "Manual después de revisar DEV; sin acceso a TEST",
   "relevance_level": "CHUNK_LEVEL_MANUAL",
   "hybrid_version": "bm25-rrf-v1.0.0",
   "semantic_metrics": {
-    "recall_at_1": 0.1667,
-    "recall_at_3": 0.2692,
-    "recall_at_5": 0.5128,
-    "mrr": 0.3943,
-    "ndcg_at_5": 0.3621
+    "recall_at_1": 0.2262,
+    "recall_at_3": 0.25,
+    "recall_at_5": 0.4762,
+    "mrr": 0.4161,
+    "ndcg_at_5": 0.3751
   },
   "hybrid_metrics": {
-    "recall_at_1": 0.2564,
-    "recall_at_3": 0.4744,
-    "recall_at_5": 0.6026,
-    "mrr": 0.5238,
-    "ndcg_at_5": 0.4817
+    "recall_at_1": 0.3095,
+    "recall_at_3": 0.4405,
+    "recall_at_5": 0.631,
+    "mrr": 0.5351,
+    "ndcg_at_5": 0.5013
   },
-  "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde"
+  "corpus_sha256": "c94e487d5706414c5ba62bb713330f011f7b291bc0035b400f48ad5906c1ab78"
 }

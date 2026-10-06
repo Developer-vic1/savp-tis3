@@ -10,4 +10,4 @@ Support: 28 casos de lógica local (20 SupportPreventiveTest, 7 InstitutionalRol
 
 Composer validate, Pint, lint PHP, php -l de seis migrations, route:list, Blade compilado/lint y npm run build: evidencias support-* vigentes. No se ejecutó up/down/pretend. NPM audit informó 11 paquetes vulnerables (2 critical), documentados individualmente en 27-NPM-VULNERABILITIES.md; locks sin cambios.
 
-Pendientes: PG aprobado, DDL/rollback/transacciones/concurrencia/FKs y pruebas completas por ventana; servicio Peter 3 real y UX autenticada seis actores/light-dark/responsive. El TestCase actual bloquea PG: preparar clase/config de testing independiente revisada por Peter 1 antes de cambiarlo; no basta ajustar DB_DATABASE en .env.
+Pendientes: PG aprobado, DDL/rollback/transacciones/concurrencia/FKs y pruebas completas por ventana; servicio Aporte Ingenieril SAVP real y UX autenticada seis actores/light-dark/responsive. El TestCase actual bloquea PG: preparar clase/config de testing independiente revisada por Peter 1 antes de cambiarlo; no basta ajustar DB_DATABASE en .env.

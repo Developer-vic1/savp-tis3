@@ -6,10 +6,11 @@ use App\Http\Controllers\AulaVirtual\AuthAulaVirtualController;
 use App\Http\Controllers\AulaVirtual\CursoVirtualController;
 use App\Http\Controllers\AulaVirtual\EntregaController;
 use App\Http\Controllers\AulaVirtual\MaterialController;
+use App\Http\Controllers\AulaVirtual\OrientacionAulaController;
 use App\Http\Controllers\AulaVirtual\OrientacionController;
-use App\Http\Controllers\AulaVirtual\StudentOrientationController;
 use App\Http\Controllers\AulaVirtual\ReporteAulaVirtualController;
 use App\Http\Controllers\AulaVirtual\TareaController;
+use App\Http\Controllers\Estudiante\InteresesController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('aula-virtual')
@@ -44,10 +45,11 @@ Route::prefix('aula-virtual')
                 Route::get('/orientacion', [OrientacionController::class, 'estudiante'])
                     ->middleware('can:Orientacion_Academica_Profesional')->name('orientacion');
                 Route::middleware('can:Orientacion_Academica_Profesional')->group(function () {
-                    Route::get('/mi-orientacion', [StudentOrientationController::class, 'show'])->name('orientacion.peter3');
-                    Route::post('/mi-orientacion/riasec', [StudentOrientationController::class, 'score'])->name('orientacion.peter3.score');
-                    Route::post('/mi-orientacion/analisis', [StudentOrientationController::class, 'analyze'])->name('orientacion.peter3.analysis');
-                    Route::post('/mi-orientacion/consulta', [StudentOrientationController::class, 'query'])->name('orientacion.peter3.query');
+                    Route::get('/mi-orientacion', [OrientacionAulaController::class, 'mostrar'])->name('orientacion.aporte');
+                    Route::post('/mi-orientacion/riasec', [InteresesController::class, 'guardar'])->name('orientacion.aporte.score');
+                    Route::post('/mi-orientacion/analisis', [InteresesController::class, 'analizar'])->name('orientacion.aporte.analysis');
+                    Route::post('/mi-orientacion/consulta', [OrientacionAulaController::class, 'consultar'])->name('orientacion.aporte.query');
+                    Route::post('/mi-orientacion/tutor/reiniciar', [OrientacionAulaController::class, 'reiniciarTutor'])->name('orientacion.aporte.tutor.reset');
                 });
                 Route::get('/orientacion/explorador', [OrientacionController::class, 'explorador'])
                     ->middleware('can:Orientacion_Academica_Profesional')->name('orientacion.explorador');

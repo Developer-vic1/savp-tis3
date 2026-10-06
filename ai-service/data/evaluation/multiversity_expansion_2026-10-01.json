@@ -1,0 +1,116 @@
+{
+  "report_version": "multiversity-expansion-1.0.0",
+  "generated_at": "2026-10-01",
+  "scope": "Sistemas, informatica y tecnologia en La Paz",
+  "corpus": {
+    "source_manifest_version": "2.2.0",
+    "source_count": 16,
+    "chunk_count_before": 773,
+    "chunk_count_after": 814,
+    "chunks_added": 41,
+    "sha256": "c94e487d5706414c5ba62bb713330f011f7b291bc0035b400f48ad5906c1ab78"
+  },
+  "evidence_quality": {
+    "official_local_sources": 16,
+    "official_source_ratio": 1.0,
+    "hash_validity": "ALL_VALID",
+    "missing_local_sources": 0,
+    "external_information_sources": 1,
+    "evidence_layer_distribution": {
+      "CORPUS_VALIDADO": 16,
+      "FUENTE_OFICIAL_EXTERNA": 1,
+      "WEB_NO_VERIFICADA": 0
+    },
+    "metadata_completeness_ratio": 0.9444
+  },
+  "universities_requested": [
+    {
+      "university_id": "BO-UCB-LP",
+      "name": "Universidad Catolica Boliviana, Sede La Paz",
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "status": "CORPUS_VALIDADO_EXISTING",
+      "local_snapshots": 2,
+      "recommendation_v2_eligible": true
+    },
+    {
+      "university_id": "BO-UNIFRANZ-LP",
+      "name": "Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz",
+      "career_id": "BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL",
+      "status": "CORPUS_VALIDADO_ADDED",
+      "local_snapshots": 2,
+      "recommendation_v2_eligible": true,
+      "limitations": [
+        "La capa de texto del PDF no permite identificar con fiabilidad todas las asignaturas; no se crearon relaciones Bridge desde esa malla."
+      ]
+    },
+    {
+      "university_id": "BO-UPB-LP",
+      "name": "Universidad Privada Boliviana - UPB, Campus La Paz",
+      "career_id": "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES",
+      "status": "CORPUS_VALIDADO_ADDED",
+      "local_snapshots": 2,
+      "recommendation_v2_eligible": true,
+      "bridge_relations_added": [
+        "BR2-MATH-SISC-UPB"
+      ]
+    },
+    {
+      "university_id": "BO-EMI-LP",
+      "name": "Escuela Militar de Ingenieria, Unidad Academica La Paz",
+      "career_id": "BO-EMI-LP-ING-SISTEMAS",
+      "status": "FUENTE_OFICIAL_EXTERNA",
+      "local_snapshots": 0,
+      "recommendation_v2_eligible": false,
+      "retrieval_http_status": 403,
+      "limitations": [
+        "El dominio oficial no permitio capturar un snapshot local durante la recuperacion; se muestra solo como enlace informativo."
+      ]
+    }
+  ],
+  "catalog": {
+    "version": "bo-careers-1.1.0",
+    "universities_total": 5,
+    "careers_total": 8,
+    "recommendation_v2_eligible_careers": 7,
+    "requested_universities_represented": 4,
+    "requested_technology_careers_in_validated_corpus": 3,
+    "requested_technology_careers_external_only": 1
+  },
+  "governance": {
+    "new_bridge_relations": 1,
+    "new_crosswalk_relations": 0,
+    "crosswalk_reason": "No se encontro evidencia oficial documentada suficiente para agregar una relacion carrera-ocupacion.",
+    "invariants": [
+      "FALTA_DE_EVIDENCIA != CERO",
+      "INTERES != APTITUD",
+      "AFINIDAD != PREPARACION",
+      "CARRERA != OCUPACION",
+      "SIMILITUD_SEMANTICA != EQUIVALENCIA_CURRICULAR"
+    ]
+  },
+  "retrieval": {
+    "selected_model": "intfloat/multilingual-e5-small",
+    "vector_dimension": 384,
+    "vectors_per_index": 814,
+    "dev_query_count": 16,
+    "dev_hybrid_metrics": {
+      "recall_at_1": 0.3095,
+      "recall_at_3": 0.4405,
+      "recall_at_5": 0.631,
+      "mrr": 0.5351,
+      "ndcg_at_5": 0.5013
+    },
+    "test_query_count": 16,
+    "test_hybrid_metrics": {
+      "recall_at_1": 0.4222,
+      "recall_at_3": 0.7778,
+      "recall_at_5": 0.9,
+      "mrr": 0.6411,
+      "ndcg_at_5": 0.6962
+    },
+    "new_query_checks": {
+      "Q31_UNIFRANZ_DEV_HYBRID_RANK": 1,
+      "Q32_UPB_TEST_HYBRID_RANK": 1
+    }
+  }
+}

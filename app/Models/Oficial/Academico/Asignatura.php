@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Asignatura extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'asignatura';
 
     protected $primaryKey = 'cod_asi';
@@ -23,16 +26,6 @@ class Asignatura extends Model
         'hor_asi', // Horas académicas
         'est_asi', // Estado asignatura
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($asignatura) {
-
-            if (! $asignatura->cod_asi) {
-                $asignatura->cod_asi = 'ASI_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

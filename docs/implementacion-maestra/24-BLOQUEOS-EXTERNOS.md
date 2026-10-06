@@ -10,7 +10,7 @@ V073/V090 (MIG-002), calendarios V016/V042/V054/V067/V081/V096 (MIG-005) y campa
 
 V024/V025: parámetros/configuración formal y permisos; no se crea tabla de opciones genéricas. V036/V066: reglas preventivas/alertas, responsables, destinatarios, evidencia y revisión humana; no se inventa score ni sanción automática.
 
-Peter 3 limita validación científica real de V100/V103/V104; adapter/fallback/contrato HTTP 1.0 están preparados y testeados con fakes. No requiere ahora tabla nueva. Snapshot persistente solo después de contrato/version/hash/corte/retención aprobados.
+Aporte Ingenieril SAVP limita validación científica real de V100/V103/V104; adapter/fallback/contrato HTTP 1.0 están preparados y testeados con fakes. No requiere ahora tabla nueva. Snapshot persistente solo después de contrato/version/hash/corte/retención aprobados.
 
 ## Pendientes internos — no ocultarlos como externos
 

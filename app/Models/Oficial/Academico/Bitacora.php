@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bitacora extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'bitacora';
 
     protected $primaryKey = 'cod_bit';
@@ -60,9 +63,6 @@ class Bitacora extends Model
     protected static function booted(): void
     {
         static::creating(function ($bitacora) {
-            if (! $bitacora->cod_bit) {
-                $bitacora->cod_bit = 'BIT_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (! $bitacora->fec_bit) {
                 $bitacora->fec_bit = now();

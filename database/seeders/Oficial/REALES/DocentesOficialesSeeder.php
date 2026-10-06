@@ -2,8 +2,8 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Docente;
-use App\Models\PersonalInstitucional;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\PersonalInstitucional;
 use Illuminate\Database\Seeder;
 
 class DocentesOficialesSeeder extends Seeder

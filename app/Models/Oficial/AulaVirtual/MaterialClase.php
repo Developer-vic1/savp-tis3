@@ -2,13 +2,16 @@
 
 namespace App\Models\Oficial\AulaVirtual;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MaterialClase extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'material_clase';
 
     protected $primaryKey = 'cod_mat';
@@ -36,15 +39,6 @@ class MaterialClase extends Model
     protected $casts = [
         'tam_mat' => 'integer',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (MaterialClase $materialClase) {
-            if (! $materialClase->cod_mat) {
-                $materialClase->cod_mat = 'MATC_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function claseVirtual(): BelongsTo
     {

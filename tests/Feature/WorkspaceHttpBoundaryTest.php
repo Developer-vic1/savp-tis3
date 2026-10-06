@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;

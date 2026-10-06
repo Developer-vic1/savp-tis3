@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Bitacora;
-use App\Models\DocumentoInscripcionEstudiante;
-use App\Models\InscripcionEstudiante;
+use App\Models\Oficial\Academico\Bitacora;
+use App\Models\Oficial\Academico\DocumentoInscripcionEstudiante;
+use App\Models\Oficial\Academico\GrupoAcademico;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Services\InscripcionAcademicaService;
 use App\Support\Academico\InscripcionAcademica;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Query\Builder;
@@ -224,6 +226,10 @@ class GestionInscripciones extends Component
     {
         return view('livewire.admin.gestion-inscripciones', [
             'inscripciones' => $this->consultaInscripciones()->paginate($this->porPagina),
+            'gruposTecnicos' => GrupoAcademico::with('curso', 'paralelo', 'turno')
+                ->where('cod_gea', $this->formInscripcion['cod_gea'] ?? '')
+                ->where('cod_cur', $this->formInscripcion['cod_cur'] ?? '')
+                ->whereHas('planEspecialidadRegistros', fn ($q) => $q->where('cod_esp', $this->formInscripcion['cod_esp_tec'] ?? '')->where('est_pes', 'ACTIVO'))->get(),
         ]);
     }
 
@@ -1407,19 +1413,12 @@ class GestionInscripciones extends Component
             DB::transaction(function () use ($datos, $forzarPendiente) {
                 if ($this->modoFormulario === 'editar' && $this->codInscripcionEditando) {
                     $modeloEditar = InscripcionEstudiante::query()->where('cod_ins', $this->codInscripcionEditando)->firstOrFail();
-                    $modeloEditar->fill($datos);
-                    $modeloEditar->save();
+                    app(InscripcionAcademicaService::class)->guardar($datos, $modeloEditar, $this->formInscripcion['fii_ivg'] ?? null, $this->formInscripcion['cod_gac_tecnico'] ?? null);
 
                     $codIns = $this->codInscripcionEditando;
                     $accion = 'ACTUALIZAR_INSCRIPCION';
                 } else {
-                    $inscripcion = new InscripcionEstudiante;
-
-                    foreach ($datos as $campo => $valor) {
-                        $inscripcion->{$campo} = $valor;
-                    }
-
-                    $inscripcion->save();
+                    $inscripcion = app(InscripcionAcademicaService::class)->guardar($datos, null, $this->formInscripcion['fii_ivg'] ?? null, $this->formInscripcion['cod_gac_tecnico'] ?? null);
 
                     $codIns = $inscripcion->cod_ins;
                     $this->codInscripcionEditando = $codIns;
@@ -1453,6 +1452,11 @@ class GestionInscripciones extends Component
             $this->cerrarModalInscripcion();
         } catch (ValidationException $e) {
             $mensajes = $e->errors();
+            foreach ($mensajes as $campo => $errores) {
+                foreach ($errores as $mensaje) {
+                    $this->addError(str_starts_with($campo, 'formInscripcion.') ? $campo : 'formInscripcion.'.$campo, $mensaje);
+                }
+            }
             $primero = collect($mensajes)->flatten()->first();
             $this->notificar('warning', (string) ($primero ?: 'No se pudo guardar la documentación. Revisa documentos duplicados, archivo PDF o fecha límite.'));
         } catch (Throwable $e) {
@@ -1579,6 +1583,8 @@ class GestionInscripciones extends Component
             'cod_esp_tec' => $registro->cod_esp_tec ?? '',
             'est_esp_tec_ins' => $registro->est_esp_tec_ins ?? 'NO_APLICA',
             'obs_esp_tec_ins' => $registro->obs_esp_tec_ins ?? '',
+            'fii_ivg' => null,
+            'cod_gac_tecnico' => null,
         ];
 
         $this->permitirSobrecupo = (bool) ($registro->sob_aut_ins ?? false);
@@ -1868,12 +1874,12 @@ class GestionInscripciones extends Component
 
         try {
             DB::transaction(function () use ($evaluacion) {
-                // DB::table directo: prepararDatosAnulacion incluye 'anulado_por' que
-                // no está en InscripcionEstudiante::$fillable, por lo que no se puede
-                // usar fill/save sin agregar la columna al modelo.
+                app(InscripcionAcademicaService::class)->cerrarInscripcion(
+                    InscripcionEstudiante::findOrFail($this->codInscripcionAccion), now()->toDateString()
+                );
                 DB::table('inscripcion_estudiante')
                     ->where('cod_ins', $this->codInscripcionAccion)
-                    ->update($this->soporte()->prepararDatosAnulacion($this->motivoAccion));
+                    ->update(array_intersect_key($this->soporte()->prepararDatosAnulacion($this->motivoAccion), array_flip((new InscripcionEstudiante)->getFillable())));
 
                 $this->registrarBitacora('ANULAR_INSCRIPCION', 'inscripcion_estudiante', $this->codInscripcionAccion, [
                     'estudiante' => $evaluacion['inscripcion']['estudiante'] ?? null,
@@ -1936,7 +1942,10 @@ class GestionInscripciones extends Component
         try {
             DB::transaction(function () use ($evaluacion) {
                 $datos = $this->soporte()->prepararDatosRetiro($this->motivoAccion);
-                $datos['fec_anu_ins'] = $this->fechaRetiro;
+                unset($datos['fec_anu_ins'], $datos['mot_anu_ins'], $datos['anulado_por']);
+                $datos['fec_ret_ins'] = $this->fechaRetiro;
+                $datos['mot_ret_ins'] = $this->motivoAccion;
+                app(InscripcionAcademicaService::class)->cerrarInscripcion(InscripcionEstudiante::findOrFail($this->codInscripcionAccion), $this->fechaRetiro);
 
                 // DB::table directo: prepararDatosRetiro incluye 'anulado_por' que
                 // no está en InscripcionEstudiante::$fillable, igual que en anulación.
@@ -1991,7 +2000,6 @@ class GestionInscripciones extends Component
                     'est_ins' => 'PENDIENTE',
                     'con_ins' => 'OBSERVADA',
                     'fec_anu_ins' => null,
-                    'anulado_por' => null,
                     'mot_anu_ins' => null,
                     'updated_at' => now(),
                 ]);
@@ -2666,6 +2674,8 @@ class GestionInscripciones extends Component
             'cod_esp_tec' => '',
             'est_esp_tec_ins' => 'NO_APLICA',
             'obs_esp_tec_ins' => '',
+            'fii_ivg' => null,
+            'cod_gac_tecnico' => null,
         ];
 
         $this->turnoMananaAplicado = ! empty($turnoManana['cod_tur']);

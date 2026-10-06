@@ -2,13 +2,16 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Persona extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'persona';
 
     protected $primaryKey = 'cod_per';
@@ -33,15 +36,6 @@ class Persona extends Model
         'fot_per',
         'est_per',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($persona) {
-            if (! $persona->cod_per) {
-                $persona->cod_per = 'PER_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function usuario()
     {

@@ -2,8 +2,8 @@
 
 namespace App\Contracts;
 
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 
 /** Una implementación debe preservar registro, evidencia, rectificación y anulación. */
 interface KardexRepository

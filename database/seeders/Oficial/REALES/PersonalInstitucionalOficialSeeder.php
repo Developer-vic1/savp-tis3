@@ -2,13 +2,9 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Administrador;
-use App\Models\Director;
-use App\Models\Docente;
-use App\Models\Persona;
-use App\Models\PersonalInstitucional;
-use App\Models\Regente;
-use App\Models\SecretariaGeneral;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Academico\PersonalInstitucional;
 use Illuminate\Database\Seeder;
 
 class PersonalInstitucionalOficialSeeder extends Seeder
@@ -58,51 +54,18 @@ class PersonalInstitucionalOficialSeeder extends Seeder
                 ['cod_pin' => $piData['cod_pin']],
                 [
                     'cod_per' => $piData['cod_per'],
-                    'car_pin' => $piData['car_pin'],
                     'est_pin' => $piData['est_pin'] ?? 'ACTIVO',
                 ]
             );
 
-            // 3. Subtipos Institucionales
-            if (! empty($subtipo['administrador'])) {
-                Administrador::updateOrCreate(
-                    ['cod_adm' => $subtipo['administrador']['cod_adm']],
-                    [
-                        'cod_pin' => $subtipo['administrador']['cod_pin'],
-                        'est_adm' => $subtipo['administrador']['est_adm'] ?? 'ACTIVO',
-                    ]
-                );
-            }
+            // 3. Docente: entidad propia; los demás cargos se representan mediante roles/vínculos.
 
-            if (! empty($subtipo['director'])) {
-                Director::updateOrCreate(
-                    ['cod_dir' => $subtipo['director']['cod_dir']],
-                    [
-                        'cod_pin' => $subtipo['director']['cod_pin'],
-                        'est_dir' => $subtipo['director']['est_dir'] ?? 'ACTIVO',
-                    ]
-                );
-            }
 
-            if (! empty($subtipo['secretaria_general'])) {
-                SecretariaGeneral::updateOrCreate(
-                    ['cod_sge' => $subtipo['secretaria_general']['cod_sge']],
-                    [
-                        'cod_pin' => $subtipo['secretaria_general']['cod_pin'],
-                        'est_sge' => $subtipo['secretaria_general']['est_sge'] ?? 'ACTIVO',
-                    ]
-                );
-            }
 
-            if (! empty($subtipo['regente'])) {
-                Regente::updateOrCreate(
-                    ['cod_reg' => $subtipo['regente']['cod_reg']],
-                    [
-                        'cod_pin' => $subtipo['regente']['cod_pin'],
-                        'est_reg' => $subtipo['regente']['est_reg'] ?? 'ACTIVO',
-                    ]
-                );
-            }
+
+
+
+
 
             if (! empty($subtipo['docente'])) {
                 Docente::updateOrCreate(

@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\DocumentoInscripcionEstudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\DocumentoInscripcionEstudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\RoleDashboardResolver;
 use Illuminate\Support\Facades\Gate;
 

@@ -1,0 +1,165 @@
+.knowledge-governance {
+    color: var(--ui-text);
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.knowledge-governance :is(section, article, aside, form, label) {
+    min-width: 0;
+}
+
+.knowledge-governance :is(input, select, textarea) {
+    max-width: 100%;
+}
+
+.knowledge-governance [role="dialog"] {
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    scroll-padding-block: 5.5rem 1rem;
+}
+
+.knowledge-governance .kg-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    padding: 1rem;
+    border: 1px solid var(--ui-border);
+    border-radius: 1rem;
+    background: var(--ui-surface-soft);
+}
+
+.knowledge-governance .kg-step-number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: var(--ui-surface);
+    border: 1px solid var(--ui-border);
+    font-weight: 800;
+}
+
+.knowledge-governance .kg-step-current {
+    border-color: var(--ui-primary);
+    background: color-mix(in srgb, var(--ui-primary) 7%, var(--ui-surface));
+}
+
+.knowledge-governance .kg-step-current .kg-step-number {
+    background: var(--ui-primary);
+    color: white;
+}
+
+.knowledge-governance .kg-step-complete {
+    border-color: color-mix(in srgb, var(--ui-success) 45%, var(--ui-border));
+}
+
+.knowledge-governance .kg-step-complete .kg-step-number {
+    color: var(--ui-success);
+    border-color: var(--ui-success);
+}
+
+.knowledge-governance .kg-field-help {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--ui-muted);
+}
+
+.knowledge-governance .kg-field-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.knowledge-governance .kg-counter {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    color: var(--ui-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.knowledge-governance .kg-input-error {
+    border-color: var(--ui-danger);
+}
+
+.knowledge-governance .kg-input-valid {
+    border-color: color-mix(in srgb, var(--ui-success) 65%, var(--ui-border));
+}
+
+.knowledge-governance .kg-text-error {
+    color: var(--ui-danger);
+}
+
+.knowledge-governance .kg-check-ok {
+    border-color: color-mix(in srgb, var(--ui-success) 35%, var(--ui-border));
+}
+
+.knowledge-governance .kg-check-error {
+    border-color: var(--ui-danger);
+    background: color-mix(in srgb, var(--ui-danger) 6%, var(--ui-surface));
+}
+
+.knowledge-governance .kg-check-pending {
+    border-color: color-mix(in srgb, var(--ui-warning) 40%, var(--ui-border));
+}
+
+.knowledge-governance .kg-progress {
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: var(--ui-border);
+}
+
+.knowledge-governance .kg-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ui-primary);
+    transition: width 180ms ease;
+}
+
+.knowledge-governance .kg-example-card {
+    padding: 1.25rem;
+    border: 1px solid var(--ui-border);
+    border-radius: 1rem;
+    background: var(--ui-surface-soft);
+}
+
+.knowledge-governance button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.knowledge-governance :is(button, a, input, select, textarea):focus-visible {
+    outline: 2px solid var(--ui-primary);
+    outline-offset: 3px;
+}
+
+.knowledge-governance [role="dialog"] {
+    overscroll-behavior: contain;
+}
+
+.knowledge-governance .ui-modal-header,
+.knowledge-governance .ui-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.knowledge-governance .ui-modal-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--ui-surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .knowledge-governance .kg-progress > span {
+        transition: none;
+    }
+}

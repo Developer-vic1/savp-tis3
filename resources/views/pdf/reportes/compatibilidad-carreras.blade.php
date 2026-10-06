@@ -38,7 +38,7 @@ $compatibilidades = $compatibilidades ?? collect([]);
 <table class="pdf-table">
     <thead>
         <tr>
-            <th>Especialidad</th>
+            <th>Perfil registrado</th>
             <th style="text-align:center;">Perfil</th>
             <th>Área Profesional</th>
             <th style="text-align:center;">Promedio</th>
@@ -57,7 +57,7 @@ $compatibilidades = $compatibilidades ?? collect([]);
             <td><strong>{{ $item['especialidad'] }}</strong></td>
             <td style="text-align:center; font-size:12pt; font-weight:bold; color:#7c3aed;">{{ $item['perfil_riasec'] ?? '—' }}</td>
             <td style="color:#0284c7; font-size:7.5pt;">{{ $item['area_profesional'] ?? '—' }}</td>
-            <td style="text-align:center; font-weight:bold; color:#059669;">{{ number_format($item['promedio'] ?? 0, 2) }}</td>
+            <td style="text-align:center; font-weight:bold; color:#059669;">—</td>
             <td style="text-align:center;">
                 <span class="badge {{ $compat >= 80 ? 'badge-green' : ($compat >= 60 ? 'badge-blue' : 'badge-amber') }}">
                     {{ $compat }}%
@@ -76,7 +76,7 @@ $compatibilidades = $compatibilidades ?? collect([]);
     </tbody>
 </table>
 @else
-<div class="pdf-empty">No se encontraron datos de compatibilidad. Se requieren calificaciones activas vinculadas a especialidades técnicas.</div>
+<div class="pdf-empty">No se encontraron datos de compatibilidad. Se requieren resultados RIASEC y recomendaciones registrados.</div>
 @endif
 
 {{-- Detalle por especialidad --}}
@@ -123,8 +123,8 @@ $compatibilidades = $compatibilidades ?? collect([]);
 @endif
 
 <div class="alert alert-info" style="margin-top: 10px;">
-    <strong>Recomendación:</strong> La compatibilidad de carreras es calculada a partir del perfil RIASEC de cada especialidad
-    técnica BTH combinado con el rendimiento académico. Se recomienda complementar con entrevistas y test psicométricos formales.
+    <strong>Recomendación:</strong> Las compatibilidades proceden de las recomendaciones registradas junto al resultado RIASEC.
+    El promedio académico no se utiliza para inventar intereses vocacionales.
 </div>
 
 {!! app(\App\Services\Reportes\GeneradorMpdfService::class)->htmlFooter($sistema ?? 'SAVP-TIS3') !!}

@@ -16,7 +16,7 @@
 - Estado: aceptada.
 - Decisión: usar `C:\laragon\www\savp-tis3-aporte` para `feature/APORTE`.
 - Motivo: el worktree original tenía cambios ajenos que Git no podía conservar al cambiar a la base requerida.
-- Consecuencia: no se toca ni oculta el trabajo original; PETER 3 queda basado exactamente en `integration/savp-consolidado`.
+- Consecuencia: no se toca ni oculta el trabajo original; Aporte Ingenieril SAVP queda basado exactamente en `integration/savp-consolidado`.
 
 ## D-002 — Núcleo sin servicios comerciales ni ML supervisado
 

@@ -132,10 +132,27 @@ class PreparationEvidenceProfile(EvidenceModel):
     interpretation: str
 
 
+class CareerAcademicProgram(EvidenceModel):
+    degree: str | None
+    duration: str | None
+    professional_profile: str | None
+    knowledge_areas: list[str]
+    documented_subjects: list[str]
+    curriculum_status: AvailabilityStatus
+    curriculum_scope: Literal[
+        "DOCUMENTED_INITIAL_SUBJECTS",
+        "OFFICIAL_CURRICULUM_SOURCE_ONLY",
+        "UNAVAILABLE",
+    ]
+    curriculum_note: str
+    sources: list[SourceReference]
+
+
 class CareerEvidenceProfile(EvidenceModel):
     career_id: str
     career_name: str
     university: str
+    academic_program: CareerAcademicProgram
     criteria_version: Literal["v2_evidence_based"] = "v2_evidence_based"
     vocational_interest_relation: EvidenceRelation
     technical_relation: EvidenceRelation

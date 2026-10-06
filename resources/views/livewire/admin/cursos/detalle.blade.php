@@ -1,0 +1,27 @@
+<div x-show="detalle" x-cloak class="personas-modal docentes-modal cursos-modal" role="dialog" aria-modal="true" aria-labelledby="curso-detalle-titulo" x-on:keydown.escape.window="if(detalle&&!claseAbierta) cerrarDetalle()" x-trap.inert.noscroll="detalle&&!claseAbierta" x-on:elegir-bloque-clase="prepararClase($event.detail)">
+    <div class="personas-modal-fondo" x-on:click="cerrarDetalle()" aria-hidden="true"></div>
+    <section class="personas-modal-panel docentes-horario-panel" x-ref="detallePanel" x-show="detalle" x-transition.opacity.duration.150ms>
+        <header class="personas-modal-cabecera"><div><p class="ui-kicker">Gestión {{ $gestion?->ani_gea }}</p><h2 class="ui-title text-xl font-bold mt-1" id="curso-detalle-titulo"><span x-text="({ficha:'Ficha del grado',horario:'Horario del grado',carga:'Carga académica'})[seccionConsulta]"></span><span x-show="!consultaEnCurso"> · {{ $cursoDetalle['nombre'] ?? '' }}</span></h2></div><button type="button" class="personas-accion" x-on:click="cerrarDetalle()" aria-label="Cerrar consulta del curso"><i class="ph-duotone ph-x" aria-hidden="true"></i></button></header>
+        <div class="personas-modal-contenido">
+            <div x-show="consultaEnCurso" class="cursos-espera-revision" role="status"><i class="ph-duotone ph-spinner-gap cursos-giro" aria-hidden="true"></i><strong x-text="mensajeProceso"></strong><p class="mt-2">Puedes cerrar esta consulta mientras se prepara.</p></div>
+            <p x-show="errorProceso" x-cloak class="ui-error" role="alert" x-text="errorProceso"></p>
+            <div x-show="!consultaEnCurso && !errorProceso">
+            @if($modalDetalle && $cursoDetalle)
+            <p wire:loading.delay role="status" class="ui-muted text-xs mb-4">Actualizando el horario seleccionado…</p>
+            @if($seccionDetalle==='horario')
+                <div class="cursos-campos">@if($cursoDetalle['paralelos'])<x-selector-institucional modelo="horarioParalelo" identificador="curso-horario-paralelo" etiqueta="Paralelo" :opciones="$cursoDetalle['paralelos']" />@endif<x-selector-institucional modelo="periodoHorario" identificador="curso-periodo-horario" etiqueta="Horario y período" :opciones="$periodosHorario" /></div>
+                <div wire:key="curso-horario-{{ $cursoSeleccionado }}-{{ $gestionFiltro }}-{{ $horarioParalelo }}-{{ $periodoHorario }}-{{ count($eventosHorario) }}" class="mt-4"><x-horario-institucional :eventos="$eventosHorario" :bloques="$bloquesHorario" :editable="$gestion?->est_gea==='ACTIVO'" :selector-periodo="false" identificador="curso-horario" mensaje-vacio="Las asignaciones se conservan. Para revisarlas, cierra esta consulta y abre Carga en las acciones del grado." /></div>
+                <p x-show="procesando==='preparar-clase'" class="ui-muted text-sm mt-3" role="status"><i class="ph-duotone ph-spinner-gap cursos-giro" aria-hidden="true"></i> Preparando materia y docente…</p>
+                <p class="ui-muted text-xs mt-4">Las fechas, turnos y bloques corresponden a cada horario registrado. Las plantillas sin clases asignadas no se completan automáticamente.</p>
+            @elseif($seccionDetalle==='carga')
+                <div class="cursos-carga">@forelse(collect($asignaciones)->groupBy('nombre') as $nombre=>$planes)<article class="ui-card-soft p-4"><header class="cursos-herramientas"><h3 class="ui-title font-bold">{{ $nombre }}</h3><span class="ui-badge-info">{{ $planes->first()['tipo'] }}</span></header><ul class="mt-3 cursos-carga-lista">@foreach($planes as $p)<li><strong>{{ mb_strtoupper($p['docente']) }}</strong><span>{{ $p['paralelo'] }} · {{ $p['turno'] }} · {{ rtrim(rtrim(number_format((float)$p['horas'],2,'.',''),'0'),'.') }} horas académicas semanales</span></li>@endforeach</ul></article>@empty<p class="ui-muted">Este grado aún no tiene cargas asignadas en la gestión seleccionada.</p>@endforelse</div>
+            @else
+                @include('livewire.admin.cursos.ficha')
+                <x-plegable-institucional class="mt-5" etiqueta="Cambios institucionales" descripcion="Editar o cambiar la habilitación requiere una autorización y un motivo registrado." icono="ph-shield-check"><div class="cursos-acciones"><button type="button" class="ui-btn ui-btn-secondary" x-on:click="cerrarDetalle(); formularioCurso('editar',@js($cursoSeleccionado),$event.currentTarget)" :disabled="!!procesando"><i class="ph-duotone ph-pencil-simple" aria-hidden="true"></i>Solicitar edición</button><button type="button" class="ui-btn ui-btn-secondary" x-on:click="cerrarDetalle(); formularioCurso(@js($cursoDetalle['estado']==='ACTIVO'?'desactivar':'reactivar'),@js($cursoSeleccionado),$event.currentTarget)" :disabled="!!procesando"><i class="ph-duotone ph-shield-warning" aria-hidden="true"></i>{{ $cursoDetalle['estado']==='ACTIVO'?'Solicitar desactivación':'Solicitar reactivación' }}</button>@if(app(\App\Services\RoleDashboardResolver::class)->roleFor(auth()->user()) === 'Administrador')<a class="ui-btn ui-btn-secondary" href="{{ route('admin.gestion-paralelos') }}"><i class="ph-duotone ph-users-three" aria-hidden="true"></i>Gestionar paralelos</a>@endif</div></x-plegable-institucional>
+            @endif
+            @endif
+            </div>
+        </div>
+        <footer class="personas-modal-pie"><p class="ui-muted text-xs">El historial académico se conserva.</p><button type="button" class="ui-btn ui-btn-secondary" x-on:click="cerrarDetalle()">Cerrar</button></footer>
+    </section>
+</div>

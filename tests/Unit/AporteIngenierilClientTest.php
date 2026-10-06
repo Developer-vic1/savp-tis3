@@ -15,9 +15,11 @@ class AporteIngenierilClientTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config()->set('services.peter3.url', 'https://peter3.test');
-        config()->set('services.peter3.enabled', true);
-        config()->set('services.peter3.version', 'v1');
+        config()->set('services.aporte_ingenieril.url', 'https://aporte.test');
+        config()->set('services.aporte_ingenieril.enabled', true);
+        config()->set('services.aporte_ingenieril.version', 'v1');
+        config()->set('services.aporte_ingenieril.key', 'test-only-internal-api-key-32-characters');
+        config()->set('services.aporte_ingenieril.allowed_hosts', ['aporte.test']);
     }
 
     private function payload(): array
@@ -34,7 +36,7 @@ class AporteIngenierilClientTest extends TestCase
 
     public function test_it_returns_valid_versioned_data_when_service_is_available(): void
     {
-        Http::fake(['peter3.test/*' => Http::response($this->response())]);
+        Http::fake(['aporte.test/*' => Http::response($this->response())]);
         $result = app(AporteIngenierilClient::class)->analysis($this->payload());
         $this->assertTrue($result->available);
         $this->assertSame('PARTIAL', $result->data['status']);
@@ -50,7 +52,7 @@ class AporteIngenierilClientTest extends TestCase
 
     public function test_it_uses_safe_fallback_for_validation_error(): void
     {
-        Http::fake(['peter3.test/*' => Http::response(['detail' => 'invalid'], 422)]);
+        Http::fake(['aporte.test/*' => Http::response(['detail' => 'invalid'], 422)]);
         $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
     }
 
@@ -80,13 +82,13 @@ class AporteIngenierilClientTest extends TestCase
 
     public function test_empty_response_is_not_presented_as_evidence(): void
     {
-        Http::fake(['peter3.test/*' => Http::response([])]);
+        Http::fake(['aporte.test/*' => Http::response([])]);
         $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
     }
 
     public function test_integration_stays_off_until_explicitly_enabled(): void
     {
-        config()->set('services.peter3.enabled', false);
+        config()->set('services.aporte_ingenieril.enabled', false);
         Http::fake();
         $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
         Http::assertNothingSent();
@@ -94,36 +96,59 @@ class AporteIngenierilClientTest extends TestCase
 
     public function test_internal_student_identifier_is_replaced_with_a_reference(): void
     {
-        Http::fake(['peter3.test/*' => Http::response($this->response())]);
+        Http::fake(['aporte.test/*' => Http::response($this->response())]);
         app(AporteIngenierilClient::class)->analysis($this->payload());
         Http::assertSent(fn ($request) => is_string($request['student_id']) && strlen($request['student_id']) === 64 && $request['student_id'] !== 'EST_0001');
     }
 
     public function test_json_list_is_an_invalid_specialized_response(): void
     {
-        Http::fake(['peter3.test/*' => Http::response(['unexpected', 'list'])]);
+        Http::fake(['aporte.test/*' => Http::response(['unexpected', 'list'])]);
         $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
     }
 
     public function test_endpoint_is_configurable_without_changing_the_contract(): void
     {
-        config()->set('services.peter3.paths.analysis', '/analysis');
-        Http::fake(['peter3.test/analysis' => Http::response($this->response())]);
+        config()->set('services.aporte_ingenieril.paths.analysis', '/analysis');
+        Http::fake(['aporte.test/analysis' => Http::response($this->response())]);
         $this->assertTrue(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
-        Http::assertSent(fn ($request) => $request->url() === 'https://peter3.test/analysis');
+        Http::assertSent(fn ($request) => $request->url() === 'https://aporte.test/analysis');
     }
 
     public function test_tutor_uses_the_existing_contract_without_sending_identity(): void
     {
-        Http::fake(['peter3.test/*' => Http::response(['schema_version' => '1.0', 'trace_id' => 'test', 'answer' => 'Explicación de prueba',
+        Http::fake(['aporte.test/*' => Http::response(['schema_version' => '1.0', 'trace_id' => 'test', 'answer' => 'Explicación de prueba',
             'answer_mode' => 'STRUCTURED', 'sources' => [], 'warnings' => [], 'suggested_topics' => [], 'insufficient_evidence' => true])]);
         $this->assertTrue(app(TutorService::class)->ask('EST_PRIVATE', 'Explica álgebra', ['email' => 'private@example.test'])->available);
         Http::assertSent(fn ($request) => $request['schema_version'] === '1.0' && $request['question'] === 'Explica álgebra' && ! isset($request['student_id']) && ! isset($request['academic_context']));
     }
 
+    public function test_tutor_sends_only_allowlisted_context_and_recent_conversation(): void
+    {
+        Http::fake(['aporte.test/*' => Http::response(['schema_version' => '1.0', 'trace_id' => 'test', 'answer' => 'Explicación contextual',
+            'answer_mode' => 'STRUCTURED', 'sources' => [], 'warnings' => [], 'suggested_topics' => [], 'insufficient_evidence' => false])]);
+
+        $result = app(TutorService::class)->ask('EST_PRIVATE', '¿Y cómo lo refuerzo?', [
+            'academic_period' => '2026', 'strengths' => ['Matemática'], 'email' => 'private@example.test',
+        ], [
+            'riasec_code' => 'IAS', 'ci' => '1234567',
+        ], [
+            ['role' => 'user', 'content' => 'Explícame álgebra'],
+            ['role' => 'assistant', 'content' => 'Empecemos por las variables.'],
+        ]);
+
+        $this->assertTrue($result->available);
+        Http::assertSent(fn ($request) => ! isset($request['student_id'])
+            && $request['academic_context'] === ['academic_period' => '2026', 'strengths' => ['Matemática']]
+            && $request['student_context'] === ['riasec_code' => 'IAS']
+            && count($request['conversation_history']) === 2
+            && ! str_contains(json_encode($request->data()), 'private@example.test')
+            && ! str_contains(json_encode($request->data()), '1234567'));
+    }
+
     public function test_knowledge_request_uses_official_corpus_filters(): void
     {
-        Http::fake(['peter3.test/*' => Http::response(['schema_version' => '1.0', 'trace_id' => 'test', 'results' => [], 'warnings' => [],
+        Http::fake(['aporte.test/*' => Http::response(['schema_version' => '1.0', 'trace_id' => 'test', 'results' => [], 'warnings' => [],
             'insufficient_evidence' => true, 'corpus_version' => 'fixture', 'embedding_model' => 'fixture', 'retrieval_version' => 'fixture'])]);
         $this->assertTrue(app(KnowledgeService::class)->search('Matemáticas')->available);
         Http::assertSent(fn ($request) => $request['query'] === 'Matemáticas' && $request['official_only'] === true && $request['top_k'] === 5);
@@ -150,16 +175,37 @@ class AporteIngenierilClientTest extends TestCase
 
     public function test_authentication_header_is_sent_only_to_configured_service(): void
     {
-        config()->set('services.peter3.key', 'fixture-internal-key');
-        Http::fake(['peter3.test/*' => Http::response($this->response())]);
+        config()->set('services.aporte_ingenieril.key', 'fixture-internal-api-key-32-characters');
+        Http::fake(['aporte.test/*' => Http::response($this->response())]);
         app(AporteIngenierilClient::class)->analysis($this->payload());
-        Http::assertSent(fn ($request) => $request->hasHeader('X-SAVP-AI-Key', 'fixture-internal-key'));
+        Http::assertSent(fn ($request) => $request->hasHeader('X-SAVP-AI-Key', 'fixture-internal-api-key-32-characters'));
     }
 
     public function test_absolute_endpoint_cannot_redirect_credentials_to_another_host(): void
     {
-        config()->set('services.peter3.paths.analysis', 'https://foreign.test/analysis');
+        config()->set('services.aporte_ingenieril.paths.analysis', 'https://foreign.test/analysis');
         Http::fake();
+        $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
+        Http::assertNothingSent();
+    }
+
+    public function test_missing_internal_key_blocks_request_before_network(): void
+    {
+        config()->set('services.aporte_ingenieril.key');
+        Http::fake();
+
+        $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
+        Http::assertNothingSent();
+    }
+
+    public function test_untrusted_or_insecure_service_host_is_blocked(): void
+    {
+        Http::fake();
+        config()->set('services.aporte_ingenieril.url', 'https://foreign.test');
+        $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
+
+        config()->set('services.aporte_ingenieril.url', 'http://aporte.test');
+        config()->set('services.aporte_ingenieril.allowed_hosts', ['aporte.test']);
         $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
         Http::assertNothingSent();
     }

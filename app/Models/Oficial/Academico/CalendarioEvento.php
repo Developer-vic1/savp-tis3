@@ -2,13 +2,16 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CalendarioEvento extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'calendario_evento';
 
     protected $primaryKey = 'cod_cae';

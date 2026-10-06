@@ -2,19 +2,19 @@
 
 namespace Database\Factories;
 
-use App\Models\Persona;
-use App\Models\Team;
-use App\Models\User;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Oficial\Sistema\User>
  */
 class UserFactory extends Factory
 {
+    protected $model = User::class;
     /**
      * The current password being used by the factory.
      */
@@ -28,9 +28,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'cod_usu' => 'USU_'.Str::upper(Str::random(16)),
             'cod_per' => fn () => Persona::create([
-                'cod_per' => 'PER_'.Str::upper(Str::random(16)),
                 'nom_per' => fake()->firstName(), 'ape_pat_per' => fake()->lastName(),
                 'ci_per' => fake()->unique()->numerify('##########'),
             ])->cod_per,
@@ -65,15 +63,6 @@ class UserFactory extends Factory
             return $this->state([]);
         }
 
-        return $this->has(
-            Team::factory()
-                ->state(fn (array $attributes, User $user) => [
-                    'name' => $user->name.'\'s Team',
-                    'user_id' => $user->id,
-                    'personal_team' => true,
-                ])
-                ->when(is_callable($callback), $callback),
-            'ownedTeams'
-        );
+        throw new \LogicException('Los equipos no forman parte de las 104 tablas oficiales.');
     }
 }

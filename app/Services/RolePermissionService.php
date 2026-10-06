@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Docente;
-use App\Models\Estudiante;
-use App\Models\Role;
-use App\Models\User;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\Role;
+use App\Models\Oficial\Sistema\User;
 use App\Support\InstitutionalRoleGovernance;
 use App\Support\PermissionLabel;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -79,14 +79,42 @@ class RolePermissionService
         'roles.crear',
     ];
 
-    public function sync(Role $role, array $permissionNames, User $actor): void
+    public function huella(Role $role): string
     {
-        DB::transaction(function () use ($role, $permissionNames, $actor) {
+        return hash('sha256',json_encode([$role->getKey(),$role->guard_name,$role->permissions()->pluck('name')->sort()->values()->all()]));
+    }
+
+    public function sync(Role $role, array $permissionNames, User $actor, string $motivo = '', string $tipoMotivo = 'OTRO', ?string $huella = null): void
+    {
+        $motivo=\App\Support\SupportRolesInstitucionales::motivo('cambio',$tipoMotivo,$motivo);
+        validator(compact('motivo'), ['motivo'=>'required|string|min:20|max:2000'])->validate();
+        abort_unless(\Illuminate\Support\Facades\Schema::hasTable('bitacora'),409,'No podemos guardar cambios sin bitácora.');
+        DB::transaction(function () use ($role, $permissionNames, $actor, $motivo, $huella) {
             $roles = $this->lockRoles();
             $lockedRole = $roles->firstWhere('id', $role->getKey());
             $lockedActor = User::lockForUpdate()->findOrFail($actor->cod_usu);
             abort_unless($lockedRole && app(RoleDashboardResolver::class)->roleFor($lockedActor) === 'Administrador', 403);
+            if ($huella !== null && !hash_equals($this->huella($lockedRole),$huella)) {
+                throw ValidationException::withMessages(['permissions'=>'Los permisos del rol cambiaron mientras editabas. Sal y vuelve a cargar el rol antes de guardar.']);
+            }
+            $antes = $lockedRole->permissions()->pluck('name')->all();
             $this->synchronize($lockedRole, $permissionNames, $lockedActor);
+            BitacoraService::registrar(accion:'JUSTIFICAR_PERMISOS_ROL',tabla:'roles',registro:(string)$role->getKey(),modulo:'Roles y Permisos',descripcion:$motivo);
+            $agregados = array_values(array_diff($permissionNames, $antes));
+            $retirados = array_values(array_diff($antes, $permissionNames));
+            if (($agregados || $retirados) && app(NotificationService::class)->available()) {
+                $etiquetas = fn(array $nombres) => mb_strimwidth(collect($nombres)->map(fn($p)=>PermissionLabel::describe($p)['label'])->implode(', '),0,550,'…');
+                $mensaje = "El rol {$lockedRole->name} cambió: ".count($agregados).' permisos agregados y '.count($retirados).' retirados.';
+                if ($agregados) $mensaje .= ' Nuevas tareas: '.$etiquetas($agregados).'.';
+                if ($retirados) $mensaje .= ' Tareas retiradas: '.$etiquetas($retirados).'.';
+                $mensaje .= ' Motivo: '.mb_strimwidth($motivo,0,500,'…');
+                $destinatarios = User::where('est_usu','ACTIVO')->where(fn($q)=>$q->whereHas('roles',fn($r)=>$r->whereKey($lockedRole->getKey()))->orWhereKey($lockedActor->getKey()))->get();
+                $aviso = app(NotificationService::class)->publicar([
+                    'clave_evento'=>'rol-permisos:'.\Illuminate\Support\Str::uuid(), 'origen'=>'SISTEMA','tipo'=>'INFORMACION',
+                    'titulo'=>'Se actualizaron los permisos de un rol','mensaje'=>$mensaje,'cod_usu_emisor'=>$lockedActor->getKey(),
+                ],$destinatarios);
+                abort_unless($aviso,409,'No se pudo guardar el aviso; los permisos no se modificaron.');
+            }
         });
     }
 

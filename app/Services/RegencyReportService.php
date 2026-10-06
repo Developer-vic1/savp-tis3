@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Calificacion;
-use App\Models\InscripcionEstudiante;
-use App\Models\PlanAsignatura;
-use App\Models\User;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Builder;
 
 class RegencyReportService
@@ -18,12 +18,13 @@ class RegencyReportService
             ->where('est_pas', 'ACTIVO')->with('asignatura', 'curso', 'paralelo', 'turno', 'gestionAcademica');
         $enrollments = InscripcionEstudiante::selectRaw('COUNT(*)')->where('est_ins', 'ACTIVA')
             ->whereHas('estudiante', fn ($q) => $q->where('est_est', 'ACTIVO'));
-        foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
-            $enrollments->whereColumn('inscripcion_estudiante.'.$field, 'plan_asignatura.'.$field);
-        }
+        $enrollments->whereHas('inscripcionVigenciaRegistros', fn ($vigencia) => $vigencia
+            ->whereColumn('inscripcion_vigencia.cod_gac', 'plan_asignatura.cod_gac')->whereNull('cod_esp_tec')
+            ->where('fii_ivg', '<=', now()->toDateString())
+            ->where(fn ($fin) => $fin->whereNull('ffi_ivg')->orWhere('ffi_ivg', '>=', now()->toDateString())));
         $query->addSelect(['inscripciones_vigentes' => $enrollments]);
         if ($user->can('calificaciones.ver.institucional') && app(GradeService::class)->available()) {
-            $grades = Calificacion::whereColumn('calificacion.cod_pas', 'plan_asignatura.cod_pas')->where('est_cal', 'ACTIVO');
+            $grades = Calificacion::whereColumn('calificacion.cod_pas', 'plan_asignatura.cod_pas')->whereIn('est_cal', ['VIGENTE', 'RECTIFICADA']);
             $query->addSelect(['notas_registradas' => (clone $grades)->selectRaw('COUNT(*)'),
                 'promedio_notas' => (clone $grades)->selectRaw('AVG(not_cal)')]);
         }

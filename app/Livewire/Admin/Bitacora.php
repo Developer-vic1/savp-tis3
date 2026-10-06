@@ -2,8 +2,9 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Bitacora as BitacoraModel;
-use App\Models\User;
+use App\Models\Oficial\Academico\Bitacora as BitacoraModel;
+use App\Models\Oficial\Sistema\User;
+use App\Support\Bitacora\BitacoraInteligente;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -23,16 +24,27 @@ class Bitacora extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $fechaDesde = '';
+
     public string $fechaHasta = '';
+
     public string $filtroUsuario = '';
+
     public string $filtroRol = '';
+
     public string $filtroModulo = '';
+
     public string $filtroTabla = '';
+
     public string $filtroNivel = '';
+
     public string $filtroResultado = '';
+
     public string $filtroAccion = '';
+
     public string $filtroMetodo = '';
+
     public int $perPage = 10;
 
     /*
@@ -48,6 +60,7 @@ class Bitacora extends Component
     |--------------------------------------------------------------------------
     */
     public bool $drawerDetalle = false;
+
     public ?BitacoraModel $eventoDetalle = null;
 
     /*
@@ -368,6 +381,7 @@ class Bitacora extends Component
 
         if (! $this->eventoDetalle) {
             $this->dispatch('error-general', mensaje: 'No se encontró el evento seleccionado.');
+
             return;
         }
 
@@ -498,7 +512,7 @@ class Bitacora extends Component
             ->whereIn(
                 'cod_usu',
                 $grupos->pluck('usuario_key')
-                    ->filter(fn($id) => $id !== 'SISTEMA')
+                    ->filter(fn ($id) => $id !== 'SISTEMA')
                     ->values()
                     ->toArray()
             )
@@ -523,18 +537,18 @@ class Bitacora extends Component
     public function gruposAccion(): Collection
     {
         $acciones = $this->queryBase(false)
-            ->selectRaw("
+            ->selectRaw('
                 acc_bit,
                 COUNT(*) as total,
                 MAX(fec_bit) as ultima_actividad
-            ")
+            ')
             ->whereNotNull('acc_bit')
             ->groupBy('acc_bit')
             ->orderByDesc('total')
             ->get();
 
         $resultadosPorAccion = BitacoraModel::query()
-            ->selectRaw("acc_bit, res_bit, COUNT(*) as total")
+            ->selectRaw('acc_bit, res_bit, COUNT(*) as total')
             ->whereNotNull('acc_bit')
             ->whereNotNull('res_bit')
             ->groupBy('acc_bit', 'res_bit')
@@ -618,7 +632,7 @@ class Bitacora extends Component
 
         return [
             'labels' => $datos->pluck('modulo')->toArray(),
-            'data' => $datos->pluck('total')->map(fn($valor) => (int) $valor)->toArray(),
+            'data' => $datos->pluck('total')->map(fn ($valor) => (int) $valor)->toArray(),
         ];
     }
 
@@ -634,13 +648,13 @@ class Bitacora extends Component
 
         return [
             'labels' => $orden
-                ->filter(fn($nivel) => isset($datos[$nivel]))
+                ->filter(fn ($nivel) => isset($datos[$nivel]))
                 ->values()
                 ->toArray(),
 
             'data' => $orden
-                ->filter(fn($nivel) => isset($datos[$nivel]))
-                ->map(fn($nivel) => (int) $datos[$nivel]->total)
+                ->filter(fn ($nivel) => isset($datos[$nivel]))
+                ->map(fn ($nivel) => (int) $datos[$nivel]->total)
                 ->values()
                 ->toArray(),
         ];
@@ -652,12 +666,12 @@ class Bitacora extends Component
         $fin = now()->endOfDay();
 
         $datos = $this->queryBase(false)
-            ->selectRaw("DATE(fec_bit) as fecha, COUNT(*) as total")
+            ->selectRaw('DATE(fec_bit) as fecha, COUNT(*) as total')
             ->whereBetween('fec_bit', [$inicio, $fin])
-            ->groupByRaw("DATE(fec_bit)")
+            ->groupByRaw('DATE(fec_bit)')
             ->orderBy('fecha')
             ->get()
-            ->keyBy(fn($item) => Carbon::parse($item->fecha)->format('Y-m-d'));
+            ->keyBy(fn ($item) => Carbon::parse($item->fecha)->format('Y-m-d'));
 
         $labels = [];
         $data = [];
@@ -690,7 +704,7 @@ class Bitacora extends Component
             ->whereIn(
                 'cod_usu',
                 $datos->pluck('usuario_key')
-                    ->filter(fn($id) => $id !== 'SISTEMA')
+                    ->filter(fn ($id) => $id !== 'SISTEMA')
                     ->values()
                     ->toArray()
             )
@@ -710,7 +724,7 @@ class Bitacora extends Component
                     : $item->usuario_key;
             })->toArray(),
 
-            'data' => $datos->pluck('total')->map(fn($valor) => (int) $valor)->toArray(),
+            'data' => $datos->pluck('total')->map(fn ($valor) => (int) $valor)->toArray(),
         ];
     }
 
@@ -735,7 +749,7 @@ class Bitacora extends Component
             ],
             'porcentajeExito' => [
                 'titulo' => 'Porcentaje de éxito',
-                'valor' => $this->porcentajeExito() . '%',
+                'valor' => $this->porcentajeExito().'%',
             ],
             'eventosSensibles' => [
                 'titulo' => 'Eventos sensibles',
@@ -743,7 +757,7 @@ class Bitacora extends Component
             ],
             'promedioDiario' => [
                 'titulo' => 'Promedio diario',
-                'valor' => $this->promedioDiarioEventos() . ' eventos',
+                'valor' => $this->promedioDiarioEventos().' eventos',
             ],
         ];
     }
@@ -829,91 +843,12 @@ class Bitacora extends Component
 
     public function accionInstitucional(?string $accion): string
     {
-        return match ($accion) {
-            /*
-            |--------------------------------------------------------------------------
-            | Usuarios
-            |--------------------------------------------------------------------------
-            */
-            'CREAR_USUARIO' => 'Registro de cuenta institucional',
-            'ACTUALIZAR_USUARIO' => 'Actualización de cuenta institucional',
-            'DESACTIVAR_USUARIO' => 'Desactivación de cuenta institucional',
-            'REACTIVAR_USUARIO' => 'Reactivación de cuenta institucional',
-            'ACTIVAR_USUARIOS_LOTE' => 'Reactivación masiva de cuentas',
-            'DESACTIVAR_USUARIOS_LOTE' => 'Desactivación masiva de cuentas',
-            'SINCRONIZAR_DATOS_USUARIOS' => 'Sincronización de usuarios ejecutada',
-            'SINCRONIZAR_PERFILES_USUARIO' => 'Sincronización de perfiles institucionales',
-            'REVISAR_SINCRONIZACION_USUARIOS' => 'Revisión de sincronización institucional',
-            'ERROR_SINCRONIZAR_DATOS_USUARIOS' => 'Error durante sincronización institucional',
-            'ERROR_CREAR_USUARIO' => 'Error al registrar cuenta institucional',
-            'ERROR_ACTUALIZAR_USUARIO' => 'Error al actualizar cuenta institucional',
-
-            /*
-            |--------------------------------------------------------------------------
-            | Personas
-            |--------------------------------------------------------------------------
-            */
-            'CREAR_PERSONA' => 'Registro de persona',
-            'ACTUALIZAR_PERSONA' => 'Actualización de datos personales',
-            'DESACTIVAR_PERSONA' => 'Desactivación de persona',
-            'REACTIVAR_PERSONA' => 'Reactivación de persona',
-            'ELIMINAR_FOTO_PERSONA' => 'Eliminación de fotografía personal',
-
-            /*
-            |--------------------------------------------------------------------------
-            | Estudiantes
-            |--------------------------------------------------------------------------
-            */
-            'REGISTRAR_ESTUDIANTE' => 'Registro académico de estudiante',
-            'EDITAR_ESTUDIANTE' => 'Actualización académica de estudiante',
-            'DESACTIVAR_ESTUDIANTE' => 'Desactivación de estudiante',
-            'REACTIVAR_ESTUDIANTE' => 'Reactivación de estudiante',
-            'MARCAR_ESTUDIANTE_RETIRADO' => 'Cambio de estado a retirado',
-            'MARCAR_ESTUDIANTE_OBSERVADO' => 'Cambio de estado a observado',
-            'MARCAR_ESTUDIANTE_EGRESADO' => 'Cambio de estado a egresado',
-            'MARCAR_ESTUDIANTE_TRASLADADO' => 'Cambio de estado a trasladado',
-
-            /*
-            |--------------------------------------------------------------------------
-            | Inscripciones
-            |--------------------------------------------------------------------------
-            */
-            'INSCRIBIR_ESTUDIANTE' => 'Inscripción académica registrada',
-            'ACTUALIZAR_INSCRIPCION_ESTUDIANTE' => 'Actualización de inscripción académica',
-
-            /*
-            |--------------------------------------------------------------------------
-            | Personal institucional
-            |--------------------------------------------------------------------------
-            */
-            'ASIGNAR_MATERIA_MANANA' => 'Asignación de materia curricular',
-            'ASIGNAR_ESPECIALIDAD_TARDE' => 'Asignación de especialidad técnica',
-            'EDITAR_DOCENTE' => 'Actualización de información docente',
-            'DESACTIVAR_DOCENTE' => 'Desactivación de docente',
-            'REACTIVAR_DOCENTE' => 'Reactivación de docente',
-
-            default => $this->formatearAccion($accion),
-        };
+        return app(BitacoraInteligente::class)->accionInstitucional($accion);
     }
 
     public function tablaInstitucional(?string $tabla): string
     {
-        return match ($tabla) {
-            'users' => 'Usuarios del sistema',
-            'persona' => 'Personas registradas',
-            'estudiante' => 'Estudiantes',
-            'inscripcion_estudiante' => 'Inscripciones académicas',
-            'docente' => 'Docentes',
-            'personal_institucional' => 'Personal institucional',
-            'plan_asignatura' => 'Planificación de materias',
-            'plan_especialidad' => 'Planificación de especialidades',
-            'bitacora' => 'Bitácora institucional',
-            'roles' => 'Roles del sistema',
-            'permissions' => 'Permisos del sistema',
-            'model_has_roles' => 'Asignación de roles',
-            'model_has_permissions' => 'Asignación de permisos',
-            default => $tabla ?: 'No identificado',
-        };
+        return app(BitacoraInteligente::class)->tablaInstitucional($tabla);
     }
 
     public function registroInstitucional(?BitacoraModel $evento): string
@@ -1053,7 +988,7 @@ class Bitacora extends Component
         $primera = mb_substr($partes->get(0, 'U'), 0, 1);
         $segunda = mb_substr($partes->get(1, 'S'), 0, 1);
 
-        return mb_strtoupper($primera . $segunda);
+        return mb_strtoupper($primera.$segunda);
     }
 
     /*
@@ -1205,7 +1140,7 @@ class Bitacora extends Component
         $campos = collect(array_keys($anteriores))
             ->merge(array_keys($nuevos))
             ->unique()
-            ->reject(fn($campo) => $this->campoSensible((string) $campo))
+            ->reject(fn ($campo) => $this->campoSensible((string) $campo))
             ->values();
 
         return $campos->map(function ($campo) use ($anteriores, $nuevos) {
@@ -1236,8 +1171,8 @@ class Bitacora extends Component
         $nuevos = $this->normalizarJson($evento->val_nue_bit);
 
         return collect($nuevos)
-            ->reject(fn($valor, $campo) => $this->campoSensible((string) $campo))
-            ->map(fn($valor, $campo) => [
+            ->reject(fn ($valor, $campo) => $this->campoSensible((string) $campo))
+            ->map(fn ($valor, $campo) => [
                 'campo' => $this->campoInstitucional((string) $campo),
                 'campo_original' => $campo,
                 'valor' => $this->formatearValorJson($valor),

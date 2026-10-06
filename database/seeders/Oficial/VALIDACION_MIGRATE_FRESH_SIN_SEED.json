@@ -1,0 +1,16 @@
+{
+    "comando": "php artisan migrate:fresh",
+    "opciones": [],
+    "entorno": "PostgreSQL aislado 5543",
+    "base": "savp_fresh_solo_034c7f58",
+    "exit_code": 0,
+    "tablas": 104,
+    "migraciones": 110,
+    "estudiantes": 0,
+    "usuarios": 0,
+    "segundos": 18.42,
+    "base_institucional_modificada": false,
+    "ejecuciones_correctas": 2,
+    "primera_segundos": 8.71,
+    "segunda_segundos": 9.71
+}

@@ -3,135 +3,64 @@
 namespace App\Services\Reportes;
 
 use App\Services\ReportAccessService;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\Process\ExecutableFinder;
+use Symfony\Component\Process\Process;
 
+/** Respaldo nativo: estructura, datos, secuencias, funciones y restricciones. */
 class GeneradorSqlAcademicoService
 {
-    /**
-     * Tablas académicas a exportar (en orden de dependencia).
-     */
-    protected array $tablas = [
-        'persona',
-        'estudiante',
-        'personal_institucional',
-        'gestion_academica',
-        'curso',
-        'paralelo',
-        'turno',
-        'asignatura',
-        'inscripcion_estudiante',
-        'plantilla_horaria',
-        'horario',
-        'horario_bloque',
-        'calificacion',
-        'periodo_evaluacion',
-        'plan_asignatura',
-        'especialidad_tecnica',
-        'institucion_procedencia',
-        'tipo_vinculacion_estudiante',
-    ];
-
-    /**
-     * Genera el archivo SQL y lo guarda en storage.
-     * Retorna la ruta relativa dentro del disco privado 'local'.
-     */
     public function generar(): string
     {
         app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Administrativos', 'Gestion_Academica']);
-        $usuario = Auth::user();
-        $fecha = now()->format('Y-m-d H:i:s');
-        $nombre = now()->format('Ymd-His').'-'.Str::random(12);
-
-        $sql = "-- ============================================================\n";
-        $sql .= "-- Exportación SQL de Gestión Académica\n";
-        $sql .= "-- Sistema SAVP-TIS3 — Unidad Educativa Franz Tamayo N° 3\n";
-        $sql .= "-- Fecha de generación: {$fecha}\n";
-        $sql .= '-- Responsable: '.($usuario?->email ?? 'Sistema')."\n";
-        $sql .= "-- ============================================================\n\n";
-
-        $sql .= "SET client_encoding = 'UTF8';\n";
-        $sql .= "SET standard_conforming_strings = on;\n\n";
-
-        $observaciones = [];
-
-        foreach ($this->tablas as $tabla) {
-            try {
-                if (! Schema::hasTable($tabla)) {
-                    $observaciones[] = "-- AVISO: tabla '{$tabla}' no existe en la base de datos.\n";
-
-                    continue;
-                }
-
-                $registros = DB::table($tabla)->get();
-
-                if ($registros->isEmpty()) {
-                    $sql .= "-- TABLA: {$tabla} (sin registros)\n\n";
-
-                    continue;
-                }
-
-                $sql .= "-- ────────────────────────────────────────\n";
-                $sql .= "-- TABLA: {$tabla} ({$registros->count()} registros)\n";
-                $sql .= "-- ────────────────────────────────────────\n";
-
-                foreach ($registros as $registro) {
-                    $arrReg = (array) $registro;
-                    $cols = implode(', ', array_map(fn ($c) => '"'.$c.'"', array_keys($arrReg)));
-                    $vals = implode(', ', array_map(fn ($v) => $this->escapar($v), array_values($arrReg)));
-
-                    $sql .= "INSERT INTO \"{$tabla}\" ({$cols}) VALUES ({$vals});\n";
-                }
-
-                $sql .= "\n";
-            } catch (\Throwable $e) {
-                Log::warning('Exportación académica interrumpida.', ['tabla' => $tabla, 'exception' => $e::class]);
-                throw new \RuntimeException('No fue posible completar la exportación académica.');
+        $conexion = DB::connection();
+        if ($conexion->getDriverName() !== 'pgsql') {
+            throw new \RuntimeException('El respaldo oficial requiere PostgreSQL.');
+        }
+        $config = $conexion->getConfig();
+        $version = (int) $conexion->selectOne("SELECT current_setting('server_version_num') numero")->numero;
+        $mayor = intdiv($version, 10000);
+        $candidatos = array_filter([
+            $config['dump_binary'] ?? null,
+            (new ExecutableFinder)->find('pg_dump'),
+            PHP_OS_FAMILY === 'Windows' ? (getenv('ProgramFiles') ?: 'C:/Program Files').'/PostgreSQL/'.$mayor.'/bin/pg_dump.exe' : null,
+        ]);
+        $binario = null;
+        foreach ($candidatos as $candidato) {
+            if (! is_file($candidato)) {
+                continue;
+            }
+            $comprobar = new Process([$candidato, '--version']);
+            $comprobar->setTimeout(10)->run();
+            if ($comprobar->isSuccessful() && preg_match('/PostgreSQL\)?\s+(\d+)/', $comprobar->getOutput(), $coincidencia) && (int) $coincidencia[1] === $mayor) {
+                $binario = $candidato;
+                break;
             }
         }
-
-        // Agregar observaciones al final
-        if (! empty($observaciones)) {
-            $sql .= "\n-- ── OBSERVACIONES ───────────────────────────────────\n";
-            foreach ($observaciones as $obs) {
-                $sql .= $obs;
-            }
+        if (! $binario) {
+            throw new \RuntimeException('Configura PG_DUMP_BINARY con pg_dump de la misma versión mayor que el servidor PostgreSQL.');
         }
-
-        $sql .= "\n-- Fin de exportación\n";
-
-        $archivo = "respaldo-academico-{$nombre}.sql";
-        $ruta = "reportes/sql/{$archivo}";
-
-        if (! Storage::disk('local')->put($ruta, $sql)) {
-            throw new \RuntimeException('No fue posible guardar la exportación académica.');
+        $ruta = 'reportes/sql/respaldo-academico-'.now()->format('Ymd-His').'-'.Str::random(12).'.sql';
+        Storage::disk('local')->makeDirectory(dirname($ruta));
+        $proceso = new Process([$binario, '--format=plain', '--no-owner', '--no-acl', '--encoding=UTF8', '--file', Storage::disk('local')->path($ruta)], null, [
+            'PGHOST' => (string) $config['host'], 'PGPORT' => (string) ($config['port'] ?? 5432),
+            'PGDATABASE' => (string) $config['database'], 'PGUSER' => (string) $config['username'],
+            'PGPASSWORD' => (string) ($config['password'] ?? ''), 'PGSSLMODE' => (string) ($config['sslmode'] ?? 'prefer'),
+            'PGCONNECT_TIMEOUT' => '10',
+        ]);
+        $proceso->setTimeout(600);
+        try {
+            $proceso->run();
+            if (! $proceso->isSuccessful() || ! Storage::disk('local')->exists($ruta) || Storage::disk('local')->size($ruta) === 0) {
+                throw new \RuntimeException('El respaldo PostgreSQL no se completó. No se entregará un archivo parcial.');
+            }
+        } catch (\Throwable $e) {
+            Storage::disk('local')->delete($ruta);
+            throw $e;
         }
 
         return $ruta;
-    }
-
-    /**
-     * Escapa un valor para SQL seguro.
-     */
-    protected function escapar(mixed $valor): string
-    {
-        if ($valor === null) {
-            return 'NULL';
-        }
-        if (is_bool($valor)) {
-            return $valor ? 'TRUE' : 'FALSE';
-        }
-        if (is_numeric($valor) && ! is_string($valor)) {
-            return (string) $valor;
-        }
-        // Escapar strings: comillas simples duplicadas
-        $v = (string) $valor;
-        $v = str_replace("'", "''", $v);
-
-        return "'{$v}'";
     }
 }

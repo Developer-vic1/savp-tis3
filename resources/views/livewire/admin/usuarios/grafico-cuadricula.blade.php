@@ -1,0 +1,3 @@
+<div class="usuarios-cuadricula mt-4" role="img" aria-label="Cuadrícula de proporciones por género; cada casilla representa aproximadamente un uno por ciento."><template x-for="(casilla,i) in cuadriculaGenero" :key="i"><span :class="'usuarios-color-'+casilla.indice" :title="casilla.nombre+': '+casilla.cantidad+' cuentas'"></span></template></div>
+<p class="ui-muted mt-3 text-xs">Cada casilla ≈ 1% de las cuentas filtradas.</p>
+<dl class="usuarios-leyenda mt-4">@foreach($indicadoresUsuarios['generos']['labels'] as $i=>$nombre)<div><span class="usuarios-color-{{ $i }}" aria-hidden="true"></span><dt>{{ $nombre }}</dt><dd class="ui-title font-bold">{{ $indicadoresUsuarios['generos']['data'][$i] }}</dd></div>@endforeach</dl>

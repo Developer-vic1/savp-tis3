@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\TipoVinculacionEstudiante as TipoModel;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante as TipoModel;
 use App\Support\Comunidad\TipoVinculacionEstudianteInteligente;
 use Illuminate\Validation\Rule;
 

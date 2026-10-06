@@ -1,0 +1,610 @@
+- generic [ref=e3]:
+  - complementary "Navegación de Estudiante" [ref=e4]:
+    - generic [ref=e5]:
+      - link "Logo de la Unidad Educativa Franz Tamayo N°3 Franz Tamayo N°3 SAVP · TIS 3" [ref=e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - img "Logo de la Unidad Educativa Franz Tamayo N°3" [ref=e8]
+        - generic [ref=e9]:
+          - generic [ref=e10]: Franz Tamayo N°3
+          - generic [ref=e11]: SAVP · TIS 3
+      - button "Contraer menú" [expanded] [ref=e12] [cursor=pointer]:
+        - generic [aria-hidden] [ref=e13]: 
+      - text: 
+    - generic [ref=e14]:
+      - generic [aria-hidden] [ref=e16]: 
+      - generic [ref=e17]:
+        - generic [ref=e18]: Estudiante
+        - generic [ref=e19]: Espacio de trabajo institucional
+    - navigation "Módulos autorizados" [ref=e20]:
+      - generic [ref=e21]: Principal
+      - link "Inicio" [ref=e22] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - generic [aria-hidden] [ref=e24]: 
+      - region "Académico" [ref=e26]:
+        - button "Grupo Académico" [ref=e27] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e29]: 
+          - generic [ref=e30]: Académico
+          - generic [aria-hidden] [ref=e31]: 
+        - text:    
+      - region "Orientación" [ref=e32]:
+        - button "Grupo Orientación" [expanded] [ref=e33] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e35]: 
+          - generic [ref=e36]: Orientación
+          - generic [aria-hidden] [ref=e37]: 
+        - group "Grupo Orientación" [ref=e38]:
+          - link "Mis intereses" [ref=e39] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/intereses
+            - generic [aria-hidden] [ref=e41]: 
+          - link "Mi futuro académico" [ref=e43] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/futuro
+            - generic [aria-hidden] [ref=e45]: 
+          - link "Mi preparación" [ref=e47] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/preparacion
+            - generic [aria-hidden] [ref=e49]: 
+          - link "Mi plan" [ref=e51] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/plan
+            - generic [aria-hidden] [ref=e53]: 
+          - link "Fuentes académicas" [ref=e55] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/fuentes
+            - generic [aria-hidden] [ref=e57]: 
+          - link "Asistente de estudio" [ref=e59] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/asistente
+            - generic [aria-hidden] [ref=e61]: 
+    - generic [ref=e63]:
+      - link "Mi perfil" [ref=e64] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/user/profile
+        - generic [aria-hidden] [ref=e66]: 
+      - button "Cerrar sesión" [ref=e69] [cursor=pointer]:
+        - generic [aria-hidden] [ref=e71]: 
+  - generic [ref=e73]:
+    - banner [ref=e74]:
+      - generic [ref=e76]:
+        - generic [ref=e77]: 01/10/2026
+        - generic [ref=e81]:
+          - generic [ref=e82]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=e83]
+        - button "Notificaciones" [ref=e85] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=e86] [cursor=pointer]
+        - button [ref=e90] [cursor=pointer]:
+          - generic [ref=e91]:
+            - img "Jose Luis Quispe Callisaya" [ref=e92]
+            - generic [ref=e93]:
+              - paragraph [ref=e94]: Jose Luis Quispe Callisaya
+              - paragraph [ref=e95]: Estudiante
+    - main [ref=e98]:
+      - generic [ref=e99]:
+        - generic [ref=e100]:
+          - paragraph [ref=e101]: Orientación académica y vocacional
+          - heading "Conoce tus intereses y explora tus opciones" [level=1] [ref=e102]
+          - paragraph [ref=e103]: Tus intereses, tu preparación y la evidencia disponible se presentan por separado. Este análisis no predice éxito ni decide una carrera.
+          - navigation "Mi orientación" [ref=e104]:
+            - link "Estado de mi perfil" [ref=e105] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=perfil
+            - link "Intereses RIASEC" [ref=e106] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=riasec
+            - link "Mi análisis y carreras" [ref=e107] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=analisis
+            - link "Fuentes e información" [ref=e108] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=fuentes
+            - link "Tutor académico-vocacional" [ref=e109] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=tutor
+        - generic [ref=e110]:
+          - heading "O*NET Interest Profiler (Mini-IP Version 2.0) — español" [level=2] [ref=e111]
+          - paragraph [ref=e112]: Responde según cuánto te gustaría realizar cada actividad. No hay respuestas correctas. Completa las 30 preguntas; puedes revisar cualquier respuesta antes de guardar.
+          - status [ref=e113]: "Progreso: 0/30"
+          - generic [ref=e114]:
+            - group "1. Construir gabinetes para cocinas" [ref=e115]:
+              - generic [ref=e117]:
+                - generic [ref=e118] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e119]
+                  - generic [ref=e120]: Me disgusta mucho
+                - generic [ref=e121] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e122]
+                  - generic [ref=e123]: Me disgusta
+                - generic [ref=e124] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e125]
+                  - generic [ref=e126]: No estoy seguro
+                - generic [ref=e127] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e128]
+                  - generic [ref=e129]: Me gusta
+                - generic [ref=e130] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e131]
+                  - generic [ref=e132]: Me gusta mucho
+            - group "2. Elaborar nueva medicina" [ref=e133]:
+              - generic [ref=e135]:
+                - generic [ref=e136] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e137]
+                  - generic [ref=e138]: Me disgusta mucho
+                - generic [ref=e139] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e140]
+                  - generic [ref=e141]: Me disgusta
+                - generic [ref=e142] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e143]
+                  - generic [ref=e144]: No estoy seguro
+                - generic [ref=e145] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e146]
+                  - generic [ref=e147]: Me gusta
+                - generic [ref=e148] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e149]
+                  - generic [ref=e150]: Me gusta mucho
+            - group "3. Escribir libros u obras de teatro" [ref=e151]:
+              - generic [ref=e153]:
+                - generic [ref=e154] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e155]
+                  - generic [ref=e156]: Me disgusta mucho
+                - generic [ref=e157] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e158]
+                  - generic [ref=e159]: Me disgusta
+                - generic [ref=e160] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e161]
+                  - generic [ref=e162]: No estoy seguro
+                - generic [ref=e163] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e164]
+                  - generic [ref=e165]: Me gusta
+                - generic [ref=e166] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e167]
+                  - generic [ref=e168]: Me gusta mucho
+            - group "4. Ayudar a personas con problemas personales o emocionales" [ref=e169]:
+              - generic [ref=e171]:
+                - generic [ref=e172] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e173]
+                  - generic [ref=e174]: Me disgusta mucho
+                - generic [ref=e175] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e176]
+                  - generic [ref=e177]: Me disgusta
+                - generic [ref=e178] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e179]
+                  - generic [ref=e180]: No estoy seguro
+                - generic [ref=e181] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e182]
+                  - generic [ref=e183]: Me gusta
+                - generic [ref=e184] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e185]
+                  - generic [ref=e186]: Me gusta mucho
+            - group "5. Administrar un departamento en una compañía grande" [ref=e187]:
+              - generic [ref=e189]:
+                - generic [ref=e190] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e191]
+                  - generic [ref=e192]: Me disgusta mucho
+                - generic [ref=e193] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e194]
+                  - generic [ref=e195]: Me disgusta
+                - generic [ref=e196] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e197]
+                  - generic [ref=e198]: No estoy seguro
+                - generic [ref=e199] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e200]
+                  - generic [ref=e201]: Me gusta
+                - generic [ref=e202] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e203]
+                  - generic [ref=e204]: Me gusta mucho
+            - group "6. Instala software en las computadoras en una gran red" [ref=e205]:
+              - generic [ref=e207]:
+                - generic [ref=e208] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e209]
+                  - generic [ref=e210]: Me disgusta mucho
+                - generic [ref=e211] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e212]
+                  - generic [ref=e213]: Me disgusta
+                - generic [ref=e214] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e215]
+                  - generic [ref=e216]: No estoy seguro
+                - generic [ref=e217] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e218]
+                  - generic [ref=e219]: Me gusta
+                - generic [ref=e220] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e221]
+                  - generic [ref=e222]: Me gusta mucho
+            - group "7. Reparar electrodomésticos" [ref=e223]:
+              - generic [ref=e225]:
+                - generic [ref=e226] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e227]
+                  - generic [ref=e228]: Me disgusta mucho
+                - generic [ref=e229] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e230]
+                  - generic [ref=e231]: Me disgusta
+                - generic [ref=e232] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e233]
+                  - generic [ref=e234]: No estoy seguro
+                - generic [ref=e235] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e236]
+                  - generic [ref=e237]: Me gusta
+                - generic [ref=e238] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e239]
+                  - generic [ref=e240]: Me gusta mucho
+            - group "8. Estudiar maneras para reducir la contaminación del agua" [ref=e241]:
+              - generic [ref=e243]:
+                - generic [ref=e244] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e245]
+                  - generic [ref=e246]: Me disgusta mucho
+                - generic [ref=e247] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e248]
+                  - generic [ref=e249]: Me disgusta
+                - generic [ref=e250] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e251]
+                  - generic [ref=e252]: No estoy seguro
+                - generic [ref=e253] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e254]
+                  - generic [ref=e255]: Me gusta
+                - generic [ref=e256] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e257]
+                  - generic [ref=e258]: Me gusta mucho
+            - group "9. Componer y hacer arreglos musicales" [ref=e259]:
+              - generic [ref=e261]:
+                - generic [ref=e262] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e263]
+                  - generic [ref=e264]: Me disgusta mucho
+                - generic [ref=e265] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e266]
+                  - generic [ref=e267]: Me disgusta
+                - generic [ref=e268] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e269]
+                  - generic [ref=e270]: No estoy seguro
+                - generic [ref=e271] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e272]
+                  - generic [ref=e273]: Me gusta
+                - generic [ref=e274] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e275]
+                  - generic [ref=e276]: Me gusta mucho
+            - group "10. Orientar a las personas sobre carreras" [ref=e277]:
+              - generic [ref=e279]:
+                - generic [ref=e280] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e281]
+                  - generic [ref=e282]: Me disgusta mucho
+                - generic [ref=e283] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e284]
+                  - generic [ref=e285]: Me disgusta
+                - generic [ref=e286] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e287]
+                  - generic [ref=e288]: No estoy seguro
+                - generic [ref=e289] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e290]
+                  - generic [ref=e291]: Me gusta
+                - generic [ref=e292] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e293]
+                  - generic [ref=e294]: Me gusta mucho
+            - group "11. Comenzar su propio negocio" [ref=e295]:
+              - generic [ref=e297]:
+                - generic [ref=e298] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e299]
+                  - generic [ref=e300]: Me disgusta mucho
+                - generic [ref=e301] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e302]
+                  - generic [ref=e303]: Me disgusta
+                - generic [ref=e304] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e305]
+                  - generic [ref=e306]: No estoy seguro
+                - generic [ref=e307] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e308]
+                  - generic [ref=e309]: Me gusta
+                - generic [ref=e310] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e311]
+                  - generic [ref=e312]: Me gusta mucho
+            - group "12. Operar una calculadora" [ref=e313]:
+              - generic [ref=e315]:
+                - generic [ref=e316] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e317]
+                  - generic [ref=e318]: Me disgusta mucho
+                - generic [ref=e319] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e320]
+                  - generic [ref=e321]: Me disgusta
+                - generic [ref=e322] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e323]
+                  - generic [ref=e324]: No estoy seguro
+                - generic [ref=e325] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e326]
+                  - generic [ref=e327]: Me gusta
+                - generic [ref=e328] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e329]
+                  - generic [ref=e330]: Me gusta mucho
+            - group "13. Ensamblar partes electrónicas" [ref=e331]:
+              - generic [ref=e333]:
+                - generic [ref=e334] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e335]
+                  - generic [ref=e336]: Me disgusta mucho
+                - generic [ref=e337] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e338]
+                  - generic [ref=e339]: Me disgusta
+                - generic [ref=e340] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e341]
+                  - generic [ref=e342]: No estoy seguro
+                - generic [ref=e343] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e344]
+                  - generic [ref=e345]: Me gusta
+                - generic [ref=e346] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e347]
+                  - generic [ref=e348]: Me gusta mucho
+            - group "14. Realizar experimentos químicos" [ref=e349]:
+              - generic [ref=e351]:
+                - generic [ref=e352] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e353]
+                  - generic [ref=e354]: Me disgusta mucho
+                - generic [ref=e355] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e356]
+                  - generic [ref=e357]: Me disgusta
+                - generic [ref=e358] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e359]
+                  - generic [ref=e360]: No estoy seguro
+                - generic [ref=e361] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e362]
+                  - generic [ref=e363]: Me gusta
+                - generic [ref=e364] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e365]
+                  - generic [ref=e366]: Me gusta mucho
+            - group "15. Crear efectos especiales para películas" [ref=e367]:
+              - generic [ref=e369]:
+                - generic [ref=e370] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e371]
+                  - generic [ref=e372]: Me disgusta mucho
+                - generic [ref=e373] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e374]
+                  - generic [ref=e375]: Me disgusta
+                - generic [ref=e376] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e377]
+                  - generic [ref=e378]: No estoy seguro
+                - generic [ref=e379] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e380]
+                  - generic [ref=e381]: Me gusta
+                - generic [ref=e382] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e383]
+                  - generic [ref=e384]: Me gusta mucho
+            - group "16. Realizar terapia de rehabilitación" [ref=e385]:
+              - generic [ref=e387]:
+                - generic [ref=e388] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e389]
+                  - generic [ref=e390]: Me disgusta mucho
+                - generic [ref=e391] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e392]
+                  - generic [ref=e393]: Me disgusta
+                - generic [ref=e394] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e395]
+                  - generic [ref=e396]: No estoy seguro
+                - generic [ref=e397] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e398]
+                  - generic [ref=e399]: Me gusta
+                - generic [ref=e400] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e401]
+                  - generic [ref=e402]: Me gusta mucho
+            - group "17. Negociar contratos comerciales" [ref=e403]:
+              - generic [ref=e405]:
+                - generic [ref=e406] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e407]
+                  - generic [ref=e408]: Me disgusta mucho
+                - generic [ref=e409] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e410]
+                  - generic [ref=e411]: Me disgusta
+                - generic [ref=e412] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e413]
+                  - generic [ref=e414]: No estoy seguro
+                - generic [ref=e415] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e416]
+                  - generic [ref=e417]: Me gusta
+                - generic [ref=e418] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e419]
+                  - generic [ref=e420]: Me gusta mucho
+            - group "18. Mantener registros de envíos y recepción" [ref=e421]:
+              - generic [ref=e423]:
+                - generic [ref=e424] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e425]
+                  - generic [ref=e426]: Me disgusta mucho
+                - generic [ref=e427] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e428]
+                  - generic [ref=e429]: Me disgusta
+                - generic [ref=e430] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e431]
+                  - generic [ref=e432]: No estoy seguro
+                - generic [ref=e433] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e434]
+                  - generic [ref=e435]: Me gusta
+                - generic [ref=e436] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e437]
+                  - generic [ref=e438]: Me gusta mucho
+            - group "19. Manejar un camión para entregar paquetes a oficinas y hogares" [ref=e439]:
+              - generic [ref=e441]:
+                - generic [ref=e442] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e443]
+                  - generic [ref=e444]: Me disgusta mucho
+                - generic [ref=e445] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e446]
+                  - generic [ref=e447]: Me disgusta
+                - generic [ref=e448] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e449]
+                  - generic [ref=e450]: No estoy seguro
+                - generic [ref=e451] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e452]
+                  - generic [ref=e453]: Me gusta
+                - generic [ref=e454] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e455]
+                  - generic [ref=e456]: Me gusta mucho
+            - group "20. Examinar muestras de sangre con el uso de un microscopio" [ref=e457]:
+              - generic [ref=e459]:
+                - generic [ref=e460] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e461]
+                  - generic [ref=e462]: Me disgusta mucho
+                - generic [ref=e463] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e464]
+                  - generic [ref=e465]: Me disgusta
+                - generic [ref=e466] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e467]
+                  - generic [ref=e468]: No estoy seguro
+                - generic [ref=e469] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e470]
+                  - generic [ref=e471]: Me gusta
+                - generic [ref=e472] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e473]
+                  - generic [ref=e474]: Me gusta mucho
+            - group "21. Pintar escenografías para obras de teatro" [ref=e475]:
+              - generic [ref=e477]:
+                - generic [ref=e478] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e479]
+                  - generic [ref=e480]: Me disgusta mucho
+                - generic [ref=e481] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e482]
+                  - generic [ref=e483]: Me disgusta
+                - generic [ref=e484] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e485]
+                  - generic [ref=e486]: No estoy seguro
+                - generic [ref=e487] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e488]
+                  - generic [ref=e489]: Me gusta
+                - generic [ref=e490] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e491]
+                  - generic [ref=e492]: Me gusta mucho
+            - group "22. Hacer trabajo voluntario en organizaciones sin fines de lucro" [ref=e493]:
+              - generic [ref=e495]:
+                - generic [ref=e496] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e497]
+                  - generic [ref=e498]: Me disgusta mucho
+                - generic [ref=e499] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e500]
+                  - generic [ref=e501]: Me disgusta
+                - generic [ref=e502] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e503]
+                  - generic [ref=e504]: No estoy seguro
+                - generic [ref=e505] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e506]
+                  - generic [ref=e507]: Me gusta
+                - generic [ref=e508] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e509]
+                  - generic [ref=e510]: Me gusta mucho
+            - group "23. Comercializar una nueva línea de ropa" [ref=e511]:
+              - generic [ref=e513]:
+                - generic [ref=e514] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e515]
+                  - generic [ref=e516]: Me disgusta mucho
+                - generic [ref=e517] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e518]
+                  - generic [ref=e519]: Me disgusta
+                - generic [ref=e520] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e521]
+                  - generic [ref=e522]: No estoy seguro
+                - generic [ref=e523] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e524]
+                  - generic [ref=e525]: Me gusta
+                - generic [ref=e526] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e527]
+                  - generic [ref=e528]: Me gusta mucho
+            - group "24. Identificar el inventario de suministros con una computadora de mano" [ref=e529]:
+              - generic [ref=e531]:
+                - generic [ref=e532] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e533]
+                  - generic [ref=e534]: Me disgusta mucho
+                - generic [ref=e535] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e536]
+                  - generic [ref=e537]: Me disgusta
+                - generic [ref=e538] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e539]
+                  - generic [ref=e540]: No estoy seguro
+                - generic [ref=e541] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e542]
+                  - generic [ref=e543]: Me gusta
+                - generic [ref=e544] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e545]
+                  - generic [ref=e546]: Me gusta mucho
+            - group "25. Probar la calidad de las partes antes de un envío" [ref=e547]:
+              - generic [ref=e549]:
+                - generic [ref=e550] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e551]
+                  - generic [ref=e552]: Me disgusta mucho
+                - generic [ref=e553] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e554]
+                  - generic [ref=e555]: Me disgusta
+                - generic [ref=e556] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e557]
+                  - generic [ref=e558]: No estoy seguro
+                - generic [ref=e559] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e560]
+                  - generic [ref=e561]: Me gusta
+                - generic [ref=e562] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e563]
+                  - generic [ref=e564]: Me gusta mucho
+            - group "26. Desarrollar una mejor manera de predecir el estado del tiempo o clima" [ref=e565]:
+              - generic [ref=e567]:
+                - generic [ref=e568] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e569]
+                  - generic [ref=e570]: Me disgusta mucho
+                - generic [ref=e571] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e572]
+                  - generic [ref=e573]: Me disgusta
+                - generic [ref=e574] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e575]
+                  - generic [ref=e576]: No estoy seguro
+                - generic [ref=e577] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e578]
+                  - generic [ref=e579]: Me gusta
+                - generic [ref=e580] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e581]
+                  - generic [ref=e582]: Me gusta mucho
+            - group "27. Escribir libretos para películas o programas de televisión" [ref=e583]:
+              - generic [ref=e585]:
+                - generic [ref=e586] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e587]
+                  - generic [ref=e588]: Me disgusta mucho
+                - generic [ref=e589] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e590]
+                  - generic [ref=e591]: Me disgusta
+                - generic [ref=e592] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e593]
+                  - generic [ref=e594]: No estoy seguro
+                - generic [ref=e595] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e596]
+                  - generic [ref=e597]: Me gusta
+                - generic [ref=e598] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e599]
+                  - generic [ref=e600]: Me gusta mucho
+            - group "28. Enseñar una clase de high school" [ref=e601]:
+              - generic [ref=e603]:
+                - generic [ref=e604] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e605]
+                  - generic [ref=e606]: Me disgusta mucho
+                - generic [ref=e607] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e608]
+                  - generic [ref=e609]: Me disgusta
+                - generic [ref=e610] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e611]
+                  - generic [ref=e612]: No estoy seguro
+                - generic [ref=e613] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e614]
+                  - generic [ref=e615]: Me gusta
+                - generic [ref=e616] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e617]
+                  - generic [ref=e618]: Me gusta mucho
+            - group "29. Vender mercancía en una tienda por departamentos" [ref=e619]:
+              - generic [ref=e621]:
+                - generic [ref=e622] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e623]
+                  - generic [ref=e624]: Me disgusta mucho
+                - generic [ref=e625] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e626]
+                  - generic [ref=e627]: Me disgusta
+                - generic [ref=e628] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e629]
+                  - generic [ref=e630]: No estoy seguro
+                - generic [ref=e631] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e632]
+                  - generic [ref=e633]: Me gusta
+                - generic [ref=e634] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e635]
+                  - generic [ref=e636]: Me gusta mucho
+            - group "30. Colocar sellos, separar y repartir correo para una organización" [ref=e637]:
+              - generic [ref=e639]:
+                - generic [ref=e640] [cursor=pointer]:
+                  - radio "Me disgusta mucho" [ref=e641]
+                  - generic [ref=e642]: Me disgusta mucho
+                - generic [ref=e643] [cursor=pointer]:
+                  - radio "Me disgusta" [ref=e644]
+                  - generic [ref=e645]: Me disgusta
+                - generic [ref=e646] [cursor=pointer]:
+                  - radio "No estoy seguro" [ref=e647]
+                  - generic [ref=e648]: No estoy seguro
+                - generic [ref=e649] [cursor=pointer]:
+                  - radio "Me gusta" [ref=e650]
+                  - generic [ref=e651]: Me gusta
+                - generic [ref=e652] [cursor=pointer]:
+                  - radio "Me gusta mucho" [ref=e653]
+                  - generic [ref=e654]: Me gusta mucho
+            - button "Guardar y ver mis intereses" [disabled] [ref=e655]
+          - paragraph [ref=e657]:
+            - text: Incluye información de O*NET Career Exploration Tools de USDOL/ETA. O*NET es una marca de USDOL/ETA. USDOL/ETA no ha aprobado ni respaldado SAVP. ·
+            - link "Fuente del instrumento" [ref=e658] [cursor=pointer]:
+              - /url: https://onetinterestprofiler.org/es/

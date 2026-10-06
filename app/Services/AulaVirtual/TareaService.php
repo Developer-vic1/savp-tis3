@@ -2,10 +2,10 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\AulaVirtual\TareaMaterial;
-use App\Models\Docente;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\AulaVirtual\TareaMaterial;
 use App\Services\BitacoraService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -30,9 +30,10 @@ class TareaService
             'fec_lim_tar' => ['nullable', 'date', 'after_or_equal:today'],
             'pun_max_tar' => ['required', 'numeric', 'min:1', 'max:1000'],
             'perm_ent_tardia' => ['nullable', 'boolean'], 'est_tar' => ['required', 'in:BORRADOR,PUBLICADA'],
+            'int_tar' => ['nullable', 'integer', 'min:1'],
+            'ape_tar' => ['nullable', 'date'], 'cor_tar' => ['nullable', 'date', 'after:ape_tar'],
         ])->validate();
         $datos['cod_doc'] = $docente->cod_doc;
-        $datos['cod_tar'] = 'TAR_'.Str::upper(Str::random(16));
         $datos['est_tar'] = $datos['est_tar'] ?? 'BORRADOR';
 
         validator(['archivo' => $archivo], ['archivo' => ['nullable', 'file', 'max:10240', 'mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,jpg,jpeg,png,txt']])->validate();
@@ -47,7 +48,6 @@ class TareaService
                     $path = $archivo->store('aula-virtual/tareas', 'local');
                     abort_unless($path, 503, 'No fue posible guardar el archivo.');
                     TareaMaterial::create([
-                        'cod_tar_mat' => 'TARM_'.Str::upper(Str::random(15)),
                         'cod_tar' => $task->cod_tar, 'nom_tar_mat' => Str::limit($archivo->getClientOriginalName(), 180, ''),
                         'tip_tar_mat' => 'ARCHIVO', 'rut_tar_mat' => $path,
                         'mime_tar_mat' => $archivo->getMimeType(), 'tam_tar_mat' => $archivo->getSize(), 'est_tar_mat' => 'ACTIVO',
@@ -55,6 +55,8 @@ class TareaService
                 }
                 BitacoraService::registrar(accion: 'CREAR_TAREA', tabla: 'tarea', registro: $task->cod_tar,
                     modulo: 'Aula Virtual', valoresNuevos: $task->only(['cod_cla', 'cod_doc', 'est_tar', 'pun_max_tar']));
+
+                $this->notificarPublicacion($task, $class);
 
                 return $task;
             });
@@ -92,6 +94,8 @@ class TareaService
             'fec_lim_tar' => ['nullable', 'date'], 'pun_max_tar' => ['required', 'numeric', 'min:1', 'max:1000'],
             'perm_ent_tardia' => ['required', 'boolean'], 'est_tar' => ['required', 'in:BORRADOR,PUBLICADA,CERRADA'],
             'motivo' => ['nullable', 'string', 'max:2000'],
+            'int_tar' => ['nullable', 'integer', 'min:1'],
+            'ape_tar' => ['nullable', 'date'], 'cor_tar' => ['nullable', 'date', 'after:ape_tar'],
         ])->validate();
         DB::transaction(function () use ($task, $data) {
             $class = ClaseVirtual::lockForUpdate()->findOrFail($task->cod_cla);
@@ -112,6 +116,9 @@ class TareaService
             if ((float) $locked->pun_max_tar !== (float) $data['pun_max_tar'] && $locked->entregas()->exists()) {
                 $errors['pun_max_tar'] = 'No puedes cambiar el puntaje máximo cuando ya hay entregas.';
             }
+            if (array_key_exists('int_tar', $data) && (int) ($data['int_tar'] ?? 1) < (int) $locked->entregas()->max('int_ent')) {
+                $errors['int_tar'] = 'No puedes reducir el máximo por debajo de los intentos históricos registrados.';
+            }
             if ($errors) {
                 throw ValidationException::withMessages($errors);
             }
@@ -122,6 +129,27 @@ class TareaService
             BitacoraService::registrar(accion: 'EDITAR_TAREA', tabla: 'tarea', registro: $locked->cod_tar,
                 modulo: 'Aula Virtual', valoresAnteriores: $before,
                 valoresNuevos: $locked->only(['est_tar', 'pun_max_tar', 'fec_lim_tar']) + ['motivo' => $reason]);
+            if ($before['est_tar'] === 'BORRADOR') {
+                $this->notificarPublicacion($locked, $class);
+            }
         });
+    }
+
+    private function notificarPublicacion(Tarea $tarea, ClaseVirtual $clase): void
+    {
+        $avisos = app(\App\Services\NotificationService::class);
+        if ($tarea->est_tar !== 'PUBLICADA' || ! $clase->vis_cla || ! $avisos->available()) return;
+        $plan = $clase->planAsignatura ?? $clase->planEspecialidad;
+        if (! $plan || $plan->gestionAcademica?->est_gea !== 'ACTIVA') return;
+        $personas = app(CursoVirtualService::class)->estudiantesVigentes($clase)
+            ->with('estudiante')->get()->pluck('estudiante.cod_per')->filter()->unique();
+        $usuarios = \App\Models\Oficial\Sistema\User::whereIn('cod_per', $personas)->pluck('cod_usu');
+        $avisos->publicar([
+            'clave_evento' => 'tarea-publicada:'.$tarea->getKey(), 'origen' => 'AULA_VIRTUAL', 'tipo' => 'ACCION',
+            'titulo' => 'Tienes una nueva actividad',
+            'mensaje' => \Illuminate\Support\Str::limit($clase->nom_cla.': '.$tarea->tit_tar, 450).'. Revisa las indicaciones y la fecha de entrega en tus materias.',
+            'permiso' => 'Aula_Virtual_Estudiante', 'ruta' => 'estudiante.materias',
+            'cod_gea' => $plan->cod_gea, 'cod_usu_emisor' => auth()->id(),
+        ], $usuarios);
     }
 }

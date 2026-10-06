@@ -1,0 +1,136 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Support\Modelos;
+
+use Illuminate\Database\Connection;
+
+final class FormatoCodigoInstitucional
+{
+    public const TABLAS = [
+        'asignatura' => ['clave' => 'cod_asi', 'prefijo' => 'ASI', 'digitos' => 3, 'separador' => ''],
+        'asistencia_clase' => ['clave' => 'cod_asi_cla', 'prefijo' => 'ASIC', 'digitos' => 6, 'separador' => '_'],
+        'asistencia_estudiante' => ['clave' => 'cod_asi_est', 'prefijo' => 'ASIE', 'digitos' => 6, 'separador' => '_'],
+        'aula' => ['clave' => 'cod_aul', 'prefijo' => 'AUL', 'digitos' => 6, 'separador' => '_'],
+        'bitacora' => ['clave' => 'cod_bit', 'prefijo' => 'BIT', 'digitos' => 6, 'separador' => '_'],
+        'calendario_evento' => ['clave' => 'cod_cae', 'prefijo' => 'CAE', 'digitos' => 6, 'separador' => '_'],
+        'calificacion' => ['clave' => 'cod_cal', 'prefijo' => 'CAL', 'digitos' => 6, 'separador' => '_'],
+        'calificacion_tarea' => ['clave' => 'cod_cal_tar', 'prefijo' => 'CALT', 'digitos' => 6, 'separador' => '_'],
+        'capacitacion_docente' => ['clave' => 'cod_cdo', 'prefijo' => 'CDO', 'digitos' => 6, 'separador' => '_'],
+        'captura_fuente' => ['clave' => 'cod_cfu', 'prefijo' => 'CFU', 'digitos' => 6, 'separador' => '_'],
+        'cargo_institucional' => ['clave' => 'cod_cai', 'prefijo' => 'CAI', 'digitos' => 3, 'separador' => ''],
+        'carrera' => ['clave' => 'cod_car', 'prefijo' => 'CAR', 'digitos' => 6, 'separador' => '_'],
+        'clase_estudiante' => ['clave' => 'cod_cla_est', 'prefijo' => 'CLE', 'digitos' => 6, 'separador' => '_'],
+        'clase_virtual' => ['clave' => 'cod_cla', 'prefijo' => 'CLA', 'digitos' => 6, 'separador' => '_'],
+        'configuracion_calendario_gestion' => ['clave' => 'cod_ccg', 'prefijo' => 'CCG', 'digitos' => 6, 'separador' => '_'],
+        'cuestionario' => ['clave' => 'cod_cue', 'prefijo' => 'CUE', 'digitos' => 6, 'separador' => '_'],
+        'curso' => ['clave' => 'cod_cur', 'prefijo' => 'CUR', 'digitos' => 3, 'separador' => ''],
+        'docente' => ['clave' => 'cod_doc', 'prefijo' => 'DOC', 'digitos' => 6, 'separador' => '_'],
+        'documento_inscripcion_estudiante' => ['clave' => 'cod_die', 'prefijo' => 'DIE', 'digitos' => 6, 'separador' => '_'],
+        'documento_personal' => ['clave' => 'cod_dpe', 'prefijo' => 'DPE', 'digitos' => 6, 'separador' => '_'],
+        'documento_traslado' => ['clave' => 'cod_dtr', 'prefijo' => 'DTR', 'digitos' => 6, 'separador' => '_'],
+        'entrega_archivo' => ['clave' => 'cod_ent_arc', 'prefijo' => 'ENTA', 'digitos' => 6, 'separador' => '_'],
+        'entrega_tarea' => ['clave' => 'cod_ent', 'prefijo' => 'ENT', 'digitos' => 6, 'separador' => '_'],
+        'especialidad_tecnica' => ['clave' => 'cod_esp', 'prefijo' => 'ESP', 'digitos' => 3, 'separador' => ''],
+        'estado_asistencia' => ['clave' => 'cod_est_asi', 'prefijo' => 'EASI', 'digitos' => 3, 'separador' => ''],
+        'estudiante' => ['clave' => 'cod_est', 'prefijo' => 'EST', 'digitos' => 6, 'separador' => '_'],
+        'estudiante_responsable' => ['clave' => 'cod_ere', 'prefijo' => 'ERE', 'digitos' => 6, 'separador' => '_'],
+        'evidencia_academica' => ['clave' => 'cod_eac', 'prefijo' => 'EAC', 'digitos' => 6, 'separador' => '_'],
+        'expediente_traslado' => ['clave' => 'cod_ext', 'prefijo' => 'EXT', 'digitos' => 6, 'separador' => '_'],
+        'experiencia_docente' => ['clave' => 'cod_edo', 'prefijo' => 'EDO', 'digitos' => 6, 'separador' => '_'],
+        'formacion_docente' => ['clave' => 'cod_fdo', 'prefijo' => 'FDO', 'digitos' => 6, 'separador' => '_'],
+        'foro_archivo' => ['clave' => 'cod_far', 'prefijo' => 'FAR', 'digitos' => 6, 'separador' => '_'],
+        'foro_clase' => ['clave' => 'cod_for', 'prefijo' => 'FOR', 'digitos' => 6, 'separador' => '_'],
+        'foro_mensaje' => ['clave' => 'cod_fme', 'prefijo' => 'FME', 'digitos' => 6, 'separador' => '_'],
+        'foro_tema' => ['clave' => 'cod_fte', 'prefijo' => 'FTE', 'digitos' => 6, 'separador' => '_'],
+        'gestion_academica' => ['clave' => 'cod_gea', 'prefijo' => 'GEA', 'digitos' => 6, 'separador' => '_'],
+        'grupo_academico' => ['clave' => 'cod_gac', 'prefijo' => 'GAC', 'digitos' => 6, 'separador' => '_'],
+        'horario' => ['clave' => 'cod_hor', 'prefijo' => 'HOR', 'digitos' => 6, 'separador' => '_'],
+        'horario_bloque' => ['clave' => 'cod_hbl', 'prefijo' => 'HBL', 'digitos' => 6, 'separador' => '_'],
+        'horario_detalle' => ['clave' => 'cod_hde', 'prefijo' => 'HDE', 'digitos' => 6, 'separador' => '_'],
+        'inscripcion_estudiante' => ['clave' => 'cod_ins', 'prefijo' => 'INS', 'digitos' => 6, 'separador' => '_'],
+        'inscripcion_vigencia' => ['clave' => 'cod_ivg', 'prefijo' => 'IVG', 'digitos' => 6, 'separador' => '_'],
+        'institucion_procedencia' => ['clave' => 'cod_ipe', 'prefijo' => 'IPE', 'digitos' => 3, 'separador' => ''],
+        'instrumento_orientacion' => ['clave' => 'cod_ior', 'prefijo' => 'IOR', 'digitos' => 6, 'separador' => '_'],
+        'instrumento_pregunta' => ['clave' => 'cod_ipr', 'prefijo' => 'IPR', 'digitos' => 6, 'separador' => '_'],
+        'intento_cuestionario' => ['clave' => 'cod_inc', 'prefijo' => 'INC', 'digitos' => 6, 'separador' => '_'],
+        'material_clase' => ['clave' => 'cod_mat', 'prefijo' => 'MATC', 'digitos' => 6, 'separador' => '_'],
+        'nota_traslado' => ['clave' => 'cod_ntr', 'prefijo' => 'NTR', 'digitos' => 6, 'separador' => '_'],
+        'notificacion' => ['clave' => 'cod_not', 'prefijo' => 'NOT', 'digitos' => 6, 'separador' => '_'],
+        'notificacion_usuario' => ['clave' => 'cod_nus', 'prefijo' => 'NUS', 'digitos' => 6, 'separador' => '_'],
+        'solicitud_rol' => ['clave' => 'cod_sor', 'prefijo' => 'SOR', 'digitos' => 6, 'separador' => '_'],
+        'concesion_acceso' => ['clave' => 'cod_cac', 'prefijo' => 'CAC', 'digitos' => 6, 'separador' => '_'],
+        'novedad_estudiante' => ['clave' => 'cod_nes', 'prefijo' => 'NES', 'digitos' => 6, 'separador' => '_'],
+        'oferta_academica' => ['clave' => 'cod_ofa', 'prefijo' => 'OFA', 'digitos' => 6, 'separador' => '_'],
+        'opcion_pregunta' => ['clave' => 'cod_opr', 'prefijo' => 'OPR', 'digitos' => 6, 'separador' => '_'],
+        'orientacion_ofertas_sugeridas' => ['clave' => 'cod_oos', 'prefijo' => 'OOS', 'digitos' => 6, 'separador' => '_'],
+        'paralelo' => ['clave' => 'cod_par', 'prefijo' => 'PAR', 'digitos' => 3, 'separador' => ''],
+        'periodo_evaluacion' => ['clave' => 'cod_pev', 'prefijo' => 'PEV', 'digitos' => 3, 'separador' => ''],
+        'persona' => ['clave' => 'cod_per', 'prefijo' => 'PER', 'digitos' => 6, 'separador' => '_'],
+        'personal_institucional' => ['clave' => 'cod_pin', 'prefijo' => 'PIN', 'digitos' => 6, 'separador' => '_'],
+        'plan_asignatura' => ['clave' => 'cod_pas', 'prefijo' => 'PAS', 'digitos' => 6, 'separador' => '_'],
+        'plan_especialidad' => ['clave' => 'cod_pes', 'prefijo' => 'PES', 'digitos' => 6, 'separador' => '_'],
+        'plantilla_horaria' => ['clave' => 'cod_pho', 'prefijo' => 'PHO', 'digitos' => 6, 'separador' => '_'],
+        'pregunta_cuestionario' => ['clave' => 'cod_prc', 'prefijo' => 'PRC', 'digitos' => 6, 'separador' => '_'],
+        'publicacion_clase' => ['clave' => 'cod_pub', 'prefijo' => 'PUB', 'digitos' => 6, 'separador' => '_'],
+        'recurso_fuente' => ['clave' => 'cod_rfu', 'prefijo' => 'RFU', 'digitos' => 6, 'separador' => '_'],
+        'regente_asignaciones' => ['clave' => 'cod_ras', 'prefijo' => 'RAS', 'digitos' => 6, 'separador' => '_'],
+        'registro_actividad_clase' => ['clave' => 'cod_rac', 'prefijo' => 'RAC', 'digitos' => 6, 'separador' => '_'],
+        'requisito_documento_cargo' => ['clave' => 'cod_rdc', 'prefijo' => 'RDC', 'digitos' => 6, 'separador' => '_'],
+        'respaldo_gestion_academica' => ['clave' => 'cod_rga', 'prefijo' => 'RGA', 'digitos' => 6, 'separador' => '_'],
+        'respuesta_cuestionario' => ['clave' => 'cod_rcu', 'prefijo' => 'RCU', 'digitos' => 6, 'separador' => '_'],
+        'respuesta_opcion' => ['clave' => 'cod_rop', 'prefijo' => 'ROP', 'digitos' => 6, 'separador' => '_'],
+        'resultado_anual' => ['clave' => 'cod_ran', 'prefijo' => 'RAN', 'digitos' => 6, 'separador' => '_'],
+        'retroalimentacion_archivo' => ['clave' => 'cod_raf', 'prefijo' => 'RAF', 'digitos' => 6, 'separador' => '_'],
+        'seccion_clase' => ['clave' => 'cod_sec', 'prefijo' => 'SEC', 'digitos' => 6, 'separador' => '_'],
+        'sede_universidad' => ['clave' => 'cod_sed', 'prefijo' => 'SED', 'digitos' => 6, 'separador' => '_'],
+        'seguimiento_academico' => ['clave' => 'cod_seg', 'prefijo' => 'SEG', 'digitos' => 6, 'separador' => '_'],
+        'sesion_academica' => ['clave' => 'cod_ses', 'prefijo' => 'SES', 'digitos' => 6, 'separador' => '_'],
+        'tarea' => ['clave' => 'cod_tar', 'prefijo' => 'TAR', 'digitos' => 6, 'separador' => '_'],
+        'tarea_material' => ['clave' => 'cod_tar_mat', 'prefijo' => 'TARM', 'digitos' => 6, 'separador' => '_'],
+        'tipo_documento_personal' => ['clave' => 'cod_tdp', 'prefijo' => 'TDP', 'digitos' => 3, 'separador' => ''],
+        'tipo_vinculacion_estudiante' => ['clave' => 'cod_tve', 'prefijo' => 'TVE', 'digitos' => 3, 'separador' => ''],
+        'turno' => ['clave' => 'cod_tur', 'prefijo' => 'TUR', 'digitos' => 3, 'separador' => ''],
+        'universidad' => ['clave' => 'cod_uni', 'prefijo' => 'UNI', 'digitos' => 3, 'separador' => ''],
+        'users' => ['clave' => 'cod_usu', 'prefijo' => 'USU', 'digitos' => 6, 'separador' => '_'],
+        'version_oferta_academica' => ['clave' => 'cod_vof', 'prefijo' => 'VOF', 'digitos' => 6, 'separador' => '_'],
+        'vinculo_personal' => ['clave' => 'cod_vpe', 'prefijo' => 'VPE', 'digitos' => 6, 'separador' => '_'],
+    ];
+
+    public static function para(string $tabla): array
+    {
+        return self::TABLAS[$tabla] ?? throw new \LogicException('Tabla sin formato institucional: '.$tabla);
+    }
+
+    /** Reservar e insertar en la misma transacción; el relleno es un mínimo. */
+    public static function siguiente(Connection $conexion, string $tabla): string
+    {
+        if ($conexion->transactionLevel() < 1) {
+            throw new \LogicException('El código institucional debe reservarse dentro de la transacción de inserción.');
+        }
+        $formato = self::para($tabla);
+        $clave = $formato['clave'];
+        if ($conexion->getDriverName() === 'pgsql' && $tabla === 'bitacora') {
+            $siguiente = (string) $conexion->selectOne("SELECT nextval('public.ofi_bitacora_codigo_seq') AS numero")->numero;
+        } elseif ($conexion->getDriverName() === 'pgsql') {
+            $conexion->select('SELECT pg_advisory_xact_lock(hashtextextended(?, 0))', ['SAVP:codigos:'.$tabla.':'.$clave]);
+            $columna = $conexion->getQueryGrammar()->wrap($clave);
+            $maximo = $conexion->table($tabla)
+                ->whereRaw($columna.' ~ ?', ['^'.$formato['prefijo'].'_?[0-9]+$'])
+                ->selectRaw('COALESCE(MAX(substring('.$columna." from '[0-9]+$')::bigint), 0) AS maximo")
+                ->value('maximo');
+            $siguiente = (string) ((int) $maximo + 1);
+        } else {
+            $maximo = 0;
+            foreach ($conexion->table($tabla)->pluck($clave) as $codigo) {
+                if (preg_match('/^'.$formato['prefijo'].'_?([0-9]+)$/D', $codigo, $coincidencia)) {
+                    $maximo = max($maximo, (int) $coincidencia[1]);
+                }
+            }
+            $siguiente = (string) ($maximo + 1);
+        }
+
+        return $formato['prefijo'].$formato['separador'].str_pad($siguiente, $formato['digitos'], '0', STR_PAD_LEFT);
+    }
+}

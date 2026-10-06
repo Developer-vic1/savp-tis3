@@ -15,7 +15,7 @@ Admisibles sin cambio de schema: **2/6** (MIG-002, MIG-004). Requieren rediseño
 
 ## Necesidad adicional y paquetes futuros
 
-**MIG-007:** PROPUESTA, NO_CREADA, Orientación local versionada; V037/V099/V100 y V101 si consume el resultado. Una nueva entidad `orientacion_instrumento_versiones` y extensiones nullable de preguntas/intentos/resultados. Schema actual carece de edición, escala/algoritmo/hashes congelados: un resultado finalizado no se reproduce de forma fiable si se editan preguntas. Sus columnas, PK/FK, CHECK, índices, privacidad, ownership y rollback conservador se especifican en el apartado MIG-007 del modelo objetivo. No añade RIASEC científico ni guarda resultados de Peter 3 indiscriminadamente.
+**MIG-007:** PROPUESTA, NO_CREADA, Orientación local versionada; V037/V099/V100 y V101 si consume el resultado. Una nueva entidad `orientacion_instrumento_versiones` y extensiones nullable de preguntas/intentos/resultados. Schema actual carece de edición, escala/algoritmo/hashes congelados: un resultado finalizado no se reproduce de forma fiable si se editan preguntas. Sus columnas, PK/FK, CHECK, índices, privacidad, ownership y rollback conservador se especifican en el apartado MIG-007 del modelo objetivo. No añade RIASEC científico ni guarda resultados de Aporte Ingenieril SAVP indiscriminadamente.
 
 Necesidades identificadas: Kardex, secciones LMS, notificación persistente, meta personal, evento institucional, integridad y edición de instrumento (**7 necesidades**). Plan de aplicación: **8 paquetes propuestos** al separar MIG-006A (relaciones/retención/morphs/índices) y MIG-006B (checks de escalas). Nombres/timestamps de futuros archivos por definir tras revisión; no crear reemplazos mientras se evalúa. **Archivos nuevos en esta auditoría: 0. Tablas nuevas del objetivo: 15 (14 de proposals existentes + versión de instrumento).** No incluye FUTURO condicionado de cupos/períodos/análisis Peter 3.
 
@@ -55,7 +55,7 @@ MIG-007: archivo futuro POR_DEFINIR; CREATE instrumento versionado/ALTER orienta
 MIGRATIONS NO NECESARIAS
 ============================================================
 
-Tablas duplicadas de Tarea/Entrega/Asistencia/Nota, tablas de sugerencias/completitud/porcentaje/contador de widget, otra bitácora, segundo Role, chat automático, biblioteca de fuentes efímeras y resultados Peter3 universales: NO propuestas. Reutilizar schema existente; corregir contrato/callers antes de extender.
+Tablas duplicadas de Tarea/Entrega/Asistencia/Nota, tablas de sugerencias/completitud/porcentaje/contador de widget, otra bitácora, segundo Role, chat automático, biblioteca de fuentes efímeras y resultados Aporte Ingenieril SAVP universales: NO propuestas. Reutilizar schema existente; corregir contrato/callers antes de extender.
 
 ============================================================
 ORDEN PROPUESTO DE EJECUCIÓN FUTURA
@@ -208,7 +208,7 @@ MIG-001 a MIG-005 rechazan down cuando sus tablas tienen filas: la inversión es
 - **COLUMNAS:** conserva not_cal numeric(5,2), pun_max_tar/pun_obt/pun_max según migrations LMS, valor_likert y avance actuales, sin nuevos defaults/nullable. **PK/UNIQUE:** sin cambios.
 - **FK:** sustituye calificacion.cod_est→estudiante por RESTRICT DELETE/CASCADE UPDATE. El nombre esperado proviene del archivo base; contrastarlo en la inspección futura aprobada, no adivinar si el despliegue difiere.
 - **ÍNDICE:** `(cod_est,est_cal)` para consultas del alumno.
-- **CHECKS PostgreSQL NOT VALID:** nota oficial 0..100, máximo de tarea 1..1000, puntaje LMS 0..pun_max con máximo positivo, Likert LOCAL 1..5 (no RIASEC de Peter 3), avance 0..100. Nuevas escrituras quedan sujetas a restricción; históricos anómalos se conservan y requieren revisión antes de VALIDATE CONSTRAINT.
+- **CHECKS PostgreSQL NOT VALID:** nota oficial 0..100, máximo de tarea 1..1000, puntaje LMS 0..pun_max con máximo positivo, Likert LOCAL 1..5 (no RIASEC de Aporte Ingenieril SAVP), avance 0..100. Nuevas escrituras quedan sujetas a restricción; históricos anómalos se conservan y requieren revisión antes de VALIDATE CONSTRAINT.
 - **HISTÓRICO:** no UPDATE/DELETE/backfill; no se infiere cod_pas de una nota antigua. **SOFT DELETE/AUDITORÍA:** NO APLICA; servicios/Bitácora existentes.
 - **MODELOS:** Calificacion, Tarea, CalificacionTarea, OrientacionRespuesta, OrientacionActividad. **SERVICES/POLICIES:** GradeService/CalificacionPolicy, EntregaService/AulaVirtualEntregaPolicy, TareaService/AulaVirtualTareaPolicy, OrientacionService/OrientacionResultadoPolicy.
 - **RIESGOS:** las escalas deben corresponder a reglas aprobadas; NOT VALID no acredita limpieza histórica. Reversión restaura el CASCADE anterior, lo que reabre su riesgo; requiere revisión explícita.
@@ -218,7 +218,7 @@ MIG-001 a MIG-005 rechazan down cuando sus tablas tienen filas: la inversión es
 
 Actividades usan Tarea.tip_tar; no se duplica actividad_clase, que es un log. Material/Entrega/Archivo/Asistencia/CalificacionTarea ya existen. Notas oficiales reutilizan calificacion.cod_pas de la migration de contexto académico del 2026-09-28; no se crea otra. Regencia ya tiene regente_asignaciones en esa misma migration; no se crea otra asignación. Documentación reutiliza documento_inscripcion_estudiante y almacenamiento privado; no precisa otra tabla de expediente. Intereses/resultados locales reutilizan las cinco tablas de orientación.
 
-Tutor y búsqueda Peter 3 se responden sin conservación de preguntas/respuestas: no requieren nueva tabla ni retención inventada. Un snapshot científico persistente de análisis solo se propondrá cuando Peter 1/Peter 3 aprueben su contenido, hash, versión, corte y retención; no se crea una tabla preventiva. Alertas/prevención reutilizarían seguimiento/notificaciones tras aprobar reglas; no se crea un score ni tabla de castigos. Configuración institucional/LMS requiere catálogo formal; no se crea almacén JSON genérico por si acaso.
+Tutor y búsqueda Aporte Ingenieril SAVP se responden sin conservación de preguntas/respuestas: no requieren nueva tabla ni retención inventada. Un snapshot científico persistente de análisis solo se propondrá cuando Peter 1/Peter 3 aprueben su contenido, hash, versión, corte y retención; no se crea una tabla preventiva. Alertas/prevención reutilizarían seguimiento/notificaciones tras aprobar reglas; no se crea un score ni tabla de castigos. Configuración institucional/LMS requiere catálogo formal; no se crea almacén JSON genérico por si acaso.
 
 ## Orden de ejecución futura propuesto — no ejecutado
 
@@ -253,7 +253,7 @@ Total: **6**. Las ventanas, motivo, columnas, PK/FK/checks/índices, histórico,
 
 ## MIGRATIONS NO NECESARIAS
 
-Se reutilizan actividades/Tarea, Material, Entrega/Archivo, Asistencia, calificación oficial/LMS, orientación local, documento de inscripción y asignaciones de Regencia. Tutor/fuentes no conservan consultas; no se crea otra tabla Peter 3 ni configuración genérica preventiva. Véase la justificación de reutilización anterior.
+Se reutilizan actividades/Tarea, Material, Entrega/Archivo, Asistencia, calificación oficial/LMS, orientación local, documento de inscripción y asignaciones de Regencia. Tutor/fuentes no conservan consultas; no se crea otra tabla Aporte Ingenieril SAVP ni configuración genérica preventiva. Véase la justificación de reutilización anterior.
 
 ## ORDEN PROPUESTO DE EJECUCIÓN FUTURA
 

@@ -276,5 +276,6 @@ class RolSeeder extends Seeder
         |--------------------------------------------------------------------------
         */
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        $this->call(PermisosGestionConocimientoSeeder::class);
     }
 }

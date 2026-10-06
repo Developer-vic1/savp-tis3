@@ -2,7 +2,8 @@
 
 namespace App\Actions\Fortify;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
+use App\Support\Seguridad\VerificadorIdentidadPerfil;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -13,20 +14,21 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     /**
      * Validate and update the given user's profile information.
      *
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
      */
     public function update(User $user, array $input): void
     {
+        app(VerificadorIdentidadPerfil::class)->confirmar($user, $input['current_password'] ?? '', bolsa: 'updateProfileInformation');
         Validator::make($input, [
-            'email'   => [
+            'email' => [
                 'required',
                 'email',
                 'max:255',
                 Rule::unique('users', 'email')->ignore($user->cod_usu, 'cod_usu'),
             ],
-            'tel_per' => ['nullable', 'string', 'max:20'],
+            'tel_per' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]{6,20}$/'],
             'dir_per' => ['nullable', 'string', 'max:255'],
-            'photo'   => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {
@@ -36,8 +38,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         // Actualizar datos de persona
         if ($user->persona) {
             $user->persona->forceFill([
-                'tel_per' => $input['tel_per'] ?? $user->persona->tel_per,
-                'dir_per' => $input['dir_per'] ?? $user->persona->dir_per,
+                'tel_per' => array_key_exists('tel_per', $input) ? $input['tel_per'] : $user->persona->tel_per,
+                'dir_per' => array_key_exists('dir_per', $input) ? $input['dir_per'] : $user->persona->dir_per,
             ])->save();
         }
 
@@ -54,7 +56,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     /**
      * Update the given verified user's profile information.
      *
-     * @param array<string, mixed> $input
+     * @param  array<string, mixed>  $input
      */
     protected function updateVerifiedUser(User $user, array $input): void
     {

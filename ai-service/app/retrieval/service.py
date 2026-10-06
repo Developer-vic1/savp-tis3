@@ -3,27 +3,30 @@ from functools import lru_cache
 
 from app.contracts.responses import KnowledgeEvidence
 from app.knowledge.registry import SERVICE_ROOT
-from app.retrieval.hybrid import HYBRID_VERSION, HybridHit, HybridRetriever, tokenize
-from app.retrieval.index import SELECTED_INDEX, SemanticIndex
+from app.retrieval.hybrid import (
+    LEXICAL_RETRIEVAL_VERSION,
+    KnowledgeHit,
+    LexicalRetriever,
+    tokenize,
+)
+from app.retrieval.index import load_corpus
 
 EXCERPT_MAX_CHARS = 650
-EVIDENCE_SCORE_THRESHOLD = 0.72
 MIN_QUERY_TERM_OVERLAP = 0.2
 
 
 @lru_cache(maxsize=1)
-def get_retriever() -> HybridRetriever:
-    return HybridRetriever(SemanticIndex.load_selected())
+def get_retriever() -> LexicalRetriever:
+    return LexicalRetriever(load_corpus())
 
 
 def selected_retrieval_metadata() -> dict[str, str]:
-    selected = json.loads(SELECTED_INDEX.read_text(encoding="utf-8"))
     corpus_manifest_path = SERVICE_ROOT / "data" / "processed" / "corpus_manifest.json"
     corpus_manifest = json.loads(corpus_manifest_path.read_text(encoding="utf-8"))
     return {
         "corpus_version": str(corpus_manifest["corpus_version"]),
-        "embedding_model": str(selected["model_id"]),
-        "retrieval_version": HYBRID_VERSION,
+        "embedding_model": "NONE",
+        "retrieval_version": LEXICAL_RETRIEVAL_VERSION,
     }
 
 
@@ -47,7 +50,7 @@ def relevant_excerpt(
     return excerpt
 
 
-def hit_to_evidence(hit: HybridHit, query: str) -> KnowledgeEvidence:
+def hit_to_evidence(hit: KnowledgeHit, query: str) -> KnowledgeEvidence:
     chunk = hit.chunk
     reference = chunk.url
     if chunk.page:
@@ -67,11 +70,11 @@ def hit_to_evidence(hit: HybridHit, query: str) -> KnowledgeEvidence:
         relevance=round(hit.score, 6),
         reference=reference,
         official=chunk.official,
-        retrieval_method=HYBRID_VERSION,
+        retrieval_method=LEXICAL_RETRIEVAL_VERSION,
     )
 
 
-def evidence_is_insufficient(query: str, hits: list[HybridHit]) -> bool:
+def evidence_is_insufficient(query: str, hits: list[KnowledgeHit]) -> bool:
     if not hits:
         return True
     query_terms = set(tokenize(query))
@@ -82,8 +85,4 @@ def evidence_is_insufficient(query: str, hits: list[HybridHit]) -> bool:
         tokenize(" ".join((top.chunk.title, top.chunk.section or "", top.chunk.text)))
     )
     overlap = len(query_terms & document_terms) / len(query_terms)
-    return (
-        top.score < EVIDENCE_SCORE_THRESHOLD
-        or top.lexical_rank is None
-        or overlap < MIN_QUERY_TERM_OVERLAP
-    )
+    return top.lexical_score <= 0 or overlap < MIN_QUERY_TERM_OVERLAP

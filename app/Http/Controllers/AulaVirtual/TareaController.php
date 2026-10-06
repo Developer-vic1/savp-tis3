@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\AulaVirtual\TareaMaterial;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\AulaVirtual\TareaMaterial;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\TareaService;
 use App\Support\PrivateFilePath;
@@ -33,6 +33,8 @@ class TareaController extends Controller
             'pun_max_tar' => ['required', 'numeric', 'min:1', 'max:1000'],
             'perm_ent_tardia' => ['nullable', 'boolean'],
             'est_tar' => ['nullable', 'in:BORRADOR,PUBLICADA'],
+            'int_tar' => ['nullable', 'integer', 'min:1'],
+            'ape_tar' => ['nullable', 'date'], 'cor_tar' => ['nullable', 'date', 'after:ape_tar'],
         ]);
 
         $datos['cod_cla'] = $clase->cod_cla;
@@ -53,7 +55,7 @@ class TareaController extends Controller
             ->with(['archivos' => fn ($query) => $query->where('est_arc', 'ACTIVO'), 'calificacion'])
             ->where('cod_tar', $tarea->cod_tar)
             ->where('cod_est', $estudiante->cod_est)
-            ->first();
+            ->orderByRaw('int_ent DESC NULLS LAST')->orderByDesc('ini_ent')->first();
 
         return view('aula-virtual.tareas.entregar', [
             'tarea' => $tarea->load(['claseVirtual.planAsignatura.asignatura', 'materiales' => fn ($query) => $query->where('est_tar_mat', 'ACTIVO')]),

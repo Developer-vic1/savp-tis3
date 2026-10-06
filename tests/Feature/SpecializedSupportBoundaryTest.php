@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Livewire\Shared\AcademicSources;
 use App\Livewire\Shared\StudyAssistant;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Illuminate\Support\Facades\Http;
 use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
@@ -25,7 +25,7 @@ class SpecializedSupportBoundaryTest extends TestCase
         $courses = Mockery::mock(CursoVirtualService::class);
         $courses->shouldReceive('estudianteDeUsuario')->andReturn(new Estudiante(['cod_est' => 'SELF']));
         $this->app->instance(CursoVirtualService::class, $courses);
-        config(['services.peter3.enabled' => false]);
+        config(['services.aporte_ingenieril.enabled' => false]);
         Http::preventStrayRequests();
         Http::fake();
     }

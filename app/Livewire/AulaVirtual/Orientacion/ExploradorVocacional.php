@@ -2,8 +2,8 @@
 
 namespace App\Livewire\AulaVirtual\Orientacion;
 
-use App\Models\AulaVirtual\OrientacionActividad;
-use App\Models\AulaVirtual\OrientacionResultado;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionResultado;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\OrientacionService;
 use Livewire\Attributes\Locked;

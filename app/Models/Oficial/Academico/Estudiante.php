@@ -7,6 +7,7 @@ use App\Models\Oficial\AulaVirtual\ClaseEstudiante;
 use App\Models\Oficial\AulaVirtual\EntregaTarea;
 use App\Models\Oficial\AulaVirtual\IntentoCuestionario;
 use App\Models\Oficial\AulaVirtual\RegistroActividadClase;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Estudiante extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'estudiante';
 
     protected $primaryKey = 'cod_est';
@@ -31,16 +34,6 @@ class Estudiante extends Model
         'cod_esp',
         'est_est',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($estudiante) {
-
-            if (! $estudiante->cod_est) {
-                $estudiante->cod_est = 'EST_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

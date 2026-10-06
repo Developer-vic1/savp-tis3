@@ -3,6 +3,7 @@
 namespace App\Models\Oficial\AulaVirtual;
 
 use App\Models\Oficial\Academico\Estudiante;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class EntregaTarea extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'entrega_tarea';
 
     protected $primaryKey = 'cod_ent';
@@ -41,8 +44,12 @@ class EntregaTarea extends Model
     protected static function booted(): void
     {
         static::creating(function (EntregaTarea $entregaTarea) {
-            if (! $entregaTarea->cod_ent) {
-                $entregaTarea->cod_ent = 'ENT_'.strtoupper(bin2hex(random_bytes(8)));
+
+            if (! array_key_exists('int_ent', $entregaTarea->getAttributes())) {
+                $entregaTarea->int_ent = 1;
+            }
+            if (! array_key_exists('ini_ent', $entregaTarea->getAttributes())) {
+                $entregaTarea->ini_ent = now();
             }
 
             if (! $entregaTarea->fec_ent && in_array($entregaTarea->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE'], true)) {

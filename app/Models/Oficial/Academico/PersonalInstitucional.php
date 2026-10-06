@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\Soporte\CodigoInstitucional;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-/** Modelo del contrato canónico; atributos históricos redundantes permanecen en Legado. */
+/** Modelo único de la tabla oficial; atributos y relaciones del contrato canónico. */
 class PersonalInstitucional extends Model
 {
     use CodigoInstitucional;
@@ -49,5 +49,10 @@ class PersonalInstitucional extends Model
     public function docenteRegistros(): HasOne
     {
         return $this->hasOne(Docente::class, 'cod_pin', 'cod_pin');
+    }
+
+    public function docente(): HasOne
+    {
+        return $this->hasOne(\App\Models\Oficial\Academico\Docente::class, 'cod_pin', 'cod_pin');
     }
 }

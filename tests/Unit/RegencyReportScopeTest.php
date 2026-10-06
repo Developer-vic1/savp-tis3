@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\GradeService;
 use App\Services\RegencyAccessService;
 use App\Services\RegencyReportService;
@@ -33,11 +33,11 @@ class RegencyReportScopeTest extends TestCase
         $query = (new RegencyReportService)->query($this->user('Regente'));
         $sql = $query->toSql();
         foreach (['cod_gea', 'cod_cur'] as $field) {
-            $this->assertStringContainsString('"ra"."'.$field.'" = "plan_asignatura"."'.$field.'"', $sql);
+            $this->assertStringContainsString('"ra"."'.$field.'" = "alcance_grupo"."'.$field.'"', $sql);
         }
-        foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
-            $this->assertStringContainsString('"inscripcion_estudiante"."'.$field.'" = "plan_asignatura"."'.$field.'"', $sql);
-        }
+        $this->assertStringContainsString('"alcance_grupo"."cod_gac" = "plan_asignatura"."cod_gac"', $sql);
+        $this->assertStringContainsString('"inscripcion_vigencia"."cod_gac" = "plan_asignatura"."cod_gac"', $sql);
+        $this->assertStringContainsString('"cod_esp_tec" is null', $sql);
         $this->assertStringContainsString('"calificacion"."cod_pas" = "plan_asignatura"."cod_pas"', $sql);
         $this->assertContains('SELF', $query->getBindings());
     }

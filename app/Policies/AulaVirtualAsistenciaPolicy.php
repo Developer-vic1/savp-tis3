@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\AulaVirtual\AsistenciaClase;
-use App\Models\User;
+use App\Models\Oficial\Academico\AsistenciaClase;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 
 class AulaVirtualAsistenciaPolicy

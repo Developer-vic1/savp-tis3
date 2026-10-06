@@ -1,4 +1,4 @@
-# PETER 3 — Fase 2 y cierre técnico de Fase 2.1
+# Aporte Ingenieril SAVP — Fase 2 y cierre técnico de Fase 2.1
 
 Rama `work/peter3-mejoras-fase2`, base histórica
 `ae386c741c850a89adc586131c9f974ac458e628` y checkpoint de
@@ -47,7 +47,7 @@ se congeló E5 sin cambiar parámetros y TEST se ejecutó una vez.
 la latencia fría observada, están en `RETRIEVAL_EVALUATION.md`.
 
 Knowledge y Tutor respondieron HTTP 200 en el smoke con `TestClient`;
-Analysis E2E y Full PETER 3 E2E pasaron. Los 13 escenarios de prompts
+Analysis E2E y Full Aporte Ingenieril SAVP E2E pasaron. Los 13 escenarios de prompts
 pasaron con 0 éxitos de inyección observados. La suite completa terminó
 en **127 passed, 1 skipped, 0 failed**, cobertura **92 %**; el skip
 corresponde al OCR real opcional (`RUN_REAL_OCR=1`). Ruff y Mypy

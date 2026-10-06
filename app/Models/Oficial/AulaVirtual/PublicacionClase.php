@@ -2,13 +2,16 @@
 
 namespace App\Models\Oficial\AulaVirtual;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PublicacionClase extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'publicacion_clase';
 
     protected $primaryKey = 'cod_pub';
@@ -38,9 +41,6 @@ class PublicacionClase extends Model
     protected static function booted(): void
     {
         static::creating(function (PublicacionClase $publicacionClase) {
-            if (! $publicacionClase->cod_pub) {
-                $publicacionClase->cod_pub = 'PUB_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (! $publicacionClase->fec_pub && $publicacionClase->est_pub === 'PUBLICADO') {
                 $publicacionClase->fec_pub = now();

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ReporteGenerado;
+use App\Models\Oficial\Academico\ReporteGenerado;
 use App\Services\BitacoraService;
 use App\Services\HistoricalReportAccessService;
 use Illuminate\Http\Request;

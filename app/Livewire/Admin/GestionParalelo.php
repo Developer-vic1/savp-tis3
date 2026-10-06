@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Bitacora;
-use App\Models\Paralelo;
+use App\Models\Oficial\Academico\Bitacora;
+use App\Models\Oficial\Academico\Paralelo;
 use App\Services\BitacoraService;
 use App\Support\Academico\ParaleloInteligente;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -13,12 +13,246 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\Attributes\Locked;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use App\Support\Academico\ConsultaParalelosInstitucionales;
+use App\Support\Academico\RespaldoCursoInstitucional;
+use App\Support\Academico\ExpedienteParaleloInstitucional;
 use Livewire\WithPagination;
 use Throwable;
 
 class GestionParalelo extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
+
+    private ?array $instantanea = null;
+    public string $motivoCambio = '';
+    public string $causaCambio = '';
+    public string $tipoDocumento = 'resolucion';
+    public string $numeroDocumento = '';
+    public string $fechaDocumento = '';
+    public string $autoridadDocumento = '';
+    public string $referenciaVerificacion = '';
+    public string $gestionSolicitud = '';
+    public bool $confirmarImpacto = false;
+    public $documentoCambio;
+    #[Locked] public array $revisionDocumento = [];
+    #[Locked] public int $faseCrear = 1;
+    #[Locked] public string $rechazoDocumentoRegistrado = '';
+    #[Locked] public string $mensajeAutollenado = '';
+    private array $expedienteGuardado = [];
+
+    private function autorizar(): void
+    {
+        abort_unless(auth()->check(), 403);
+        Gate::authorize('Paralelos');
+    }
+
+    private function datosVigentes(): array
+    {
+        return $this->instantanea ??= app(ConsultaParalelosInstitucionales::class)->consultar();
+    }
+
+    private function reiniciarExpediente(): void
+    {
+        $this->reset('motivoCambio', 'causaCambio', 'tipoDocumento', 'numeroDocumento', 'fechaDocumento', 'autoridadDocumento', 'referenciaVerificacion', 'documentoCambio', 'confirmarImpacto', 'revisionDocumento', 'faseCrear', 'rechazoDocumentoRegistrado', 'mensajeAutollenado');
+        $this->gestionSolicitud = (string) ($this->datosVigentes()['gestion']?->ani_gea ?? '');
+    }
+
+    public function updated($campo): void
+    {
+        if (in_array($campo, ['filtroGrado','filtroTurno','filtroCapacidad','filtroDocumentacion'])) $this->resetPage();
+        if ($campo === 'form.est_par') $this->confirmarImpacto = false;
+        if (in_array($campo, ['documentoCambio', 'numeroDocumento', 'tipoDocumento', 'form.nom_par', 'formEditar.nom_par', 'gestionSolicitud', 'fechaDocumento'])) {
+            $this->mensajeAutollenado = '';
+            $this->revisionDocumento = [];
+            $this->confirmarImpacto = false;
+            if ($this->modalCrear && $this->faseCrear === 3) $this->faseCrear = 2;
+        }
+        $reglas = $this->reglasCamposExpediente();
+        if (array_key_exists($campo, $reglas)) {
+            $this->validateOnly($campo, $reglas, $this->mensajesCamposExpediente());
+            if ($campo === 'motivoCambio') $this->validarJustificacion();
+        }
+    }
+
+    private function reglasCamposExpediente(): array
+    {
+        return ['causaCambio'=>['required', Rule::in(['demanda','infraestructura','reorganizacion','rectificacion','otro'])],
+            'motivoCambio'=>'required|string|min:30|max:2000',
+            'numeroDocumento'=>['required','string','min:3','max:100','regex:/^[\p{L}\p{N}][\p{L}\p{N} .\/\-]*\d[\p{L}\p{N} .\/\-]*$/u'],
+            'fechaDocumento'=>'required|date|before_or_equal:'.now('America/La_Paz')->toDateString(),
+            'gestionSolicitud'=>'required|integer|min:'.now()->year.'|max:'.(now()->year+1),
+            'autoridadDocumento'=>['required','string','min:8','max:200','regex:/[\p{L}]{3,}\s+[\p{L}]{3,}/u'],
+            'referenciaVerificacion'=>'required|string|min:15|max:500',
+            'tipoDocumento'=>['required', Rule::in(['resolucion','rectificacion'])], 'documentoCambio'=>'required|file|mimes:pdf|max:8192'];
+    }
+
+    private function mensajesCamposExpediente(): array
+    {
+        return ['causaCambio.required'=>'Selecciona el motivo que justifica el cambio.',
+            'motivoCambio.required'=>'Explica la necesidad, los grados afectados y los ambientes disponibles.',
+            'motivoCambio.min'=>'Escribe al menos 30 caracteres con una explicación concreta.',
+            'numeroDocumento.required'=>'Copia el número completo de la resolución. Ejemplo de formato: 123/2026.',
+            'numeroDocumento.regex'=>'Usa la referencia oficial con números. Ejemplo de formato: DDE-123/2026.',
+            'fechaDocumento.required'=>'Indica la fecha de emisión que figura en el PDF.',
+            'fechaDocumento.before_or_equal'=>'La fecha de emisión no puede ser posterior a hoy.',
+            'autoridadDocumento.required'=>'Escribe la autoridad emisora que aparece en el documento.',
+            'autoridadDocumento.regex'=>'Escribe el nombre completo de la autoridad, con palabras separadas.',
+            'gestionSolicitud.required'=>'Indica el año autorizado en el documento.',
+            'gestionSolicitud.min'=>'La gestión debe ser la vigente o la próxima.', 'gestionSolicitud.max'=>'La gestión debe ser la vigente o la próxima.',
+            'documentoCambio.required'=>'Adjunta el PDF para leerlo o revisarlo.',
+            'documentoCambio.mimes'=>'El respaldo debe ser un archivo PDF.', 'documentoCambio.max'=>'El PDF no puede superar 8 MB.',
+            'referenciaVerificacion.required'=>'Registra cuándo, por qué canal oficial y con qué referencia comprobaste el respaldo.'];
+    }
+
+    public function updatedGestionSolicitud(): void
+    {
+        if ((int)$this->gestionSolicitud > now()->year && $this->modalCrear) $this->form['est_par'] = 'INACTIVO';
+    }
+
+    public function revisarDocumento(): void
+    {
+        $this->autorizar();
+        $this->validate(['documentoCambio' => 'required|file|mimes:pdf|max:8192', 'numeroDocumento' => 'required|string|min:3|max:100', 'fechaDocumento' => 'required|date|before_or_equal:'.now('America/La_Paz')->toDateString(), 'gestionSolicitud' => 'required|integer', 'tipoDocumento' => ['required', Rule::in(['resolucion', 'rectificacion'])]]);
+        $lectura = app(RespaldoCursoInstitucional::class)->leer($this->documentoCambio->getRealPath(), 'documentoCambio');
+        $nombre = $this->modalEditar ? $this->formEditar['nom_par'] : $this->form['nom_par'];
+        $this->revisionDocumento = ExpedienteParaleloInstitucional::revisar($lectura['texto'], $this->numeroDocumento, $nombre, $this->tipoDocumento, $this->fechaDocumento, $this->gestionSolicitud);
+        $this->registrarRechazoDocumento($lectura, $nombre, ['numero'=>$this->numeroDocumento, 'fecha'=>$this->fechaDocumento, 'gestion'=>$this->gestionSolicitud, 'tipo'=>$this->tipoDocumento]);
+    }
+
+    public function completarDesdePdf(): void
+    {
+        $this->autorizar();
+        abort_unless($this->modalCrear || $this->modalEditar, 422);
+        $this->resetValidation();
+        $this->mensajeAutollenado = '';
+        $this->confirmarImpacto = false;
+        $this->revisionDocumento = [];
+        $this->validate(['documentoCambio'=>'required|file|mimes:pdf|max:8192'], $this->mensajesCamposExpediente(), ['documentoCambio'=>'respaldo PDF']);
+        $lectura = app(RespaldoCursoInstitucional::class)->leer($this->documentoCambio->getRealPath(), 'documentoCambio');
+        $datos = ExpedienteParaleloInstitucional::detectar($lectura['texto']);
+        $nombre = $this->modalEditar ? $this->formEditar['nom_par'] : $this->form['nom_par'];
+        $this->revisionDocumento = ExpedienteParaleloInstitucional::revisar($lectura['texto'], $datos['numero'], $nombre, $datos['tipo'], $datos['fecha'], $datos['gestion']);
+        $this->revisionDocumento['reglas'] += [
+            'Campos documentales únicos y completos'=>!in_array('', $datos, true),
+            'Fecha de emisión no futura'=>$datos['fecha'] !== '' && $datos['fecha'] <= now('America/La_Paz')->toDateString(),
+            'Gestión vigente o próxima'=>(int)$datos['gestion'] >= now()->year && (int)$datos['gestion'] <= now()->year + 1,
+        ];
+        $this->revisionDocumento['coherente'] = !in_array(false, $this->revisionDocumento['reglas'], true);
+        $this->registrarRechazoDocumento($lectura, $nombre, $datos);
+        if (!$this->revisionDocumento['coherente']) {
+            $this->addError('documentoCambio', 'PDF rechazado para autollenado: revisa las observaciones. El intento se guardó en bitácora y tus valores no fueron sobrescritos.');
+            return;
+        }
+        $this->numeroDocumento = $datos['numero'];
+        $this->fechaDocumento = $datos['fecha'];
+        $this->gestionSolicitud = $datos['gestion'];
+        $this->autoridadDocumento = $datos['autoridad'];
+        $this->tipoDocumento = $datos['tipo'];
+        $this->updatedGestionSolicitud();
+        if ($this->modalCrear) $this->faseCrear = 2;
+        $this->mensajeAutollenado = 'PDF coherente: se actualizaron número, fecha, gestión, autoridad y tipo. Completa el motivo y comprueba el respaldo con la autoridad antes de guardar.';
+    }
+
+    private function registrarRechazoDocumento(array $lectura, string $nombre, array $datos): void
+    {
+        if (!$this->revisionDocumento['coherente']) {
+            $huella = hash('sha256', json_encode([$lectura['sha256'], $nombre, $datos]));
+            if ($this->rechazoDocumentoRegistrado !== $huella) {
+                // Solo el rechazo de un PDF leído genera este intento; no el simple llenado del formulario.
+                $ruta = $this->documentoCambio->store('expedientes/paralelos/rechazados', 'local');
+                if (!$ruta) throw new \RuntimeException('No se pudo conservar el respaldo rechazado.');
+                try {
+                    $this->registrarBitacoraSeguro(accion: $this->modalEditar ? 'INTENTO_EDITAR_PARALELO_PDF_RECHAZADO' : 'INTENTO_CREAR_PARALELO_PDF_RECHAZADO', tabla: 'paralelo',
+                        registro: $this->modalEditar ? $this->paraleloSeleccionado : null, nombreRegistro: 'Paralelo '.$nombre,
+                        descripcion: 'El PDF leído no cumple las coincidencias documentales. No se creó ni modificó el paralelo.', nivel: 'WARNING', resultado: 'BLOQUEADO',
+                        valoresNuevos: ['nombre_solicitado'=>$nombre, 'documento'=>$datos + ['archivo'=>$ruta, 'sha256'=>$lectura['sha256']], 'revision'=>$this->revisionDocumento]);
+                    $this->rechazoDocumentoRegistrado = $huella;
+                } catch (Throwable $e) {
+                    Storage::disk('local')->delete($ruta);
+                    throw $e;
+                }
+            }
+        }
+    }
+
+    public function continuarCreacion(): void
+    {
+        $this->autorizar();
+        $this->resetValidation();
+        if ($this->faseCrear === 1) {
+            $this->interpretarParaleloCrear();
+            $this->validate($this->rulesCrear());
+            if (!$this->puedeGuardarCrear) {
+                $this->addError('form.nom_par', $this->bloqueoCrearMensaje ?? 'Corrige el nombre antes de continuar.');
+                return;
+            }
+            $this->faseCrear = 2;
+            return;
+        }
+        if ($this->faseCrear === 2) {
+            $this->validate(['causaCambio'=>['required',Rule::in(['demanda','infraestructura','reorganizacion','rectificacion','otro'])], 'motivoCambio'=>'required|string|min:30|max:2000',
+                'autoridadDocumento'=>'required|string|min:8|max:200', 'gestionSolicitud'=>'required|integer|min:'.now()->year.'|max:'.(now()->year+1)], $this->mensajesCamposExpediente());
+            $this->validarJustificacion();
+            $this->revisarDocumento();
+            if (!$this->revisionDocumento['coherente']) {
+                $this->addError('documentoCambio', 'PDF rechazado en la revisión de contenido. El intento quedó registrado; puedes corregir los datos o adjuntar el respaldo correcto.');
+                return;
+            }
+            $this->faseCrear = 3;
+        }
+    }
+
+    public function volverFaseCreacion(): void
+    {
+        $this->autorizar();
+        $this->faseCrear = max(1, $this->faseCrear - 1);
+        $this->confirmarImpacto = false;
+        $this->resetValidation();
+    }
+
+    public function getExpedienteCompletoProperty(): bool
+    {
+        return strlen(trim($this->motivoCambio)) >= 30 && $this->causaCambio !== ''
+            && $this->fechaDocumento !== '' && strlen(trim($this->autoridadDocumento)) >= 8
+            && strlen(trim($this->referenciaVerificacion)) >= 15 && $this->confirmarImpacto
+            && ($this->revisionDocumento['coherente'] ?? false);
+    }
+
+    private function validarJustificacion(): void
+    {
+        if (!ExpedienteParaleloInstitucional::justificacionComprensible($this->motivoCambio)) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['motivoCambio'=>'Explica la necesidad en una frase de al menos cinco palabras útiles. Una cadena de letras o palabras repetidas no justifica el cambio.']);
+        }
+    }
+
+    private function validarExpediente(bool $crear = false): void
+    {
+        $this->autorizar();
+        $this->validate($this->reglasCamposExpediente() + ['confirmarImpacto'=>'accepted'], $this->mensajesCamposExpediente(), ['motivoCambio'=>'justificación', 'causaCambio'=>'motivo', 'documentoCambio'=>'respaldo PDF', 'referenciaVerificacion'=>'verificación con la autoridad']);
+        $this->validarJustificacion();
+        if ($crear && $this->tipoDocumento !== 'resolucion') {
+            throw \Illuminate\Validation\ValidationException::withMessages(['tipoDocumento' => 'La incorporación requiere resolución administrativa. Una solicitud enviada aún no es aprobación.']);
+        }
+        $estadoDestino = $crear ? $this->form['est_par'] : $this->formEditar['est_par'];
+        if ((int)$this->gestionSolicitud > now()->year && $estadoDestino === 'ACTIVO') {
+            throw \Illuminate\Validation\ValidationException::withMessages(['gestionSolicitud' => 'Una incorporación para la próxima gestión se registra inactiva. No se habilita anticipadamente ni de forma automática.']);
+        }
+        // Se vuelve a leer el archivo al guardar; no se confía en el análisis del navegador.
+        $this->revisarDocumento();
+        if (!($this->revisionDocumento['coherente'] ?? false)) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['documentoCambio' => 'El documento no cumple las coincidencias mínimas. Revisa las observaciones; los datos se conservan.']);
+        }
+        $this->expedienteGuardado = ['causa' => $this->causaCambio, 'motivo' => $this->motivoCambio, 'tipo' => $this->tipoDocumento,
+            'numero' => $this->numeroDocumento, 'fecha' => $this->fechaDocumento, 'autoridad' => $this->autoridadDocumento,
+            'verificacion' => $this->referenciaVerificacion, 'gestion_solicitada' => $this->gestionSolicitud,
+            'alcance' => 'Catálogo institucional. No abre grupos, no traslada estudiantes ni aplica automáticamente a futuras gestiones.',
+            'sha256' => hash_file('sha256', $this->documentoCambio->getRealPath()), 'revision' => $this->revisionDocumento];
+    }
+
 
     protected string $paginationTheme = 'tailwind';
 
@@ -32,6 +266,11 @@ class GestionParalelo extends Component
     public string $estado = '';
     public string $usoAcademico = '';
     public string $impacto = '';
+    public string $filtroGrado = '';
+    public string $filtroTurno = '';
+    public string $filtroCapacidad = '';
+    public string $filtroDocumentacion = '';
+    private ?Collection $expedientesCatalogo = null;
     public int $perPage = 10;
 
     public string $sortField = 'nom_par';
@@ -72,7 +311,9 @@ class GestionParalelo extends Component
     |--------------------------------------------------------------------------
     */
 
+    #[Locked]
     public array $analisisCrear = [];
+    #[Locked]
     public array $analisisEditar = [];
     public bool $puedeGuardarCrear = false;
     public ?string $bloqueoCrearMensaje = null;
@@ -83,6 +324,7 @@ class GestionParalelo extends Component
     |--------------------------------------------------------------------------
     */
 
+    #[Locked]
     public ?string $paraleloSeleccionado = null;
     public array $detalleParalelo = [];
 
@@ -108,9 +350,9 @@ class GestionParalelo extends Component
 
     public array $opcionesImpacto = [
         '' => 'Todos',
-        'ALTO' => 'Uso alto',
-        'MEDIO' => 'Uso medio',
-        'BAJO' => 'Uso bajo',
+        'ALTO' => 'Con estudiantes',
+        'MEDIO' => 'Planificado',
+        'BAJO' => 'Grupos preparados',
         'SIN_USO' => 'Sin uso',
         'HISTORICO' => 'Histórico',
     ];
@@ -123,12 +365,14 @@ class GestionParalelo extends Component
 
     public function mount(): void
     {
+        $this->autorizar();
         $this->reiniciarAnalisisCrear();
         $this->reiniciarAnalisisEditar();
     }
 
     public function render()
     {
+        $this->autorizar();
         $paralelos = $this->obtenerParalelosPaginados();
 
         return view('livewire.admin.gestion-paralelo', [
@@ -137,7 +381,9 @@ class GestionParalelo extends Component
             'distribucion' => $this->obtenerDistribucionEstudiantil(),
             'recomendaciones' => $this->obtenerRecomendacionesSistema(),
             'catalogoSugerido' => ParaleloInteligente::catalogoSugerido(),
-            'historicos' => $this->obtenerHistoricosRecuperables(),
+            'historicos' => $this->modalHistoricos ? $this->obtenerHistoricosRecuperables() : collect(),
+            'gestionVigente' => $this->datosVigentes()['gestion'],
+            'mapaGrupos' => $this->datosVigentes()['mapa'],
         ]);
     }
 
@@ -179,6 +425,7 @@ class GestionParalelo extends Component
             'estado',
             'usoAcademico',
             'impacto',
+            'filtroGrado', 'filtroTurno', 'filtroCapacidad', 'filtroDocumentacion',
         ]);
 
         $this->perPage = 10;
@@ -217,21 +464,32 @@ class GestionParalelo extends Component
 
     private function obtenerParalelosPaginados(): LengthAwarePaginator
     {
-        $paginados = $this->paralelosQuery()->paginate($this->perPage);
-
-        $paginados->getCollection()->transform(function (Paralelo $paralelo) {
-            return $this->enriquecerParalelo($paralelo);
-        });
-
-        if ($this->impacto !== '') {
-            $filtrados = $paginados->getCollection()
-                ->filter(fn(Paralelo $paralelo) => ($paralelo->impacto_academico['nivel'] ?? '') === $this->impacto)
-                ->values();
-
-            $paginados->setCollection($filtrados);
-        }
-
-        return $paginados;
+        $filas = Paralelo::query()->get()->map(fn ($p) => $this->enriquecerParalelo($p))->filter(function ($p) {
+            $uso = $p->uso_academico;
+            $gruposFiltrados = collect($uso['grupos'])->filter(fn ($g) => (!$this->filtroGrado || $g['cod_cur'] === $this->filtroGrado) && (!$this->filtroTurno || $g['cod_tur'] === $this->filtroTurno));
+            $cumpleGrupos = (!$this->filtroGrado && !$this->filtroTurno && !$this->filtroCapacidad) || $gruposFiltrados->contains(fn ($g) => match ($this->filtroCapacidad) {
+                'excedida' => $g['capacidad'] > 0 && $g['estudiantes'] > $g['capacidad'],
+                'plazas' => $g['capacidad'] > $g['estudiantes'], 'vacio' => $g['estudiantes'] === 0, default => true,
+            });
+            $cumpleDocumento = true;
+            if ($this->filtroDocumentacion) {
+                $this->expedientesCatalogo ??= Bitacora::where('tab_bit', 'paralelo')->where('res_bit', 'EXITOSO')->orderByDesc('fec_bit')->get(['reg_bit','val_nue_bit'])->unique('reg_bit')->keyBy('reg_bit');
+                $documentado = !empty($this->expedientesCatalogo->get($p->cod_par)?->val_nue_bit['expediente']);
+                $cumpleDocumento = $this->filtroDocumentacion === 'con' ? $documentado : !$documentado;
+            }
+            return (trim($this->search) === '' || str_contains(mb_strtolower($p->nom_par), mb_strtolower(trim($this->search))))
+                && $cumpleGrupos && $cumpleDocumento
+                && (!$this->estado || $p->est_par === $this->estado)
+                && (!$this->impacto || $p->impacto_academico['nivel'] === $this->impacto)
+                && match ($this->usoAcademico) {
+                    'CON_ESTUDIANTES' => $uso['tiene_estudiantes'], 'SIN_ESTUDIANTES' => !$uso['tiene_estudiantes'],
+                    'CON_PLANIFICACION' => $uso['tiene_planificacion'], 'SIN_USO' => !$uso['tiene_uso'] && !count($uso['grupos']),
+                    'HISTORICO' => $p->est_par === 'INACTIVO', default => true,
+                };
+        })->sortBy(in_array($this->sortField, ['nom_par', 'est_par']) ? $this->sortField : 'nom_par', SORT_NATURAL, $this->sortDirection === 'desc')->values();
+        $pagina = max(1, $this->getPage());
+        $limite = in_array($this->perPage, [10, 20, 50]) ? $this->perPage : 10;
+        return new \Illuminate\Pagination\LengthAwarePaginator($filas->forPage($pagina, $limite)->values(), $filas->count(), $limite, $pagina);
     }
 
     private function paralelosQuery(): Builder
@@ -323,7 +581,7 @@ class GestionParalelo extends Component
     {
         $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
         $impacto = $this->calcularImpacto($paralelo, $uso);
-        $bitacora = $this->obtenerUltimaBitacora($paralelo->cod_par);
+        $bitacora = null;
         $analisis = ParaleloInteligente::interpretar($paralelo->nom_par, []);
 
         $paralelo->uso_academico = $uso;
@@ -343,28 +601,7 @@ class GestionParalelo extends Component
 
     public function obtenerUsoAcademico(string $codPar): array
     {
-        $estudiantes = $this->contarEstudiantes($codPar);
-        $inscripciones = $this->contarInscripciones($codPar);
-        $planesAsignatura = $this->contarTabla('plan_asignatura', 'cod_par', $codPar);
-        $planesEspecialidad = $this->contarTabla('plan_especialidad', 'cod_par', $codPar);
-        $horarios = $this->contarHorarios($codPar);
-        $cursos = $this->contarCursosVinculados($codPar);
-
-        $total = $inscripciones + $planesAsignatura + $planesEspecialidad + $horarios;
-
-        return [
-            'estudiantes' => $estudiantes,
-            'inscripciones' => $inscripciones,
-            'planes_asignatura' => $planesAsignatura,
-            'planes_especialidad' => $planesEspecialidad,
-            'horarios' => $horarios,
-            'cursos' => $cursos,
-            'total' => $total,
-            'tiene_estudiantes' => $estudiantes > 0,
-            'tiene_planificacion' => ($planesAsignatura + $planesEspecialidad + $horarios) > 0,
-            'tiene_uso' => $total > 0 || $estudiantes > 0,
-            'texto' => $this->textoUsoAcademico($estudiantes, $planesAsignatura, $planesEspecialidad, $horarios),
-        ];
+        return $this->datosVigentes()['usos'][$codPar] ?? ['estudiantes'=>0, 'inscripciones'=>0, 'planes_asignatura'=>0, 'planes_especialidad'=>0, 'horarios'=>0, 'cursos'=>0, 'grupos'=>[], 'total'=>0, 'tiene_estudiantes'=>false, 'tiene_planificacion'=>false, 'tiene_uso'=>false, 'texto'=>'Sin uso en la gestión vigente'];
     }
 
     private function contarEstudiantes(string $codPar): int
@@ -447,8 +684,8 @@ class GestionParalelo extends Component
         }
 
         if (Schema::hasColumn('horario_detalle', 'cod_pas') && Schema::hasTable('plan_asignatura')) {
-            $planes = DB::table('plan_asignatura')
-                ->where('cod_par', $codPar)
+            $planes = DB::table('plan_asignatura')->join('grupo_academico as contexto_paralelo', 'contexto_paralelo.cod_gac', '=', 'plan_asignatura.cod_gac')
+                ->where('contexto_paralelo.cod_par', $codPar)
                 ->pluck('cod_pas')
                 ->filter()
                 ->values();
@@ -461,8 +698,8 @@ class GestionParalelo extends Component
         }
 
         if (Schema::hasColumn('horario_detalle', 'cod_pes') && Schema::hasTable('plan_especialidad')) {
-            $planes = DB::table('plan_especialidad')
-                ->where('cod_par', $codPar)
+            $planes = DB::table('plan_especialidad')->join('grupo_academico as contexto_paralelo', 'contexto_paralelo.cod_gac', '=', 'plan_especialidad.cod_gac')
+                ->where('contexto_paralelo.cod_par', $codPar)
                 ->pluck('cod_pes')
                 ->filter()
                 ->values();
@@ -521,40 +758,10 @@ class GestionParalelo extends Component
             ];
         }
 
-        $peso = ((int) $uso['estudiantes'] * 2)
-            + ((int) $uso['planes_asignatura'] * 3)
-            + ((int) $uso['planes_especialidad'] * 3)
-            + ((int) $uso['horarios'] * 2);
-
-        if ($peso === 0) {
-            return [
-                'nivel' => 'SIN_USO',
-                'texto' => 'Sin uso',
-                'descripcion' => 'No tiene estudiantes ni planificación vinculada.',
-            ];
-        }
-
-        if ($peso >= 60) {
-            return [
-                'nivel' => 'ALTO',
-                'texto' => 'Uso alto',
-                'descripcion' => 'Tiene alta participación estudiantil o planificación activa.',
-            ];
-        }
-
-        if ($peso >= 15) {
-            return [
-                'nivel' => 'MEDIO',
-                'texto' => 'Uso medio',
-                'descripcion' => 'Tiene uso académico relevante.',
-            ];
-        }
-
-        return [
-            'nivel' => 'BAJO',
-            'texto' => 'Uso bajo',
-            'descripcion' => 'Tiene uso académico reducido.',
-        ];
+        if ($uso['tiene_estudiantes']) return ['nivel'=>'ALTO', 'texto'=>'Con estudiantes', 'descripcion'=>'Cambiar su disponibilidad afecta a estudiantes inscritos.'];
+        if ($uso['tiene_planificacion']) return ['nivel'=>'MEDIO', 'texto'=>'Planificado', 'descripcion'=>'Conserva planes o horarios vigentes.'];
+        if (count($uso['grupos'])) return ['nivel'=>'BAJO', 'texto'=>'Grupos preparados', 'descripcion'=>'Tiene grupos activos; revisa su planificación antes de cambiar la disponibilidad.'];
+        return ['nivel'=>'SIN_USO', 'texto'=>'Sin uso', 'descripcion'=>'Sin grupos, estudiantes ni planificación vigente.'];
     }
 
     private function obtenerDisponibilidad(Paralelo $paralelo, array $uso): array
@@ -567,7 +774,7 @@ class GestionParalelo extends Component
             ];
         }
 
-        if (($uso['estudiantes'] ?? 0) === 0 && ! ($uso['tiene_planificacion'] ?? false)) {
+        if (($uso['estudiantes'] ?? 0) === 0 && ! ($uso['tiene_planificacion'] ?? false) && !count($uso['grupos'])) {
             return [
                 'estado' => 'SIN_USO',
                 'texto' => 'Sin uso actual',
@@ -609,7 +816,7 @@ class GestionParalelo extends Component
                 $conEstudiantes++;
             }
 
-            if (! ($uso['tiene_uso'] ?? false) && $paralelo->est_par === 'ACTIVO') {
+            if (! ($uso['tiene_uso'] ?? false) && !count($uso['grupos']) && $paralelo->est_par === 'ACTIVO') {
                 $sinUso++;
             }
         });
@@ -651,7 +858,7 @@ class GestionParalelo extends Component
         Paralelo::query()->orderBy('nom_par')->get()->each(function (Paralelo $paralelo) use (&$recomendaciones) {
             $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
 
-            if ($paralelo->est_par === 'ACTIVO' && ! ($uso['tiene_uso'] ?? false)) {
+            if ($paralelo->est_par === 'ACTIVO' && ! ($uso['tiene_uso'] ?? false) && !count($uso['grupos'])) {
                 $recomendaciones[] = [
                     'tipo' => 'warning',
                     'titulo' => 'Paralelo sin uso actual',
@@ -680,10 +887,12 @@ class GestionParalelo extends Component
             $recomendaciones[] = [
                 'tipo' => 'success',
                 'titulo' => 'Organización estable',
-                'mensaje' => 'No se detectaron paralelos duplicados, sin uso o inconsistentes.',
+                'mensaje' => 'No hay alertas de uso del catálogo. Revisa cada grupo: el total por letra no demuestra equilibrio entre grados o turnos.',
             ];
         }
 
+        $alertas = \App\Support\Academico\OrganizacionParalelosInteligente::revisar($this->datosVigentes()['mapa'], $this->datosVigentes()['gestion']?->ani_gea);
+        if ($alertas) $recomendaciones = array_merge($alertas, array_filter($recomendaciones, fn ($r) => $r['tipo'] !== 'success'));
         return array_slice($recomendaciones, 0, 5);
     }
 
@@ -695,6 +904,8 @@ class GestionParalelo extends Component
 
     public function abrirModalCrear(): void
     {
+        $this->autorizar();
+        $this->reiniciarExpediente();
         $this->resetValidation();
         $this->limpiarFormularioCrear();
         $this->modalCrear = true;
@@ -702,6 +913,7 @@ class GestionParalelo extends Component
 
     public function cerrarModalCrear(): void
     {
+        $this->instantanea = null;
         $this->modalCrear = false;
         $this->limpiarFormularioCrear();
         $this->resetValidation();
@@ -842,6 +1054,8 @@ class GestionParalelo extends Component
 
     public function guardarParalelo(): void
     {
+        $this->validarExpediente(true);
+        abort_unless($this->faseCrear === 3, 422);
         $this->normalizarFormularioCrear();
         $this->interpretarParaleloCrear();
 
@@ -896,6 +1110,10 @@ class GestionParalelo extends Component
 
         try {
             DB::transaction(function () {
+                $gestion = $this->datosVigentes()['gestion'];
+                if (!$gestion) throw new \RuntimeException('No hay gestión vigente para registrar el expediente.');
+                DB::table('gestion_academica')->where('cod_gea', $gestion->cod_gea)->lockForUpdate()->first();
+                if (Paralelo::whereRaw('LOWER(nom_par) = ?', [mb_strtolower($this->form['nom_par'])])->exists()) throw new \RuntimeException('El nombre ya está registrado.');
                 $paralelo = Paralelo::create([
                     'nom_par' => $this->analisisCrear['nombre_sugerido'] ?: $this->form['nom_par'],
                     'est_par' => $this->form['est_par'],
@@ -947,8 +1165,8 @@ class GestionParalelo extends Component
             return;
         }
 
-        $this->reactivarParalelo($codigo);
         $this->cerrarModalCrear();
+        $this->solicitarReactivar($codigo);
     }
 
     /*
@@ -959,6 +1177,8 @@ class GestionParalelo extends Component
 
     public function abrirModalEditar(string $codPar): void
     {
+        $this->autorizar();
+        $this->reiniciarExpediente();
         $this->resetValidation();
 
         $paralelo = Paralelo::where('cod_par', $codPar)->firstOrFail();
@@ -978,6 +1198,7 @@ class GestionParalelo extends Component
 
     public function cerrarModalEditar(): void
     {
+        $this->instantanea = null;
         $this->modalEditar = false;
         $this->paraleloSeleccionado = null;
 
@@ -1022,12 +1243,22 @@ class GestionParalelo extends Component
 
     public function guardarEdicionParalelo(): void
     {
+        $this->validarExpediente();
+        abort_unless($this->paraleloSeleccionado === $this->formEditar['cod_par'], 422);
         $this->normalizarFormularioEditar();
         $this->interpretarParaleloEditar();
 
         $paralelo = Paralelo::where('cod_par', $this->formEditar['cod_par'])->firstOrFail();
         $valoresAnteriores = $paralelo->toArray();
         $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
+        if ($this->formEditar['est_par'] !== $paralelo->est_par && $this->tipoDocumento !== 'resolucion') {
+            $this->addError('tipoDocumento', 'Cambiar la habilitación requiere resolución; un acta de corrección no basta.');
+            return;
+        }
+        if ($this->formEditar['est_par'] === 'INACTIVO' && ($uso['tiene_uso'] || count($uso['grupos']) > 0)) {
+            $this->addError('formEditar.est_par', 'No se puede desactivar un paralelo con grupos activos, estudiantes o planificación vigente.');
+            return;
+        }
 
         if (! ($this->analisisEditar['puede_crear'] ?? false)) {
             $this->addError('formEditar.nom_par', $this->analisisEditar['mensaje'] ?? 'No se puede actualizar este paralelo.');
@@ -1040,7 +1271,7 @@ class GestionParalelo extends Component
             return;
         }
 
-        if (($uso['tiene_uso'] ?? false) && ! ParaleloInteligente::esCambioMenor($paralelo->nom_par, $this->analisisEditar['nombre_sugerido'] ?? $this->formEditar['nom_par'])) {
+        if (DB::table('grupo_academico')->where('cod_par', $paralelo->cod_par)->exists() && ! ParaleloInteligente::esCambioMenor($paralelo->nom_par, $this->analisisEditar['nombre_sugerido'] ?? $this->formEditar['nom_par'])) {
             $this->addError('formEditar.nom_par', 'Este paralelo tiene historial académico. Solo se permiten correcciones menores.');
 
             $this->dispatch(
@@ -1055,6 +1286,14 @@ class GestionParalelo extends Component
 
         try {
             DB::transaction(function () use ($paralelo, $valoresAnteriores, $uso) {
+                $gestion = $this->datosVigentes()['gestion'];
+                if (!$gestion) throw new \RuntimeException('No hay gestión vigente para registrar el expediente.');
+                DB::table('gestion_academica')->where('cod_gea', $gestion->cod_gea)->lockForUpdate()->first();
+                $actual = Paralelo::whereKey($paralelo->cod_par)->lockForUpdate()->firstOrFail();
+                $this->instantanea = null;
+                $usoActual = $this->obtenerUsoAcademico($paralelo->cod_par);
+                if ($this->formEditar['est_par'] === 'INACTIVO' && ($usoActual['tiene_uso'] || count($usoActual['grupos']))) throw new \RuntimeException('El paralelo conserva grupos o uso vigente.');
+                if (DB::table('grupo_academico')->where('cod_par', $actual->cod_par)->exists() && !ParaleloInteligente::esCambioMenor($actual->nom_par, $this->analisisEditar['nombre_sugerido'] ?: $this->formEditar['nom_par'])) throw new \RuntimeException('La identidad histórica del paralelo está protegida.');
                 $paralelo->update([
                     'nom_par' => $this->analisisEditar['nombre_sugerido'] ?: $this->formEditar['nom_par'],
                     'est_par' => $this->formEditar['est_par'],
@@ -1109,6 +1348,7 @@ class GestionParalelo extends Component
 
     public function abrirModalDetalle(string $codPar): void
     {
+        $this->autorizar();
         $paralelo = Paralelo::where('cod_par', $codPar)->firstOrFail();
         $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
         $impacto = $this->calcularImpacto($paralelo, $uso);
@@ -1163,6 +1403,7 @@ class GestionParalelo extends Component
 
     public function abrirModalCatalogo(): void
     {
+        $this->autorizar();
         $this->modalCatalogo = true;
     }
 
@@ -1183,6 +1424,7 @@ class GestionParalelo extends Component
 
     public function abrirModalHistoricos(): void
     {
+        $this->autorizar();
         $this->modalHistoricos = true;
     }
 
@@ -1220,127 +1462,30 @@ class GestionParalelo extends Component
 
     public function solicitarDesactivar(string $codPar): void
     {
-        $paralelo = Paralelo::where('cod_par', $codPar)->firstOrFail();
-        $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
-
-        $titulo = '¿Desactivar paralelo?';
-
-        if (($uso['estudiantes'] ?? 0) > 0) {
-            $mensaje = 'El Paralelo ' . $paralelo->nom_par . ' tiene estudiantes asignados. No se recomienda desactivarlo hasta reasignar o cerrar su uso académico.';
-            $riesgo = 'ALTO';
-        } elseif (($uso['tiene_planificacion'] ?? false)) {
-            $mensaje = 'El Paralelo ' . $paralelo->nom_par . ' tiene planificación vinculada. Se desactivará de forma lógica y conservará su historial.';
-            $riesgo = 'MEDIO';
-        } else {
-            $mensaje = 'Este paralelo no será eliminado físicamente. Se ocultará de selectores operativos y conservará su historial académico.';
-            $riesgo = 'BAJO';
-        }
-
-        $this->dispatch(
-            'confirmar-desactivar-paralelo',
-            codigo: $paralelo->cod_par,
-            titulo: $titulo,
-            mensaje: $mensaje,
-            riesgo: $riesgo
-        );
+        $this->abrirModalEditar($codPar);
+        $this->formEditar['est_par'] = 'INACTIVO';
     }
 
     public function desactivarParalelo(string $codPar): void
     {
-        $paralelo = Paralelo::where('cod_par', $codPar)->firstOrFail();
-
-        if ($paralelo->est_par === 'INACTIVO') {
-            $this->dispatch('advertencia-general', mensaje: 'El paralelo ya se encuentra inactivo.');
-            return;
-        }
-
-        $valoresAnteriores = $paralelo->toArray();
-        $uso = $this->obtenerUsoAcademico($paralelo->cod_par);
-
-        try {
-            DB::transaction(function () use ($paralelo, $valoresAnteriores, $uso) {
-                $paralelo->update([
-                    'est_par' => 'INACTIVO',
-                ]);
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'DESACTIVAR_PARALELO',
-                    tabla: 'paralelo',
-                    registro: $paralelo->cod_par,
-                    nombreRegistro: 'Paralelo ' . $paralelo->nom_par,
-                    descripcion: 'Se desactivó lógicamente el Paralelo ' . $paralelo->nom_par . '. No fue eliminado físicamente.',
-                    nivel: ($uso['estudiantes'] ?? 0) > 0 ? 'WARNING' : 'INFO',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: [
-                        'paralelo' => $valoresAnteriores,
-                        'uso_academico' => $uso,
-                    ],
-                    valoresNuevos: [
-                        'paralelo' => $paralelo->fresh()?->toArray(),
-                    ]
-                );
-            });
-
-            $this->dispatch('paralelo-desactivado', mensaje: 'Paralelo desactivado correctamente. Su historial académico fue conservado.');
-        } catch (Throwable $e) {
-            report($e);
-
-            $this->dispatch('error-general', mensaje: 'No se pudo desactivar el paralelo.');
-        }
+        $this->autorizar();
+        abort_unless($this->modalEditar && $this->paraleloSeleccionado === $codPar, 422);
+        $this->formEditar['est_par'] = 'INACTIVO';
+        $this->guardarEdicionParalelo();
     }
 
     public function solicitarReactivar(string $codPar): void
     {
-        $paralelo = Paralelo::where('cod_par', $codPar)->firstOrFail();
-
-        $this->dispatch(
-            'confirmar-reactivar-paralelo',
-            codigo: $paralelo->cod_par,
-            titulo: '¿Reactivar paralelo?',
-            mensaje: 'El Paralelo ' . $paralelo->nom_par . ' volverá a estar disponible para planificación, inscripciones y horarios.'
-        );
+        $this->abrirModalEditar($codPar);
+        $this->formEditar['est_par'] = 'ACTIVO';
     }
 
     public function reactivarParalelo(string $codPar): void
     {
-        $paralelo = Paralelo::where('cod_par', $codPar)->firstOrFail();
-
-        if ($paralelo->est_par === 'ACTIVO') {
-            $this->dispatch('advertencia-general', mensaje: 'El paralelo ya se encuentra activo.');
-            return;
-        }
-
-        $valoresAnteriores = $paralelo->toArray();
-
-        try {
-            DB::transaction(function () use ($paralelo, $valoresAnteriores) {
-                $paralelo->update([
-                    'est_par' => 'ACTIVO',
-                ]);
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'REACTIVAR_PARALELO',
-                    tabla: 'paralelo',
-                    registro: $paralelo->cod_par,
-                    nombreRegistro: 'Paralelo ' . $paralelo->nom_par,
-                    descripcion: 'Se reactivó el Paralelo ' . $paralelo->nom_par . ' para uso académico institucional.',
-                    nivel: 'SUCCESS',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: [
-                        'paralelo' => $valoresAnteriores,
-                    ],
-                    valoresNuevos: [
-                        'paralelo' => $paralelo->fresh()?->toArray(),
-                    ]
-                );
-            });
-
-            $this->dispatch('paralelo-reactivado', mensaje: 'Paralelo reactivado correctamente.');
-        } catch (Throwable $e) {
-            report($e);
-
-            $this->dispatch('error-general', mensaje: 'No se pudo reactivar el paralelo.');
-        }
+        $this->autorizar();
+        abort_unless($this->modalEditar && $this->paraleloSeleccionado === $codPar, 422);
+        $this->formEditar['est_par'] = 'ACTIVO';
+        $this->guardarEdicionParalelo();
     }
 
     /*
@@ -1377,6 +1522,7 @@ class GestionParalelo extends Component
             'rol' => $bitacora->rol_bit,
             'nivel' => $bitacora->niv_bit,
             'resultado' => $bitacora->res_bit,
+            'expediente' => $bitacora->val_nue_bit['expediente'] ?? null,
         ];
     }
 
@@ -1393,10 +1539,17 @@ class GestionParalelo extends Component
         ?string $error = null
     ): void {
         try {
-            if (! class_exists(BitacoraService::class)) {
-                return;
+            if (! class_exists(BitacoraService::class) || !Schema::hasTable('bitacora')) {
+                throw new \RuntimeException('No se puede guardar sin bitácora institucional.');
             }
 
+            if ($resultado === 'EXITOSO' && $this->expedienteGuardado) {
+                $ruta = $this->documentoCambio->store('expedientes/paralelos', 'local');
+                if (!$ruta) throw new \RuntimeException('No se pudo archivar el respaldo.');
+                $valoresNuevos['expediente'] = $this->expedienteGuardado + ['archivo' => $ruta];
+                $valoresNuevos['expediente']['comprobado_por'] = auth()->id();
+                $descripcion .= ' Motivo: '.trim($this->motivoCambio);
+            }
             BitacoraService::registrar(
                 accion: $accion,
                 tabla: $tabla,
@@ -1412,6 +1565,8 @@ class GestionParalelo extends Component
             );
         } catch (Throwable $e) {
             report($e);
+            if (isset($ruta)) Storage::disk('local')->delete($ruta);
+            if ($resultado === 'EXITOSO' || str_contains($accion, 'PDF_RECHAZADO')) throw $e;
         }
     }
 
@@ -1432,7 +1587,7 @@ class GestionParalelo extends Component
             ],
             'form.est_par' => [
                 'required',
-                Rule::in(array_keys($this->estadosDisponibles)),
+                Rule::in(['ACTIVO', 'INACTIVO']),
             ],
         ];
     }
@@ -1453,7 +1608,7 @@ class GestionParalelo extends Component
             ],
             'formEditar.est_par' => [
                 'required',
-                Rule::in(array_keys($this->estadosDisponibles)),
+                Rule::in(['ACTIVO', 'INACTIVO']),
             ],
         ];
     }
@@ -1527,7 +1682,7 @@ class GestionParalelo extends Component
                     'cod_par' => $paralelo->cod_par,
                     'nom_par' => $paralelo->nom_par,
                     'est_par' => $paralelo->est_par,
-                    'bitacora' => $this->obtenerUltimaBitacora($paralelo->cod_par, ['DESACTIVAR_PARALELO', 'ELIMINAR_PARALELO_LOGICO']),
+                    'bitacora' => null,
                 ];
             })
             ->toArray();
@@ -1541,45 +1696,7 @@ class GestionParalelo extends Component
 
     private function obtenerDistribucionCursosPorParalelo(string $codPar): array
     {
-        $datos = collect();
-
-        foreach ($this->tablasInscripcionDisponibles() as $tabla) {
-            if (! $this->tablaTieneColumna($tabla, 'cod_par') || ! $this->tablaTieneColumna($tabla, 'cod_cur')) {
-                continue;
-            }
-
-            $columnaEstudiante = $this->primeraColumnaDisponible($tabla, [
-                'cod_est',
-                'cod_estu',
-                'cod_estudiante',
-                'cod_per',
-            ]);
-
-            $registros = DB::table($tabla)
-                ->where('cod_par', $codPar)
-                ->select('cod_cur')
-                ->selectRaw($columnaEstudiante ? 'COUNT(DISTINCT ' . $columnaEstudiante . ') as total' : 'COUNT(*) as total')
-                ->groupBy('cod_cur')
-                ->get();
-
-            $datos = $datos->merge($registros);
-        }
-
-        if ($datos->isEmpty()) {
-            return [];
-        }
-
-        return $datos
-            ->groupBy('cod_cur')
-            ->map(function (Collection $items, string $curso) {
-                return [
-                    'curso' => $this->nombreCurso($curso),
-                    'estudiantes' => (int) $items->sum('total'),
-                ];
-            })
-            ->sortByDesc('estudiantes')
-            ->values()
-            ->toArray();
+        return collect($this->obtenerUsoAcademico($codPar)['grupos'])->map(fn ($g) => array_merge($g, ['curso' => $g['curso'].' · '.$g['turno']]))->all();
     }
 
     private function nombreCurso(string $codCur): string

@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EstadoAsistencia extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'estado_asistencia';
 
     protected $primaryKey = 'cod_est_asi';
@@ -36,15 +39,6 @@ class EstadoAsistencia extends Model
         'afecta_asistencia' => 'boolean',
         'requiere_observacion' => 'boolean',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (EstadoAsistencia $estadoAsistencia) {
-            if (! $estadoAsistencia->cod_est_asi) {
-                $estadoAsistencia->cod_est_asi = 'EASI_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function asistenciasEstudiantes(): HasMany
     {

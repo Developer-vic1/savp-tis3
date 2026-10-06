@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Paralelo;
+use App\Models\Oficial\Academico\Paralelo;
 use Illuminate\Database\Seeder;
 
 class ParalelosOficialesSeeder extends Seeder

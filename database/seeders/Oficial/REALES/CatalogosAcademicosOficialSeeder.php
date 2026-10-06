@@ -2,12 +2,12 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Asignatura;
-use App\Models\Curso;
-use App\Models\EspecialidadTecnica;
-use App\Models\Paralelo;
-use App\Models\TipoVinculacionEstudiante;
-use App\Models\Turno;
+use App\Models\Oficial\Academico\Asignatura;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\EspecialidadTecnica;
+use App\Models\Oficial\Academico\Paralelo;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\Turno;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 

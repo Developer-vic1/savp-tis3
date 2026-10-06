@@ -6,12 +6,8 @@ from collections import Counter
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.ingestion.models import KnowledgeChunk
-from app.retrieval.index import SemanticIndex
 
-RRF_K = 60
-SEMANTIC_WEIGHT = 1.0
-LEXICAL_WEIGHT = 1.0
-HYBRID_VERSION = "bm25-rrf-v1.0.0"
+LEXICAL_RETRIEVAL_VERSION = "bm25-local-v1.0.0"
 
 SPANISH_STOPWORDS = {
     "a",
@@ -57,15 +53,13 @@ def _searchable_text(chunk: KnowledgeChunk) -> str:
     return " ".join((chunk.title, chunk.section or "", chunk.text))
 
 
-class HybridHit(BaseModel):
+class KnowledgeHit(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     chunk: KnowledgeChunk
     score: float = Field(ge=0, le=1)
-    semantic_score: float = Field(ge=-1.01, le=1.01)
     lexical_score: float = Field(ge=0)
-    semantic_rank: int = Field(gt=0)
-    lexical_rank: int | None = Field(default=None, gt=0)
+    lexical_rank: int = Field(gt=0)
 
 
 class Bm25Index:
@@ -110,10 +104,10 @@ class Bm25Index:
         return scores
 
 
-class HybridRetriever:
-    def __init__(self, semantic_index: SemanticIndex) -> None:
-        self.semantic_index = semantic_index
-        self.lexical_index = Bm25Index(semantic_index.chunks)
+class LexicalRetriever:
+    def __init__(self, chunks: list[KnowledgeChunk]) -> None:
+        self.chunks = chunks
+        self.lexical_index = Bm25Index(chunks)
 
     def search(
         self,
@@ -123,61 +117,27 @@ class HybridRetriever:
         institution: str | None = None,
         source_type: str | None = None,
         official_only: bool = True,
-    ) -> list[HybridHit]:
+    ) -> list[KnowledgeHit]:
         if not query.strip() or top_k < 1:
             return []
-        semantic_hits = self.semantic_index.search(
-            query,
-            len(self.semantic_index.chunks),
-            institution=institution,
-            source_type=source_type,
-            official_only=official_only,
-        )
-        if not semantic_hits:
-            return []
-
-        semantic_by_id = {
-            hit.chunk.chunk_id: (rank, hit.score, hit.chunk)
-            for rank, hit in enumerate(semantic_hits, start=1)
-        }
-        lexical_scores = self.lexical_index.scores(query)
-        lexical_candidates = [
-            (lexical_scores[position], chunk.chunk_id)
-            for position, chunk in enumerate(self.semantic_index.chunks)
-            if lexical_scores[position] > 0 and chunk.chunk_id in semantic_by_id
+        candidates = [
+            (score, chunk)
+            for score, chunk in zip(self.lexical_index.scores(query), self.chunks, strict=True)
+            if score > 0
+            and (not official_only or chunk.official)
+            and (not institution or institution.casefold() in chunk.institution.casefold())
+            and (not source_type or source_type.casefold() == chunk.source_type.casefold())
         ]
-        lexical_candidates.sort(key=lambda item: (-item[0], item[1]))
-        lexical_by_id = {
-            chunk_id: (rank, score)
-            for rank, (score, chunk_id) in enumerate(lexical_candidates, start=1)
-        }
-
-        ideal = (SEMANTIC_WEIGHT + LEXICAL_WEIGHT) / (RRF_K + 1)
-        hits: list[HybridHit] = []
-        for chunk_id, (semantic_rank, semantic_score, chunk) in semantic_by_id.items():
-            lexical = lexical_by_id.get(chunk_id)
-            raw_score = SEMANTIC_WEIGHT / (RRF_K + semantic_rank)
-            lexical_rank: int | None = None
-            lexical_score = 0.0
-            if lexical:
-                lexical_rank, lexical_score = lexical
-                raw_score += LEXICAL_WEIGHT / (RRF_K + lexical_rank)
-            hits.append(
-                HybridHit(
-                    chunk=chunk,
-                    score=min(raw_score / ideal, 1.0),
-                    semantic_score=semantic_score,
-                    lexical_score=lexical_score,
-                    semantic_rank=semantic_rank,
-                    lexical_rank=lexical_rank,
-                )
+        candidates.sort(key=lambda item: (-item[0], item[1].chunk_id))
+        if not candidates:
+            return []
+        highest_score = candidates[0][0]
+        return [
+            KnowledgeHit(
+                chunk=chunk,
+                score=round(raw_score / highest_score, 6),
+                lexical_score=raw_score,
+                lexical_rank=rank,
             )
-        hits.sort(
-            key=lambda hit: (
-                -hit.score,
-                hit.semantic_rank,
-                hit.lexical_rank or len(self.semantic_index.chunks) + 1,
-                hit.chunk.chunk_id,
-            )
-        )
-        return hits[:top_k]
+            for rank, (raw_score, chunk) in enumerate(candidates[:top_k], start=1)
+        ]

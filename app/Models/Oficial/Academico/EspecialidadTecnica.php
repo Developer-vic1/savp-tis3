@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EspecialidadTecnica extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'especialidad_tecnica';
 
     protected $primaryKey = 'cod_esp';
@@ -21,15 +24,6 @@ class EspecialidadTecnica extends Model
         'des_esp',
         'est_esp',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($especialidad) {
-            if (! $especialidad->cod_esp) {
-                $especialidad->cod_esp = 'ESP_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function estudiantes()
     {

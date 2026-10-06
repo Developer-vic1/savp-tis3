@@ -2,6 +2,7 @@
 
 <div class="pdf-title">📋 Reporte de Calificaciones</div>
 <div class="pdf-kicker">Listado académico detallado · {{ now()->format('d/m/Y') }}</div>
+@isset($parte_reporte)<div class="pdf-kicker">Parte {{ $parte_reporte }} del listado completo</div>@endisset
 
 {{-- Métricas resumen --}}
 @php
@@ -60,7 +61,7 @@ $notaMin = $totalCals > 0 ? $cals->min('not_cal') : 0;
         <tr>
             <td style="color:#64748b; font-size:7.5pt;">{{ $i + 1 }}</td>
             <td><strong>{{ $nombre ?: 'Sin nombre' }}</strong></td>
-            <td style="font-size:7.5pt; color:#334155;">{{ $item->estudiante?->especialidad?->nom_esp ?? '—' }}</td>
+            <td style="font-size:7.5pt; color:#334155;">{{ $item->planEspecialidad?->especialidad?->nom_esp ?? '—' }}</td>
             <td>{{ $item->asignatura?->nom_asi ?? '—' }}</td>
             <td style="font-size:7.5pt; color:#64748b;">{{ $item->periodoEvaluacion?->nom_pev ?? '—' }}</td>
             <td style="text-align:center; font-weight:bold; font-size:11pt;
@@ -89,7 +90,7 @@ $notaMin = $totalCals > 0 ? $cals->min('not_cal') : 0;
 
 {{-- Resumen final --}}
 <div class="alert alert-info" style="margin-top: 10px;">
-    <strong>Observación del periodo:</strong> El presente reporte incluye únicamente calificaciones con estado ACTIVO.
+    <strong>Observación del periodo:</strong> El presente reporte incluye únicamente calificaciones VIGENTES o RECTIFICADAS.
     Para reportes filtrados por periodo, asignatura o estudiante, use los filtros del sistema y regenere el reporte.
 </div>
 

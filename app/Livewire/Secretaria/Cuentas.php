@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Secretaria;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\OperationalAccountService;
 use Livewire\Component;
 use Livewire\WithPagination;

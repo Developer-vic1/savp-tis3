@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\GestionAcademica;
+use App\Models\Oficial\Academico\GestionAcademica;
 use Illuminate\Database\Seeder;
 
 class Gestion2026Seeder extends Seeder

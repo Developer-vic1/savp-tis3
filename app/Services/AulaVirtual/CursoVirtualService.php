@@ -2,16 +2,16 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\AsistenciaClase;
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\ClaseEstudiante;
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\OrientacionActividad;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\Docente;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\AsistenciaClase;
+use App\Models\Oficial\Academico\AsistenciaEstudiante;
+use App\Models\Oficial\AulaVirtual\ClaseEstudiante;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\RoleDashboardResolver;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -62,17 +62,12 @@ class CursoVirtualService
         return ClaseVirtual::query()
             ->with($this->relacionesCurso())
             ->withCount($this->summaryCounts($estudiante))
-            ->whereHas('planAsignatura', function ($plan) use ($estudiante) {
-                $plan->whereExists(function ($enrollment) use ($estudiante) {
-                    $enrollment->selectRaw('1')->from('inscripcion_estudiante')->where('cod_est', $estudiante->cod_est)->where('est_ins', 'ACTIVA');
-                    foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
-                        $enrollment->whereColumn('inscripcion_estudiante.'.$field, 'plan_asignatura.'.$field);
-                    }
-                });
-            })
+            ->where(fn (Builder $contexto) => $contexto
+                ->whereHas('planAsignatura', fn (Builder $plan) => $this->limitarPlanAlEstudiante($plan, 'plan_asignatura', $estudiante->cod_est))
+                ->orWhereHas('planEspecialidad', fn (Builder $plan) => $this->limitarPlanAlEstudiante($plan, 'plan_especialidad', $estudiante->cod_est)))
             ->whereHas('estudiantes', function ($query) use ($estudiante) {
                 $query->where('cod_est', $estudiante->cod_est)
-                    ->where('est_cla_est', 'ACTIVO');
+                    ->vigentesEn(now()->toDateString());
             })
             ->where('est_cla', 'ACTIVA')
             ->orderBy('nom_cla');
@@ -94,7 +89,9 @@ class CursoVirtualService
         return ClaseVirtual::query()
             ->with($this->relacionesCurso())
             ->withCount($this->summaryCounts())
-            ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $docente->cod_doc))
+            ->where(fn (Builder $planes) => $planes
+                ->whereHas('planAsignatura', fn ($query) => $query->where('cod_doc', $docente->cod_doc))
+                ->orWhereHas('planEspecialidad', fn ($query) => $query->where('cod_doc', $docente->cod_doc)))
             ->whereIn('est_cla', ['ACTIVA', 'CERRADA'])
             ->orderBy('nom_cla');
     }
@@ -115,7 +112,9 @@ class CursoVirtualService
             && $user->can('Acceso_Aula_Virtual') && $user->can($teacher ? 'Aula_Virtual_Docente' : 'Aula_Virtual_Estudiante'), 403);
 
         return ($teacher ? $this->teacherQuery($user) : $this->studentQuery($user))
-            ->when($gestion !== '', fn ($q) => $q->whereHas('planAsignatura.gestionAcademica', fn ($g) => $g->where('ani_gea', $gestion)))
+            ->when($gestion !== '', fn ($q) => $q->where(fn ($planes) => $planes
+                ->whereHas('planAsignatura.gestionAcademica', fn ($g) => $g->where('ani_gea', $gestion))
+                ->orWhereHas('planEspecialidad.gestionAcademica', fn ($g) => $g->where('ani_gea', $gestion))))
             ->when($search !== '', fn ($q) => $q->where(fn ($names) => $names->where('nom_cla', 'like', '%'.$search.'%')
                 ->orWhereHas('planAsignatura.asignatura', fn ($subject) => $subject->where('nom_asi', 'like', '%'.$search.'%'))))
             ->paginate(12)->withQueryString();
@@ -123,35 +122,54 @@ class CursoVirtualService
 
     public function vinculosVigentes(User $teacher): Builder
     {
-        return ClaseEstudiante::query()->where('est_cla_est', 'ACTIVO')
+        return ClaseEstudiante::query()->vigentesEn(now()->toDateString())
             ->whereIn('cod_cla', $this->teacherQuery($teacher)->reorder()->select('cod_cla')->withoutEagerLoads())
             ->whereHas('estudiante', fn ($q) => $q->where('est_est', 'ACTIVO'))
-            ->whereHas('claseVirtual.planAsignatura', function ($plan) {
-                $plan->whereExists(function ($enrollment) {
-                    $enrollment->selectRaw('1')->from('inscripcion_estudiante')->where('est_ins', 'ACTIVA')
-                        ->whereColumn('inscripcion_estudiante.cod_est', 'clase_estudiante.cod_est');
-                    foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
-                        $enrollment->whereColumn('inscripcion_estudiante.'.$field, 'plan_asignatura.'.$field);
-                    }
-                });
-            });
+            ->whereHas('claseVirtual', fn (Builder $clase) => $clase->where(fn (Builder $planes) => $planes
+                ->whereHas('planAsignatura', fn (Builder $plan) => $this->limitarPlanAlEstudiante($plan, 'plan_asignatura', null))
+                ->orWhereHas('planEspecialidad', fn (Builder $plan) => $this->limitarPlanAlEstudiante($plan, 'plan_especialidad', null))));
     }
 
-    public function estudiantesVigentes(ClaseVirtual $class): HasMany
+    public function estudiantesVigentes(ClaseVirtual $class, ?string $fecha = null): HasMany
     {
-        $query = $class->estudiantes()->where('est_cla_est', 'ACTIVO');
-        $plan = $class->planAsignatura;
+        $fecha ??= now()->toDateString();
+        $query = $class->estudiantes()->vigentesEn($fecha);
+        $plan = $class->planAsignatura ?? $class->planEspecialidad;
         if (! $plan) {
             return $query->whereRaw('1 = 0');
         }
 
-        return $query->whereHas('estudiante', fn ($student) => $student->where('est_est', 'ACTIVO')
-            ->whereHas('inscripciones', function ($enrollment) use ($plan) {
-                $enrollment->where('est_ins', 'ACTIVA');
-                foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
-                    $enrollment->where($field, $plan->$field);
+        return $query->whereHas('estudiante', fn ($student) => $student
+            ->whereHas('inscripciones', fn ($inscripcion) => $inscripcion->where('cod_gea', $plan->cod_gea)
+                ->whereHas('inscripcionVigenciaRegistros', fn ($vigencia) => $vigencia
+                    ->where('cod_gac', $plan->cod_gac)
+                    ->where('cod_esp_tec', $class->cod_pes ? $plan->cod_esp : null)
+                    ->where('fii_ivg', '<=', $fecha)
+                    ->where(fn ($fin) => $fin->whereNull('ffi_ivg')->orWhere('ffi_ivg', '>=', $fecha)))));
+    }
+
+    private function limitarPlanAlEstudiante(Builder $plan, string $tabla, ?string $estudiante): Builder
+    {
+        $fecha = now()->toDateString();
+        $sufijo = $tabla === 'plan_asignatura' ? 'pas' : 'pes';
+
+        return $plan->where('fii_'.$sufijo, '<=', $fecha)
+            ->where(fn ($fin) => $fin->whereNull('ffi_'.$sufijo)->orWhere('ffi_'.$sufijo, '>=', $fecha))
+            ->whereExists(function ($vigencia) use ($tabla, $estudiante, $fecha) {
+                $vigencia->selectRaw('1')->from('inscripcion_vigencia as contexto_ivg')
+                    ->join('inscripcion_estudiante as contexto_ins', 'contexto_ins.cod_ins', '=', 'contexto_ivg.cod_ins')
+                    ->where('contexto_ins.est_ins', 'ACTIVA')
+                    ->whereColumn('contexto_ivg.cod_gac', $tabla.'.cod_gac')
+                    ->where('contexto_ivg.fii_ivg', '<=', $fecha)
+                    ->where(fn ($fin) => $fin->whereNull('contexto_ivg.ffi_ivg')->orWhere('contexto_ivg.ffi_ivg', '>=', $fecha));
+                $estudiante ? $vigencia->where('contexto_ins.cod_est', $estudiante)
+                    : $vigencia->whereColumn('contexto_ins.cod_est', 'clase_estudiante.cod_est');
+                if ($tabla === 'plan_asignatura') {
+                    $vigencia->whereNull('contexto_ivg.cod_esp_tec');
+                } else {
+                    $vigencia->whereColumn('contexto_ivg.cod_esp_tec', 'plan_especialidad.cod_esp');
                 }
-            }));
+            });
     }
 
     public function dashboardEstudiante(User $user): array
@@ -335,6 +353,14 @@ class CursoVirtualService
             'planAsignatura.paralelo',
             'planAsignatura.turno',
             'planAsignatura.gestionAcademica',
+            'planAsignatura.grupoAcademico',
+            'planEspecialidad.especialidadTecnica',
+            'planEspecialidad.docente.personalInstitucional.persona',
+            'planEspecialidad.grupoAcademico',
+            'planEspecialidad.curso',
+            'planEspecialidad.paralelo',
+            'planEspecialidad.turno',
+            'planEspecialidad.gestionAcademica',
         ];
     }
 }

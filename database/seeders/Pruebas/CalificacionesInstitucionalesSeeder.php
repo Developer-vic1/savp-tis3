@@ -2,10 +2,10 @@
 
 namespace Database\Seeders\Pruebas;
 
-use App\Models\Asignatura;
-use App\Models\Calificacion;
-use App\Models\Estudiante;
-use App\Models\PeriodoEvaluacion;
+use App\Models\Oficial\Academico\Asignatura;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\PeriodoEvaluacion;
 use App\Support\Evaluacion\CalificacionInteligente;
 use Illuminate\Database\Seeder;
 

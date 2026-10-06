@@ -1,6 +1,6 @@
-# Contexto maestro PETER 3
+# Contexto maestro Aporte Ingenieril SAVP
 
-PETER 3 es el núcleo analítico y documental Python de SAVP-TIS3. Su diseño actual es un sistema
+Aporte Ingenieril SAVP es el núcleo analítico y documental Python de SAVP-TIS3. Su diseño actual es un sistema
 basado en evidencia, no un predictor de éxito. DSRM estructura investigación/diseño/evaluación
 del artefacto; ICONIX pertenece al desarrollo global del software.
 

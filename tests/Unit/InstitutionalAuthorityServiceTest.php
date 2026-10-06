@@ -2,22 +2,20 @@
 
 namespace Tests\Unit;
 
-use App\Models\Director;
-use App\Models\Persona;
-use App\Models\PersonalInstitucional;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Academico\PersonalInstitucional;
 use App\Services\InstitutionalAuthorityService;
 use PHPUnit\Framework\TestCase;
 
 class InstitutionalAuthorityServiceTest extends TestCase
 {
-    private function director(string $id, string $directorStatus = 'ACTIVO', string $staffStatus = 'ACTIVO'): Director
+    private function director(string $id, string $directorStatus = 'ACTIVO', string $staffStatus = 'ACTIVO'): PersonalInstitucional
     {
         $person = new Persona(['nom_per' => 'Ana María', 'ape_pat_per' => 'Quispe', 'ape_mat_per' => 'Rojas']);
-        $staff = new PersonalInstitucional(['est_pin' => $staffStatus]);
+        $staff = new PersonalInstitucional(['est_pin' => $directorStatus === 'ACTIVO' ? $staffStatus : 'INACTIVO']);
+        $staff->forceFill(['cod_pin' => $id]);
         $staff->setRelation('persona', $person);
-        $director = new Director(['cod_dir' => $id, 'est_dir' => $directorStatus]);
-        $director->setRelation('personalInstitucional', $staff);
-        return $director;
+        return $staff;
     }
 
     public function test_absent_inactive_and_ambiguous_director_are_blocked(): void

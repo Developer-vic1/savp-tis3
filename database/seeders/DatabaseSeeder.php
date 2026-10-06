@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             HistorialInstitucionalSeeder::class,
+            RolSeeder::class,
             AdministradorSistemaSeeder::class,
         ]);
         // El administrador se configura después del cierre del historial.

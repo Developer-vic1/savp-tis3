@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\ConfiguracionCalendarioGestion;
+use App\Models\Oficial\Academico\ConfiguracionCalendarioGestion;
 use Illuminate\Database\Seeder;
 
 class ConfiguracionCalendario2026Seeder extends Seeder

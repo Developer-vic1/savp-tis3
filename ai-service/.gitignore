@@ -9,3 +9,5 @@
 .ruff_cache/
 **/__pycache__/
 tmp/
+/data/knowledge/source_intake.json
+/data/knowledge/source_intake.tmp

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
-use App\Models\AulaVirtual\OrientacionActividad;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\OrientacionService;
 use Illuminate\Http\Request;
@@ -43,7 +43,9 @@ class OrientacionController extends Controller
             'estado' => ['nullable', 'in:pendiente,en_proceso,finalizado,revisado,requiere_seguimiento']]);
         $scope = $this->cursos->vinculosVigentes($request->user())->selectRaw('1')
             ->whereColumn('clase_estudiante.cod_est', 'orientacion_actividades.cod_est')
-            ->whereHas('claseVirtual.planAsignatura', fn ($q) => $q->whereColumn('plan_asignatura.cod_gea', 'orientacion_actividades.cod_gea'));
+            ->whereHas('claseVirtual', fn ($clase) => $clase->where(fn ($planes) => $planes
+                ->whereHas('planAsignatura.grupoAcademico', fn ($q) => $q->whereColumn('grupo_academico.cod_gea', 'orientacion_actividades.cod_gea'))
+                ->orWhereHas('planEspecialidad.grupoAcademico', fn ($q) => $q->whereColumn('grupo_academico.cod_gea', 'orientacion_actividades.cod_gea'))));
         $rows = OrientacionActividad::with('estudiante.persona', 'gestionAcademica', 'resultado')
             ->whereExists($scope->toBase())
             ->when(filled($filters['estado'] ?? null), fn ($q) => $q->where('estado', $filters['estado']))

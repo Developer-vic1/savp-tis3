@@ -2,12 +2,11 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\PublicacionClase;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\PublicacionClase;
 use App\Services\BitacoraService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class PublicacionService
@@ -30,7 +29,7 @@ class PublicacionService
             Gate::forUser($user)->authorize('manage', $class);
             abort_unless($class->est_cla === 'ACTIVA', 422);
             $record = $id ? $class->publicaciones()->lockForUpdate()->findOrFail($id)
-                : new PublicacionClase(['cod_pub' => 'PUB_'.Str::upper(Str::random(16)), 'cod_cla' => $curso, 'cod_usu' => $user->cod_usu]);
+                : new PublicacionClase(['cod_cla' => $curso, 'cod_usu' => $user->cod_usu]);
             if ($record->exists && $record->est_pub !== 'BORRADOR' && blank($data['motivo'] ?? null)) {
                 throw ValidationException::withMessages(['motivo' => 'Describe el motivo del cambio en la publicación.']);
             }

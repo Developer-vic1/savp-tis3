@@ -1,4 +1,4 @@
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -133,6 +133,11 @@ class KnowledgeSearchRequest(ContractModel):
     official_only: bool = True
 
 
+class TutorConversationTurn(ContractModel):
+    role: Literal["user", "assistant"]
+    content: str = Field(min_length=1, max_length=2000)
+
+
 class TutorQueryRequest(ContractModel):
     schema_version: str
     question: str = Field(min_length=2, max_length=2000)
@@ -140,3 +145,7 @@ class TutorQueryRequest(ContractModel):
     level: str | None = Field(default=None, max_length=80)
     academic_context: dict[str, Any] | None = None
     student_context: dict[str, Any] | None = None
+    conversation_history: list[TutorConversationTurn] = Field(
+        default_factory=list,
+        max_length=8,
+    )

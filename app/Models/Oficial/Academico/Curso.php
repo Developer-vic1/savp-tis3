@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Curso extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'curso';
 
     protected $primaryKey = 'cod_cur';
@@ -23,16 +26,6 @@ class Curso extends Model
         'est_cur', // Estado curso
         'ord_cur',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($curso) {
-
-            if (! $curso->cod_cur) {
-                $curso->cod_cur = 'CUR_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

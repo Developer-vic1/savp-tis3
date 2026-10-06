@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Turno extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'turno';
 
     protected $primaryKey = 'cod_tur';
@@ -23,16 +26,6 @@ class Turno extends Model
         'hor_fin_tur', // Hora fin turno
         'est_tur', // Estado turno
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($turno) {
-
-            if (! $turno->cod_tur) {
-                $turno->cod_tur = 'TUR_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

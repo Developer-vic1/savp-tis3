@@ -66,6 +66,8 @@
                         <label><span class="ui-label">Paralelo</span><select wire:model.live="form.cod_par" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($paralelos as $item)<option value="{{ $item->cod_par }}">{{ $item->nom_par }}</option>@endforeach</select></label>
                         <label><span class="ui-label">Turno</span><select wire:model.live="form.cod_tur" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($turnos as $item)<option value="{{ $item->cod_tur }}">{{ $item->nom_tur }}</option>@endforeach</select></label>
                         <label><span class="ui-label">Gestión</span><select wire:model.live="form.cod_gea" class="ui-input mt-2"><option value="">Seleccionar</option>@foreach($gestiones as $item)<option value="{{ $item->cod_gea }}">{{ $item->ani_gea }}</option>@endforeach</select></label>
+                        <label><span class="ui-label">Inicio efectivo</span><input type="date" wire:model.live="form.fii_pas" class="ui-input mt-2" required></label>
+                        <label><span class="ui-label">Fin efectivo, si corresponde</span><input type="date" wire:model.live="form.ffi_pas" class="ui-input mt-2"></label>
                         <label><span class="ui-label">Horas asignadas</span><input type="number" min="1" max="40" wire:model.live="form.hor_pas" class="ui-input mt-2"></label>
                         <label><span class="ui-label">Estado</span><select wire:model.live="form.est_pas" class="ui-input mt-2"><option>ACTIVO</option><option>INACTIVO</option></select></label>
                     </div>

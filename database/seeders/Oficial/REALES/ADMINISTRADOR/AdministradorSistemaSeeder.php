@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders\Oficial\REALES\ADMINISTRADOR;
 
 use App\Models\Oficial\Academico\Persona;
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use Database\Seeders\RolSeeder;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -50,6 +50,7 @@ final class AdministradorSistemaSeeder extends Seeder
                 'exp_per' => 'LP',
                 'fec_nac_per' => '2006-06-11',
                 'ema_per' => $email,
+                'tel_per' => '75836807',
                 'dir_per' => 'CALLE TOCOPILLA 1480, ZONA BAJO TEJAR, LA PAZ',
                 'est_per' => true,
             ]);

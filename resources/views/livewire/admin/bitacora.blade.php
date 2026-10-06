@@ -1216,10 +1216,7 @@
                     @endif
 
                     {{-- Detalle técnico secundario --}}
-                    <details class="rounded-[1.6rem] border border-[var(--ui-border)] bg-[var(--ui-card)] p-5">
-                        <summary class="cursor-pointer text-sm font-black text-[var(--ui-text)]">
-                            Información técnica del evento
-                        </summary>
+                    <x-plegable-institucional class="rounded-[1.6rem] border border-[var(--ui-border)] bg-[var(--ui-card)] p-5" icono="ph-code"><x-slot:titulo>Información técnica del evento</x-slot:titulo>
 
                         <p class="mt-2 text-xs leading-6 text-[var(--ui-muted)]">
                             Esta información se conserva para auditoría técnica, depuración y trazabilidad interna del
@@ -1299,7 +1296,7 @@
                                 </p>
                             </div>
                         </div>
-                    </details>
+                    </x-plegable-institucional>
                 </div>
             </aside>
         </div>

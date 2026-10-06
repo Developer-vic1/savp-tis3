@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante;
 use Illuminate\Database\Seeder;
 
 class TiposVinculacionOficialSeeder extends Seeder

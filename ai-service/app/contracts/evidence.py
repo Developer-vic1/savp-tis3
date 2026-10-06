@@ -18,9 +18,11 @@ class SourceReference(EvidenceContract):
     source_id: str = Field(min_length=1)
     title: str | None = None
     institution: str | None = None
+    source_type: str | None = None
     reference: str | None = None
     version: str | None = None
     official: bool | None = None
+    evidence_layer: str | None = None
 
 
 class Limitation(EvidenceContract):

@@ -2,13 +2,13 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\CalificacionTarea;
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\EntregaArchivo;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\Docente;
-use App\Models\Estudiante;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\AulaVirtual\CalificacionTarea;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\EntregaArchivo;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AulaVirtual\Tarea;
 use App\Services\BitacoraService;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -35,9 +35,19 @@ class EntregaService
                 $task = Tarea::lockForUpdate()->findOrFail($tarea->cod_tar);
                 Gate::authorize('submit', $task);
                 abort_unless($task->puedeRecibirEntregas(), 422, 'La tarea no recibe entregas.');
-                $entrega = EntregaTarea::where('cod_tar', $task->cod_tar)->where('cod_est', $estudiante->cod_est)->lockForUpdate()->first()
-                    ?? new EntregaTarea(['cod_ent' => 'ENT_'.Str::upper(Str::random(16)), 'cod_tar' => $task->cod_tar, 'cod_est' => $estudiante->cod_est]);
-                abort_if($entrega->exists && in_array($entrega->est_ent, ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO', 'ANULADO'], true), 422, 'La tarea ya fue enviada y no puede modificarse.');
+                $anterior = EntregaTarea::where('cod_tar', $task->cod_tar)->where('cod_est', $estudiante->cod_est)
+                    ->orderByRaw('int_ent DESC NULLS LAST')->orderByDesc('ini_ent')->lockForUpdate()->first();
+                if ($anterior && $anterior->est_ent !== 'PENDIENTE') {
+                    $unicidadAnterior = DB::connection()->getDriverName() === 'pgsql'
+                        && DB::selectOne("SELECT EXISTS (SELECT 1 FROM pg_constraint WHERE conrelid = 'public.entrega_tarea'::regclass AND contype = 'u' AND pg_get_constraintdef(oid) = 'UNIQUE (cod_tar, cod_est)') AS vigente")->vigente;
+                    abort_if($unicidadAnterior, 422, 'La estructura actual admite una entrega por tarea y estudiante. Se conserva la entrega anterior; los intentos adicionales requieren la corrección institucional aprobada.');
+                    abort_unless($anterior->int_ent !== null, 422, 'La entrega histórica no tiene número de intento; requiere revisión institucional.');
+                    abort_if($anterior->est_ent === 'ANULADO', 422, 'Una entrega anulada requiere revisión institucional.');
+                    abort_unless((int) $anterior->int_ent < (int) ($task->int_tar ?? 1), 422, 'Se alcanzó el máximo de intentos permitido por la tarea.');
+                }
+                $entrega = $anterior && $anterior->est_ent === 'PENDIENTE' ? $anterior
+                    : new EntregaTarea(['cod_tar' => $task->cod_tar, 'cod_est' => $estudiante->cod_est,
+                        'int_ent' => $anterior ? (int) $anterior->int_ent + 1 : 1, 'ini_ent' => now()]);
                 if ($datos['accion'] === 'enviar') {
                     abort_if(blank($datos['tex_ent'] ?? null) && ! $archivo && ! ($entrega->exists && $entrega->archivos()->where('est_arc', 'ACTIVO')->exists()), 422, 'Escribe una respuesta o adjunta un archivo.');
                 }
@@ -51,7 +61,7 @@ class EntregaService
                     $path = $archivo->store('aula-virtual/entregas', 'local');
                     abort_unless($path, 503, 'No fue posible guardar el archivo.');
                     EntregaArchivo::create([
-                        'cod_ent_arc' => 'ENTA_'.Str::upper(Str::random(15)), 'cod_ent' => $entrega->cod_ent,
+                        'cod_ent' => $entrega->cod_ent,
                         'nom_arc' => Str::limit($archivo->getClientOriginalName(), 180, ''), 'rut_arc' => $path,
                         'mime_arc' => $archivo->getMimeType(), 'tam_arc' => $archivo->getSize(), 'est_arc' => 'ACTIVO',
                     ]);
@@ -84,7 +94,7 @@ class EntregaService
             $grade = CalificacionTarea::where('cod_ent', $locked->cod_ent)->first();
             abort_if($grade && blank($retroalimentacion), 422, 'La rectificación requiere un motivo en la retroalimentación.');
             $before = $grade?->only(['pun_obt', 'pun_max', 'est_cal']);
-            $grade ??= new CalificacionTarea(['cod_cal_tar' => 'CALT_'.Str::upper(Str::random(15)), 'cod_ent' => $locked->cod_ent]);
+            $grade ??= new CalificacionTarea(['cod_ent' => $locked->cod_ent]);
             $grade->fill([
                 'cod_tar' => $locked->cod_tar, 'cod_est' => $locked->cod_est, 'cod_doc' => $docente->cod_doc,
                 'pun_obt' => $puntaje, 'pun_max' => $locked->tarea->pun_max_tar, 'com_cal' => $retroalimentacion,

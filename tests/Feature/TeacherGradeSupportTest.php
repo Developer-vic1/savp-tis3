@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Livewire\Shared\TeacherGradeForm;
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\Calificacion;
-use App\Models\PlanAsignatura;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\GradeService;
 use App\Support\Evaluacion\CalificacionInteligente;
@@ -94,7 +94,7 @@ class TeacherGradeSupportTest extends TestCase
         $courses->shouldReceive('cursoParaDocente')->with($user, 'CLA1')->once()->andReturn($course);
         $service = Mockery::mock(GradeService::class, [$courses])->makePartial();
         $service->shouldReceive('available')->once()->andReturnTrue();
-        $grades = Mockery::mock('alias:App\Models\Calificacion');
+        $grades = Mockery::mock('alias:App\Models\Oficial\Academico\Calificacion');
         $query = Mockery::mock();
         $grades->shouldReceive('where')->with('cod_pas', 'PAS1')->once()->andReturn($query);
         $query->shouldReceive('whereKey')->with('FOREIGN')->once()->andReturnSelf();
@@ -131,7 +131,7 @@ class TeacherGradeSupportTest extends TestCase
         $courses->shouldReceive('cursoParaDocente')->with($user, 'CLA1')->once()->andReturn($course);
         $service = Mockery::mock(GradeService::class, [$courses])->makePartial();
         $service->shouldReceive('available')->once()->andReturnTrue();
-        $enrollment = Mockery::mock('alias:App\Models\InscripcionEstudiante');
+        $enrollment = Mockery::mock('alias:App\Models\Oficial\Academico\InscripcionEstudiante');
         $query = Mockery::mock();
         $enrollment->shouldReceive('where')->with('cod_est', 'FOREIGN')->once()->andReturn($query);
         foreach (['est_ins' => 'ACTIVA', 'cod_gea' => 'GEA1', 'cod_cur' => 'CUR1', 'cod_par' => 'PAR1', 'cod_tur' => 'TUR1'] as $field => $value) {

@@ -1,13 +1,13 @@
 {
   "split": "TEST",
-  "dataset_version": "retrieval-bo-test-v2.0.0",
-  "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde",
-  "evaluated_at": "2026-10-01T17:55:42.662392+00:00",
+  "dataset_version": "retrieval-bo-test-v2.1.0",
+  "corpus_sha256": "c94e487d5706414c5ba62bb713330f011f7b291bc0035b400f48ad5906c1ab78",
+  "evaluated_at": "2026-10-02T02:43:34.188010+00:00",
   "environment": {
     "python": "3.14.0",
     "platform": "Windows-11-10.0.26200-SP0"
   },
-  "query_count": 15,
+  "query_count": 16,
   "models": [
     {
       "model_id": "intfloat/multilingual-e5-small",
@@ -16,14 +16,14 @@
         "model_id": "intfloat/multilingual-e5-small",
         "model_slug": "intfloat__multilingual_e5_small",
         "dimension": 384,
-        "chunk_count": 773,
-        "embedding_rows": 773,
+        "chunk_count": 814,
+        "embedding_rows": 814,
         "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
         "normalized_l2": true,
         "exact": true,
-        "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde",
-        "build_seconds": 96.4972,
-        "built_at": "2026-10-01T17:51:35.179098+00:00",
+        "corpus_sha256": "c94e487d5706414c5ba62bb713330f011f7b291bc0035b400f48ad5906c1ab78",
+        "build_seconds": 100.9427,
+        "built_at": "2026-10-02T02:41:43.572065+00:00",
         "python_version": "3.14.0",
         "dependencies": {
           "torch": "2.13.0+cpu",
@@ -35,32 +35,32 @@
         "model_revision_status": "UNAVAILABLE_FROM_RUNTIME"
       },
       "metrics_scope": "QUERIES_WITH_RELEVANT_CHUNKS",
-      "positive_query_count": 14,
+      "positive_query_count": 15,
       "no_relevant_chunk_count": 1,
       "semantic": {
         "metrics": {
-          "recall_at_1": 0.3095,
-          "recall_at_3": 0.5119,
-          "recall_at_5": 0.7262,
-          "mrr": 0.5156,
-          "ndcg_at_5": 0.5399
+          "recall_at_1": 0.3556,
+          "recall_at_3": 0.4778,
+          "recall_at_5": 0.6778,
+          "mrr": 0.5162,
+          "ndcg_at_5": 0.5372
         },
         "latency": {
-          "median_ms": 31.8686,
-          "p95_ms": 23909.9202
+          "median_ms": 26.1676,
+          "p95_ms": 18747.1079
         }
       },
       "hybrid": {
         "metrics": {
-          "recall_at_1": 0.381,
-          "recall_at_3": 0.869,
-          "recall_at_5": 0.8929,
-          "mrr": 0.6548,
-          "ndcg_at_5": 0.7043
+          "recall_at_1": 0.4222,
+          "recall_at_3": 0.7778,
+          "recall_at_5": 0.9,
+          "mrr": 0.6411,
+          "ndcg_at_5": 0.6962
         },
         "latency": {
-          "median_ms": 44.1105,
-          "p95_ms": 51.4384
+          "median_ms": 36.4125,
+          "p95_ms": 47.8011
         }
       },
       "per_query": [
@@ -154,7 +154,7 @@
             "1a7afa3329ff627ac382d1ce",
             "f73c96c8029fd1db303f5dd4",
             "5b4759b445e13bd6888db799",
-            "f034d256594af6b3db4be406"
+            "3c178c0a41fd310fbbef2373"
           ]
         },
         {
@@ -165,27 +165,27 @@
           ],
           "semantic_top_chunk_ids": [
             "959b63cbc686020e590c2090",
+            "3db0e5d5f21a4f0d827db2a5",
+            "e9dc6343144865f498e1423e",
+            "1ebaa2c593e6c6594254d4a2",
+            "a4826c23f3e70ee42488eb84",
+            "54bd8d2ba17fe66bf91b9a86",
+            "ed9bdff81bb9ec538ca79549",
             "ea301807129365c01fbc91a5",
-            "21b69739cd8f55f039992acd",
-            "ba95d284aee43ea5612a633b",
-            "005cb00bd9ea6c88cea5330a",
-            "6215426042d47c231786daa5",
-            "b0a6331ec82e430cfed9fa9e",
-            "02b75fc220bb796eeb3585fd",
-            "6f5c4484747ed742d378de6d",
-            "b986f3a29b1e9ee1647e6fba"
+            "b1d0f33e9fc1b8c912bb9bcf",
+            "7cf863ee1485767d05dd457f"
           ],
           "hybrid_top_chunk_ids": [
             "959b63cbc686020e590c2090",
+            "e9dc6343144865f498e1423e",
             "21b69739cd8f55f039992acd",
-            "ea301807129365c01fbc91a5",
-            "6215426042d47c231786daa5",
+            "f18be04a773ed3f2d94516e2",
+            "0c648e0c952044399a7beff2",
             "02b75fc220bb796eeb3585fd",
-            "ee28db79fbb62ce79ac5fb54",
-            "ba95d284aee43ea5612a633b",
-            "497314e4093a1b9c03e6a81d",
-            "e9b2783b422868c4bd18e075",
-            "7899e8cd8acee890339fdf51"
+            "ea301807129365c01fbc91a5",
+            "3db0e5d5f21a4f0d827db2a5",
+            "6215426042d47c231786daa5",
+            "7cf863ee1485767d05dd457f"
           ]
         },
         {
@@ -196,27 +196,27 @@
           ],
           "semantic_top_chunk_ids": [
             "959b63cbc686020e590c2090",
+            "a4826c23f3e70ee42488eb84",
+            "54bd8d2ba17fe66bf91b9a86",
+            "ed9bdff81bb9ec538ca79549",
             "ba95d284aee43ea5612a633b",
-            "ea301807129365c01fbc91a5",
-            "b986f3a29b1e9ee1647e6fba",
-            "f6dcc30fb3b9f4bc48817e9f",
-            "7899e8cd8acee890339fdf51",
-            "2778c66ba9d49d68a36ecc0f",
-            "9554eb4b58ce28db98b5fdb8",
-            "f0a0e8e01ae26ea67067f298",
-            "0349355f440d901ce6768442"
+            "1ebaa2c593e6c6594254d4a2",
+            "3db0e5d5f21a4f0d827db2a5",
+            "b1d0f33e9fc1b8c912bb9bcf",
+            "7cf863ee1485767d05dd457f",
+            "efc1493fcd23422201de031e"
           ],
           "hybrid_top_chunk_ids": [
             "959b63cbc686020e590c2090",
+            "7cf863ee1485767d05dd457f",
+            "b1d0f33e9fc1b8c912bb9bcf",
+            "efc1493fcd23422201de031e",
             "2778c66ba9d49d68a36ecc0f",
             "ea301807129365c01fbc91a5",
             "7899e8cd8acee890339fdf51",
-            "ba95d284aee43ea5612a633b",
+            "6f4cdad872bf5a481200288f",
             "0349355f440d901ce6768442",
-            "21b69739cd8f55f039992acd",
-            "497314e4093a1b9c03e6a81d",
-            "f0a0e8e01ae26ea67067f298",
-            "7778bf4a6926dfd3edcf6f19"
+            "ba95d284aee43ea5612a633b"
           ]
         },
         {
@@ -246,9 +246,9 @@
             "f6dcc30fb3b9f4bc48817e9f",
             "078bd7127f58aff4f44173d1",
             "f6911012bef638e2fac53332",
+            "0513afdc94ef6a9cb4c1cbb2",
             "606f98cffc3bf6988782356f",
             "3313dd6467165d18ac2c22a8",
-            "0513afdc94ef6a9cb4c1cbb2",
             "8d98bf262a9de351fdebb611"
           ]
         },
@@ -265,22 +265,22 @@
             "3f38670bababa54cd31213f4",
             "7899e8cd8acee890339fdf51",
             "d83de654303d08c2b7ec79ee",
+            "0c648e0c952044399a7beff2",
             "6a88d1e1b2bb12b645902e78",
             "17f1eba62dd7ed936a8fe634",
-            "143ff2548a3825fe43de791d",
-            "ed056364deaf7c6de671a825"
+            "143ff2548a3825fe43de791d"
           ],
           "hybrid_top_chunk_ids": [
             "9b65a7af8f71a8edb4d46405",
             "7778bf4a6926dfd3edcf6f19",
             "143ff2548a3825fe43de791d",
-            "6a88d1e1b2bb12b645902e78",
             "17f1eba62dd7ed936a8fe634",
+            "6a88d1e1b2bb12b645902e78",
             "aebf03ab454fd5a5cef5fba9",
-            "ed056364deaf7c6de671a825",
             "eb08b5fde5990c21ba479b85",
-            "12b04d54b340f4e2501c4d39",
-            "77d7ec2b529ebfdc62d24eea"
+            "ed056364deaf7c6de671a825",
+            "0c648e0c952044399a7beff2",
+            "12b04d54b340f4e2501c4d39"
           ]
         },
         {
@@ -310,8 +310,8 @@
             "7778bf4a6926dfd3edcf6f19",
             "6bfc18d0fbb7230422218a15",
             "83333ef0cc651530bb887bda",
-            "e8e5ce9ec374792df4ccdae4",
-            "89749489ddaf98eb35fcb8d5"
+            "89749489ddaf98eb35fcb8d5",
+            "e8e5ce9ec374792df4ccdae4"
           ]
         },
         {
@@ -329,20 +329,20 @@
             "9554eb4b58ce28db98b5fdb8",
             "e82f1d4171807fe8cd321c46",
             "43dcf0b3275b26c8594d2c25",
-            "3f38670bababa54cd31213f4",
-            "b813299563f38cf6afdf591e"
+            "64f17ef8129db8a076c424f6",
+            "3f38670bababa54cd31213f4"
           ],
           "hybrid_top_chunk_ids": [
             "5e920a51d5286fba952624bc",
             "d83de654303d08c2b7ec79ee",
-            "63b146c360d0d2fd9e011467",
             "9554eb4b58ce28db98b5fdb8",
+            "63b146c360d0d2fd9e011467",
             "43dcf0b3275b26c8594d2c25",
             "133a965246d33d142557611c",
-            "d67f7473489bdcdad639a7ea",
-            "9b65a7af8f71a8edb4d46405",
             "84224192518bff4cefb5d732",
-            "39dd7e3346332e6cdd4301ab"
+            "9b65a7af8f71a8edb4d46405",
+            "d67f7473489bdcdad639a7ea",
+            "64f17ef8129db8a076c424f6"
           ]
         },
         {
@@ -401,10 +401,10 @@
             "3cd169ffa29a31cf26c3b1c0",
             "adcbb49d64ea81411913b49b",
             "77d7ec2b529ebfdc62d24eea",
-            "6bfc18d0fbb7230422218a15",
             "2ebca67b3ab7175b06ccfbc9",
-            "83333ef0cc651530bb887bda",
-            "e8e5ce9ec374792df4ccdae4"
+            "6bfc18d0fbb7230422218a15",
+            "44fc9f24e79bf1da79017dab",
+            "83333ef0cc651530bb887bda"
           ]
         },
         {
@@ -461,8 +461,8 @@
           "hybrid_top_chunk_ids": [
             "c945bdaa95b67ec8d6d0329b",
             "228d7ddab256d6d3e4c05b76",
-            "113a2bb9cd46d91aaa09ae23",
             "1a7afa3329ff627ac382d1ce",
+            "113a2bb9cd46d91aaa09ae23",
             "6cff8d8a9dce97e603764d3a",
             "005cb00bd9ea6c88cea5330a",
             "4d39386e704778d9afa1db0a",
@@ -492,12 +492,12 @@
             "9cb870c1e9744d30f0b58d73",
             "9554eb4b58ce28db98b5fdb8",
             "476a73323b70c4b7e06717ba",
-            "959b63cbc686020e590c2090",
             "79c7a44eb01ab0fdac53cd23",
             "3125abf240b457a47aa07655",
-            "e314c27affdf98beec3cb4f6",
-            "43b59f0a4ec4f53cccf7d597",
-            "5deb89334dbc44c243a7ebe8"
+            "959b63cbc686020e590c2090",
+            "54bd8d2ba17fe66bf91b9a86",
+            "a4826c23f3e70ee42488eb84",
+            "ed9bdff81bb9ec538ca79549"
           ]
         },
         {
@@ -529,6 +529,37 @@
             "26f8c7eeeabf1593340a818c",
             "bcf0b3d2854eaa5387c27692",
             "9f57caa1640b0434731ba91e"
+          ]
+        },
+        {
+          "query_id": "Q32",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "e9dc6343144865f498e1423e"
+          ],
+          "semantic_top_chunk_ids": [
+            "e9dc6343144865f498e1423e",
+            "3db0e5d5f21a4f0d827db2a5",
+            "a4826c23f3e70ee42488eb84",
+            "54bd8d2ba17fe66bf91b9a86",
+            "ed9bdff81bb9ec538ca79549",
+            "1ebaa2c593e6c6594254d4a2",
+            "ba95d284aee43ea5612a633b",
+            "e15a9bc3c1c11d0a8fe2e8cc",
+            "959b63cbc686020e590c2090",
+            "7a42c7872de2cc7aae99dd43"
+          ],
+          "hybrid_top_chunk_ids": [
+            "e9dc6343144865f498e1423e",
+            "3db0e5d5f21a4f0d827db2a5",
+            "7cf863ee1485767d05dd457f",
+            "1ebaa2c593e6c6594254d4a2",
+            "b1d0f33e9fc1b8c912bb9bcf",
+            "7a42c7872de2cc7aae99dd43",
+            "e15a9bc3c1c11d0a8fe2e8cc",
+            "a4826c23f3e70ee42488eb84",
+            "54bd8d2ba17fe66bf91b9a86",
+            "efc1493fcd23422201de031e"
           ]
         }
       ]

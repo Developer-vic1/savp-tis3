@@ -2,7 +2,7 @@
 
 > **Nota histórica (2026-09-30):** Este documento describe la línea base de esa fecha. El estado vigente de corpus, FAISS y gates está en `FINAL_STATUS.md`.
 
-# Estado actual de PETER 3
+# Estado actual de Aporte Ingenieril SAVP
 
 Fecha: 2026-09-29. Rama: `feature/APORTE`.
 

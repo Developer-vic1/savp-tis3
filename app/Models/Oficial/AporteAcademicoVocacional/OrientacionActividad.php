@@ -4,7 +4,7 @@ namespace App\Models\Oficial\AporteAcademicoVocacional;
 
 use App\Models\Oficial\Academico\Estudiante;
 use App\Models\Oficial\Academico\GestionAcademica;
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

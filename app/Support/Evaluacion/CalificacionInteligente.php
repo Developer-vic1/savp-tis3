@@ -2,7 +2,10 @@
 
 namespace App\Support\Evaluacion;
 
-use App\Models\Calificacion;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Academico\PlanEspecialidad;
 
 class CalificacionInteligente
 {
@@ -10,20 +13,27 @@ class CalificacionInteligente
     {
         $nota = is_numeric($datos['not_cal'] ?? null) ? round((float) $datos['not_cal'], 2) : -1;
         $desempeno = $this->clasificar($nota);
+        $campoPlan = ! empty($datos['cod_pas']) ? 'cod_pas' : 'cod_pes';
+        $plan = $campoPlan === 'cod_pas' ? PlanAsignatura::find($datos['cod_pas'] ?? '') : PlanEspecialidad::find($datos['cod_pes'] ?? '');
+        $inscripcion = $datos['cod_ins'] ?? ($plan && ! empty($datos['cod_est'])
+            ? InscripcionEstudiante::where('cod_est', $datos['cod_est'])->where('cod_gea', $plan->cod_gea)->value('cod_ins') : null);
         $duplicado = Calificacion::query()
             ->when($ignorarCodigo, fn ($q) => $q->where('cod_cal', '!=', $ignorarCodigo))
-            ->where('cod_est', $datos['cod_est'] ?? '')
-            ->where('cod_asi', $datos['cod_asi'] ?? '')
-            ->when(\Illuminate\Support\Facades\Schema::hasColumn('calificacion', 'cod_pas'), fn ($q) => $q->where('cod_pas', $datos['cod_pas'] ?? null))
+            ->where('cod_ins', $inscripcion)
+            ->where($campoPlan, $datos[$campoPlan] ?? null)
             ->where('cod_pev', $datos['cod_pev'] ?? '')
+            ->where('est_cal', '!=', 'ANULADA')
             ->exists();
 
-        $faltantes = collect(['cod_est', 'cod_asi', 'cod_pev'])
+        $faltantes = collect(['cod_est', $campoPlan, 'cod_pev', 'fea_cal'])
             ->filter(fn ($campo) => blank($datos[$campo] ?? null))->values()->all();
         $bloqueos = [];
 
         if ($faltantes !== []) {
-            $bloqueos[] = 'Faltan estudiante, asignatura o periodo.';
+            $bloqueos[] = 'Faltan estudiante, plan, periodo o fecha académica efectiva.';
+        }
+        if (empty($inscripcion)) {
+            $bloqueos[] = 'El estudiante no tiene inscripción en la gestión del plan.';
         }
         if ($nota < 0 || $nota > 100) {
             $bloqueos[] = 'La nota debe estar entre 0 y 100.';
@@ -36,12 +46,12 @@ class CalificacionInteligente
             'datos' => array_merge($datos, [
                 'not_cal' => max(0, $nota),
                 'obs_cal' => trim((string) ($datos['obs_cal'] ?? '')) ?: $this->observacion($nota),
-                'est_cal' => $datos['est_cal'] ?? 'ACTIVO',
+                'est_cal' => $datos['est_cal'] ?? 'VIGENTE',
             ]),
             'desempeno' => $desempeno,
             'riesgo' => $nota >= 0 && $nota <= 50,
             'duplicado' => $duplicado,
-            'completitud' => (int) round(((3 - count($faltantes) + ($nota >= 0 && $nota <= 100 ? 1 : 0)) / 4) * 100),
+            'completitud' => (int) round(((4 - count($faltantes) + ($nota >= 0 && $nota <= 100 ? 1 : 0)) / 5) * 100),
             'bloqueos' => $bloqueos,
             'puede_guardar' => $bloqueos === [],
         ];

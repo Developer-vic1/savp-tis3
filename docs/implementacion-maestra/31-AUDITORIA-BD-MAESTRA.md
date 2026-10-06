@@ -39,7 +39,7 @@ LMS conserva Tarea evaluable, publicaciones, materiales, entregas/archivos y cal
 
 Asistencia registra sesión/marca individual; se deriva porcentaje con estados configurados y población elegible. valor_porcentual de EstadoAsistencia persiste una ponderación oficial. UNIQUE con bloque NULL permite más de una sesión según semántica PostgreSQL; fijar identidad y política de rectificación antes de corregir. Las FK no crean automáticamente índices referentes y NULL en UNIQUE requiere regla explícita. [PostgreSQL Constraints](https://www.postgresql.org/docs/18/ddl-constraints.html).
 
-Orientación local conserva preguntas/respuestas/resultados, pero no instrumento/algoritmo de edición. Añadir una versión de instrumento y enlaces nullable tiene necesidad concreta, MIG-007 SOLO DISEÑO. El reporte antiguo calcula compatibilidad 95/80/60/40 desde promedios y asigna letras RIASEC por especialidad: esa salida no es medición científica reproducible y no debe convertirse en dato oficial. Peter 3 permanece DTO con pseudónimo; no acceso DB ni tabla genérica automática.
+Orientación local conserva preguntas/respuestas/resultados, pero no instrumento/algoritmo de edición. Añadir una versión de instrumento y enlaces nullable tiene necesidad concreta, MIG-007 SOLO DISEÑO. El reporte antiguo calcula compatibilidad 95/80/60/40 desde promedios y asigna letras RIASEC por especialidad: esa salida no es medición científica reproducible y no debe convertirse en dato oficial. Aporte Ingenieril SAVP permanece DTO con pseudónimo; no acceso DB ni tabla genérica automática.
 
 Kardex conserva el concepto de SeguimientoAcademico y necesita hecho/autor/momento/contexto/visibilidad/revisión/evidencia. Cinco catálogos son ejes tipados; la alternativa genérica requiere discriminador y FK equivalentes. La versión común exige edición publicada consistente; no se aprueban niveles/sanciones por crear tablas. MIG-001 cambia para no obligar silenciosamente toda observación general a un plan y para separar tiempo del hecho/captura. Meta personal y evento institucional son hechos faltantes; avance, cupo disponible, campana unread y fechas de tarea se derivan.
 
@@ -74,7 +74,7 @@ Ocho grupos de consultas a optimizar, sin tiempo ni plan medido: [bd-consultas-a
 
 Inventario de índices/keys ya declarados en [bd-indices-declarados.csv](evidencia/bd-indices-declarados.csv), siempre con fase/origen. En entrega hay INDEX(cod_tar,cod_est) y UNIQUE mismo orden: candidato redundante de índice, no de datos; medir y revisar otros usos antes de retiro. En unidad UNIQUE(id,cod_cla) permite FK compuesta y se conserva deliberadamente. UI reactive no implica aprobar una consulta por cada tecla; revalidación servidor al guardar sigue necesaria.
 
-Relaciones completas, cardinalidad, owner, historia y DELETE/UPDATE: [34-RELACIONES-BD.md](34-RELACIONES-BD.md), bd-relaciones-cardinalidad.csv, bd-fks.csv y bd-modelos.csv. Service↔tabla↔owner↔ventana: bd-services-tablas.csv. Peter3↔origen/DTO/personal/agregado/persistencia/acceso directo: bd-peter3-data.csv. Las dependencias transitivas no prueban que todas las tablas se lean en cada acción.
+Relaciones completas, cardinalidad, owner, historia y DELETE/UPDATE: [34-RELACIONES-BD.md](34-RELACIONES-BD.md), bd-relaciones-cardinalidad.csv, bd-fks.csv y bd-modelos.csv. Service↔tabla↔owner↔ventana: bd-services-tablas.csv. Aporte Ingenieril SAVP↔origen/DTO/personal/agregado/persistencia/acceso directo: bd-peter3-data.csv. Las dependencias transitivas no prueban que todas las tablas se lean en cada acción.
 
 ## Impacto en las 105 ventanas
 
@@ -86,7 +86,7 @@ Subfunciones parciales: V073/V090 unidades; V016/V042/V054/V067/V081/V096 evento
 
 ## Propuestas, privacidad y verificación
 
-[25-MIGRATIONS-PROPUESTAS.md](25-MIGRATIONS-PROPUESTAS.md) contiene dictamen vigente y conserva el antecedente íntegro; [35-MODELO-DATOS-OBJETIVO.md](35-MODELO-DATOS-OBJETIVO.md) es ADR propuesto, entidades/columnas nuevas, snapshots, frontera Peter 3 y plan aislado; [36-DEUDA-TECNICA-BD.md](36-DEUDA-TECNICA-BD.md) ordena 20 hallazgos: 1 CRITICAL, 10 HIGH, 7 MEDIUM, 2 LOW. No se convierten riesgos estáticos en incidentes confirmados.
+[25-MIGRATIONS-PROPUESTAS.md](25-MIGRATIONS-PROPUESTAS.md) contiene dictamen vigente y conserva el antecedente íntegro; [35-MODELO-DATOS-OBJETIVO.md](35-MODELO-DATOS-OBJETIVO.md) es ADR propuesto, entidades/columnas nuevas, snapshots, frontera Aporte Ingenieril SAVP y plan aislado; [36-DEUDA-TECNICA-BD.md](36-DEUDA-TECNICA-BD.md) ordena 20 hallazgos: 1 CRITICAL, 10 HIGH, 7 MEDIUM, 2 LOW. No se convierten riesgos estáticos en incidentes confirmados.
 
 Privacidad PUBLIC/INSTITUTIONAL/PERSONAL/SENSITIVE en columnas; notes/respuestas/credenciales/seguimiento/audit sensible. Retención y borrado legal no se inventan. Sesión/cache/token se expiran; hechos oficiales y revisiones se conservan por estado/append-only. No hay SoftDeletes global y un hook de Model no impide borrado vía SQL externo; permisos y writer deben hacer cumplir retención.
 
@@ -175,7 +175,7 @@ MEDIUM: 7.
 LOW: 2.
 
 ==================================================
-PETER 3
+Aporte Ingenieril SAVP
 ==================================================
 
 Acceso directo PostgreSQL recomendado: NO.

@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AsistenciaEstudiante extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'asistencia_estudiante';
 
     protected $primaryKey = 'cod_asi_est';
@@ -40,9 +43,6 @@ class AsistenciaEstudiante extends Model
     protected static function booted(): void
     {
         static::creating(function (AsistenciaEstudiante $asistenciaEstudiante) {
-            if (! $asistenciaEstudiante->cod_asi_est) {
-                $asistenciaEstudiante->cod_asi_est = 'ASIE_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (! $asistenciaEstudiante->fec_reg_asi_est) {
                 $asistenciaEstudiante->fec_reg_asi_est = now();

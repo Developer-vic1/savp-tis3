@@ -1,4 +1,4 @@
-# Estado del corpus — PETER 3
+# Estado del corpus — Aporte Ingenieril SAVP
 
 Verificación del 2026-10-01: `verify_sources.py --upstream-only` y la
 verificación completa pasaron. Hay **12 snapshots locales**, **11 referencias**

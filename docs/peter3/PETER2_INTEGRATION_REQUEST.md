@@ -2,7 +2,7 @@
 
 ## Necesidad
 
-Construir, cuando PETER 2 lo autorice, un DTO normalizado y un cliente HTTP Laravel para el contrato v1. PETER 3 no realizará este cambio.
+Construir, cuando PETER 2 lo autorice, un DTO normalizado y un cliente HTTP Laravel para el contrato v1. Aporte Ingenieril SAVP no realizará este cambio.
 
 ## Endpoint involucrado
 

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\AulaVirtual\Tareas;
 
-use App\Models\AulaVirtual\Tarea;
+use App\Models\Oficial\AulaVirtual\Tarea;
 use App\Services\AulaVirtual\TareaService;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Locked;

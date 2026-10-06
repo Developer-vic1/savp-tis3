@@ -2,7 +2,7 @@
 
 namespace App\Support;
 
-use App\Models\Role;
+use App\Models\Oficial\Sistema\Role;
 use Illuminate\Support\Str;
 
 final class InstitutionalRoleGovernance
@@ -68,6 +68,9 @@ final class InstitutionalRoleGovernance
         $blocked = [];
         $suggested = null;
         $normal = $this->normalize($name);
+        foreach([[$name,4,true],[$justification,30,false],[$functions,30,false]] as [$texto,$minimo,$esNombre]){
+            if($error=SupportRolesInstitucionales::errorTexto($texto,$minimo,$esNombre))$reasons[]=$error;
+        }
         if (in_array($normal, ['secretaria academica', 'secretario academico'], true)) {
             $suggested = 'Secretaria';
             $reasons[] = 'El cargo académico no debe crearse como otro rol RBAC. Utiliza el actor institucional Secretaria.';

@@ -2,12 +2,15 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\User;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RespaldoGestionAcademica extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'respaldo_gestion_academica';
 
     protected $primaryKey = 'cod_rga';
@@ -36,17 +39,6 @@ class RespaldoGestionAcademica extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (RespaldoGestionAcademica $respaldo) {
-            if (! empty($respaldo->cod_rga)) {
-                return;
-            }
-
-            $respaldo->cod_rga = 'RGA_'.strtoupper(bin2hex(random_bytes(8)));
-        });
-    }
 
     public function gestionAcademica(): BelongsTo
     {

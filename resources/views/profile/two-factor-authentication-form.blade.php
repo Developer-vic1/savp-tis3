@@ -1,10 +1,10 @@
 <div x-data="{ mostrarCodigos: @js($showingRecoveryCodes), mostrarClave: false }"
-    class="relative overflow-hidden rounded-[1.8rem] border border-[var(--ui-border)] bg-[var(--ui-card)] p-5 shadow-sm sm:p-6">
+    class="relative overflow-hidden rounded-[1.8rem] border border-[var(--ui-border)] bg-[var(--ui-surface)] p-5 shadow-sm sm:p-6">
 
     {{-- Fondos suaves --}}
-    <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-violet-400/10 blur-3xl"></div>
-    <div class="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl"></div>
-    <div class="pointer-events-none absolute bottom-0 right-1/3 h-52 w-52 rounded-full bg-emerald-400/10 blur-3xl">
+    <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[var(--ui-primary-soft)] blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full bg-[var(--ui-primary-soft)] blur-3xl"></div>
+    <div class="pointer-events-none absolute bottom-0 right-1/3 h-52 w-52 rounded-full bg-[var(--ui-primary-soft)] blur-3xl">
     </div>
 
     <div class="relative space-y-6">
@@ -16,7 +16,7 @@
             <div class="max-w-3xl">
                 <div class="flex flex-wrap items-center gap-2">
                     <span
-                        class="inline-flex items-center gap-2 rounded-full border border-violet-200/70 bg-violet-50 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-violet-700 dark:border-violet-400/20 dark:bg-violet-400/10 dark:text-violet-300">
+                        class="inline-flex items-center gap-2 rounded-full border border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                 d="M12 3.75 4.5 6.75v5.625c0 4.038 3.06 7.82 7.5 8.875 4.44-1.055 7.5-4.837 7.5-8.875V6.75L12 3.75Z" />
@@ -27,18 +27,18 @@
                     @if ($this->enabled)
                         @if ($showingConfirmation)
                             <span
-                                class="inline-flex rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+                                class="inline-flex rounded-full border border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-warning)] border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]">
                                 Pendiente de confirmación
                             </span>
                         @else
                             <span
-                                class="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
+                                class="inline-flex rounded-full border border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]">
                                 Protección activa
                             </span>
                         @endif
                     @else
                         <span
-                            class="inline-flex rounded-full border border-[var(--ui-border)] bg-[var(--ui-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-muted)]">
+                            class="inline-flex rounded-full border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-muted)]">
                             Protección desactivada
                         </span>
                     @endif
@@ -64,7 +64,7 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3 xl:min-w-[320px]">
-                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] px-4 py-3">
+                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-4 py-3">
                     <p class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--ui-muted)]">
                         Estado
                     </p>
@@ -86,7 +86,7 @@
                     </p>
                 </div>
 
-                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] px-4 py-3">
+                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-4 py-3">
                     <p class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--ui-muted)]">
                         Método
                     </p>
@@ -107,9 +107,9 @@
         ============================================================ --}}
         <div class="rounded-2xl border px-4 py-4 text-sm leading-6
             @if ($this->enabled)
-                border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200
+                border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]
             @else
-                border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-400/20 dark:bg-sky-400/10 dark:text-sky-200
+                border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]
             @endif">
             @if ($this->enabled)
                 @if ($showingConfirmation)
@@ -129,9 +129,9 @@
         CONFIGURACIÓN QR
         ============================================================ --}}
         @if ($this->enabled && $showingQrCode)
-            <section class="rounded-[1.5rem] border border-[var(--ui-border)] bg-[var(--ui-soft)] p-5">
+            <section class="rounded-[1.5rem] border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] p-5">
                 <div class="mb-5">
-                    <p class="text-sm font-black uppercase tracking-[0.16em] text-sky-600 dark:text-sky-300">
+                    <p class="text-sm font-black uppercase tracking-[0.16em] text-[var(--ui-primary)] text-[var(--ui-primary)]">
                         Configuración de seguridad
                     </p>
 
@@ -166,7 +166,7 @@
 
                     {{-- CLAVE + CONFIRMACIÓN --}}
                     <div class="space-y-4">
-                        <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] p-4">
+                        <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] p-4">
                             <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                                 <div>
                                     <p class="text-xs font-bold uppercase tracking-[0.14em] text-[var(--ui-muted)]">
@@ -178,14 +178,14 @@
                                 </div>
 
                                 <button type="button" @click="mostrarClave = !mostrarClave"
-                                    class="rounded-xl border border-[var(--ui-border)] bg-[var(--ui-soft)] px-3 py-2 text-xs font-bold text-[var(--ui-text)] transition hover:border-[var(--ui-primary)] hover:text-[var(--ui-primary)]">
+                                    class="rounded-xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-3 py-2 text-xs font-bold text-[var(--ui-text)] transition hover:border-[var(--ui-primary)] hover:text-[var(--ui-primary)]">
                                     <span x-show="!mostrarClave">Mostrar clave</span>
                                     <span x-show="mostrarClave" x-cloak>Ocultar clave</span>
                                 </button>
                             </div>
 
                             <div x-show="mostrarClave" x-transition x-cloak
-                                class="mt-4 rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] p-4">
+                                class="mt-4 rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] p-4">
                                 <p class="break-all font-mono text-sm font-semibold text-[var(--ui-text)]">
                                     {{ decrypt($this->user->two_factor_secret) }}
                                 </p>
@@ -194,8 +194,8 @@
 
                         @if ($showingConfirmation)
                             <div
-                                class="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-400/20 dark:bg-amber-400/10">
-                                <label for="code" class="block text-sm font-bold text-amber-900 dark:text-amber-100">
+                                class="rounded-2xl border border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] p-4 border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)]">
+                                <label for="code" class="block text-sm font-bold text-[var(--ui-warning)] text-[var(--ui-warning)]">
                                     Código de verificación
                                 </label>
 
@@ -205,7 +205,7 @@
 
                                 <x-input-error for="code" class="mt-2" />
 
-                                <p class="mt-3 text-sm leading-6 text-amber-800 dark:text-amber-200">
+                                <p class="mt-3 text-sm leading-6 text-[var(--ui-warning)] text-[var(--ui-warning)]">
                                     Introduce el código temporal generado por tu aplicación autenticadora.
                                 </p>
                             </div>
@@ -220,10 +220,10 @@
         ============================================================ --}}
         @if ($this->enabled && $showingRecoveryCodes)
             <section
-                class="rounded-[1.5rem] border border-emerald-200 bg-emerald-50/70 p-5 dark:border-emerald-400/20 dark:bg-emerald-400/10">
+                class="rounded-[1.5rem] border border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] p-5 border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)]">
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                        <p class="text-sm font-black uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">
+                        <p class="text-sm font-black uppercase tracking-[0.16em] text-[var(--ui-primary)] text-[var(--ui-primary)]">
                             Recuperación de acceso
                         </p>
 
@@ -239,14 +239,14 @@
 
                     <div class="flex flex-wrap gap-3">
                         <button type="button" @click="mostrarCodigos = !mostrarCodigos"
-                            class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] px-4 py-2 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-soft)]">
+                            class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] px-4 py-2 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-surface-soft)]">
                             <span x-show="!mostrarCodigos">Ver códigos</span>
                             <span x-show="mostrarCodigos" x-cloak>Ocultar códigos</span>
                         </button>
 
                         <x-confirms-password wire:then="regenerateRecoveryCodes">
                             <button type="button"
-                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] px-4 py-2 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-soft)]">
+                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] px-4 py-2 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-surface-soft)]">
                                 Regenerar códigos
                             </button>
                         </x-confirms-password>
@@ -255,9 +255,9 @@
 
                 <div x-show="mostrarCodigos" x-transition x-cloak class="mt-5">
                     <div
-                        class="grid gap-2 rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] px-4 py-4 font-mono text-sm text-[var(--ui-text)] shadow-sm sm:grid-cols-2">
+                        class="grid gap-2 rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] px-4 py-4 font-mono text-sm text-[var(--ui-text)] shadow-sm sm:grid-cols-2">
                         @foreach (json_decode(decrypt($this->user->two_factor_recovery_codes), true) as $code)
-                            <div class="rounded-xl border border-[var(--ui-border)] bg-[var(--ui-soft)] px-3 py-2">
+                            <div class="rounded-xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-3 py-2">
                                 {{ $code }}
                             </div>
                         @endforeach
@@ -284,7 +284,7 @@
                 @if (!$this->enabled)
                     <x-confirms-password wire:then="enableTwoFactorAuthentication">
                         <button type="button" wire:loading.attr="disabled"
-                            class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-sky-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
+                            class="inline-flex items-center gap-2 rounded-2xl ui-btn-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                     d="M12 3.75 4.5 6.75v5.625c0 4.038 3.06 7.82 7.5 8.875 4.44-1.055 7.5-4.837 7.5-8.875V6.75L12 3.75Z" />
@@ -296,7 +296,7 @@
                     @if ($showingConfirmation)
                         <x-confirms-password wire:then="confirmTwoFactorAuthentication">
                             <button type="button" wire:loading.attr="disabled"
-                                class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-sky-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
+                                class="inline-flex items-center gap-2 rounded-2xl ui-btn-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                         d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -307,7 +307,7 @@
 
                         <x-confirms-password wire:then="disableTwoFactorAuthentication">
                             <button type="button" wire:loading.attr="disabled"
-                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] px-5 py-3 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-soft)] disabled:cursor-not-allowed disabled:opacity-60">
+                                class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] px-5 py-3 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-surface-soft)] disabled:cursor-not-allowed disabled:opacity-60">
                                 Cancelar activación
                             </button>
                         </x-confirms-password>
@@ -315,7 +315,7 @@
                         @if (!$showingRecoveryCodes)
                             <x-confirms-password wire:then="showRecoveryCodes">
                                 <button type="button" x-on:click="mostrarCodigos = true"
-                                    class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] px-5 py-3 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-soft)]">
+                                    class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] px-5 py-3 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-surface-soft)]">
                                     Ver códigos de recuperación
                                 </button>
                             </x-confirms-password>

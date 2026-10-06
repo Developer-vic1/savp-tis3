@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Turno;
+use App\Models\Oficial\Academico\Turno;
 use Illuminate\Database\Seeder;
 
 class TurnosOficialesSeeder extends Seeder

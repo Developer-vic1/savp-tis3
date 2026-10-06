@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\AulaVirtual\Tarea;
-use App\Models\CalendarioEvento;
-use App\Models\PlanAsignatura;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\Academico\CalendarioEvento;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
@@ -33,9 +33,10 @@ class CalendarService
                 $classes = $actor === 'Docente' ? $courses->teacherQuery($user) : $courses->studentQuery($user);
                 $plans = PlanAsignatura::whereIn('cod_pas', $classes->reorder()->select('cod_pas')->withoutEagerLoads());
             }
-            $plans->selectRaw('1')->whereColumn('plan_asignatura.cod_gea', 'calendario_evento.cod_gea');
+            $plans->join('grupo_academico as contexto_calendario', 'contexto_calendario.cod_gac', '=', 'plan_asignatura.cod_gac')
+                ->selectRaw('1')->whereColumn('contexto_calendario.cod_gea', 'calendario_evento.cod_gea');
             foreach (['cod_cur', 'cod_par', 'cod_tur'] as $field) {
-                $plans->where(fn ($q) => $q->whereNull('calendario_evento.'.$field)->orWhereColumn('plan_asignatura.'.$field, 'calendario_evento.'.$field));
+                $plans->where(fn ($q) => $q->whereNull('calendario_evento.'.$field)->orWhereColumn('contexto_calendario.'.$field, 'calendario_evento.'.$field));
             }
             $query->whereExists($plans->toBase());
         }

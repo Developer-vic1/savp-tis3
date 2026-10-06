@@ -1,6 +1,6 @@
 > **Nota histórica (2026-09-30):** Este documento describe la línea base de esa fecha. El estado vigente de corpus, FAISS y gates está en `FINAL_STATUS.md`.
 
-# Matriz de requisitos PETER 3
+# Matriz de requisitos Aporte Ingenieril SAVP
 
 Estado auditado: 2026-09-29.
 

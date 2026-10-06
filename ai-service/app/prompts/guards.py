@@ -9,7 +9,9 @@ ALLOWED_STUDENT_CONTEXT_KEYS = {
     "course",
     "preparation_label",
     "preparation_route",
+    "riasec_code",
     "strengths",
+    "technical_specialty",
 }
 
 DISALLOWED_PII_PATTERNS = [

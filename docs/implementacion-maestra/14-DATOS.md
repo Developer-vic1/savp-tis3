@@ -14,10 +14,10 @@ Evidencia: cierre-schema-baseline.csv (hashes previos), cierre-schema-referencia
 | Asistencia | AsistenciaClase/Estudiante/EstadoAsistencia | Ninguna tabla nueva; locks y alcance en servicio |
 | Calificaciones | Calificacion oficial y CalificacionTarea LMS | MIG-006 CHECK NOT VALID y FK restrictiva de nota oficial |
 | Seguimiento/Kardex | No hay raíz equivalente completa en este checkout | MIG-001 raíz seguimiento/catálogos versionados/revisiones/evidencias |
-| Orientación | Actividad/Pregunta/Respuesta/Resultado/Carrera locales | MIG-004 solo metas propias; no trasladar Likert a Peter 3 |
+| Orientación | Actividad/Pregunta/Respuesta/Resultado/Carrera locales | MIG-004 solo metas propias; no trasladar Likert a Aporte Ingenieril SAVP |
 | Calendario | Fechas de Tarea actuales | MIG-005 eventos institucionales/revisiones |
 | Notificaciones | User Notifiable actual, sin tabla notifications | MIG-003; no usar Bitácora como avisos leídos |
-| Peter 3 | HTTP DTO/fallback, respuesta efímera minimizada | Ninguna tabla preventiva de preguntas/resultados sin contrato de retención |
+| Aporte Ingenieril SAVP | HTTP DTO/fallback, respuesta efímera minimizada | Ninguna tabla preventiva de preguntas/resultados sin contrato de retención |
 
 Hallazgos: FK calificacion.cod_est originalmente CASCADE DELETE; propuesta MIG-006 la restringe. Escalas actuales solo protegidas en aplicación: CHECK NOT VALID conserva históricos y condiciona nuevas escrituras. Migration histórica 2026_06_20_144115 elimina entregas duplicadas e hijos: no ejecutada/modificada, requiere reconciliación autorizada antes de cualquier carga futura. PK string(20) se conserva en FK nuevas, incluida identidad de notificaciones; no usar morph bigint sobre cod_usu.
 

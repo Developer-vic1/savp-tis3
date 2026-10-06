@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\AulaVirtual\EstadoAsistencia;
+use App\Models\Oficial\Academico\EstadoAsistencia;
 use Database\Seeders\AulaVirtual\AulaVirtualOrientacionPreguntasSeeder;
 use Illuminate\Database\Seeder;
 

@@ -2,7 +2,7 @@
 
 namespace App\Models\Oficial\Academico;
 
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,6 +52,7 @@ class ReporteGenerado extends Model
                 ? (($usuario->persona?->nom_per ?? '').' '.($usuario->persona?->ape_pat_per ?? '') ?: $usuario->email)
                 : 'Sistema',
             'estado' => 'generado',
+            'cod_usu' => $usuario?->cod_usu,
         ]);
     }
 

@@ -2,16 +2,15 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\MaterialClase;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\MaterialClase;
+use App\Models\Oficial\Sistema\User;
 use App\Services\BitacoraService;
 use App\Support\PrivateFilePath;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class MaterialService
@@ -44,7 +43,7 @@ class MaterialService
                 $class = ClaseVirtual::lockForUpdate()->findOrFail($datos['cod_cla']);
                 Gate::forUser($user)->authorize('manage', $class);
                 abort_unless($class->est_cla === 'ACTIVA', 422, 'El curso está cerrado para cambios.');
-                $material = MaterialClase::create($datos + ['cod_usu' => $user->cod_usu, 'cod_mat' => 'MAT_'.Str::upper(Str::random(16))]);
+                $material = MaterialClase::create($datos + ['cod_usu' => $user->cod_usu]);
                 BitacoraService::registrar(accion: 'CREAR_MATERIAL', tabla: 'material_clase', registro: $material->cod_mat,
                     modulo: 'Aula Virtual', valoresNuevos: $material->only(['cod_cla', 'tip_mat', 'est_mat']));
 

@@ -2,11 +2,14 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DocumentoInscripcionEstudiante extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'documento_inscripcion_estudiante';
 
     protected $primaryKey = 'cod_die';
@@ -39,17 +42,6 @@ class DocumentoInscripcionEstudiante extends Model
         'created_at' => 'datetime', // Fecha de creación
         'updated_at' => 'datetime', // Fecha de actualización
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (DocumentoInscripcionEstudiante $documento) {
-            if (! empty($documento->cod_die)) {
-                return;
-            }
-
-            $documento->cod_die = 'DIE_'.strtoupper(bin2hex(random_bytes(8)));
-        });
-    }
 
     public function inscripcion(): BelongsTo
     {

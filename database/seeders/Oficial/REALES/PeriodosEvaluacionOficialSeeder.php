@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\PeriodoEvaluacion;
+use App\Models\Oficial\Academico\PeriodoEvaluacion;
 use Illuminate\Database\Seeder;
 
 class PeriodosEvaluacionOficialSeeder extends Seeder

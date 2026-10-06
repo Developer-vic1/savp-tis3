@@ -1,0 +1,46 @@
+{
+    "base": "SAVPTIS3-OFICIAL",
+    "puerto": 5432,
+    "fecha": "2026-10-04T19:57:53+00:00",
+    "migration": "database\/migrations\/AulaVirtual\/2026_10_04_000008_conservar_intentos_de_entrega_tarea.php",
+    "autorizacion": "CORRECCION IMPORTANTE AUTORIZADA PARA EJECUCION POR EL USUARIO",
+    "antes": {
+        "total": 1313319,
+        "sin_intento": 0,
+        "invalidos": 0,
+        "huella": "1cc2fc42f8a8c9a18be6550d135f1c7b"
+    },
+    "despues": {
+        "total": 1313319,
+        "sin_intento": 0,
+        "invalidos": 0,
+        "huella": "1cc2fc42f8a8c9a18be6550d135f1c7b"
+    },
+    "conteos_relacionados_conservados": {
+        "entrega_archivo": 1250330,
+        "calificacion_tarea": 1235470,
+        "retroalimentacion_archivo": 61670,
+        "persona": 1280,
+        "users": 668,
+        "estudiante": 612,
+        "docente": 48,
+        "plan_asignatura": 2100,
+        "plan_especialidad": 476,
+        "horario": 904,
+        "horario_detalle": 27192
+    },
+    "pruebas": [
+        {
+            "caso": "Prevalidación detiene números de intento ausentes sin tocar filas",
+            "resultado": "CORRECTO"
+        },
+        {
+            "caso": "Up conserva conteos y permite varios intentos; duplicados\/NULL\/cero se rechazan",
+            "resultado": "CORRECTO"
+        },
+        {
+            "caso": "Rollback restaura unicidad y nulabilidad si no hay múltiples intentos",
+            "resultado": "CORRECTO"
+        }
+    ]
+}

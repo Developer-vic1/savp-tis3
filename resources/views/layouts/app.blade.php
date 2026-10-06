@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <x-icono-institucional />
 
     <title>@yield('title', config('app.name', 'SAVP - TIS 3'))</title>
 
@@ -109,26 +110,28 @@
                     );
 
                     $nombreUsuario = $nombreCompleto ?: ($user->name ?? $user->email ?? 'Usuario');
+                    $nombreBreve = trim(explode(' ', trim($persona?->nom_per ?? $user?->name ?? 'Usuario'))[0] . ' ' . ($persona?->ape_pat_per ?? ''));
                     $correoUsuario = $user->email ?? 'correo@ejemplo.com';
                     $inicial = strtoupper(substr($persona->nom_per ?? $user->name ?? $user->email ?? 'U', 0, 1));
                     $rol = $user ? app(\App\Services\RoleDashboardResolver::class)->roleFor($user) : null;
                 @endphp
 
                 {{-- TOPBAR OPERATIVA --}}
-                <header class="sticky top-0 z-30 px-5 pt-5 sm:px-6 lg:px-8">
-                    <div class="soft-panel topbar-shadow rounded-[2rem] px-6 py-4 sm:px-7">
-                        <div class="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-center">
+                <header class="savp-workspace-header sticky top-0 z-30">
+                    <div class="savp-workspace-container">
+                    <div class="soft-panel topbar-shadow savp-topbar">
+                        <div class="savp-topbar-row">
 
-                            <button type="button" @click="mobileSidebar = true" class="ui-btn-secondary lg:hidden" aria-label="Abrir menú" aria-controls="workspace-sidebar" :aria-expanded="mobileSidebar">☰ Menú</button>
+                            <button type="button" @click="mobileSidebar = true" class="savp-topbar-action savp-mobile-menu" aria-label="Abrir menú" aria-controls="workspace-sidebar" :aria-expanded="mobileSidebar"><i class="ph-duotone ph-list" aria-hidden="true"></i></button>
 
                             {{-- FECHA --}}
-                            <div class="ui-card-soft px-5 py-3 text-sm font-medium">
-                                <span class="ui-muted">{{ now()->format('d/m/Y') }}</span>
+                            <div class="savp-topbar-date">
+                                <i class="ph-duotone ph-calendar-blank" aria-hidden="true"></i>
+                                <time datetime="{{ now('America/La_Paz')->toDateString() }}">{{ now('America/La_Paz')->format('d/m/Y') }}</time>
                             </div>
 
                             {{-- BUSCADOR --}}
-                            <div class="flex w-full items-center gap-3 rounded-2xl border px-4 py-3 shadow-sm xl:w-[800px]"
-                                style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
+                            <div class="savp-topbar-search">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0"
                                     style="color: var(--ui-muted);" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
@@ -142,32 +145,24 @@
                             {{-- BOTÓN MODO CLARO / OSCURO --}}
                             <livewire:shared.notification-center />
                             <button type="button" onclick="window.themeManager.toggle()"
-                                class="inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-2xl border shadow-sm transition hover:-translate-y-0.5"
-                                style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);"
+                                class="savp-topbar-action savp-theme-toggle" data-theme-toggle
                                 title="Cambiar tema" aria-label="Cambiar tema">
 
                                 {{-- Luna: visible en modo claro --}}
-                                <svg class="h-5 w-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                        d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75 9.75 9.75 0 0 1 8.25 6c0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25 9.75 9.75 0 0 0 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
-                                </svg>
+                                <i class="ph-duotone ph-moon-stars dark:hidden" aria-hidden="true"></i>
 
                                 {{-- Sol: visible en modo oscuro --}}
-                                <svg class="hidden h-5 w-5 dark:block" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
-                                        d="M12 3v2.25m0 13.5V21m9-9h-2.25M5.25 12H3m15.364-6.364-1.591 1.591M7.227 16.773l-1.591 1.591m12.728 0-1.591-1.591M7.227 7.227 5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
-                                </svg>
+                                <i class="ph-duotone ph-sun hidden dark:block" aria-hidden="true"></i>
                             </button>
 
                             {{-- USUARIO --}}
-                            <div class="relative">
+                            <div class="savp-topbar-profile relative">
                                 <button type="button" @click="openUser = !openUser"
-                                    class="flex w-full items-center justify-between gap-4 rounded-2xl border px-4 py-3 shadow-sm transition hover:-translate-y-0.5"
+                                    class="savp-profile-button" title="{{ $nombreUsuario }}" :aria-expanded="openUser" aria-controls="savp-profile-menu"
                                     style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
 
                                     <div class="flex min-w-0 items-center gap-3">
-                                        @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                                        @if (Laravel\Jetstream\Jetstream::managesProfilePhotos() && $user->profile_photo_path)
                                             <img class="h-11 w-11 shrink-0 rounded-full object-cover ring-2"
                                                 style="--tw-ring-color: var(--ui-border);"
                                                 src="{{ $user->profile_photo_url }}" alt="{{ $nombreUsuario }}">
@@ -179,10 +174,10 @@
                                         @endif
 
                                         <div class="min-w-0 text-left">
-                                            <p class="truncate text-sm font-bold" style="color: var(--ui-text);">
-                                                {{ $nombreUsuario }}
+                                            <p class="savp-profile-name text-sm font-bold" style="color: var(--ui-text);">
+                                                {{ $nombreBreve }}
                                             </p>
-                                            <p class="truncate text-xs" style="color: var(--ui-muted);">
+                                            <p class="text-xs" style="color: var(--ui-muted);">
                                                 {{ $rol }}
                                             </p>
                                         </div>
@@ -198,7 +193,7 @@
                                 </button>
 
                                 {{-- Dropdown usuario --}}
-                                <div x-show="openUser" @click.outside="openUser = false" x-transition x-cloak
+                                <div id="savp-profile-menu" x-show="openUser" @click.outside="openUser = false" x-transition x-cloak
                                     class="absolute right-0 mt-3 w-72 overflow-hidden rounded-2xl border shadow-xl"
                                     style="background: var(--ui-surface); border-color: var(--ui-border); color: var(--ui-text);">
 
@@ -264,14 +259,17 @@
                             </div>
                         </div>
                     </div>
+                    </div>
                 </header>
 
-                <main class="flex-1 px-5 py-5 sm:px-6 lg:px-8">
+                <main class="savp-workspace-main min-w-0 flex-1">
+                    <div class="savp-workspace-container">
                     @if (session('status'))<p class="ui-alert-success mb-4" role="status">{{ session('status') }}</p>@endif
                     @if (session('error'))<p class="ui-alert-danger mb-4" role="alert">{{ session('error') }}</p>@endif
                     @if (session('warning'))<p class="ui-alert-warning mb-4" role="status">{{ session('warning') }}</p>@endif
                     @if ($errors->any())<div class="ui-alert-danger mb-4" role="alert"><p>Revisa los campos señalados.</p>@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
                     @yield('content')
+                    </div>
                 </main>
             </div>
         </div>

@@ -2,12 +2,12 @@
 
 namespace App\Services\AulaVirtual;
 
-use App\Models\AulaVirtual\OrientacionActividad;
-use App\Models\AulaVirtual\OrientacionPregunta;
-use App\Models\AulaVirtual\OrientacionRespuesta;
-use App\Models\AulaVirtual\OrientacionResultado;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionPregunta;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionRespuesta;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionResultado;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\BitacoraService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

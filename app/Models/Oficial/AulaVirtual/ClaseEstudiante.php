@@ -3,12 +3,15 @@
 namespace App\Models\Oficial\AulaVirtual;
 
 use App\Models\Oficial\Academico\Estudiante;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ClaseEstudiante extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'clase_estudiante';
 
     protected $primaryKey = 'cod_cla_est';
@@ -37,15 +40,6 @@ class ClaseEstudiante extends Model
         'cant_acc_cla_est' => 'integer',
     ];
 
-    protected static function booted(): void
-    {
-        static::creating(function (ClaseEstudiante $claseEstudiante) {
-            if (! $claseEstudiante->cod_cla_est) {
-                $claseEstudiante->cod_cla_est = 'CLE_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
-
     public function claseVirtual(): BelongsTo
     {
         return $this->belongsTo(ClaseVirtual::class, 'cod_cla', 'cod_cla');
@@ -65,6 +59,13 @@ class ClaseEstudiante extends Model
     public function scopeActivos($query)
     {
         return $query->where('est_cla_est', 'ACTIVO');
+    }
+
+    public function scopeVigentesEn($query, string $fecha)
+    {
+        return $query->where('fec_inc_cla_est', '<=', $fecha)
+            ->where(fn ($fin) => $fin->whereNull('fec_ret_cla_est')->orWhere('fec_ret_cla_est', '>', $fecha))
+            ->whereNotIn('est_cla_est', ['ANULADO', 'INACTIVO']);
     }
 
     public function scopeInactivos($query)

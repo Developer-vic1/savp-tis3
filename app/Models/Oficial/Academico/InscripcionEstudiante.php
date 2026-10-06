@@ -2,6 +2,7 @@
 
 namespace App\Models\Oficial\Academico;
 
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class InscripcionEstudiante extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'inscripcion_estudiante';
 
     protected $primaryKey = 'cod_ins';
@@ -57,17 +60,6 @@ class InscripcionEstudiante extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (InscripcionEstudiante $inscripcion) {
-            if (! empty($inscripcion->cod_ins)) {
-                return;
-            }
-
-            $inscripcion->cod_ins = 'INS_'.strtoupper(bin2hex(random_bytes(8)));
-        });
-    }
 
     public function estudiante(): BelongsTo
     {
@@ -359,6 +351,11 @@ class InscripcionEstudiante extends Model
     public function resultadoAnualRegistros(): HasOne
     {
         return $this->hasOne(ResultadoAnual::class, 'cod_ins', 'cod_ins');
+    }
+
+    public function resultadoAnual(): HasOne
+    {
+        return $this->resultadoAnualRegistros();
     }
 
     public function calificacionRegistros(): HasMany

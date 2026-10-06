@@ -12,7 +12,7 @@ SERVICE_ROOT = Path(__file__).resolve().parents[2]
 def test_source_registry_completeness_and_quality() -> None:
     manifest = load_source_manifest()
     assert len(manifest.sources) >= 11
-    assert manifest.manifest_version == "2.1.0"
+    assert manifest.manifest_version == "2.2.0"
     assert manifest.governance_policy == "OFFICIAL_SOURCES_ONLY_WITH_EXPLICIT_AUTHORITY_TIER"
 
     for source in manifest.sources:

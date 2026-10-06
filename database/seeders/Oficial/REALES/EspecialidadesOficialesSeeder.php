@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\EspecialidadTecnica;
+use App\Models\Oficial\Academico\EspecialidadTecnica;
 use Illuminate\Database\Seeder;
 
 class EspecialidadesOficialesSeeder extends Seeder

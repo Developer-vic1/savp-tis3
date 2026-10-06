@@ -9,7 +9,7 @@ from app.knowledge.registry import SERVICE_ROOT, load_source_manifest
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Construye el corpus PETER 3 trazable.")
+    parser = argparse.ArgumentParser(description="Construye el corpus trazable del aporte.")
     parser.add_argument(
         "--output",
         type=Path,

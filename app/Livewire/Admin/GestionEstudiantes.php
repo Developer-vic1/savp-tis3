@@ -2,22 +2,27 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Curso;
-use App\Models\EspecialidadTecnica;
-use App\Models\Estudiante;
-use App\Models\GestionAcademica;
-use App\Models\InscripcionEstudiante;
-use App\Models\InstitucionProcedencia;
-use App\Models\Paralelo;
-use App\Models\Persona;
-use App\Models\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\EspecialidadTecnica;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\GestionAcademica;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\InstitucionProcedencia;
+use App\Models\Oficial\Academico\Paralelo;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Academico\Persona as PersonaAcademica;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\Turno;
 use App\Services\BitacoraService;
+use App\Services\InscripcionAcademicaService;
+use App\Support\Comunidad\IndicadoresEstudiantes;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -33,23 +38,41 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public string $search = '';
+
     public string $filtroCurso = '';
+
     public string $filtroParalelo = '';
+
     public string $filtroEspecialidad = '';
+
     public string $filtroEstado = '';
+
     public string $filtroInscripcion = '';
+
     public string $filtroVinculacion = '';
+
     public string $filtroProcedencia = '';
+
     public int $perPage = 10;
+
+    public string $orden = 'nombre';
+
+    private array $columnasInscripcion = [];
 
     /*
     |--------------------------------------------------------------------------
     | Formatos de vista
     |--------------------------------------------------------------------------
     */
-    public string $vistaActiva = 'todos';
+    public string $vistaActiva = 'cursos';
+
+    #[Locked]
+    public string $rutaInscripciones = 'admin.gestion-inscripciones';
+
     public string $cursoCarpetaSeleccionado = '';
+
     public string $especialidadCarpetaSeleccionada = '';
+
     public string $procedenciaCarpetaSeleccionada = '';
 
     /*
@@ -58,9 +81,13 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public bool $modalRegistrar = false;
+
     public bool $modalEditar = false;
+
     public bool $modalInscripcion = false;
+
     public bool $modalHistorial = false;
+
     public bool $panelDetalle = false;
 
     /*
@@ -69,8 +96,11 @@ class GestionEstudiantes extends Component
     |--------------------------------------------------------------------------
     */
     public ?Estudiante $estudianteDetalle = null;
+
     public ?string $codEstudianteSeleccionado = null;
+
     public ?string $gestionActualId = null;
+
     public string $nombreGestionActual = 'Sin gestión activa';
 
     /*
@@ -94,7 +124,8 @@ class GestionEstudiantes extends Component
         'cod_par' => '',
         'cod_gea' => '',
         'fec_ins' => '',
-        'est_ins' => 'ACTIVO',
+        'est_ins' => 'ACTIVA',
+        'fii_ivg' => null,
     ];
 
     /*
@@ -104,6 +135,9 @@ class GestionEstudiantes extends Component
     */
     public function mount(): void
     {
+        $this->rutaInscripciones = request()->routeIs('secretaria.*')
+            ? 'secretaria.inscripciones'
+            : 'admin.gestion-inscripciones';
         $this->resolverGestionActual();
 
         $this->formInscripcion['cod_gea'] = $this->gestionActualId ?? '';
@@ -232,7 +266,8 @@ class GestionEstudiantes extends Component
             'cod_par' => '',
             'cod_gea' => $this->gestionActualId ?? '',
             'fec_ins' => now()->toDateString(),
-            'est_ins' => 'ACTIVO',
+            'est_ins' => 'ACTIVA',
+            'fii_ivg' => null,
         ];
     }
 
@@ -243,29 +278,23 @@ class GestionEstudiantes extends Component
     */
     public function cambiarVista(string $vista): void
     {
-        if (! in_array($vista, ['todos', 'cursos', 'especialidades', 'procedencias', 'tarjetas'], true)) {
-            return;
+        if (in_array($vista, ['todos', 'cursos', 'especialidades', 'procedencias', 'tarjetas', 'lista'], true)) {
+            $this->vistaActiva = $vista;
         }
+    }
 
-        $this->vistaActiva = $vista;
-
-        if ($vista !== 'cursos') {
-            $this->cursoCarpetaSeleccionado = '';
-            $this->filtroCurso = '';
-            $this->filtroParalelo = '';
-        }
-
-        if ($vista !== 'especialidades') {
-            $this->especialidadCarpetaSeleccionada = '';
-            $this->filtroEspecialidad = '';
-        }
-
-        if ($vista !== 'procedencias') {
-            $this->procedenciaCarpetaSeleccionada = '';
-            $this->filtroProcedencia = '';
-        }
-
+    public function updatedOrden(): void
+    {
         $this->resetPage();
+    }
+
+    public function updated($propiedad): void
+    {
+        if (str_starts_with($propiedad, 'formEstudiante.')) {
+            $this->validateOnly($propiedad, $this->rulesEstudiante($this->modalEditar), $this->messagesEstudiante());
+        } elseif (str_starts_with($propiedad, 'formInscripcion.')) {
+            $this->validateOnly($propiedad, $this->rulesInscripcion(), $this->messagesInscripcion());
+        }
     }
 
     public function seleccionarCursoCarpeta(string $codCurso): void
@@ -289,6 +318,17 @@ class GestionEstudiantes extends Component
         $this->filtroCurso = $codCurso;
         $this->filtroParalelo = '';
         $this->resetPage();
+    }
+
+    public function filtrarCursoParalelo(string $curso, string $paralelo): void
+    {
+        if (! Paralelo::where('cod_par', $paralelo)->where('est_par', 'ACTIVO')->exists()) {
+            return;
+        }
+        $this->seleccionarCursoCarpeta($curso);
+        if ($this->filtroCurso === $curso) {
+            $this->filtroParalelo = $paralelo;
+        }
     }
 
     public function limpiarCursoCarpeta(): void
@@ -379,6 +419,7 @@ class GestionEstudiantes extends Component
         if (! $gestion) {
             $this->gestionActualId = null;
             $this->nombreGestionActual = 'Sin gestión activa';
+
             return;
         }
 
@@ -386,7 +427,7 @@ class GestionEstudiantes extends Component
 
         $this->nombreGestionActual = ! empty($gestion->ani_gea)
             ? (string) $gestion->ani_gea
-            : $gestion->cod_gea;
+            : 'Gestión activa';
     }
 
     /*
@@ -405,7 +446,6 @@ class GestionEstudiantes extends Component
                 'inscripciones.curso',
                 'inscripciones.paralelo',
                 'inscripciones.gestionAcademica',
-                'calificaciones',
             ])
             ->findOrFail($codEstudiante);
     }
@@ -450,7 +490,7 @@ class GestionEstudiantes extends Component
 
         $estado = $inscripcion->{$campoEstado} ?? 'ACTIVO';
 
-        return $estado === 'ACTIVO'
+        return in_array($estado, ['ACTIVO', 'ACTIVA'], true)
             ? 'INSCRITO'
             : 'PENDIENTE';
     }
@@ -692,7 +732,8 @@ class GestionEstudiantes extends Component
             'cod_par' => $inscripcionActual->cod_par ?? '',
             'cod_gea' => $inscripcionActual->cod_gea ?? ($this->gestionActualId ?? ''),
             'fec_ins' => $this->obtenerFechaInscripcion($inscripcionActual) ?? now()->toDateString(),
-            'est_ins' => $this->obtenerEstadoModeloInscripcion($inscripcionActual) ?? 'ACTIVO',
+            'est_ins' => $this->obtenerEstadoModeloInscripcion($inscripcionActual) ?? 'ACTIVA',
+            'fii_ivg' => null,
         ];
 
         $this->estudianteDetalle = $estudiante;
@@ -800,7 +841,7 @@ class GestionEstudiantes extends Component
             if ($inscripcion) {
                 $valoresAnteriores = $this->resumenInscripcion($inscripcion);
 
-                $inscripcion->update($payload);
+                app(InscripcionAcademicaService::class)->guardar($payload, $inscripcion, $this->formInscripcion['fii_ivg'] ?? null);
 
                 $inscripcionActualizada = $inscripcion->fresh([
                     'estudiante.persona',
@@ -823,7 +864,7 @@ class GestionEstudiantes extends Component
 
                 $mensaje = 'Inscripción académica actualizada correctamente.';
             } else {
-                $inscripcion = InscripcionEstudiante::create($payload);
+                $inscripcion = app(InscripcionAcademicaService::class)->guardar($payload, null, $this->formInscripcion['fii_ivg'] ?? null);
 
                 $inscripcion = $inscripcion->fresh([
                     'estudiante.persona',
@@ -1042,10 +1083,12 @@ class GestionEstudiantes extends Component
             'formInscripcion.fec_ins' => [
                 'nullable',
                 'date',
+                'after_or_equal:1900-01-01',
+                'before_or_equal:today',
             ],
             'formInscripcion.est_ins' => [
                 'required',
-                Rule::in(['ACTIVO', 'INACTIVO', 'PENDIENTE']),
+                Rule::in(['ACTIVA', 'PENDIENTE', 'OBSERVADA', 'ANULADA', 'RETIRADA']),
             ],
         ];
     }
@@ -1060,6 +1103,8 @@ class GestionEstudiantes extends Component
             'formInscripcion.cod_par.exists' => 'El paralelo seleccionado no existe.',
             'formInscripcion.cod_gea.required' => 'Selecciona la gestión académica.',
             'formInscripcion.cod_gea.exists' => 'La gestión académica seleccionada no existe.',
+            'formInscripcion.fec_ins.before_or_equal' => 'La fecha de inscripción no puede ser futura.',
+            'formInscripcion.fec_ins.after_or_equal' => 'Revisa el año de la inscripción.',
             'formInscripcion.fec_ins.date' => 'La fecha de inscripción no es válida.',
             'formInscripcion.est_ins.required' => 'Selecciona el estado de inscripción.',
             'formInscripcion.est_ins.in' => 'El estado de inscripción seleccionado no es válido.',
@@ -1086,12 +1131,13 @@ class GestionEstudiantes extends Component
 
     public function puedeGuardarInscripcion(): bool
     {
-        return filled($this->formInscripcion['cod_est'] ?? null)
+        return (! filled($this->formInscripcion['fec_ins'] ?? null) || (preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->formInscripcion['fec_ins']) && $this->formInscripcion['fec_ins'] >= '1900-01-01' && $this->formInscripcion['fec_ins'] <= now()->toDateString()))
+            && filled($this->formInscripcion['cod_est'] ?? null)
             && filled($this->formInscripcion['cod_cur'] ?? null)
             && filled($this->formInscripcion['cod_par'] ?? null)
             && filled($this->formInscripcion['cod_gea'] ?? null)
             && filled($this->formInscripcion['est_ins'] ?? null)
-            && in_array($this->formInscripcion['est_ins'], ['ACTIVO', 'INACTIVO', 'PENDIENTE'], true);
+            && in_array($this->formInscripcion['est_ins'], ['ACTIVA', 'PENDIENTE', 'OBSERVADA', 'ANULADA', 'RETIRADA'], true);
     }
 
     /*
@@ -1142,7 +1188,7 @@ class GestionEstudiantes extends Component
                 $q->where('est_est', $this->filtroEstado);
             })
             ->when($this->filtroEspecialidad !== '', function (Builder $q) {
-                $q->where('cod_esp', $this->filtroEspecialidad);
+                $this->filtroEspecialidad === 'SIN_ESPECIALIDAD' ? $q->whereNull('cod_esp') : $q->where('cod_esp', $this->filtroEspecialidad);
             })
             ->when($this->filtroProcedencia !== '', function (Builder $q) {
                 $q->where('cod_ipe', $this->filtroProcedencia);
@@ -1150,21 +1196,14 @@ class GestionEstudiantes extends Component
             ->when($this->filtroVinculacion !== '', function (Builder $q) {
                 $q->where('cod_tve', $this->filtroVinculacion);
             })
-            ->when($this->filtroCurso !== '', function (Builder $q) {
+            ->when($this->filtroCurso !== '' || $this->filtroParalelo !== '', function (Builder $q) {
                 $q->whereHas('inscripciones', function (Builder $sub) {
-                    $sub->where('cod_cur', $this->filtroCurso);
-
+                    $sub->when($this->filtroCurso !== '', fn ($q) => $q->where('cod_cur', $this->filtroCurso))
+                        ->when($this->filtroParalelo !== '', fn ($q) => $q->where('cod_par', $this->filtroParalelo));
                     if ($this->gestionActualId) {
                         $sub->where('cod_gea', $this->gestionActualId);
-                    }
-                });
-            })
-            ->when($this->filtroParalelo !== '', function (Builder $q) {
-                $q->whereHas('inscripciones', function (Builder $sub) {
-                    $sub->where('cod_par', $this->filtroParalelo);
-
-                    if ($this->gestionActualId) {
-                        $sub->where('cod_gea', $this->gestionActualId);
+                    } else {
+                        $sub->whereRaw('1=0');
                     }
                 });
             })
@@ -1186,7 +1225,7 @@ class GestionEstudiantes extends Component
                 $sub->where('cod_gea', $this->gestionActualId);
 
                 if ($campoEstado) {
-                    $sub->where($campoEstado, 'ACTIVO');
+                    $sub->whereIn($campoEstado, ['ACTIVO', 'ACTIVA']);
                 }
             }),
 
@@ -1194,7 +1233,7 @@ class GestionEstudiantes extends Component
                 $sub->where('cod_gea', $this->gestionActualId);
 
                 if ($campoEstado) {
-                    $sub->whereIn($campoEstado, ['PENDIENTE', 'INACTIVO']);
+                    $sub->whereIn($campoEstado, ['PENDIENTE', 'INACTIVO', 'OBSERVADA', 'ANULADA', 'RETIRADA']);
                 }
             }),
 
@@ -1214,7 +1253,7 @@ class GestionEstudiantes extends Component
     private function campoEstadoInscripcion(): ?string
     {
         foreach (['est_ins', 'est_ine', 'est_ies', 'estado'] as $campo) {
-            if (Schema::hasColumn('inscripcion_estudiante', $campo)) {
+            if (in_array($campo, $this->columnasInscripcion ?: ($this->columnasInscripcion = Schema::getColumnListing('inscripcion_estudiante')), true)) {
                 return $campo;
             }
         }
@@ -1224,8 +1263,8 @@ class GestionEstudiantes extends Component
 
     private function campoFechaInscripcion(): ?string
     {
-        foreach (['fec_ins', 'fec_ine', 'fec_ies', 'fecha', 'fecha_inscripcion'] as $campo) {
-            if (Schema::hasColumn('inscripcion_estudiante', $campo)) {
+        foreach (['fei_ins', 'fec_ins', 'fec_ine', 'fec_ies', 'fecha', 'fecha_inscripcion'] as $campo) {
+            if (in_array($campo, $this->columnasInscripcion ?: ($this->columnasInscripcion = Schema::getColumnListing('inscripcion_estudiante')), true)) {
                 return $campo;
             }
         }
@@ -1274,6 +1313,8 @@ class GestionEstudiantes extends Component
             'cod_cur' => $this->formInscripcion['cod_cur'],
             'cod_par' => $this->formInscripcion['cod_par'],
             'cod_gea' => $this->formInscripcion['cod_gea'],
+            'cod_tur' => Turno::where('nom_tur', 'ILIKE', 'Mañana')->sole()->cod_tur,
+            'tip_ins' => 'REGULAR', 'con_ins' => 'NORMAL',
         ];
 
         $campoFecha = $this->campoFechaInscripcion();
@@ -1296,20 +1337,20 @@ class GestionEstudiantes extends Component
     | Helpers visuales para Blade
     |--------------------------------------------------------------------------
     */
-    public function nombreCompleto(?Persona $persona): string
+    public function nombreCompleto(?PersonaAcademica $persona): string
     {
         if (! $persona) {
             return 'Sin persona asociada';
         }
 
-        return trim(collect([
+        return mb_strtoupper(trim(collect([
             $persona->nom_per ?? '',
             $persona->ape_pat_per ?? '',
             $persona->ape_mat_per ?? '',
-        ])->filter()->implode(' '));
+        ])->filter()->implode(' ')));
     }
 
-    public function iniciales(?Persona $persona): string
+    public function iniciales(?PersonaAcademica $persona): string
     {
         if (! $persona) {
             return 'ES';
@@ -1321,10 +1362,10 @@ class GestionEstudiantes extends Component
         $primera = $nombres !== '' ? mb_substr($nombres, 0, 1) : 'E';
         $segunda = $paterno !== '' ? mb_substr($paterno, 0, 1) : 'S';
 
-        return mb_strtoupper($primera . $segunda);
+        return mb_strtoupper($primera.$segunda);
     }
 
-    public function ciCompleto(?Persona $persona): string
+    public function ciCompleto(?PersonaAcademica $persona): string
     {
         if (! $persona) {
             return 'Sin CI';
@@ -1332,12 +1373,12 @@ class GestionEstudiantes extends Component
 
         return trim(collect([
             $persona->ci_per ?? '',
-            $persona->com_per ? '-' . $persona->com_per : '',
+            $persona->com_per ? '-'.$persona->com_per : '',
             $persona->exp_per ?? '',
         ])->filter()->implode(' '));
     }
 
-    public function edad(?Persona $persona): ?int
+    public function edad(?PersonaAcademica $persona): ?int
     {
         if (! $persona || empty($persona->fec_nac_per)) {
             return null;
@@ -1481,7 +1522,7 @@ class GestionEstudiantes extends Component
 
                 $inscritos = (clone $base)
                     ->when($campoEstadoInscripcion, function ($query) use ($campoEstadoInscripcion) {
-                        $query->where($campoEstadoInscripcion, 'ACTIVO');
+                        $query->whereIn($campoEstadoInscripcion, ['ACTIVO', 'ACTIVA']);
                     })
                     ->distinct('cod_est')
                     ->count('cod_est');
@@ -1522,7 +1563,7 @@ class GestionEstudiantes extends Component
                         }
 
                         if ($campoEstadoInscripcion) {
-                            $query->where($campoEstadoInscripcion, 'ACTIVO');
+                            $query->whereIn($campoEstadoInscripcion, ['ACTIVO', 'ACTIVA']);
                         }
                     })
                     ->count();
@@ -1557,7 +1598,7 @@ class GestionEstudiantes extends Component
                         }
 
                         if ($campoEstadoInscripcion) {
-                            $query->where($campoEstadoInscripcion, 'ACTIVO');
+                            $query->whereIn($campoEstadoInscripcion, ['ACTIVO', 'ACTIVA']);
                         }
                     })
                     ->count();
@@ -1677,15 +1718,29 @@ class GestionEstudiantes extends Component
             ])
             ->withCount([
                 'inscripciones as total_inscripciones',
-                'calificaciones as total_calificaciones',
             ]);
 
         $estudiantesQuery = $this->aplicarBusqueda($estudiantesQuery);
         $estudiantesQuery = $this->aplicarFiltrosAcademicos($estudiantesQuery);
 
-        $estudiantes = $estudiantesQuery
-            ->orderByDesc('cod_est')
-            ->paginate($this->perPage);
+        $perPage = in_array($this->perPage, [10, 20, 50], true) ? $this->perPage : 10;
+        $estadistica = (clone $estudiantesQuery)->setEagerLoads([])
+            ->select(['cod_est', 'cod_esp', 'est_est', 'cod_tve'])
+            ->with(['inscripciones' => fn ($q) => $q->where('cod_gea', $this->gestionActualId ?? '')])
+            ->get();
+        $cursos = Curso::where('est_cur', 'ACTIVO')->orderBy('nom_cur')->get();
+        $paralelos = $this->paralelosFiltrados();
+        $especialidades = EspecialidadTecnica::where('est_esp', 'ACTIVO')->orderBy('nom_esp')->get();
+        $indicadoresEstudiantes = IndicadoresEstudiantes::desde($estadistica, $cursos, $paralelos, $especialidades);
+        if ($this->orden === 'recientes') {
+            $estudiantesQuery->orderByDesc('created_at');
+        } elseif ($this->orden === 'rude') {
+            $estudiantesQuery->orderBy('rud_est');
+        } else {
+            $direccion = $this->orden === 'nombre_desc' ? 'desc' : 'asc';
+            $estudiantesQuery->orderBy(Persona::selectRaw("concat_ws(' ', ape_pat_per, ape_mat_per, nom_per)")->whereColumn('persona.cod_per', 'estudiante.cod_per'), $direccion);
+        }
+        $estudiantes = $estudiantesQuery->orderBy('cod_est')->paginate($perPage);
 
         $totalEstudiantes = Estudiante::count();
         $estudiantesActivos = Estudiante::where('est_est', 'ACTIVO')->count();
@@ -1697,20 +1752,20 @@ class GestionEstudiantes extends Component
 
         $inscritosGestionActual = $this->gestionActualId
             ? InscripcionEstudiante::query()
-            ->where('cod_gea', $this->gestionActualId)
-            ->when($campoEstadoInscripcion, function ($query) use ($campoEstadoInscripcion) {
-                $query->where($campoEstadoInscripcion, 'ACTIVO');
-            })
-            ->distinct('cod_est')
-            ->count('cod_est')
+                ->where('cod_gea', $this->gestionActualId)
+                ->when($campoEstadoInscripcion, function ($query) use ($campoEstadoInscripcion) {
+                    $query->whereIn($campoEstadoInscripcion, ['ACTIVO', 'ACTIVA']);
+                })
+                ->distinct('cod_est')
+                ->count('cod_est')
             : 0;
 
         $sinInscripcionGestionActual = $this->gestionActualId
             ? Estudiante::query()
-            ->whereDoesntHave('inscripciones', function (Builder $query) {
-                $query->where('cod_gea', $this->gestionActualId);
-            })
-            ->count()
+                ->whereDoesntHave('inscripciones', function (Builder $query) {
+                    $query->where('cod_gea', $this->gestionActualId);
+                })
+                ->count()
             : $totalEstudiantes;
 
         $totalEspecialidadesConEstudiantes = Estudiante::query()
@@ -1722,9 +1777,7 @@ class GestionEstudiantes extends Component
             ->where('est_est', 'OBSERVADO')
             ->count();
 
-        $cursosCarpeta = $this->cursosCarpeta($campoEstadoInscripcion);
-        $especialidadesCarpeta = $this->especialidadesCarpeta($campoEstadoInscripcion);
-        $procedenciasCarpeta = $this->procedenciasCarpeta($campoEstadoInscripcion);
+        $this->dispatch('indicadores-estudiantes', datos: $indicadoresEstudiantes);
 
         return view('livewire.admin.gestion-estudiantes', [
             'estudiantes' => $estudiantes,
@@ -1740,19 +1793,15 @@ class GestionEstudiantes extends Component
             'gestionActualId' => $this->gestionActualId,
             'nombreGestionActual' => $this->nombreGestionActual,
 
-            'personasDisponibles' => $this->personasDisponibles(),
+            'personasDisponibles' => $this->modalRegistrar ? $this->personasDisponibles() : collect(),
 
-            'cursos' => Curso::where('est_cur', 'ACTIVO')
-                ->orderBy('nom_cur')
-                ->get(),
+            'cursos' => $cursos,
 
-            'paralelos' => $this->paralelosFiltrados(),
+            'paralelos' => $paralelos,
 
             'paralelosFormulario' => $this->paralelosParaFormularioInscripcion(),
 
-            'especialidades' => EspecialidadTecnica::where('est_esp', 'ACTIVO')
-                ->orderBy('nom_esp')
-                ->get(),
+            'especialidades' => $especialidades,
 
             'tiposVinculacion' => TipoVinculacionEstudiante::orderBy('nom_tve')
                 ->get(),
@@ -1766,9 +1815,7 @@ class GestionEstudiantes extends Component
 
             'estadosEstudiante' => $this->estadosEstudiantePermitidos(),
 
-            'cursosCarpeta' => $cursosCarpeta,
-            'especialidadesCarpeta' => $especialidadesCarpeta,
-            'procedenciasCarpeta' => $procedenciasCarpeta,
+            'indicadoresEstudiantes' => $indicadoresEstudiantes,
         ]);
     }
 }

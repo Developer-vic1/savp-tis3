@@ -5,7 +5,7 @@ namespace App\Support\Academico;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use App\Support\Academico\EsquemaAcademico as Schema;
 use Throwable;
 
 class GestionAcademicaInteligente
@@ -162,6 +162,26 @@ class GestionAcademicaInteligente
             $bloqueos[] = 'Ya existe una gestión académica activa.';
             $sugerencias[] = 'Registra la nueva gestión como PLANIFICADA hasta cerrar o finalizar la gestión actual.';
         }
+        if (Schema::hasTable('gestion_academica')) {
+            $anioActivo = DB::table('gestion_academica')->whereIn('est_gea', self::estadosActivosCompatibles())->max('ani_gea');
+            if ($anioActivo && $anio > (int) $anioActivo && now()->month < 11) {
+                $bloqueos[] = 'La siguiente gestión se prepara desde noviembre o diciembre, conforme al flujo institucional de planificación.';
+            }
+        }
+        if ($anio !== 2026) {
+            $advertencias[] = 'Las fechas y los trimestres sugeridos son una propuesta de planificación. La normativa de 2026 no acredita el calendario ministerial de otro año.';
+            $sugerencias[] = 'Contrasta la propuesta con la resolución ministerial vigente antes de activar el ciclo curricular.';
+        }
+        if ((bool) ($datos['crear_periodos'] ?? false)) {
+            if ($anio !== 2026) {
+                $bloqueos[] = 'Confirma la normativa de esta gestión antes de crear sus trimestres base.';
+            } elseif (! $inicio || today()->toDateString() > $inicio) {
+                $bloqueos[] = 'Los trimestres base se incorporan durante la planificación inicial, antes del inicio de clases.';
+            }
+        }
+        if ((bool) ($datos['copiar_estructura'] ?? false)) {
+            $bloqueos[] = 'La estructura anterior debe revisarse desde los planes académicos. Esta acción no dispone de una copia institucional validada.';
+        }
 
         $analisisFechas = $this->analizarRangoGestion($anio, $inicio, $fin);
 
@@ -169,6 +189,13 @@ class GestionAcademicaInteligente
         $advertencias = array_merge($advertencias, $analisisFechas['advertencias']);
         $sugerencias = array_merge($sugerencias, $analisisFechas['sugerencias']);
         $resumen = array_merge($resumen, $analisisFechas['resumen']);
+
+        if ($anio >= 2020 && $anio <= 2100 && $inicio && $fin && empty($analisisFechas['bloqueos'])) {
+            $revisionClases = $this->revisarCalendarioInicial($anio, $inicio, $fin);
+            $resumen['calendario_inicial'] = $revisionClases;
+            $bloqueos = array_merge($bloqueos, $revisionClases['bloqueos']);
+            $advertencias = array_merge($advertencias, $revisionClases['advertencias']);
+        }
 
         if ($estado === self::ESTADO_ACTIVA && ! $this->tieneEstructuraAcademicaBasica()) {
             $advertencias[] = 'La gestión será creada como ACTIVA, pero todavía no se detecta una estructura académica completa de cursos, paralelos, turnos y asignaturas.';
@@ -661,18 +688,61 @@ class GestionAcademicaInteligente
     // FECHAS, GESTIÓN Y PERIODOS
     // ============================================================
 
+    public function primerLunesFebrero(int $anio): string
+    {
+        $febrero = Carbon::create($anio, 2, 1)->startOfDay();
+        return $febrero->addDays((8 - $febrero->dayOfWeekIso) % 7)->toDateString();
+    }
+
+    public function revisarCalendarioInicial(int $anio, string $inicio, string $fin): array
+    {
+        $publicacion = app(\App\Services\Academico\EstudioCalendarioMinisterial::class)->leer($anio);
+        $fuente = ($publicacion['estado'] ?? '') === 'RESULTADO' ? ($publicacion['resultado'] ?? []) : [];
+        if ($anio === 2026 && ! $fuente) $fuente = ['inicio' => '2026-02-02', 'cierre' => '2026-12-02', 'documento' => 'Resolución Ministerial 0001/2026', 'url' => PanelGestionAcademica::NORMA_2026];
+        $inicioClases = $this->analizarInicioCurricular($anio, $inicio);
+        $bloqueos = $advertencias = [];
+        if ($fuente && ($inicio < $fuente['inicio'] || $fin > $fuente['cierre'])) {
+            $bloqueos[] = 'El inicio o cierre de clases supera el rango publicado para este año. Usa las fechas de la disposición; una ampliación se revisa durante la gestión con su respaldo.';
+        }
+        if (in_array($inicioClases['coincidencia'], ['SEGUNDO_LUNES', 'EXCEPCIONAL'], true) && $inicio !== ($fuente['inicio'] ?? null)) {
+            $advertencias[] = $inicioClases['mensaje'];
+        }
+        $advertencias[] = 'La meta es 200 días efectivos de clases. Los feriados, descansos y suspensiones deben revisarse en el calendario; los días de lunes a viernes no certifican por sí solos su cumplimiento.';
+        if (! $fuente) $advertencias[] = 'Consulta la publicación de este año antes de aprobar el calendario. Puedes preparar la propuesta mientras se revisa.';
+        return ['meta' => self::DIAS_HABILES_CURRICULARES, 'dias_lunes_viernes' => $this->calcularDiasHabilesReferenciales($inicio, $fin),
+            'inicio' => $inicioClases, 'fuente' => $fuente, 'bloqueos' => $bloqueos, 'advertencias' => $advertencias,
+            'cumplimiento_confirmado' => false];
+    }
+
+    public function analizarInicioCurricular(int $anio, ?string $registrado): array
+    {
+        $primero = $this->primerLunesFebrero($anio);
+        $segundo = Carbon::parse($primero)->addWeek()->toDateString();
+        $fecha = $registrado ? substr($registrado, 0, 10) : null;
+        return ['primero' => $primero, 'segundo' => $segundo, 'registrado' => $fecha,
+            'coincidencia' => $fecha === $primero ? 'HABITUAL' : ($fecha === $segundo ? 'SEGUNDO_LUNES' : ($fecha ? 'EXCEPCIONAL' : 'SIN_FECHA')),
+            'mensaje' => $fecha === $primero ? 'El inicio registrado coincide con el primer lunes de febrero. Contrasta siempre la disposición de esta gestión.'
+                : ($fecha === $segundo ? 'El inicio registrado cae el segundo lunes de febrero. Revisa el respaldo de esta excepción.'
+                    : ($fecha ? 'El inicio registrado se aparta de la fecha habitual. Conserva la fecha aprobada y revisa su disposición de respaldo.'
+                        : 'Se propone el primer lunes de febrero. La disposición oficial del año tiene prioridad.'))];
+    }
+
     public function sugerirFechasGestion(int $anio): array
     {
         return [
             'anio' => $anio,
             'inicio_institucional' => "{$anio}-01-19",
-            'inicio_curricular' => "{$anio}-02-02",
+            'inicio_curricular' => $this->primerLunesFebrero($anio),
+            'inicio_curricular_alternativo' => Carbon::parse($this->primerLunesFebrero($anio))->addWeek()->toDateString(),
             'cierre_curricular' => "{$anio}-12-02",
             'cierre_institucional' => "{$anio}-12-11",
             'dias_habiles_curriculares_referencia' => self::DIAS_HABILES_CURRICULARES,
             'cantidad_trimestres' => self::CANTIDAD_TRIMESTRES,
             'descanso_pedagogico_dias_habiles' => self::DESCANSO_PEDAGOGICO_DIAS_HABILES,
-            'recomendacion' => 'Para gestión académica institucional se recomienda usar inicio institucional y cierre institucional.',
+            'recomendacion' => 'El primer lunes de febrero orienta el inicio de clases; el segundo requiere revisar la disposición del año. El rango institucional incluye preparación y cierre.',
+            'tipo_referencia' => $anio === 2026 ? 'NORMA_CURRICULAR_Y_PROPUESTA_INSTITUCIONAL' : 'PROPUESTA_POR_CONFIRMAR',
+            'fuente' => $anio === 2026 ? 'Resolución Ministerial 0001/2026, Educación Regular: inicio de clases, tres trimestres y 200 días efectivos. Revisa las adecuaciones institucionales.' : 'Inicio habitual de clases: primer lunes de febrero. Consulta la resolución del Ministerio de Educación de este año para confirmar el calendario.',
+            'url_fuente' => $anio === 2026 ? PanelGestionAcademica::NORMA_2026 : null,
         ];
     }
 
@@ -682,7 +752,7 @@ class GestionAcademicaInteligente
             [
                 'nombre' => 'Primer trimestre',
                 'orden' => 1,
-                'fecha_inicio' => "{$anio}-02-02",
+                'fecha_inicio' => $this->primerLunesFebrero($anio),
                 'fecha_fin' => "{$anio}-05-08",
                 'dias_habiles_referencia' => self::DIAS_TRIMESTRE_1,
                 'incluye_descanso_pedagogico' => false,
@@ -952,7 +1022,7 @@ class GestionAcademicaInteligente
     // RESUMEN Y PENDIENTES
     // ============================================================
 
-    public function resumenGestion(string $codGea): array
+    public function resumenGestion(string $codGea, bool $incluirSeguimiento = true): array
     {
         $gestion = $this->obtenerGestion($codGea);
 
@@ -976,7 +1046,7 @@ class GestionAcademicaInteligente
             'planes_asignatura' => $this->contarPorGestion('plan_asignatura', $codGea),
             'planes_especialidad' => $this->contarPorGestion('plan_especialidad', $codGea),
             'horarios' => $this->contarPorGestion('horario', $codGea),
-            'calificaciones' => $this->contarCalificacionesPorGestion($codGea),
+            'calificaciones' => $incluirSeguimiento ? $this->contarCalificacionesPorGestion($codGea) : null,
             'reportes' => $this->contarPorGestion('reporte', $codGea),
 
             'periodos_catalogo' => $this->contarTabla('periodo_evaluacion'),
@@ -986,9 +1056,9 @@ class GestionAcademicaInteligente
             'asignaturas_activas' => $this->contarActivos('asignatura', 'est_asi'),
             'docentes_activos' => $this->contarActivos('docente', 'est_doc'),
 
-            'clases_virtuales' => $this->contarPorGestionIndirectaAulaVirtual($codGea),
-            'tareas' => $this->contarTareasPorGestion($codGea),
-            'asistencias' => $this->contarAsistenciasPorGestion($codGea),
+            'clases_virtuales' => $incluirSeguimiento ? $this->contarPorGestionIndirectaAulaVirtual($codGea) : null,
+            'tareas' => $incluirSeguimiento ? $this->contarTareasPorGestion($codGea) : null,
+            'asistencias' => $incluirSeguimiento ? $this->contarAsistenciasPorGestion($codGea) : null,
 
             'fechas_sugeridas' => $this->sugerirFechasGestion((int) $gestion->ani_gea),
             'periodos_sugeridos' => $this->sugerirPeriodosEvaluacion((int) $gestion->ani_gea),
@@ -1093,13 +1163,7 @@ class GestionAcademicaInteligente
 
     private function contarPorGestion(string $tabla, string $codGea): int
     {
-        if (! Schema::hasTable($tabla) || ! Schema::hasColumn($tabla, 'cod_gea')) {
-            return 0;
-        }
-
-        return DB::table($tabla)
-            ->where('cod_gea', $codGea)
-            ->count();
+        return app(PanelGestionAcademica::class)->porGestion($tabla, $codGea)?->count() ?? 0;
     }
 
     private function contarInscripcionesPendientes(string $codGea): int
@@ -1131,9 +1195,8 @@ class GestionAcademicaInteligente
             return 0;
         }
 
-        return DB::table('plan_asignatura')
-            ->where('cod_gea', $codGea)
-            ->where(function ($query) {
+        return app(PanelGestionAcademica::class)->porGestion('plan_asignatura', $codGea)
+            ?->where(function ($query) {
                 if (Schema::hasColumn('plan_asignatura', 'est_pas')) {
                     $query->where('est_pas', '!=', 'ACTIVO');
                 }
@@ -1143,7 +1206,7 @@ class GestionAcademicaInteligente
                         ->orWhere('hor_pas', '<=', 0);
                 }
             })
-            ->count();
+            ->count() ?? 0;
     }
 
     private function contarPlanesEspecialidadIncompletos(string $codGea): int
@@ -1152,9 +1215,8 @@ class GestionAcademicaInteligente
             return 0;
         }
 
-        return DB::table('plan_especialidad')
-            ->where('cod_gea', $codGea)
-            ->where(function ($query) {
+        return app(PanelGestionAcademica::class)->porGestion('plan_especialidad', $codGea)
+            ?->where(function ($query) {
                 if (Schema::hasColumn('plan_especialidad', 'est_pes')) {
                     $query->where('est_pes', '!=', 'ACTIVO');
                 }
@@ -1164,7 +1226,7 @@ class GestionAcademicaInteligente
                         ->orWhere('hor_pes', '<=', 0);
                 }
             })
-            ->count();
+            ->count() ?? 0;
     }
 
     private function contarHorariosPendientes(string $codGea): int
@@ -1177,15 +1239,14 @@ class GestionAcademicaInteligente
             return 0;
         }
 
-        return DB::table('horario')
-            ->where('cod_gea', $codGea)
-            ->whereIn('est_hor', [
+        return app(PanelGestionAcademica::class)->porGestion('horario', $codGea)
+            ?->whereIn('est_hor', [
                 'BORRADOR',
                 'PENDIENTE',
                 'OBSERVADO',
                 'INACTIVO',
             ])
-            ->count();
+            ->count() ?? 0;
     }
 
     private function contarReportesPendientes(): int
@@ -1213,31 +1274,44 @@ class GestionAcademicaInteligente
             return $this->contarPorGestion('calificacion_estudiante', $codGea);
         }
 
+        $inscripciones = app(PanelGestionAcademica::class)->porGestion('inscripcion_estudiante', $codGea);
+        if ($inscripciones && Schema::hasTable('calificacion') && Schema::hasColumn('calificacion', 'cod_ins')) {
+            return DB::table('calificacion')->whereIn('cod_ins', $inscripciones->select('cod_ins'))->count();
+        }
+
         return 0;
     }
 
     private function contarPorGestionIndirectaAulaVirtual(string $codGea): int
     {
+        return $this->clasesVirtualesPorGestion($codGea)?->count() ?? 0;
+    }
+
+    private function clasesVirtualesPorGestion(string $codGea): ?\Illuminate\Database\Query\Builder
+    {
         if (! Schema::hasTable('clase_virtual')) {
-            return 0;
+            return null;
         }
-
         if (Schema::hasColumn('clase_virtual', 'cod_gea')) {
-            return $this->contarPorGestion('clase_virtual', $codGea);
+            return DB::table('clase_virtual')->where('cod_gea', $codGea);
         }
 
-        if (
-            Schema::hasTable('plan_asignatura')
-            && Schema::hasColumn('clase_virtual', 'cod_pas')
-            && Schema::hasColumn('plan_asignatura', 'cod_gea')
-        ) {
-            return DB::table('clase_virtual')
-                ->join('plan_asignatura', 'clase_virtual.cod_pas', '=', 'plan_asignatura.cod_pas')
-                ->where('plan_asignatura.cod_gea', $codGea)
-                ->count();
+        $planes = [];
+        foreach (['plan_asignatura' => 'cod_pas', 'plan_especialidad' => 'cod_pes'] as $tabla => $columna) {
+            if (Schema::hasColumn('clase_virtual', $columna)) {
+                $consulta = app(PanelGestionAcademica::class)->porGestion($tabla, $codGea);
+                if ($consulta) {
+                    $planes[$columna] = $consulta->select($columna);
+                }
+            }
         }
 
-        return 0;
+        return DB::table('clase_virtual')->where(function ($query) use ($planes) {
+            $query->whereRaw('1 = 0');
+            foreach ($planes as $columna => $consulta) {
+                $query->orWhereIn($columna, $consulta);
+            }
+        });
     }
 
     private function contarTareasPorGestion(string $codGea): int
@@ -1253,9 +1327,7 @@ class GestionAcademicaInteligente
         }
 
         return DB::table('tarea')
-            ->join('clase_virtual', 'tarea.cod_cla', '=', 'clase_virtual.cod_cla')
-            ->join('plan_asignatura', 'clase_virtual.cod_pas', '=', 'plan_asignatura.cod_pas')
-            ->where('plan_asignatura.cod_gea', $codGea)
+            ->whereIn('cod_cla', $this->clasesVirtualesPorGestion($codGea)->select('cod_cla'))
             ->count();
     }
 
@@ -1272,9 +1344,7 @@ class GestionAcademicaInteligente
         }
 
         return DB::table('asistencia_clase')
-            ->join('clase_virtual', 'asistencia_clase.cod_cla', '=', 'clase_virtual.cod_cla')
-            ->join('plan_asignatura', 'clase_virtual.cod_pas', '=', 'plan_asignatura.cod_pas')
-            ->where('plan_asignatura.cod_gea', $codGea)
+            ->whereIn('cod_cla', $this->clasesVirtualesPorGestion($codGea)->select('cod_cla'))
             ->count();
     }
 
@@ -1289,9 +1359,7 @@ class GestionAcademicaInteligente
             return 0;
         }
 
-        return DB::table('clase_virtual')
-            ->join('plan_asignatura', 'clase_virtual.cod_pas', '=', 'plan_asignatura.cod_pas')
-            ->where('plan_asignatura.cod_gea', $codGea)
+        return $this->clasesVirtualesPorGestion($codGea)
             ->whereIn('clase_virtual.est_cla', [
                 'ACTIVA',
                 'ACTIVO',
@@ -1314,9 +1382,7 @@ class GestionAcademicaInteligente
         }
 
         return DB::table('tarea')
-            ->join('clase_virtual', 'tarea.cod_cla', '=', 'clase_virtual.cod_cla')
-            ->join('plan_asignatura', 'clase_virtual.cod_pas', '=', 'plan_asignatura.cod_pas')
-            ->where('plan_asignatura.cod_gea', $codGea)
+            ->whereIn('cod_cla', $this->clasesVirtualesPorGestion($codGea)->select('cod_cla'))
             ->whereIn('tarea.est_tar', [
                 'BORRADOR',
                 'PUBLICADA',
@@ -1336,9 +1402,7 @@ class GestionAcademicaInteligente
         }
 
         return DB::table('asistencia_clase')
-            ->join('clase_virtual', 'asistencia_clase.cod_cla', '=', 'clase_virtual.cod_cla')
-            ->join('plan_asignatura', 'clase_virtual.cod_pas', '=', 'plan_asignatura.cod_pas')
-            ->where('plan_asignatura.cod_gea', $codGea)
+            ->whereIn('cod_cla', $this->clasesVirtualesPorGestion($codGea)->select('cod_cla'))
             ->whereIn('asistencia_clase.est_asi_cla', [
                 'BORRADOR',
                 'ABIERTA',

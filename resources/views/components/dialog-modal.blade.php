@@ -1,17 +1,18 @@
 @props(['id' => null, 'maxWidth' => null])
+@php $id = $id ?? md5($attributes->wire('model')); @endphp
 
-<x-modal :id="$id" :maxWidth="$maxWidth" {{ $attributes }}>
+<x-modal :id="$id" :maxWidth="$maxWidth" aria-labelledby="{{ $id }}-titulo" {{ $attributes }}>
     <div class="px-6 py-4">
-        <div class="text-lg font-medium text-gray-900">
+        <div id="{{ $id }}-titulo" class="ui-title text-lg font-medium">
             {{ $title }}
         </div>
 
-        <div class="mt-4 text-sm text-gray-600">
+        <div class="ui-muted mt-4 text-sm">
             {{ $content }}
         </div>
     </div>
 
-    <div class="flex flex-row justify-end px-6 py-4 bg-gray-100 text-end">
+    <div class="savp-modal-pie text-end">
         {{ $footer }}
     </div>
 </x-modal>

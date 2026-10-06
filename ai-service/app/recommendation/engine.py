@@ -54,9 +54,7 @@ def _alignment(evidence: list[str], targets: list[str], *, aggregate: str) -> fl
     return _rounded(value)
 
 
-def _weighted_available(
-    values: dict[str, float | None], weights: dict[str, float]
-) -> float | None:
+def _weighted_available(values: dict[str, float | None], weights: dict[str, float]) -> float | None:
     observed = {name: value for name, value in values.items() if value is not None}
     denominator = sum(weights[name] for name in observed)
     if not observed or denominator == 0:
@@ -147,9 +145,7 @@ def _build_gaps(
     for requirement in profile.requirements:
         current, evidence_rows = current_scores[requirement.competency]
         magnitude = (
-            _rounded(max(0.0, requirement.required - current))
-            if current is not None
-            else None
+            _rounded(max(0.0, requirement.required - current)) if current is not None else None
         )
         relation = relations[requirement.relation_id]
         gaps.append(
@@ -274,17 +270,13 @@ def _strengths(
     return strengths
 
 
-def _route(
-    gaps: list[CompetencyGap], profile: CareerCriteria
-) -> list[PreparationRouteItem]:
+def _route(gaps: list[CompetencyGap], profile: CareerCriteria) -> list[PreparationRouteItem]:
     requirement_by_competency = {
         requirement.competency: requirement for requirement in profile.requirements
     }
     pending = [gap for gap in gaps if gap.magnitude is not None and gap.magnitude > 0]
     pending.sort(key=lambda gap: (-float(gap.magnitude or 0), gap.competency))
-    selected_topics = {
-        requirement_by_competency[gap.competency].topic for gap in pending
-    }
+    selected_topics = {requirement_by_competency[gap.competency].topic for gap in pending}
     emitted_topics: set[str] = set()
     ordered: list[CompetencyGap] = []
     while pending:
@@ -407,13 +399,16 @@ def build_career_ranking(
     recommendations: list[CareerRecommendation] = []
     warnings: list[str] = []
     for career in catalog.careers:
+        career_criteria = criteria.career_profiles.get(career.career_id)
+        if career_criteria is None:
+            continue
         recommendation, warning = _recommendation(
             request,
             vocational,
             academic,
             career,
             institutions[career.university_id],
-            criteria.career_profiles[career.career_id],
+            career_criteria,
             criteria,
             relations,
         )

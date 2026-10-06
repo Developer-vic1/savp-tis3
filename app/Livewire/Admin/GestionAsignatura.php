@@ -2,9 +2,14 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Asignatura;
+use App\Models\Oficial\Academico\Asignatura;
 use App\Services\BitacoraService;
 use App\Support\Academico\AsignaturaInteligente;
+use App\Support\Academico\ConsultaAsignaturasInstitucionales;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +22,7 @@ use Throwable;
 class GestionAsignatura extends Component
 {
     use WithPagination;
+    use \App\Livewire\Admin\Concerns\VerificaDocumentoCurricular;
 
     protected string $paginationTheme = 'tailwind';
 
@@ -29,7 +35,21 @@ class GestionAsignatura extends Component
     public string $search = '';
     public string $estado = '';
     public string $usoAcademico = '';
+    public string $campoEducativo = '';
+    public string $gestionFiltro = '';
+    public string $motivoEdicion = '';
+    public string $motivoCambio = '';
+    public bool $confirmarCambio = false;
+    public bool $modalCambio = false;
+    #[Locked] public ?string $cambioCodigo = null;
+    #[Locked] public string $tipoCambio = '';
     public int $perPage = 10;
+    public string $filtroHoras = '';
+    public string $filtroDocentes = '';
+    public string $filtroClases = '';
+    public function updatedFiltroHoras(): void { $this->resetPage(); }
+    public function updatedFiltroDocentes(): void { $this->resetPage(); }
+    public function updatedFiltroClases(): void { $this->resetPage(); }
     public string $sortField = 'nom_asi';
     public string $sortDirection = 'asc';
 
@@ -71,8 +91,8 @@ class GestionAsignatura extends Component
     |--------------------------------------------------------------------------
     */
 
-    public array $analisisCrear = [];
-    public array $analisisEditar = [];
+    #[Locked] public array $analisisCrear = [];
+    #[Locked] public array $analisisEditar = [];
 
     /*
     |--------------------------------------------------------------------------
@@ -80,8 +100,8 @@ class GestionAsignatura extends Component
     |--------------------------------------------------------------------------
     */
 
-    public ?string $asignaturaSeleccionada = null;
-    public array $detalleAsignatura = [];
+    #[Locked] public ?string $asignaturaSeleccionada = null;
+    #[Locked] public array $detalleAsignatura = [];
 
     /*
     |--------------------------------------------------------------------------
@@ -90,8 +110,8 @@ class GestionAsignatura extends Component
     */
 
     public array $estadosDisponibles = [
-        'ACTIVO' => 'Activo',
-        'INACTIVO' => 'Inactivo',
+        'ACTIVO' => 'Vigente',
+        'INACTIVO' => 'Retirada del catálogo',
     ];
 
     public array $opcionesUsoAcademico = [
@@ -115,18 +135,21 @@ class GestionAsignatura extends Component
 
     public function mount(): void
     {
+        $this->autorizar();
+        $this->gestionFiltro = $this->gestiones->firstWhere('est_gea','ACTIVO')->cod_gea ?? $this->gestiones->first()?->cod_gea ?? '';
         $this->reiniciarAnalisisCrear();
         $this->reiniciarAnalisisEditar();
     }
 
     public function render()
     {
-        $asignaturas = $this->obtenerAsignaturasPaginadas();
-
+        $this->autorizar();
         return view('livewire.admin.gestion-asignatura', [
-            'asignaturas' => $asignaturas,
-            'resumen' => $this->obtenerResumen(),
-            'catalogoInteligente' => AsignaturaInteligente::catalogoSugerencias(),
+            'asignaturas'=>$this->obtenerAsignaturasPaginadas(),
+            'resumen'=>$this->obtenerResumen(), 'materias'=>$this->materias,
+            'gestiones'=>$this->gestiones, 'gestion'=>$this->gestiones->firstWhere('cod_gea',$this->gestionFiltro),
+            'campos'=>ConsultaAsignaturasInstitucionales::campos(),
+            'catalogoInteligente'=>$this->catalogoPendiente,
         ]);
     }
 
@@ -162,6 +185,8 @@ class GestionAsignatura extends Component
             'search',
             'estado',
             'usoAcademico',
+            'campoEducativo',
+            'filtroHoras','filtroDocentes','filtroClases',
         ]);
 
         $this->perPage = 10;
@@ -203,20 +228,25 @@ class GestionAsignatura extends Component
 
     private function obtenerAsignaturasPaginadas(): LengthAwarePaginator
     {
-        $query = $this->asignaturasQuery();
-
-        $asignaturas = $query->paginate($this->perPage);
-
-        $asignaturas->getCollection()->transform(function (Asignatura $asignatura) {
-            $uso = $this->obtenerUsoAcademico($asignatura->cod_asi);
-
-            $asignatura->uso_academico = $uso;
-            $asignatura->analisis_inteligente = AsignaturaInteligente::interpretar($asignatura->nom_asi);
-
-            return $asignatura;
+        $materias=$this->materias->filter(function($m){
+            if ($this->search !== '' && !str_contains(AsignaturaInteligente::normalizar($m->nom_asi.' '.$m->sig_asi),AsignaturaInteligente::normalizar($this->search))) return false;
+            if ($this->estado && $m->est_asi !== $this->estado) return false;
+            if ($this->campoEducativo && $m->campo_educativo['clave'] !== $this->campoEducativo) return false;
+            if($this->filtroHoras==='hasta2' && $m->hor_asi>2 || $this->filtroHoras==='3a4' && ($m->hor_asi<3 || $m->hor_asi>4) || $this->filtroHoras==='5mas' && $m->hor_asi<5) return false;
+            if($this->filtroDocentes==='ninguno' && $m->docentes_actuales>0 || $this->filtroDocentes==='uno' && $m->docentes_actuales!==1 || $this->filtroDocentes==='varios' && $m->docentes_actuales<2) return false;
+            if($this->filtroClases==='con' && $m->bloques_actuales===0 || $this->filtroClases==='sin' && $m->bloques_actuales>0) return false;
+            return match($this->usoAcademico){
+                'CON_USO','CON_PLAN'=>$m->planes_actuales>0,
+                'SIN_USO'=>$m->planes_actuales===0,
+                'CON_CALIFICACIONES'=>$m->uso_academico['calificaciones']>0,
+                default=>true,
+            };
         });
-
-        return $asignaturas;
+        $campo=in_array($this->sortField,['nom_asi','sig_asi','hor_asi','est_asi'],true)?$this->sortField:'nom_asi';
+        $materias=$this->sortDirection==='desc'?$materias->sortByDesc($campo):$materias->sortBy($campo);
+        $cantidad=in_array($this->perPage,[10,20,50],true)?$this->perPage:10;
+        $pagina=max(1,min((int)$this->getPage(),max(1,(int)ceil($materias->count()/$cantidad))));
+        return new \Illuminate\Pagination\LengthAwarePaginator($materias->values()->forPage($pagina,$cantidad),$materias->count(),$cantidad,$pagina);
     }
 
     private function asignaturasQuery(): Builder
@@ -262,8 +292,8 @@ class GestionAsignatura extends Component
             return $query->whereExists(function ($subQuery) {
                 $subQuery
                     ->selectRaw('1')
-                    ->from('calificacion')
-                    ->whereColumn('calificacion.cod_asi', 'asignatura.cod_asi');
+                    ->from('calificacion')->join('plan_asignatura as plan_notas_asignatura', 'plan_notas_asignatura.cod_pas', '=', 'calificacion.cod_pas')
+                    ->whereColumn('plan_notas_asignatura.cod_asi', 'asignatura.cod_asi');
             });
         }
 
@@ -282,8 +312,8 @@ class GestionAsignatura extends Component
                     $subQuery->orWhereExists(function ($exists) {
                         $exists
                             ->selectRaw('1')
-                            ->from('calificacion')
-                            ->whereColumn('calificacion.cod_asi', 'asignatura.cod_asi');
+                            ->from('calificacion')->join('plan_asignatura as plan_notas_asignatura', 'plan_notas_asignatura.cod_pas', '=', 'calificacion.cod_pas')
+                            ->whereColumn('plan_notas_asignatura.cod_asi', 'asignatura.cod_asi');
                     });
                 }
             });
@@ -303,8 +333,8 @@ class GestionAsignatura extends Component
                 $query->whereNotExists(function ($subQuery) {
                     $subQuery
                         ->selectRaw('1')
-                        ->from('calificacion')
-                        ->whereColumn('calificacion.cod_asi', 'asignatura.cod_asi');
+                        ->from('calificacion')->join('plan_asignatura as plan_notas_asignatura', 'plan_notas_asignatura.cod_pas', '=', 'calificacion.cod_pas')
+                        ->whereColumn('plan_notas_asignatura.cod_asi', 'asignatura.cod_asi');
                 });
             }
         }
@@ -320,49 +350,21 @@ class GestionAsignatura extends Component
 
     private function obtenerResumen(): array
     {
-        $total = Asignatura::count();
-        $activas = Asignatura::where('est_asi', 'ACTIVO')->count();
-        $inactivas = Asignatura::where('est_asi', 'INACTIVO')->count();
-        $horas = (int) Asignatura::sum('hor_asi');
-
-        $conPlan = $this->contarAsignaturasConRelacion('plan_asignatura', 'cod_asi');
-        $conCalificaciones = $this->contarAsignaturasConRelacion('calificacion', 'cod_asi');
-
-        $codigosConUso = collect();
-
-        if (Schema::hasTable('plan_asignatura')) {
-            $codigosConUso = $codigosConUso->merge(
-                DB::table('plan_asignatura')
-                    ->whereNotNull('cod_asi')
-                    ->pluck('cod_asi')
-            );
-        }
-
-        if (Schema::hasTable('calificacion')) {
-            $codigosConUso = $codigosConUso->merge(
-                DB::table('calificacion')
-                    ->whereNotNull('cod_asi')
-                    ->pluck('cod_asi')
-            );
-        }
-
-        $conUso = $codigosConUso->unique()->count();
-        $sinUso = max($total - $conUso, 0);
-
-        return [
-            'total' => $total,
-            'activas' => $activas,
-            'inactivas' => $inactivas,
-            'con_plan' => $conPlan,
-            'con_calificaciones' => $conCalificaciones,
-            'con_uso' => $conUso,
-            'sin_uso' => $sinUso,
-            'horas' => $horas,
-        ];
+        $materias=$this->materias;
+        return ['total'=>$materias->count(),'activas'=>$materias->where('est_asi','ACTIVO')->count(),
+            'inactivas'=>$materias->where('est_asi','INACTIVO')->count(), 'horas'=>$materias->sum('hor_asi'),
+            'con_plan'=>$materias->where('planes_actuales','>',0)->count(),
+            'con_calificaciones'=>$materias->filter(fn($m)=>$m->uso_academico['calificaciones']>0)->count(),
+            'con_uso'=>$materias->where('planes_actuales','>',0)->count(),
+            'sin_uso'=>$materias->where('planes_actuales',0)->count()];
     }
 
     private function contarAsignaturasConRelacion(string $tabla, string $columnaAsignatura): int
     {
+        if ($tabla === 'calificacion' && $columnaAsignatura === 'cod_asi') {
+            return DB::table('calificacion')->join('plan_asignatura as asignaturas_con_nota', 'asignaturas_con_nota.cod_pas', '=', 'calificacion.cod_pas')
+                ->distinct()->count('asignaturas_con_nota.cod_asi');
+        }
         if (! Schema::hasTable($tabla) || ! Schema::hasColumn($tabla, $columnaAsignatura)) {
             return 0;
         }
@@ -381,8 +383,10 @@ class GestionAsignatura extends Component
 
     public function abrirModalCrear(): void
     {
+        $this->autorizar();
         $this->resetValidation();
         $this->limpiarFormularioCrear();
+        $this->prepararDocumentoCurricular('crear');
         $this->modalCrear = true;
     }
 
@@ -412,6 +416,7 @@ class GestionAsignatura extends Component
 
     public function interpretarAsignaturaCrear(): void
     {
+        $this->autorizar();
         $existentes = $this->obtenerAsignaturasExistentes();
 
         $this->analisisCrear = AsignaturaInteligente::interpretar(
@@ -419,10 +424,7 @@ class GestionAsignatura extends Component
             $existentes
         );
 
-        if (($this->analisisCrear['valido'] ?? false) && ! ($this->analisisCrear['duplicado'] ?? false)) {
-            $this->form['sig_asi'] = $this->analisisCrear['sigla'] ?: $this->form['sig_asi'];
-            $this->form['hor_asi'] = $this->analisisCrear['horas'] ?: $this->form['hor_asi'];
-        }
+        // La sigla y carga autorizadas se conservan tal como fueron leídas del documento.
     }
 
     public function usarSugerenciaCrear(): void
@@ -441,6 +443,8 @@ class GestionAsignatura extends Component
 
     public function guardarAsignatura(): void
     {
+        $this->autorizar();
+        $revision=$this->comprobarDocumentoCurricular($this->form);
         $this->normalizarFormularioCrear();
         $this->interpretarAsignaturaCrear();
 
@@ -479,51 +483,15 @@ class GestionAsignatura extends Component
 
         $this->validate($this->rulesCrear(), [], $this->validationAttributesCrear());
 
-        try {
-            DB::transaction(function () {
-                $asignatura = Asignatura::create([
-                    'nom_asi' => $this->form['nom_asi'],
-                    'sig_asi' => mb_strtoupper($this->form['sig_asi']),
-                    'hor_asi' => (int) $this->form['hor_asi'],
-                    'est_asi' => $this->form['est_asi'],
-                ]);
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'CREAR_ASIGNATURA',
-                    tabla: 'asignatura',
-                    registro: $asignatura->cod_asi,
-                    nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se registró la asignatura ' . $asignatura->nom_asi . ' con validación inteligente.',
-                    nivel: ($this->analisisCrear['requiere_revision'] ?? false) ? 'WARNING' : 'SUCCESS',
-                    resultado: 'EXITOSO',
-                    valoresNuevos: [
-                        'asignatura' => $asignatura->toArray(),
-                        'analisis_inteligente' => $this->analisisCrear,
-                    ]
-                );
-            });
-
-            $this->cerrarModalCrear();
-            $this->resetPage();
-
-            $this->dispatch('asignatura-creada', mensaje: 'Asignatura registrada correctamente.');
-        } catch (Throwable $e) {
-            report($e);
-
-            $this->registrarBitacoraSeguro(
-                accion: 'ERROR_CREAR_ASIGNATURA',
-                tabla: 'asignatura',
-                registro: null,
-                nombreRegistro: $this->form['nom_asi'] ?? null,
-                descripcion: 'No se pudo registrar la asignatura.',
-                nivel: 'ERROR',
-                resultado: 'FALLIDO',
-                valoresNuevos: $this->form,
-                error: $e->getMessage()
-            );
-
-            $this->dispatch('error-general', mensaje: 'No se pudo registrar la asignatura. Revisa los datos e intenta nuevamente.');
+        if(!AsignaturaInteligente::siglaCompatible($this->form['nom_asi'],$this->form['sig_asi'])){
+            $this->addError('form.sig_asi','La sigla debe corresponder al nombre. Ejemplo sugerido: '.AsignaturaInteligente::generarSigla($this->form['nom_asi']));
+            return;
         }
+        app(\App\Services\IncorporacionCurricularService::class)->programar('asignatura',$this->form,$revision,$this->documentoCurricular);
+        $this->cerrarModalCrear();
+        $this->dispatch('asignatura-creada',mensaje:'Incorporación programada para la siguiente gestión. Se publicó el aviso institucional.');
+        return;
+
     }
 
     /*
@@ -534,8 +502,9 @@ class GestionAsignatura extends Component
 
     public function abrirModalEditar(string $codAsi): void
     {
+        $this->autorizar();
         $this->resetValidation();
-
+        $this->motivoEdicion = '';
         $asignatura = Asignatura::where('cod_asi', $codAsi)->firstOrFail();
 
         $this->asignaturaSeleccionada = $asignatura->cod_asi;
@@ -550,6 +519,7 @@ class GestionAsignatura extends Component
 
         $this->interpretarAsignaturaEditar();
 
+        $this->prepararDocumentoCurricular('editar');
         $this->modalEditar = true;
     }
 
@@ -577,6 +547,7 @@ class GestionAsignatura extends Component
 
     public function interpretarAsignaturaEditar(): void
     {
+        $this->autorizar();
         $existentes = collect($this->obtenerAsignaturasExistentes())
             ->reject(fn(array $item) => ($item['cod_asi'] ?? null) === ($this->formEditar['cod_asi'] ?? null))
             ->values()
@@ -604,10 +575,20 @@ class GestionAsignatura extends Component
 
     public function guardarEdicionAsignatura(): void
     {
+        $this->autorizar();
+        $revision=$this->comprobarDocumentoCurricular($this->formEditar);
+        $this->motivoEdicion=$this->motivoCurricular;
+        if(!AsignaturaInteligente::siglaCompatible($this->formEditar['nom_asi'],$this->formEditar['sig_asi'])){
+            $this->addError('formEditar.sig_asi','La sigla no corresponde al nombre. Sugerencia: '.AsignaturaInteligente::generarSigla($this->formEditar['nom_asi']));
+            return;
+        }
         $this->normalizarFormularioEditar();
         $this->interpretarAsignaturaEditar();
 
-        $asignatura = Asignatura::where('cod_asi', $this->formEditar['cod_asi'])->firstOrFail();
+        abort_unless($this->asignaturaSeleccionada && $this->asignaturaSeleccionada === ($this->formEditar['cod_asi'] ?? null), 422);
+        $this->validate(['motivoEdicion'=>['required','string','min:15','max:1500']]);
+        $asignatura = Asignatura::findOrFail($this->asignaturaSeleccionada);
+        $this->formEditar['est_asi'] = $asignatura->est_asi;
         $valoresAnteriores = $asignatura->toArray();
         $uso = $this->obtenerUsoAcademico($asignatura->cod_asi);
 
@@ -646,13 +627,18 @@ class GestionAsignatura extends Component
 
         $this->validate($this->rulesEditar(), [], $this->validationAttributesEditar());
 
+        $revision = $this->conservarDocumentoCurricular($revision);
         try {
-            DB::transaction(function () use ($asignatura, $valoresAnteriores, $uso) {
+            DB::transaction(function () use ($asignatura, $valoresAnteriores, $uso, $revision) {
+                if(!Schema::hasTable('bitacora')) throw ValidationException::withMessages(['documentoCurricular'=>'La bitácora no está disponible. No se guardó el cambio.']);
+                $asignatura = Asignatura::lockForUpdate()->findOrFail($this->asignaturaSeleccionada);
+                $usoActual = $this->usoHistoricoActual($asignatura->cod_asi);
+                if ($usoActual['calificaciones'] > 0 && !AsignaturaInteligente::esCorreccionMenor($asignatura->nom_asi,$this->formEditar['nom_asi'])) throw ValidationException::withMessages(['formEditar.nom_asi'=>'Conserva la identidad de esta materia: ya tiene notas registradas.']);
                 $asignatura->update([
                     'nom_asi' => $this->formEditar['nom_asi'],
                     'sig_asi' => mb_strtoupper($this->formEditar['sig_asi']),
                     'hor_asi' => (int) $this->formEditar['hor_asi'],
-                    'est_asi' => $this->formEditar['est_asi'],
+                    'est_asi' => $asignatura->est_asi,
                 ]);
 
                 $nivel = ($uso['total'] > 0 || ($this->analisisEditar['requiere_revision'] ?? false))
@@ -664,7 +650,7 @@ class GestionAsignatura extends Component
                     tabla: 'asignatura',
                     registro: $asignatura->cod_asi,
                     nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se actualizó la asignatura ' . $asignatura->nom_asi . '.',
+                    descripcion: trim($this->motivoEdicion),
                     nivel: $nivel,
                     resultado: 'EXITOSO',
                     valoresAnteriores: [
@@ -674,14 +660,21 @@ class GestionAsignatura extends Component
                     valoresNuevos: [
                         'asignatura' => $asignatura->fresh()?->toArray(),
                         'analisis_inteligente' => $this->analisisEditar,
+                        'motivo' => trim($this->motivoEdicion),
+                        'documento' => $revision,
                     ]
                 );
             });
 
             $this->cerrarModalEditar();
 
+            unset($this->materias,$this->catalogoPendiente);
             $this->dispatch('asignatura-actualizada', mensaje: 'Asignatura actualizada correctamente.');
+        } catch (ValidationException $e) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($revision['ruta_pdf']);
+            throw $e;
         } catch (Throwable $e) {
+            \Illuminate\Support\Facades\Storage::disk('local')->delete($revision['ruta_pdf']);
             report($e);
 
             $this->registrarBitacoraSeguro(
@@ -708,6 +701,7 @@ class GestionAsignatura extends Component
 
     public function abrirModalDetalle(string $codAsi): void
     {
+        $this->autorizar();
         $asignatura = Asignatura::where('cod_asi', $codAsi)->firstOrFail();
 
         $uso = $this->obtenerUsoAcademico($asignatura->cod_asi);
@@ -724,6 +718,9 @@ class GestionAsignatura extends Component
             'uso' => $uso,
             'analisis' => $analisis,
             'recomendacion' => $this->recomendacionInstitucional($asignatura, $uso, $analisis),
+            'campo' => ConsultaAsignaturasInstitucionales::campo($analisis['area'] ?? ''),
+            'docentes' => app(ConsultaAsignaturasInstitucionales::class)->docentes($codAsi,$this->gestionFiltro),
+            'historial' => app(ConsultaAsignaturasInstitucionales::class)->historial($codAsi),
         ];
 
         $this->modalDetalle = true;
@@ -744,6 +741,7 @@ class GestionAsignatura extends Component
 
     public function abrirModalCatalogo(): void
     {
+        $this->autorizar();
         $this->modalCatalogo = true;
     }
 
@@ -754,6 +752,9 @@ class GestionAsignatura extends Component
 
     public function usarDesdeCatalogo(string $sigla): void
     {
+        $this->autorizar();
+        abort_unless(collect($this->catalogoPendiente)->contains('sigla',$sigla),422);
+        $this->limpiarFormularioCrear();
         $analisis = AsignaturaInteligente::desdeSigla($sigla);
 
         if (! ($analisis['valido'] ?? false)) {
@@ -783,117 +784,22 @@ class GestionAsignatura extends Component
 
     public function solicitarDesactivar(string $codAsi): void
     {
-        $asignatura = Asignatura::where('cod_asi', $codAsi)->firstOrFail();
-        $uso = $this->obtenerUsoAcademico($codAsi);
-
-        $mensaje = $uso['total'] > 0
-            ? 'Esta asignatura tiene uso académico. Se desactivará para nuevas planificaciones, pero conservará su historial.'
-            : 'La asignatura será desactivada y no estará disponible para nuevas planificaciones.';
-
-        $this->dispatch(
-            'confirmar-desactivar',
-            codigo: $asignatura->cod_asi,
-            titulo: '¿Desactivar asignatura?',
-            mensaje: $mensaje
-        );
+        $this->prepararCambioCatalogo($codAsi,'retirar');
     }
 
     public function desactivarAsignatura(string $codAsi): void
     {
-        $asignatura = Asignatura::where('cod_asi', $codAsi)->firstOrFail();
-
-        if ($asignatura->est_asi === 'INACTIVO') {
-            $this->dispatch('advertencia-general', mensaje: 'La asignatura ya se encuentra inactiva.');
-            return;
-        }
-
-        $valoresAnteriores = $asignatura->toArray();
-        $uso = $this->obtenerUsoAcademico($asignatura->cod_asi);
-
-        try {
-            DB::transaction(function () use ($asignatura, $valoresAnteriores, $uso) {
-                $asignatura->update([
-                    'est_asi' => 'INACTIVO',
-                ]);
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'DESACTIVAR_ASIGNATURA',
-                    tabla: 'asignatura',
-                    registro: $asignatura->cod_asi,
-                    nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se desactivó la asignatura ' . $asignatura->nom_asi . '.',
-                    nivel: $uso['total'] > 0 ? 'WARNING' : 'INFO',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: [
-                        'asignatura' => $valoresAnteriores,
-                        'uso_academico' => $uso,
-                    ],
-                    valoresNuevos: [
-                        'asignatura' => $asignatura->fresh()?->toArray(),
-                    ]
-                );
-            });
-
-            $this->dispatch('asignatura-desactivada', mensaje: 'Asignatura desactivada correctamente.');
-        } catch (Throwable $e) {
-            report($e);
-
-            $this->dispatch('error-general', mensaje: 'No se pudo desactivar la asignatura.');
-        }
+        $this->guardarCambioCatalogo($codAsi,'retirar');
     }
 
     public function solicitarReactivar(string $codAsi): void
     {
-        $asignatura = Asignatura::where('cod_asi', $codAsi)->firstOrFail();
-
-        $this->dispatch(
-            'confirmar-reactivar',
-            codigo: $asignatura->cod_asi,
-            titulo: '¿Reactivar asignatura?',
-            mensaje: 'La asignatura volverá a estar disponible para nuevas planificaciones académicas.'
-        );
+        $this->prepararCambioCatalogo($codAsi,'recuperar');
     }
 
     public function reactivarAsignatura(string $codAsi): void
     {
-        $asignatura = Asignatura::where('cod_asi', $codAsi)->firstOrFail();
-
-        if ($asignatura->est_asi === 'ACTIVO') {
-            $this->dispatch('advertencia-general', mensaje: 'La asignatura ya se encuentra activa.');
-            return;
-        }
-
-        $valoresAnteriores = $asignatura->toArray();
-
-        try {
-            DB::transaction(function () use ($asignatura, $valoresAnteriores) {
-                $asignatura->update([
-                    'est_asi' => 'ACTIVO',
-                ]);
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'REACTIVAR_ASIGNATURA',
-                    tabla: 'asignatura',
-                    registro: $asignatura->cod_asi,
-                    nombreRegistro: $asignatura->nom_asi,
-                    descripcion: 'Se reactivó la asignatura ' . $asignatura->nom_asi . '.',
-                    nivel: 'SUCCESS',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: [
-                        'asignatura' => $valoresAnteriores,
-                    ],
-                    valoresNuevos: [
-                        'asignatura' => $asignatura->fresh()?->toArray(),
-                    ]
-                );
-            });
-
-            $this->dispatch('asignatura-reactivada', mensaje: 'Asignatura reactivada correctamente.');
-        } catch (Throwable $e) {
-            report($e);
-
-            $this->dispatch('error-general', mensaje: 'No se pudo reactivar la asignatura.');
-        }
+        $this->guardarCambioCatalogo($codAsi,'recuperar');
     }
 
     /*
@@ -904,41 +810,10 @@ class GestionAsignatura extends Component
 
     public function obtenerUsoAcademico(string $codAsi): array
     {
-        $planes = $this->contarUsoTabla('plan_asignatura', 'cod_asi', $codAsi);
-        $calificaciones = $this->contarUsoTabla('calificacion', 'cod_asi', $codAsi);
-
-        $horarios = 0;
-
-        if (Schema::hasTable('horario_detalle')) {
-            if (Schema::hasColumn('horario_detalle', 'cod_asi')) {
-                $horarios += $this->contarUsoTabla('horario_detalle', 'cod_asi', $codAsi);
-            }
-
-            if (Schema::hasColumn('horario_detalle', 'cod_pas') && Schema::hasTable('plan_asignatura')) {
-                $planesAsignatura = DB::table('plan_asignatura')
-                    ->where('cod_asi', $codAsi)
-                    ->pluck('cod_pas')
-                    ->filter()
-                    ->values();
-
-                if ($planesAsignatura->isNotEmpty()) {
-                    $horarios += DB::table('horario_detalle')
-                        ->whereIn('cod_pas', $planesAsignatura)
-                        ->count();
-                }
-            }
-        }
-
-        $total = $planes + $calificaciones + $horarios;
-
-        return [
-            'planes' => $planes,
-            'calificaciones' => $calificaciones,
-            'horarios' => $horarios,
-            'total' => $total,
-            'tiene_uso' => $total > 0,
-            'texto' => $this->textoUsoAcademico($planes, $calificaciones, $horarios),
-        ];
+        $this->autorizar();
+        $materia=$this->materias->firstWhere('cod_asi',$codAsi);
+        abort_unless($materia,404);
+        return $materia->uso_academico;
     }
 
     private function contarUsoTabla(string $tabla, string $columna, string $codAsi): int
@@ -1089,6 +964,11 @@ class GestionAsignatura extends Component
     protected function messages(): array
     {
         return [
+            'motivoEdicion.required' => 'Explica el motivo institucional de esta edición.',
+            'motivoEdicion.min' => 'Describe el motivo de la edición en al menos 15 caracteres.',
+            'motivoCambio.required' => 'Explica el motivo institucional de este cambio.',
+            'motivoCambio.min' => 'Describe el motivo del cambio en al menos 15 caracteres.',
+            'confirmarCambio.accepted' => 'Confirma que revisaste el efecto y el respaldo del cambio.',
             'required' => 'El campo :attribute es obligatorio.',
             'string' => 'El campo :attribute debe ser texto.',
             'integer' => 'El campo :attribute debe ser un número entero.',
@@ -1111,7 +991,7 @@ class GestionAsignatura extends Component
         $this->form['nom_asi'] = $this->limpiarNombre($this->form['nom_asi'] ?? '');
         $this->form['sig_asi'] = $this->limpiarSigla($this->form['sig_asi'] ?? '');
         $this->form['hor_asi'] = (int) ($this->form['hor_asi'] ?? 2);
-        $this->form['est_asi'] = $this->form['est_asi'] ?: 'ACTIVO';
+        $this->form['est_asi'] = 'ACTIVO';
     }
 
     private function normalizarFormularioEditar(): void
@@ -1173,6 +1053,81 @@ class GestionAsignatura extends Component
     |--------------------------------------------------------------------------
     */
 
+    private function autorizar(): void
+    {
+        abort_unless(auth()->user()?->hasRole('Administrador'),403);
+        Gate::authorize('Asignaturas');
+    }
+
+    public function getGestionesProperty(): Collection
+    {
+        return DB::table('gestion_academica')->orderByDesc('ani_gea')->get();
+    }
+
+    public function getMateriasProperty(): Collection
+    {
+        abort_unless($this->gestiones->contains('cod_gea',$this->gestionFiltro),422);
+        return app(ConsultaAsignaturasInstitucionales::class)->catalogo($this->gestionFiltro);
+    }
+
+    public function getCatalogoPendienteProperty(): array
+    {
+        $nombres=$this->materias->flatMap(fn($m)=>[AsignaturaInteligente::normalizar($m->nom_asi),AsignaturaInteligente::normalizar($m->analisis_inteligente['nombre']??'')]);
+        $siglas=$this->materias->pluck('sig_asi')->map(fn($s)=>mb_strtoupper($s));
+        return collect(AsignaturaInteligente::catalogoSugerencias())->reject(fn($s)=>$nombres->contains(AsignaturaInteligente::normalizar($s['nombre'])) || $siglas->contains(mb_strtoupper($s['sigla'])))->values()->all();
+    }
+
+    public function updatedCampoEducativo(): void { $this->resetPage(); }
+
+    public function updatedGestionFiltro(): void
+    {
+        $this->resetPage();
+        $this->modalDetalle=false;
+        unset($this->materias);
+    }
+
+    private function usoHistoricoActual(string $codigo): array
+    {
+        return ['calificaciones'=>DB::table('calificacion as n')->join('plan_asignatura as p','p.cod_pas','=','n.cod_pas')->where('p.cod_asi',$codigo)->where('n.est_cal','<>','ANULADA')->count()];
+    }
+
+    private function prepararCambioCatalogo(string $codigo,string $tipo): void
+    {
+        $this->autorizar();
+        $this->resetValidation();
+        $this->abrirModalDetalle($codigo);
+        $this->modalDetalle=false;
+        $this->motivoCambio='';
+        $this->confirmarCambio=false;
+        $this->cambioCodigo=$codigo;
+        $this->tipoCambio=$tipo;
+        $this->modalCambio=true;
+    }
+
+    public function guardarCambioCatalogo(string $codigo,string $tipo): void
+    {
+        $this->autorizar();
+        abort_unless($this->modalCambio && $this->cambioCodigo===$codigo && $this->tipoCambio===$tipo && in_array($tipo,['retirar','recuperar'],true),422);
+        $this->motivoCambio=trim($this->motivoCambio);
+        $this->validate(['motivoCambio'=>['required','string','min:15','max:1500'],'confirmarCambio'=>['accepted']]);
+        try {
+            DB::transaction(function() use($codigo,$tipo){
+                $materia=Asignatura::lockForUpdate()->findOrFail($codigo);
+                $estado=$tipo==='retirar'?'INACTIVO':'ACTIVO';
+                if ($materia->est_asi===$estado) throw ValidationException::withMessages(['motivoCambio'=>'La disponibilidad de esta materia ya cambió. Cierra esta revisión y vuelve a consultar.']);
+                $anterior=$materia->toArray();
+                $materia->update(['est_asi'=>$estado]);
+                $this->registrarBitacoraSeguro(accion:$tipo==='retirar'?'DESACTIVAR_ASIGNATURA':'REACTIVAR_ASIGNATURA',tabla:'asignatura',registro:$codigo,nombreRegistro:$materia->nom_asi,descripcion:$this->motivoCambio,
+                    valoresAnteriores:['asignatura'=>$anterior],valoresNuevos:['asignatura'=>$materia->toArray(),'motivo'=>$this->motivoCambio,'gestion_consultada'=>$this->gestionFiltro]);
+            });
+            unset($this->materias,$this->catalogoPendiente);
+            $this->modalCambio=false;
+            $this->modalDetalle=false;
+            $this->dispatch($tipo==='retirar'?'asignatura-desactivada':'asignatura-reactivada',mensaje:$tipo==='retirar'?'Materia retirada del catálogo. Su historial se conserva.':'Materia disponible nuevamente para planificación.');
+        } catch(ValidationException $e) { throw $e; }
+        catch(Throwable $e) { report($e); $this->addError('motivoCambio','No pudimos registrar el cambio y su motivo. Conservamos la materia; vuelve a intentarlo.'); }
+    }
+
     private function registrarBitacoraSeguro(
         string $accion,
         string $tabla,
@@ -1186,8 +1141,8 @@ class GestionAsignatura extends Component
         ?string $error = null
     ): void {
         try {
-            if (! class_exists(BitacoraService::class)) {
-                return;
+            if (! Schema::hasTable('bitacora')) {
+                throw new \RuntimeException('No está disponible el registro de cambios institucionales.');
             }
 
             BitacoraService::registrar(
@@ -1205,6 +1160,7 @@ class GestionAsignatura extends Component
             );
         } catch (Throwable $e) {
             report($e);
+            if ($resultado === 'EXITOSO') throw $e;
         }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Shared;
 
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\Calificacion;
+use App\Models\Oficial\Academico\AsistenciaEstudiante;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\Academico\Calificacion;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\UnitContentService;
 use App\Services\GradeService;
@@ -160,8 +160,8 @@ abstract class CourseWorkspace extends Component
                 break;
             case 'notas-oficiales':
                 if (app(GradeService::class)->available()) {
-                    $query = Calificacion::with('periodoEvaluacion', 'estudiante.persona')->where('cod_pas', $class->cod_pas)
-                        ->where('est_cal', 'ACTIVO')->when(! $teacher, fn ($q) => $q->where('cod_est', $student->cod_est));
+                    $query = Calificacion::with('periodoEvaluacion', 'estudiante.persona')->where($class->cod_pas ? 'cod_pas' : 'cod_pes', $class->cod_pas ?? $class->cod_pes)
+                        ->whereIn('est_cal', ['VIGENTE', 'RECTIFICADA'])->when(! $teacher, fn ($q) => $q->deEstudiante($student->cod_est));
                     $columns = ['periodoEvaluacion.nom_pev' => 'Periodo', 'not_cal' => 'Nota oficial'];
                     if ($teacher) {
                         $columns = ['estudiante.persona.nom_per' => 'Estudiante'] + $columns;

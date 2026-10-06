@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\HorarioBloque;
+use App\Models\Oficial\Academico\HorarioBloque;
 use Illuminate\Database\Seeder;
 
 class BloquesHorariosOficialesSeeder extends Seeder

@@ -1,4 +1,44 @@
+import '../css/gestion-academica.css';
+import '../css/panel-academico.css';
+import './panel-academico';
+import './calificaciones-comparativas';
+import '../css/calificaciones-comparativas.css';
 import './bootstrap';
+import './errores-institucionales';
+import '../css/errores-institucionales.css';
+import { crearPausaAcceso } from './pausa-acceso';
+window.crearPausaAcceso = crearPausaAcceso;
+import '../css/espacio-institucional.css';
+import './panel-administrador';
+import './perfil-institucional';
+import '../css/componentes-institucionales.css';
+import './componentes-institucionales';
+import './cursos-institucionales';
+import '../css/cursos-institucionales.css';
+import './asignaturas-institucionales';
+import './roles-institucionales';
+import './notificaciones-institucionales';
+import '../css/roles-institucionales.css';
+import '../css/asignaturas-institucionales.css';
+import './selector-institucional';
+import '../css/selector-institucional.css';
+import './personas-institucional';
+import './usuarios-institucional';
+import './personal-institucional';
+import './docentes-institucional';
+import '../css/docentes-institucional.css';
+import './estudiantes-institucional';
+import '../css/estudiantes-institucional.css';
+import '../css/personal-institucional.css';
+import './horario-institucional';
+import '../css/horario-institucional.css';
+import '../css/personas-institucional.css';
+import '../css/usuarios-institucional.css';
+import '../css/perfil-institucional.css';
+import knowledgeGovernance from './gestion-conocimiento';
+import '../css/gestion-conocimiento.css';
+
+window.knowledgeGovernance = knowledgeGovernance;
 import '@phosphor-icons/web/duotone';
 
 import Swal from 'sweetalert2';
@@ -94,6 +134,12 @@ window.themeManager = {
 
         localStorage.setItem(this.storageKey, selectedTheme);
 
+        document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+            const label = selectedTheme === 'dark' ? 'Activar modo claro' : 'Activar modo oscuro';
+            button.setAttribute('aria-label', label);
+            button.setAttribute('title', label);
+        });
+
         window.dispatchEvent(new CustomEvent('theme-changed', {
             detail: {
                 theme: selectedTheme,
@@ -130,6 +176,7 @@ window.themeManager = {
 };
 
 window.themeManager.init();
+document.addEventListener('livewire:navigated', () => window.themeManager.init());
 
 /*
 |--------------------------------------------------------------------------
@@ -285,6 +332,7 @@ window.documentoAutocomplete = {
 
 // Confirmación y bloqueo de formularios HTTP que comparten el shell institucional.
 document.addEventListener('submit', async (event) => {
+    if (event.defaultPrevented) return;
     const form = event.target;
     if (!(form instanceof HTMLFormElement) || form.method.toLowerCase() !== 'post' || form.hasAttribute('wire:submit')) return;
     if (form.dataset.submitting === 'true') { event.preventDefault(); return; }

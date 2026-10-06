@@ -2,12 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Calificacion;
-use App\Models\Curso;
-use App\Models\Estudiante;
-use App\Models\InscripcionEstudiante;
-use App\Models\PlanAsignatura;
-use App\Models\User;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Academico\PlanAsignatura;
+use App\Models\Oficial\Academico\PlanEspecialidad;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 
 class AcademicAccessService
@@ -56,7 +57,7 @@ class AcademicAccessService
         }
 
         if ($user->hasRole('Regente') && $user->can('cursos.ver.institucional')) {
-            return app(RegencyAccessService::class)->constrain(PlanAsignatura::where('cod_cur', $course->cod_cur), $user, 'plan_asignatura')->exists();
+            return app(RegencyAccessService::class)->constrain(PlanAsignatura::deCurso($course->cod_cur), $user, 'plan_asignatura')->exists();
         }
 
         if ($user->hasRole('Docente')) {
@@ -65,7 +66,7 @@ class AcademicAccessService
             }
             $teacher = $this->virtualCourses->docenteDeUsuario($user);
 
-            return $teacher && PlanAsignatura::query()->where('cod_doc', $teacher->cod_doc)->where('cod_cur', $course->cod_cur)->exists();
+            return $teacher && PlanAsignatura::query()->where('cod_doc', $teacher->cod_doc)->deCurso($course->cod_cur)->exists();
         }
 
         if (! $user->hasRole('Estudiante') || ! $user->canAny(['cursos.ver.propios', 'Aula_Virtual_Estudiante'])) {
@@ -77,7 +78,7 @@ class AcademicAccessService
         return $student && $student->inscripciones()->where('cod_cur', $course->cod_cur)->where('est_ins', 'ACTIVA')->exists();
     }
 
-    public function canManageGrade(User $user, string $studentId, string $subjectId, ?string $planId = null): bool
+    public function canManageGrade(User $user, string $studentId, ?string $subjectId, ?string $planId = null, ?string $fechaAcademica = null): bool
     {
         if (! app(RoleDashboardResolver::class)->roleFor($user)) {
             return false;
@@ -98,17 +99,23 @@ class AcademicAccessService
             return false;
         }
 
-        return PlanAsignatura::query()
-            ->where('cod_pas', $planId)
-            ->where('cod_doc', $teacher->cod_doc)
-            ->where('cod_asi', $subjectId)
-            ->whereExists(function ($query) use ($studentId) {
+        $plan = PlanAsignatura::find($planId) ?? PlanEspecialidad::find($planId);
+        if (! $plan || $plan->cod_doc !== $teacher->cod_doc
+            || ($plan instanceof PlanAsignatura && $plan->cod_asi !== $subjectId)) {
+            return false;
+        }
+        $fecha = $fechaAcademica ?? now()->toDateString();
+        $tecnico = $plan instanceof PlanEspecialidad;
+
+        return $plan->newQuery()->whereKey($planId)
+            ->whereExists(function ($query) use ($studentId, $plan, $fecha, $tecnico) {
                 $query->selectRaw('1')
                     ->from('inscripcion_estudiante')
-                    ->whereColumn('inscripcion_estudiante.cod_cur', 'plan_asignatura.cod_cur')
-                    ->whereColumn('inscripcion_estudiante.cod_gea', 'plan_asignatura.cod_gea')
-                    ->whereColumn('inscripcion_estudiante.cod_par', 'plan_asignatura.cod_par')
-                    ->whereColumn('inscripcion_estudiante.cod_tur', 'plan_asignatura.cod_tur')
+                    ->join('inscripcion_vigencia as permiso_ivg', 'permiso_ivg.cod_ins', '=', 'inscripcion_estudiante.cod_ins')
+                    ->whereColumn('permiso_ivg.cod_gac', $plan->getTable().'.cod_gac')
+                    ->where('permiso_ivg.cod_esp_tec', $tecnico ? $plan->cod_esp : null)
+                    ->where('permiso_ivg.fii_ivg', '<=', $fecha)
+                    ->where(fn ($fin) => $fin->whereNull('permiso_ivg.ffi_ivg')->orWhere('permiso_ivg.ffi_ivg', '>=', $fecha))
                     ->where('inscripcion_estudiante.cod_est', $studentId)
                     ->where('inscripcion_estudiante.est_ins', 'ACTIVA');
             })
@@ -126,16 +133,17 @@ class AcademicAccessService
         if ($user->hasRole('Estudiante')) {
             return $user->can('calificaciones.ver.propias') && $this->studentFor($user)?->cod_est === $grade->cod_est;
         }
-        if (! $grade->cod_pas) {
+        $plan = $grade->planAsignatura ?? $grade->planEspecialidad;
+        if (! $plan) {
             return false;
         }
         if ($user->hasRole('Regente') && $user->can('calificaciones.ver.institucional')) {
-            return app(RegencyAccessService::class)->constrain(PlanAsignatura::whereKey($grade->cod_pas), $user, 'plan_asignatura')->exists();
+            return app(RegencyAccessService::class)->constrain($plan->newQuery()->whereKey($plan->getKey()), $user, $plan->getTable())->exists();
         }
 
         $teacher = $user->hasRole('Docente') ? $this->virtualCourses->docenteDeUsuario($user) : null;
 
         return $teacher && $user->can('calificaciones.ver.curso')
-            && $grade->planAsignatura?->cod_doc === $teacher->cod_doc;
+            && $plan->cod_doc === $teacher->cod_doc;
     }
 }

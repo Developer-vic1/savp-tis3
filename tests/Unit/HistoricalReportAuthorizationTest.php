@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\ReporteGenerado;
-use App\Models\User;
+use App\Models\Oficial\Academico\ReporteGenerado;
+use App\Models\Oficial\Sistema\User;
 use App\Services\HistoricalReportAccessService;
 use Mockery;
 use Tests\TestCase;

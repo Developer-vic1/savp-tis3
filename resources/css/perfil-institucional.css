@@ -1,0 +1,55 @@
+.perfil-institucional { display: grid; gap: 1.25rem; container-type: inline-size; }
+.perfil-institucional :is(section, form, div) { min-width: 0; }
+.perfil-hero { display: grid; align-items: center; gap: 1.5rem; padding: clamp(1.25rem, 2.4vw, 2rem); border-radius: 1.5rem; background: linear-gradient(115deg, var(--ui-primary-soft), var(--ui-surface) 65%); }
+.perfil-identidad { display: flex; align-items: center; gap: 1.25rem; }
+.perfil-nombre { font-size: clamp(1.5rem, 1.2rem + .65vw, 2rem); line-height: 1.25; overflow-wrap: anywhere; text-wrap: balance; }
+.perfil-identidad-detalle { display: flex; align-items: center; flex-wrap: wrap; gap: .65rem; margin-top: .8rem; font-size: .875rem; overflow-wrap: anywhere; }
+.perfil-hero-acciones { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; }
+.perfil-avatar { display: inline-grid; place-items: center; overflow: hidden; flex: none; width: 5rem; height: 5rem; border: 1px solid var(--ui-primary-border); border-radius: 1.25rem; background: var(--ui-primary-soft); color: var(--ui-primary); }
+.perfil-avatar i { font-size: 3.7rem; line-height: 1; }
+.perfil-avatar-principal { width: 6rem; height: 6rem; box-shadow: 0 0 0 .35rem var(--ui-surface); }
+.perfil-avatar-principal i { font-size: 4.5rem; }
+.perfil-navegacion { display: flex; flex-wrap: wrap; gap: .4rem; padding: .4rem; border: 1px solid var(--ui-border); border-radius: 1rem; background: var(--ui-surface); }
+.perfil-navegacion button { display: inline-flex; align-items: center; gap: .5rem; min-height: 2.75rem; padding: .65rem 1rem; border-radius: .7rem; color: var(--ui-text-soft); font-size: .875rem; font-weight: 600; }
+.perfil-navegacion button[aria-selected="true"] { background: var(--ui-primary-soft); color: var(--ui-primary); }
+.perfil-navegacion i { font-size: 1.2rem; }
+.perfil-institucional button, .perfil-institucional a { transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease, transform 180ms ease; }
+.perfil-institucional :is(button, a):focus-visible, .perfil-ver-password:focus-visible { outline: 2px solid var(--ui-primary); outline-offset: 3px; }
+.perfil-institucional .ui-btn { min-height: 2.75rem; gap: .5rem; }
+.perfil-institucional .ui-btn:hover { transform: translateY(-2px); }
+.perfil-contenido { min-width: 0; }
+.perfil-seccion { padding: clamp(1.25rem, 2vw, 1.75rem); border-radius: 1.25rem; scroll-margin-top: var(--perfil-cabecera, 8rem); }
+.perfil-seccion-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; }
+.perfil-seccion-cabecera > .ui-btn { flex: none; }
+.perfil-datos, .perfil-campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+.perfil-datos > div { padding: .85rem 1rem; border-radius: .85rem; overflow-wrap: anywhere; }
+.perfil-actividad { display: grid; gap: 1rem; }
+.perfil-actividad > div { display: grid; grid-template-columns: 2rem 1fr; gap: .3rem .5rem; padding-bottom: .8rem; border-bottom: 1px solid var(--ui-border); }
+.perfil-actividad > div:last-child { border-bottom: 0; }
+.perfil-actividad i { grid-row: span 2; color: var(--ui-primary); font-size: 1.4rem; }
+.perfil-actividad dt { color: var(--ui-muted); font-size: .75rem; }
+.perfil-actividad dd { color: var(--ui-text); font-size: .875rem; font-weight: 600; overflow-wrap: anywhere; }
+.perfil-preview { display: flex; align-items: center; gap: 1.25rem; padding: 1rem; border-radius: 1rem; }
+.perfil-formulario { display: grid; gap: 1.5rem; }
+.perfil-foto-editor { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 1.5rem; padding: 1.25rem; border-radius: 1rem; }
+.perfil-foto-preview .perfil-avatar { width: 7rem; height: 7rem; }
+.perfil-foto-preview .perfil-avatar i { font-size: 5rem; }
+.perfil-campo-completo { grid-column: 1 / -1; }
+.perfil-confirmar-identidad { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1rem; padding: 1.25rem; border-radius: 1rem; }
+.perfil-confirmar-identidad > div { max-width: 36rem; }
+.perfil-icono { display: inline-grid; flex: none; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: .85rem; background: var(--ui-primary-soft); color: var(--ui-primary); font-size: 1.5rem; }
+.perfil-ver-password { position: absolute; inset-block: 0; right: 0; width: 2.75rem; display: grid; place-items: center; color: var(--ui-muted); font-size: 1.3rem; border-radius: .65rem; }
+.perfil-ver-password:hover { color: var(--ui-primary); }
+.perfil-formulario-pie { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--ui-border); }
+.perfil-btn-sensible { border: 1px solid var(--ui-danger-border); background: var(--ui-danger-soft); color: var(--ui-danger); }
+.perfil-btn-sensible:hover { background: var(--ui-danger-soft); box-shadow: 0 0 0 3px var(--ui-danger-border); }
+.perfil-modal-titulo { display: flex; align-items: center; gap: .85rem; }
+.jetstream-modal { display: flex; flex-direction: column; }
+.savp-modal-panel { position: relative; margin-block: auto; background: var(--ui-surface); color: var(--ui-text); border: 1px solid var(--ui-border); border-radius: 1.25rem; box-shadow: var(--ui-shadow-lg); }
+.savp-modal-fondo { background: var(--ui-text); opacity: .45; backdrop-filter: blur(4px); }
+.savp-modal-pie { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: .75rem; padding: 1rem 1.5rem; background: var(--ui-surface-soft); border-top: 1px solid var(--ui-border); }
+@container (min-width: 64rem) { .perfil-hero { grid-template-columns: minmax(0, 1fr) auto; } .perfil-hero-acciones { flex-direction: column; align-items: stretch; } .perfil-hero-acciones > span { align-self: flex-end; } }
+@container (min-width: 48rem) { .perfil-datos { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 767px) { .perfil-resumen { grid-template-columns: 1fr; } .perfil-seccion-cabecera, .perfil-formulario-pie { align-items: flex-start; flex-direction: column; } .perfil-navegacion button { flex: 1 1 calc(50% - .4rem); justify-content: center; padding-inline: .6rem; } .perfil-identidad { gap: .85rem; } .perfil-avatar-principal { width: 4.5rem; height: 4.5rem; } .perfil-avatar-principal i { font-size: 3.4rem; } .perfil-foto-editor { gap: 1rem; } }
+@media (max-width: 420px) { .perfil-datos, .perfil-campos { grid-template-columns: 1fr; } .perfil-foto-editor { grid-template-columns: 1fr; } .perfil-confirmar-identidad { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .perfil-institucional *, .jetstream-modal * { animation: none !important; transition: none !important; } .perfil-institucional .ui-btn:hover { transform: none; } }

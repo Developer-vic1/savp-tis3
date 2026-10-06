@@ -118,12 +118,12 @@ def test_malformed_json_uses_sanitized_error(client: TestClient) -> None:
     assert "traceback" not in response.text.casefold()
 
 
-def test_production_requires_configured_key(
+def test_every_environment_requires_configured_key(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(
         "app.api.dependencies.get_settings",
-        lambda: Settings(env="production", api_key=None, _env_file=None),
+        lambda: Settings(env="development", api_key=None, _env_file=None),
     )
     response = client.get("/api/v2/riasec/instrument")
     assert response.status_code == 503
@@ -133,7 +133,11 @@ def test_production_requires_configured_key(
 def test_invalid_api_key_is_rejected(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         "app.api.dependencies.get_settings",
-        lambda: Settings(env="production", api_key="valid", _env_file=None),
+        lambda: Settings(
+            env="production",
+            api_key="valid-internal-api-key-with-32-characters",
+            _env_file=None,
+        ),
     )
     assert client.post(
         "/api/v2/riasec/score", json=payload(), headers={"X-SAVP-AI-Key": "invalid"}

@@ -1,4 +1,4 @@
-"""Check local source snapshots and the corpus/index provenance chain."""
+"""Check local source snapshots and the corpus provenance chain."""
 
 import argparse
 import hashlib
@@ -33,8 +33,10 @@ def verify(*, upstream_only: bool = False) -> list[str]:
     sources = read_json(ROOT / "data/sources/sources.json")["sources"]
     source_manifest = read_json(ROOT / "data/sources/sources.json")
     references = read_json(ROOT / "data/sources/references.json")["references"]
+    external_entries = read_json(ROOT / "data/sources/external_information.json")["entries"]
     source_ids: set[str] = set()
     reference_ids: set[str] = set()
+    external_ids: set[str] = set()
     for source in sources:
         source_id = source["source_id"]
         if source_id in source_ids:
@@ -73,6 +75,24 @@ def verify(*, upstream_only: bool = False) -> list[str]:
         else:
             findings.append(f"VALID {reference_id}: external reference metadata")
 
+    for entry in external_entries:
+        external_id = entry["external_id"]
+        if external_id in external_ids or external_id in source_ids or external_id in reference_ids:
+            findings.append(f"MISMATCH duplicate external ID: {external_id}")
+        external_ids.add(external_id)
+        if entry.get("recommendation_eligible") is not False:
+            findings.append(f"MISMATCH {external_id}: recommendation_eligible")
+        elif entry.get("evidence_layer") == "FUENTE_OFICIAL_EXTERNA" and not entry.get("official"):
+            findings.append(f"MISMATCH {external_id}: official source flag")
+        elif not str(entry.get("url", "")).startswith("https://"):
+            findings.append(f"MISSING {external_id}: official HTTPS URL")
+        elif entry.get("snapshot_status") == "VALID_LOCAL_SNAPSHOT":
+            findings.append(f"MISMATCH {external_id}: validated snapshots belong in sources.json")
+        else:
+            findings.append(
+                f"VALID {external_id}: informational layer, excluded from recommendation"
+            )
+
     corpus_file = ROOT / "data/processed/corpus.jsonl"
     corpus_manifest = read_json(ROOT / "data/processed/corpus_manifest.json")
     if not corpus_file.is_file():
@@ -84,8 +104,13 @@ def verify(*, upstream_only: bool = False) -> list[str]:
     corpus_ids = [row["chunk_id"] for row in corpus_rows]
     source_by_id = {source["source_id"]: source for source in sources}
     orphan_sources = sorted({row["source_id"] for row in corpus_rows} - source_ids)
+    leaked_external_sources = sorted({row["source_id"] for row in corpus_rows} & external_ids)
     if orphan_sources or len(corpus_ids) != len(set(corpus_ids)):
         findings.append(f"MISMATCH corpus IDs: orphan_sources={orphan_sources}")
+    if leaked_external_sources:
+        findings.append(
+            f"MISMATCH corpus contains external informational sources: {leaked_external_sources}"
+        )
     if any(not str(row.get("text", "")).strip() for row in corpus_rows):
         findings.append("MISMATCH corpus: empty chunk text")
     if corpus_manifest["chunk_count"] != len(corpus_rows):
@@ -95,8 +120,7 @@ def verify(*, upstream_only: bool = False) -> list[str]:
     for row in corpus_rows:
         source = source_by_id.get(row["source_id"])
         if source and (
-            row["document_hash"] != source["document_hash"]
-            or row["version"] != source["version"]
+            row["document_hash"] != source["document_hash"] or row["version"] != source["version"]
         ):
             findings.append(f"STALE corpus chunk {row['chunk_id']}: source version/hash")
             break
@@ -108,52 +132,6 @@ def verify(*, upstream_only: bool = False) -> list[str]:
         findings.append(f"VALID corpus: {len(corpus_rows)} chunks, sha256:{corpus_sha}")
     if upstream_only:
         return findings
-    for manifest_path in sorted((ROOT / "data/indexes").glob("*/manifest.json")):
-        manifest = read_json(manifest_path)
-        index_file = manifest_path.parent / "index.faiss"
-        chunk_file = manifest_path.parent / "chunks.jsonl"
-        if not index_file.is_file() or not chunk_file.is_file():
-            findings.append(f"MISSING {manifest_path.parent.name}: FAISS index or chunks")
-            continue
-        try:
-            import faiss
-
-            index = faiss.read_index(str(index_file))
-        except (ImportError, OSError, RuntimeError) as exc:
-            findings.append(f"MISMATCH {manifest_path.parent.name}: cannot read FAISS: {exc}")
-            continue
-        if index.ntotal != len(corpus_rows) or index.d != manifest.get("dimension"):
-            findings.append(f"STALE {manifest_path.parent.name}: FAISS rows/dimension")
-        if manifest.get("embedding_rows", index.ntotal) != index.ntotal:
-            findings.append(f"STALE {manifest_path.parent.name}: embedding rows")
-        if manifest.get("model_slug") != manifest_path.parent.name:
-            findings.append(f"MISMATCH {manifest_path.parent.name}: model slug")
-        index_rows = [
-            json.loads(line)
-            for line in chunk_file.read_text(encoding="utf-8").splitlines()
-            if line
-        ]
-        index_ids = [row["chunk_id"] for row in index_rows]
-        if index_ids != corpus_ids:
-            findings.append(f"STALE {manifest_path.parent.name}: chunk order/IDs")
-        if index_rows != corpus_rows:
-            findings.append(f"STALE {manifest_path.parent.name}: chunk metadata/content")
-        if manifest["corpus_sha256"] != corpus_sha or manifest["chunk_count"] != len(corpus_rows):
-            findings.append(f"STALE {manifest_path.parent.name}: corpus hash/count")
-        elif upstream_stale:
-            findings.append(f"STALE {manifest_path.parent.name}: upstream source/corpus")
-        else:
-            findings.append(f"VALID {manifest_path.parent.name}: corpus sha256:{corpus_sha}")
-    selected_path = ROOT / "data/indexes/selected.json"
-    if selected_path.is_file():
-        selected = read_json(selected_path)
-        selected_dir = local_file(str(selected["index_directory"]))
-        if not selected_dir.is_relative_to(ROOT) or not selected_dir.is_dir():
-            findings.append("MISSING selected index directory")
-        else:
-            selected_manifest = read_json(selected_dir / "manifest.json")
-            if selected_manifest["model_id"] != selected["model_id"]:
-                findings.append("MISMATCH selected model ID")
     return findings
 
 

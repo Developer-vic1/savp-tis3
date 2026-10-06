@@ -1,4 +1,4 @@
-# Ingeniería de Prompts y Seguridad de Contexto — SAVP-TIS3 (PETER 3)
+# Ingeniería de Prompts y Seguridad de Contexto — SAVP-TIS3 (Aporte Ingenieril SAVP)
 
 ## 1. Arquitectura Modular del Subsistema (`app/prompts/`)
 

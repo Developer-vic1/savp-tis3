@@ -2,13 +2,15 @@
 
 namespace App\Services\AporteIngenieril;
 
-use App\Models\AulaVirtual\OrientacionActividad;
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\Calificacion;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
+use App\Models\Oficial\Academico\AsistenciaEstudiante;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AporteIngenieril\DTO\AporteResponse;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Illuminate\Support\Facades\DB;
@@ -29,16 +31,35 @@ class StudentOrientationService
     public function context(User $user): array
     {
         $student = $this->student($user);
-        $storageReady = Schema::hasColumn('orientacion_actividades', 'riasec_public');
-        $activity = $storageReady ? OrientacionActividad::where('cod_est', $student->cod_est)->whereNotNull('riasec_public')->latest('id')->first() : null;
         $enrollment = $student->inscripciones()->with('especialidadTecnica')->where('est_ins', 'ACTIVA')->latest('fei_ins')->first();
+
+        return $this->buildContext($student, $enrollment, $this->courses->studentQuery($user));
+    }
+
+    /** Vista previa institucional: reutiliza la preparación del aporte sin suplantar al alumno. */
+    public function institutionalContext(User $actor, string $inscripcion): array
+    {
+        app(\App\Services\InstitutionalQueryService::class)->authorizeQuery($actor, 'lms', 'admin');
+        abort_unless($actor->can('orientacion.ver.institucional') && $actor->can('calificaciones.ver.global') && $actor->can('estudiantes.ver.global'), 403);
+        $enrollment = InscripcionEstudiante::with(['estudiante', 'especialidadTecnica', 'gestionAcademica'])->where('est_ins', '!=', 'ANULADA')->findOrFail($inscripcion);
+        $clases = ClaseVirtual::query()->whereHas('estudiantes', fn ($q) => $q->where('cod_est', $enrollment->cod_est)->where('est_cla_est', '!=', 'ANULADO'));
+
+        return $this->buildContext($enrollment->estudiante, $enrollment, $clases, true);
+    }
+
+    private function buildContext(Estudiante $student, ?InscripcionEstudiante $enrollment, \Illuminate\Database\Eloquent\Builder $clases, bool $institucional = false): array
+    {
+        $storageReady = Schema::hasColumn('orientacion_actividades', 'riasec_public');
+        $activity = $storageReady ? OrientacionActividad::where('cod_est', $student->cod_est)
+            ->when($institucional, fn ($q) => $q->where('cod_gea', $enrollment?->cod_gea))
+            ->when(! $institucional, fn ($q) => $q->whereNotNull('riasec_public'))->latest('id')->first() : null;
         $grades = Calificacion::with('asignatura', 'periodoEvaluacion', 'planAsignatura')
-            ->where('cod_est', $student->cod_est)->where('est_cal', 'ACTIVO')->whereNotNull('cod_pas')
+            ->deEstudiante($student->cod_est)->whereIn('est_cal', ['VIGENTE', 'RECTIFICADA'])->whereNotNull('cod_pas')
             ->whereHas('planAsignatura')->orderBy('cod_cal')->get();
         $record = fn ($grade) => ['subject' => $grade->asignatura->nom_asi, 'score' => (float) $grade->not_cal, 'scale_min' => 0, 'scale_max' => 100,
             'period' => $grade->periodoEvaluacion?->nom_pev, 'period_order' => $grade->periodoEvaluacion?->ord_pev];
         $grades = $grades->filter(fn ($grade) => $grade->asignatura && $grade->not_cal !== null && $grade->not_cal >= 0 && $grade->not_cal <= 100);
-        $current = $grades->filter(fn ($grade) => $grade->planAsignatura->cod_gea === $enrollment?->cod_gea);
+        $current = $grades->filter(fn ($grade) => $institucional ? $grade->cod_ins === $enrollment?->cod_ins : $grade->planAsignatura->cod_gea === $enrollment?->cod_gea);
         $payload = ['schema_version' => '2.0', 'student_id' => $student->cod_est, 'history' => [], 'declared_interests' => []];
         if ($current->isNotEmpty()) {
             $payload['academic'] = ['records' => $current->map($record)->values()->all()];
@@ -46,10 +67,17 @@ class StudentOrientationService
         if ($enrollment) {
             $payload['academic_period'] = $enrollment->cod_gea;
         }
-        foreach ($grades->reject(fn ($grade) => $grade->planAsignatura->cod_gea === $enrollment?->cod_gea)->groupBy('planAsignatura.cod_gea') as $period => $rows) {
+        $historial = $grades->reject(fn ($grade) => $grade->planAsignatura->cod_gea === $enrollment?->cod_gea);
+        if ($institucional) {
+            $year = $enrollment?->gestionAcademica?->ani_gea;
+            $grades->load('inscripcionEstudiante.gestionAcademica');
+            $historial = $historial->filter(fn ($grade) => $grade->inscripcionEstudiante?->gestionAcademica?->ani_gea < $year);
+        }
+        foreach ($historial->groupBy('planAsignatura.cod_gea') as $period => $rows) {
             $payload['history'][] = ['period' => (string) $period, 'records' => $rows->map($record)->values()->all()];
         }
-        if ($activity?->riasec_public && $activity->riasec_score) {
+        if ($activity?->riasec_public && $activity->riasec_score && (! $institucional || ($activity->finalizado_at
+            && \App\Services\AporteIngenieril\DTO\ContratoAporteIngenierilV2::riasecValido($activity->riasec_public)))) {
             $payload['riasec_public'] = $activity->riasec_public;
         }
         $technicalStatus = $enrollment?->est_esp_tec_ins ?? 'NO_INFORMADO';
@@ -60,13 +88,15 @@ class StudentOrientationService
         if ($enrollment) {
             $attendance = AsistenciaEstudiante::with('estadoAsistencia')->where('cod_est', $student->cod_est)
                 ->whereIn('est_asi_est', ['REGISTRADO', 'RECTIFICADO'])
-                ->whereHas('asistenciaClase.claseVirtual.planAsignatura', fn ($query) => $query->where('cod_gea', $enrollment->cod_gea))->get();
+                ->whereHas('asistenciaClase.claseVirtual.planAsignatura', fn ($query) => $query->deGestion($enrollment->cod_gea))->get();
             // Solo conteos binarios respaldados por catálogo; no convertir porcentajes parciales en clases.
             $known = $attendance->filter(fn ($row) => $row->estadoAsistencia?->afecta_asistencia && in_array((float) $row->estadoAsistencia->valor_porcentual, [0.0, 100.0], true));
             if ($known->isNotEmpty() && $known->count() === $attendance->count()) {
                 $payload['attendance'] = ['total_classes' => $known->count(), 'attended_classes' => $known->filter(fn ($row) => (float) $row->estadoAsistencia->valor_porcentual === 100.0)->count()];
             }
-            $courses = $this->courses->studentQuery($user)->whereHas('planAsignatura', fn ($query) => $query->where('cod_gea', $enrollment->cod_gea))->pluck('cod_cla');
+            $courses = $clases->where(fn ($planes) => $planes
+                ->whereHas('planAsignatura', fn ($query) => $query->deGestion($enrollment->cod_gea))
+                ->orWhereHas('planEspecialidad', fn ($query) => $query->deGestion($enrollment->cod_gea)))->pluck('cod_cla');
             $tasks = Tarea::whereIn('cod_cla', $courses)->whereIn('est_tar', ['PUBLICADA', 'CERRADA'])->pluck('cod_tar');
             if ($tasks->isNotEmpty()) {
                 $delivered = EntregaTarea::where('cod_est', $student->cod_est)->whereIn('cod_tar', $tasks)->whereIn('est_ent', ['ENTREGADO', 'ENTREGADO_TARDE', 'CALIFICADO'])->distinct()->count('cod_tar');

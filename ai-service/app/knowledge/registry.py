@@ -2,7 +2,7 @@ import hashlib
 import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -10,6 +10,7 @@ SERVICE_ROOT = Path(__file__).resolve().parents[2]
 SOURCE_MANIFEST = SERVICE_ROOT / "data" / "sources" / "sources.json"
 REFERENCE_REGISTRY = SERVICE_ROOT / "data" / "sources" / "references.json"
 CAREER_CATALOG = SERVICE_ROOT / "data" / "catalog" / "careers.json"
+EXTERNAL_INFORMATION_REGISTRY = SERVICE_ROOT / "data" / "sources" / "external_information.json"
 
 
 class RegistryModel(BaseModel):
@@ -44,6 +45,7 @@ class SourceRecord(RegistryModel):
     snapshot_timestamp: str | None = None
     final_url: str | None = None
     content_type: str | None = None
+    evidence_layer: Literal["CORPUS_VALIDADO"] = "CORPUS_VALIDADO"
     limitations: list[str] = Field(default_factory=list)
 
 
@@ -51,6 +53,7 @@ class SourceManifest(RegistryModel):
     manifest_version: str
     retrieved_at: str
     governance_policy: str | None = None
+    default_evidence_layer: Literal["CORPUS_VALIDADO"] = "CORPUS_VALIDADO"
     sources: list[SourceRecord] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -61,11 +64,44 @@ class SourceManifest(RegistryModel):
         return self
 
 
+class ExternalInformationRecord(RegistryModel):
+    external_id: str = Field(min_length=1)
+    evidence_layer: Literal["FUENTE_OFICIAL_EXTERNA", "WEB_NO_VERIFICADA"]
+    institution: str = Field(min_length=1)
+    title: str = Field(min_length=1)
+    country: str = "Bolivia"
+    url: str = Field(min_length=1)
+    official: bool
+    retrieval_attempted_at: str
+    snapshot_status: str = Field(min_length=1)
+    http_status: int | None = Field(default=None, ge=100, le=599)
+    recommendation_eligible: Literal[False] = False
+    limitations: list[str] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def external_information_is_never_recommendation_evidence(self) -> "ExternalInformationRecord":
+        if self.evidence_layer == "FUENTE_OFICIAL_EXTERNA" and not self.official:
+            raise ValueError("FUENTE_OFICIAL_EXTERNA requiere official=true")
+        return self
+
+
+class ExternalInformationRegistry(RegistryModel):
+    registry_version: str = Field(min_length=1)
+    retrieved_at: str
+    purpose: str = Field(min_length=1)
+    entries: list[ExternalInformationRecord] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def unique_external_ids(self) -> "ExternalInformationRegistry":
+        ids = [entry.external_id for entry in self.entries]
+        if len(ids) != len(set(ids)):
+            raise ValueError("external_id debe ser unico")
+        return self
+
+
 class ReferenceRecord(RegistryModel):
     reference_id: str = Field(min_length=1)
-    reference_kind: str = Field(
-        pattern=r"^(EXTERNAL_OFFICIAL|EXTERNAL_METHOD|INTERNAL_ARTIFACT)$"
-    )
+    reference_kind: str = Field(pattern=r"^(EXTERNAL_OFFICIAL|EXTERNAL_METHOD|INTERNAL_ARTIFACT)$")
     organization: str = Field(min_length=1)
     title: str = Field(min_length=1)
     url: str | None = None
@@ -112,17 +148,33 @@ class Career(RegistryModel):
     university_id: str
     name: str
     aliases: list[str]
-    degree: str
-    duration_semesters: int = Field(gt=0)
-    valid_from: str
+    degree: str | None
+    duration_semesters: int | None = Field(default=None, gt=0)
+    duration_text: str | None = None
+    valid_from: str | None
     valid_until: str | None
     status: str
     entry_profile: str | None
     entry_profile_status: str
     professional_profile: str | None
-    official_knowledge_areas: list[str] = Field(min_length=1)
-    initial_subjects: list[str] = Field(min_length=1)
+    official_knowledge_areas: list[str] = Field(default_factory=list)
+    initial_subjects: list[str] = Field(default_factory=list)
     source_ids: list[str] = Field(min_length=1)
+    evidence_layer: Literal["CORPUS_VALIDADO", "FUENTE_OFICIAL_EXTERNA", "WEB_NO_VERIFICADA"] = (
+        "CORPUS_VALIDADO"
+    )
+    recommendation_eligible: bool = True
+
+    @model_validator(mode="after")
+    def recommendation_requires_validated_corpus(self) -> "Career":
+        if self.recommendation_eligible and self.evidence_layer != "CORPUS_VALIDADO":
+            raise ValueError("una carrera elegible para Recommendation V2 requiere CORPUS_VALIDADO")
+        if not self.recommendation_eligible and self.evidence_layer == "CORPUS_VALIDADO":
+            raise ValueError(
+                "CORPUS_VALIDADO no puede quedar excluido de Recommendation V2 "
+                "sin una regla explicita"
+            )
+        return self
 
 
 class CareerCatalog(RegistryModel):
@@ -166,35 +218,57 @@ def load_reference_registry() -> ReferenceRegistry:
     missing = [
         reference.reference_id
         for reference in registry.references
-        if reference.local_path is not None
-        and not (SERVICE_ROOT / reference.local_path).is_file()
+        if reference.local_path is not None and not (SERVICE_ROOT / reference.local_path).is_file()
     ]
     if missing:
         raise ValueError(f"artefactos internos ausentes: {sorted(missing)}")
     return registry
 
 
+@lru_cache(maxsize=1)
+def load_external_information_registry() -> ExternalInformationRegistry:
+    registry = ExternalInformationRegistry.model_validate(_read_json(EXTERNAL_INFORMATION_REGISTRY))
+    source_ids = {source.source_id for source in load_source_manifest().sources}
+    reference_ids = {reference.reference_id for reference in load_reference_registry().references}
+    external_ids = {entry.external_id for entry in registry.entries}
+    overlap = external_ids & (source_ids | reference_ids)
+    if overlap:
+        raise ValueError(f"IDs externos duplicados: {sorted(overlap)}")
+    return registry
+
+
 def known_evidence_reference_ids() -> set[str]:
     """Return every governed local-source and methodological reference ID."""
     source_ids = {source.source_id for source in load_source_manifest().sources}
-    reference_ids = {
-        reference.reference_id for reference in load_reference_registry().references
-    }
+    reference_ids = {reference.reference_id for reference in load_reference_registry().references}
     overlap = source_ids & reference_ids
     if overlap:
         raise ValueError(f"IDs duplicados entre registros: {sorted(overlap)}")
     return source_ids | reference_ids
 
 
+def known_external_information_ids() -> set[str]:
+    """Return IDs that are informational only and excluded from Recommendation V2."""
+    return {entry.external_id for entry in load_external_information_registry().entries}
+
+
 @lru_cache(maxsize=1)
 def load_career_catalog() -> CareerCatalog:
     catalog = CareerCatalog.model_validate(_read_json(CAREER_CATALOG))
     source_ids = {source.source_id for source in load_source_manifest().sources}
+    external_ids = known_external_information_ids()
     unknown = {
         source_id
         for career in catalog.careers
+        if career.recommendation_eligible
         for source_id in career.source_ids
         if source_id not in source_ids
+    } | {
+        source_id
+        for career in catalog.careers
+        if not career.recommendation_eligible
+        for source_id in career.source_ids
+        if source_id not in external_ids
     }
     if unknown:
         raise ValueError(f"fuentes desconocidas en catálogo: {sorted(unknown)}")
@@ -217,6 +291,7 @@ def validate_local_source_hashes() -> list[str]:
 
 def calculate_source_quality_metrics() -> dict[str, Any]:
     manifest = load_source_manifest()
+    external_registry = load_external_information_registry()
     total = len(manifest.sources)
     if total == 0:
         return {"source_count": 0, "official_source_ratio": 0.0}
@@ -228,6 +303,11 @@ def calculate_source_quality_metrics() -> dict[str, Any]:
     ]
     superseded = [s.source_id for s in manifest.sources if s.superseded_by]
     unverified = [s.source_id for s in manifest.sources if s.verification_status != "VALID"]
+    layer_distribution: dict[str, int] = {"CORPUS_VALIDADO": total}
+    for entry in external_registry.entries:
+        layer_distribution[entry.evidence_layer] = (
+            layer_distribution.get(entry.evidence_layer, 0) + 1
+        )
 
     tier_distribution: dict[str, int] = {}
     for s in manifest.sources:
@@ -247,10 +327,7 @@ def calculate_source_quality_metrics() -> dict[str, Any]:
     ]
     total_checks = total * len(fields_to_check)
     passed_checks = sum(
-        1
-        for s in manifest.sources
-        for f in fields_to_check
-        if getattr(s, f, None) is not None
+        1 for s in manifest.sources for f in fields_to_check if getattr(s, f, None) is not None
     )
 
     return {
@@ -261,6 +338,9 @@ def calculate_source_quality_metrics() -> dict[str, Any]:
         "missing_local_sources": missing_sources,
         "superseded_sources": superseded,
         "unverified_sources": unverified,
+        "external_information_count": len(external_registry.entries),
+        "recommendation_eligible_source_count": total,
+        "evidence_layer_distribution": layer_distribution,
         "tier_distribution": tier_distribution,
         "metadata_completeness_ratio": (
             round(passed_checks / total_checks, 4) if total_checks else 0.0

@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace App\Models\Oficial\Academico;
 
 use App\Models\Oficial\AulaVirtual\ClaseVirtual;
-use App\Models\Soporte\CodigoInstitucional;
+use App\Support\Modelos\CodigoInstitucional;
+use App\Support\Modelos\ContextoGrupoAcademico;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Modelo del contrato canónico; atributos históricos redundantes permanecen en Legado. */
+/** Modelo único de la tabla oficial; atributos y relaciones del contrato canónico. */
 class PlanAsignatura extends Model
 {
     use CodigoInstitucional;
+    use ContextoGrupoAcademico;
 
     protected $table = 'plan_asignatura';
 

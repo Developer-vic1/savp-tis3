@@ -3,8 +3,8 @@
 namespace App\Services\Kardex;
 
 use App\Contracts\KardexRepository;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Policies\KardexPolicy;
 use App\Services\RoleDashboardResolver;
 use App\Support\Academico\KardexInteligente;

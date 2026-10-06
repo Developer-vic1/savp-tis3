@@ -17,7 +17,7 @@
     <div wire:loading class="ui-alert-info" role="status">Cargando información del curso…</div>
     <div wire:loading.remove class="space-y-5">
         @if($tab === 'contenido' && $units)
-            <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Unidades del curso</h2>@forelse($units as $unit)<article class="ui-card-soft mt-3 p-4"><h3 class="ui-title font-bold">{{ $unit->orden }}. {{ $unit->titulo }}</h3><p class="ui-muted">{{ $unit->descripcion }}</p><p class="ui-muted">{{ $unit->materiales_count }} materiales publicados · {{ $unit->tareas_count }} actividades publicadas o cerradas</p></article>@empty<p class="ui-muted mt-3">No hay unidades visibles para este curso.</p>@endforelse {{ $units->links() }}</section>
+            <section class="ui-panel"><h2 class="ui-title text-xl font-bold">Unidades del curso</h2>@forelse($units as $unit)<article class="ui-card-soft mt-3 p-4"><h3 class="ui-title font-bold">{{ $unit->ord_sec }}. {{ $unit->nom_sec }}</h3><p class="ui-muted">{{ $unit->des_sec }}</p><p class="ui-muted">{{ $unit->materiales_count }} materiales publicados · {{ $unit->tareas_count }} actividades publicadas o cerradas</p></article>@empty<p class="ui-muted mt-3">No hay unidades visibles para este curso.</p>@endforelse {{ $units->links() }}</section>
         @endif
         @if ($tab === 'resumen')
             <section class="grid gap-4 sm:grid-cols-3">

@@ -7,11 +7,14 @@ use App\Models\Oficial\AulaVirtual\Cuestionario;
 use App\Models\Oficial\AulaVirtual\ForoClase;
 use App\Models\Oficial\AulaVirtual\RespuestaCuestionario;
 use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Docente extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'docente';
 
     protected $primaryKey = 'cod_doc';
@@ -27,16 +30,6 @@ class Docente extends Model
         'est_doc', // Estado docente
         'num_mod_doc', // Numero de modificaciones
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function ($docente) {
-
-            if (! $docente->cod_doc) {
-                $docente->cod_doc = 'DOC_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     // 🔗 Relaciones
 

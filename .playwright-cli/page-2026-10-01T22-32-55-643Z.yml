@@ -1,0 +1,244 @@
+- generic [ref=e3]:
+  - complementary "Navegación de Estudiante" [ref=e4]:
+    - generic [ref=e5]:
+      - link "Logo de la Unidad Educativa Franz Tamayo N°3 Franz Tamayo N°3 SAVP · TIS 3" [ref=e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - img "Logo de la Unidad Educativa Franz Tamayo N°3" [ref=e8]
+        - generic [ref=e9]:
+          - generic [ref=e10]: Franz Tamayo N°3
+          - generic [ref=e11]: SAVP · TIS 3
+      - button "Contraer menú" [expanded] [ref=e12] [cursor=pointer]:
+        - generic [aria-hidden] [ref=e13]: 
+      - text: 
+    - generic [ref=e14]:
+      - generic [aria-hidden] [ref=e16]: 
+      - generic [ref=e17]:
+        - generic [ref=e18]: Estudiante
+        - generic [ref=e19]: Espacio de trabajo institucional
+    - navigation "Módulos autorizados" [ref=e20]:
+      - generic [ref=e21]: Principal
+      - link "Inicio" [ref=e22] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - generic [aria-hidden] [ref=e24]: 
+      - region "Académico" [ref=e26]:
+        - button "Grupo Académico" [expanded] [ref=e27] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e29]: 
+          - generic [ref=e30]: Académico
+          - generic [aria-hidden] [ref=e31]: 
+        - group "Grupo Académico" [ref=e32]:
+          - link "Mis materias" [ref=e33] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/materias
+            - generic [aria-hidden] [ref=e35]: 
+          - link "Mi progreso" [ref=e37] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/progreso
+            - generic [aria-hidden] [ref=e39]: 
+          - link "Mi asistencia" [ref=e41] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/asistencia
+            - generic [aria-hidden] [ref=e43]: 
+          - link "Calendario" [ref=e45] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/calendario
+            - generic [aria-hidden] [ref=e47]: 
+      - region "Orientación" [ref=e49]:
+        - button "Grupo Orientación" [ref=e50] [cursor=pointer]:
+          - generic [aria-hidden] [ref=e52]: 
+          - generic [ref=e53]: Orientación
+          - generic [aria-hidden] [ref=e54]: 
+        - text:      
+    - generic [ref=e55]:
+      - link "Mi perfil" [ref=e56] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/user/profile
+        - generic [aria-hidden] [ref=e58]: 
+      - button "Cerrar sesión" [ref=e61] [cursor=pointer]:
+        - generic [aria-hidden] [ref=e63]: 
+  - generic [ref=e65]:
+    - banner [ref=e66]:
+      - generic [ref=e68]:
+        - generic [ref=e69]: 01/10/2026
+        - generic [ref=e73]:
+          - generic [ref=e74]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=e75]
+        - button "Notificaciones" [ref=e77] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=e78] [cursor=pointer]
+        - button [ref=e82] [cursor=pointer]:
+          - generic [ref=e83]:
+            - img "Jose Luis Quispe Callisaya" [ref=e84]
+            - generic [ref=e85]:
+              - paragraph [ref=e86]: Jose Luis Quispe Callisaya
+              - paragraph [ref=e87]: Estudiante
+    - main [ref=e90]:
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - paragraph [ref=e93]: Experiencia estudiantil
+          - heading "Mi progreso" [level=1] [ref=e94]
+          - paragraph [ref=e95]: Revisa tu avance con calificaciones, asistencia, materias y entregas registradas.
+        - generic [ref=e96]:
+          - article [ref=e97]:
+            - paragraph [ref=e98]: Materias
+            - paragraph [ref=e99]: "4"
+          - article [ref=e100]:
+            - paragraph [ref=e101]: Tareas entregadas
+            - paragraph [ref=e102]: "8"
+          - article [ref=e103]:
+            - paragraph [ref=e104]: Promedio de tareas
+            - paragraph [ref=e105]: "83.63"
+          - article [ref=e106]:
+            - paragraph [ref=e107]: Asistencia general
+            - paragraph [ref=e108]: 91.67%
+        - generic [ref=e109]:
+          - heading "Historial de notas oficiales" [level=2] [ref=e110]
+          - paragraph [ref=e111]: Las notas oficiales se conservan por gestión y se presentan separadas de las tareas.
+          - table [ref=e113]:
+            - rowgroup [ref=e114]:
+              - row [ref=e115]:
+                - columnheader "Gestión" [ref=e116]
+                - columnheader "Curso" [ref=e117]
+                - columnheader "Asignatura" [ref=e118]
+                - columnheader "Periodo" [ref=e119]
+                - columnheader "Nota" [ref=e120]
+            - rowgroup [ref=e121]:
+              - row [ref=e122]:
+                - cell "2021" [ref=e123]
+                - cell "1ro de Secundaria" [ref=e124]
+                - cell "Comunicación y Lenguaje" [ref=e125]
+                - cell "Primer Trimestre" [ref=e126]
+                - cell "70.00" [ref=e127]
+              - row [ref=e128]:
+                - cell "2021" [ref=e129]
+                - cell "1ro de Secundaria" [ref=e130]
+                - cell "Comunicación y Lenguaje" [ref=e131]
+                - cell "Segundo Trimestre" [ref=e132]
+                - cell "74.00" [ref=e133]
+              - row [ref=e134]:
+                - cell "2021" [ref=e135]
+                - cell "1ro de Secundaria" [ref=e136]
+                - cell "Comunicación y Lenguaje" [ref=e137]
+                - cell "Tercer Trimestre" [ref=e138]
+                - cell "77.00" [ref=e139]
+              - row [ref=e140]:
+                - cell "2021" [ref=e141]
+                - cell "1ro de Secundaria" [ref=e142]
+                - cell "Matemática" [ref=e143]
+                - cell "Primer Trimestre" [ref=e144]
+                - cell "64.00" [ref=e145]
+              - row [ref=e146]:
+                - cell "2021" [ref=e147]
+                - cell "1ro de Secundaria" [ref=e148]
+                - cell "Matemática" [ref=e149]
+                - cell "Segundo Trimestre" [ref=e150]
+                - cell "68.00" [ref=e151]
+              - row [ref=e152]:
+                - cell "2021" [ref=e153]
+                - cell "1ro de Secundaria" [ref=e154]
+                - cell "Matemática" [ref=e155]
+                - cell "Tercer Trimestre" [ref=e156]
+                - cell "71.00" [ref=e157]
+              - row [ref=e158]:
+                - cell "2021" [ref=e159]
+                - cell "1ro de Secundaria" [ref=e160]
+                - cell "Ciencias Sociales" [ref=e161]
+                - cell "Primer Trimestre" [ref=e162]
+                - cell "75.00" [ref=e163]
+              - row [ref=e164]:
+                - cell "2021" [ref=e165]
+                - cell "1ro de Secundaria" [ref=e166]
+                - cell "Ciencias Sociales" [ref=e167]
+                - cell "Segundo Trimestre" [ref=e168]
+                - cell "79.00" [ref=e169]
+              - row [ref=e170]:
+                - cell "2021" [ref=e171]
+                - cell "1ro de Secundaria" [ref=e172]
+                - cell "Ciencias Sociales" [ref=e173]
+                - cell "Tercer Trimestre" [ref=e174]
+                - cell "77.00" [ref=e175]
+              - row [ref=e176]:
+                - cell "2021" [ref=e177]
+                - cell "1ro de Secundaria" [ref=e178]
+                - cell "Ciencias Biológicas" [ref=e179]
+                - cell "Primer Trimestre" [ref=e180]
+                - cell "71.00" [ref=e181]
+              - row [ref=e182]:
+                - cell "2021" [ref=e183]
+                - cell "1ro de Secundaria" [ref=e184]
+                - cell "Ciencias Biológicas" [ref=e185]
+                - cell "Segundo Trimestre" [ref=e186]
+                - cell "75.00" [ref=e187]
+              - row [ref=e188]:
+                - cell "2021" [ref=e189]
+                - cell "1ro de Secundaria" [ref=e190]
+                - cell "Ciencias Biológicas" [ref=e191]
+                - cell "Tercer Trimestre" [ref=e192]
+                - cell "78.00" [ref=e193]
+              - row [ref=e194]:
+                - cell "2021" [ref=e195]
+                - cell "1ro de Secundaria" [ref=e196]
+                - cell "Física" [ref=e197]
+                - cell "Primer Trimestre" [ref=e198]
+                - cell "67.00" [ref=e199]
+              - row [ref=e200]:
+                - cell "2021" [ref=e201]
+                - cell "1ro de Secundaria" [ref=e202]
+                - cell "Física" [ref=e203]
+                - cell "Segundo Trimestre" [ref=e204]
+                - cell "66.00" [ref=e205]
+              - row [ref=e206]:
+                - cell "2021" [ref=e207]
+                - cell "1ro de Secundaria" [ref=e208]
+                - cell "Física" [ref=e209]
+                - cell "Tercer Trimestre" [ref=e210]
+                - cell "69.00" [ref=e211]
+              - row [ref=e212]:
+                - cell "2021" [ref=e213]
+                - cell "1ro de Secundaria" [ref=e214]
+                - cell "Química" [ref=e215]
+                - cell "Primer Trimestre" [ref=e216]
+                - cell "68.00" [ref=e217]
+              - row [ref=e218]:
+                - cell "2021" [ref=e219]
+                - cell "1ro de Secundaria" [ref=e220]
+                - cell "Química" [ref=e221]
+                - cell "Segundo Trimestre" [ref=e222]
+                - cell "72.00" [ref=e223]
+              - row [ref=e224]:
+                - cell "2021" [ref=e225]
+                - cell "1ro de Secundaria" [ref=e226]
+                - cell "Química" [ref=e227]
+                - cell "Tercer Trimestre" [ref=e228]
+                - cell "75.00" [ref=e229]
+              - row [ref=e230]:
+                - cell "2021" [ref=e231]
+                - cell "1ro de Secundaria" [ref=e232]
+                - cell "Lengua Extranjera - Inglés" [ref=e233]
+                - cell "Primer Trimestre" [ref=e234]
+                - cell "75.00" [ref=e235]
+              - row [ref=e236]:
+                - cell "2021" [ref=e237]
+                - cell "1ro de Secundaria" [ref=e238]
+                - cell "Lengua Extranjera - Inglés" [ref=e239]
+                - cell "Segundo Trimestre" [ref=e240]
+                - cell "79.00" [ref=e241]
+          - navigation "Navegación de paginación" [ref=e242]:
+            - generic [ref=e243]:
+              - paragraph [ref=e245]: Mostrando 1 a 20 de 136 resultados
+              - generic [ref=e247]:
+                - generic "Anterior" [ref=e248]
+                - generic [ref=e252]: "1"
+                - link "Ir a la página 2" [ref=e254] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=2
+                  - text: "2"
+                - link "Ir a la página 3" [ref=e255] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=3
+                  - text: "3"
+                - link "Ir a la página 4" [ref=e256] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=4
+                  - text: "4"
+                - link "Ir a la página 5" [ref=e257] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=5
+                  - text: "5"
+                - link "Ir a la página 6" [ref=e258] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=6
+                  - text: "6"
+                - link "Ir a la página 7" [ref=e259] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=7
+                  - text: "7"
+                - link "Siguiente" [ref=e260] [cursor=pointer]:
+                  - /url: http://127.0.0.1:8012/estudiante/progreso?page=2

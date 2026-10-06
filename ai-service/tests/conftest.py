@@ -1,18 +1,29 @@
 import json
+from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
 
+from app.config import get_settings
 from app.main import app
 
 FIXTURES = Path(__file__).resolve().parents[1] / "data" / "fixtures"
+TEST_API_KEY = "test-only-internal-api-key-32-characters"
 
 
 @pytest.fixture
-def client() -> TestClient:
-    return TestClient(app, raise_server_exceptions=False)
+def client(monkeypatch: pytest.MonkeyPatch) -> Iterator[TestClient]:
+    monkeypatch.setenv("SAVP_AI_API_KEY", TEST_API_KEY)
+    get_settings.cache_clear()
+    with TestClient(
+        app,
+        raise_server_exceptions=False,
+        headers={"X-SAVP-AI-Key": TEST_API_KEY},
+    ) as test_client:
+        yield test_client
+    get_settings.cache_clear()
 
 
 @pytest.fixture
@@ -26,4 +37,3 @@ def load_fixture() -> Any:
         return payload
 
     return _load
-

@@ -4,12 +4,15 @@ namespace App\Models\Oficial\AulaVirtual;
 
 use App\Models\Oficial\Academico\Docente;
 use App\Models\Oficial\Academico\Estudiante;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CalificacionTarea extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'calificacion_tarea';
 
     protected $primaryKey = 'cod_cal_tar';
@@ -44,9 +47,6 @@ class CalificacionTarea extends Model
     protected static function booted(): void
     {
         static::creating(function (CalificacionTarea $calificacionTarea) {
-            if (! $calificacionTarea->cod_cal_tar) {
-                $calificacionTarea->cod_cal_tar = 'CALT_'.strtoupper(bin2hex(random_bytes(8)));
-            }
 
             if (! $calificacionTarea->fec_cal) {
                 $calificacionTarea->fec_cal = now();

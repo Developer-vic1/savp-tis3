@@ -3,9 +3,9 @@
 namespace App\Services\Kardex;
 
 use App\Contracts\KardexRepository;
-use App\Models\Estudiante;
-use App\Models\SeguimientoAcademico;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\SeguimientoAcademico;
+use App\Models\Oficial\Sistema\User;
 use App\Policies\KardexPolicy;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\RegencyAccessService;

@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\ReporteAulaVirtualService;
 use Illuminate\Support\Facades\Schema;

@@ -2,14 +2,16 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Persona;
+use App\Models\Oficial\Academico\Persona;
 use App\Services\BitacoraService;
+use App\Support\Personas\IndicadoresPersonas;
 use App\Support\Personas\PersonaInteligente;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -22,6 +24,8 @@ class GestionPersonas extends Component
     use WithPagination;
 
     protected string $paginationTheme = 'tailwind';
+
+    private ?PersonaInteligente $soporteEnSolicitud = null;
 
     // ============================================================
     // FILTROS
@@ -36,6 +40,8 @@ class GestionPersonas extends Component
     public string $cuentaUsuario = '';
 
     public string $direccion = '';
+
+    public array $pendientes = [];
 
     public int $perPage = 10;
 
@@ -257,6 +263,7 @@ class GestionPersonas extends Component
 
     public function render()
     {
+        Gate::authorize('viewAny', Persona::class);
         $personas = $this->personasQuery()->paginate($this->perPage);
 
         return view('livewire.admin.gestion-personas', [
@@ -331,6 +338,22 @@ class GestionPersonas extends Component
         $this->resetPage();
     }
 
+    public function updatedPerPage(): void
+    {
+        if (! in_array($this->perPage, [10, 20, 50], true)) {
+            $this->perPage = 10;
+            $this->addError('perPage', 'Selecciona 10, 20 o 50 personas por página.');
+        } else {
+            $this->resetValidation('perPage');
+        }
+    }
+
+    public function updatedPendientes(): void
+    {
+        $this->resetPage();
+        $this->actualizarGraficos();
+    }
+
     public function limpiarFiltros(): void
     {
         $this->reset([
@@ -339,6 +362,7 @@ class GestionPersonas extends Component
             'estado',
             'cuentaUsuario',
             'direccion',
+            'pendientes',
         ]);
 
         $this->resetPage();
@@ -492,7 +516,7 @@ class GestionPersonas extends Component
     public function updatedFoto(): void
     {
         $this->validateOnly('foto', [
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ], $this->messages);
     }
 
@@ -643,7 +667,7 @@ class GestionPersonas extends Component
     public function updatedFotoEditar(): void
     {
         $this->validateOnly('fotoEditar', [
-            'fotoEditar' => ['nullable', 'image', 'max:2048'],
+            'fotoEditar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ], $this->messages);
     }
 
@@ -654,9 +678,9 @@ class GestionPersonas extends Component
     private function rulesCrear(): array
     {
         return [
-            'form.nom_per' => ['required', 'string', 'min:2', 'max:100'],
-            'form.ape_pat_per' => ['required', 'string', 'min:2', 'max:100'],
-            'form.ape_mat_per' => ['nullable', 'string', 'max:100'],
+            'form.nom_per' => ['required', 'string', 'min:2', 'max:100', 'regex:'.PersonaInteligente::PATRON_NOMBRE],
+            'form.ape_pat_per' => ['required', 'string', 'min:2', 'max:100', 'regex:'.PersonaInteligente::PATRON_NOMBRE],
+            'form.ape_mat_per' => ['nullable', 'string', 'max:100', 'regex:'.PersonaInteligente::PATRON_NOMBRE],
 
             'form.ci_per' => [
                 'required',
@@ -671,6 +695,7 @@ class GestionPersonas extends Component
             'form.fec_nac_per' => [
                 'required',
                 'date',
+                'date_format:Y-m-d',
                 'before_or_equal:today',
                 'after_or_equal:'.now()->subYears(120)->format('Y-m-d'),
             ],
@@ -697,7 +722,7 @@ class GestionPersonas extends Component
             'form.dep_per' => ['nullable', 'string', 'max:100'],
 
             'form.est_per' => ['required', 'boolean'],
-            'foto' => ['nullable', 'image', 'max:2048'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -705,9 +730,9 @@ class GestionPersonas extends Component
     {
         return [
             'formEditar.cod_per' => ['required', 'exists:persona,cod_per'],
-            'formEditar.nom_per' => ['required', 'string', 'min:2', 'max:100'],
-            'formEditar.ape_pat_per' => ['required', 'string', 'min:2', 'max:100'],
-            'formEditar.ape_mat_per' => ['nullable', 'string', 'max:100'],
+            'formEditar.nom_per' => ['required', 'string', 'min:2', 'max:100', 'regex:'.PersonaInteligente::PATRON_NOMBRE],
+            'formEditar.ape_pat_per' => ['required', 'string', 'min:2', 'max:100', 'regex:'.PersonaInteligente::PATRON_NOMBRE],
+            'formEditar.ape_mat_per' => ['nullable', 'string', 'max:100', 'regex:'.PersonaInteligente::PATRON_NOMBRE],
 
             'formEditar.ci_per' => [
                 'required',
@@ -722,6 +747,7 @@ class GestionPersonas extends Component
             'formEditar.fec_nac_per' => [
                 'required',
                 'date',
+                'date_format:Y-m-d',
                 'before_or_equal:today',
                 'after_or_equal:'.now()->subYears(120)->format('Y-m-d'),
             ],
@@ -748,7 +774,7 @@ class GestionPersonas extends Component
             'formEditar.dep_per' => ['nullable', 'string', 'max:100'],
 
             'formEditar.est_per' => ['required', 'boolean'],
-            'fotoEditar' => ['nullable', 'image', 'max:2048'],
+            'fotoEditar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ];
     }
 
@@ -818,8 +844,8 @@ class GestionPersonas extends Component
             'ci_per' => $persona->ci_per ?? '',
             'com_per' => $persona->com_per ?? '',
             'exp_per' => $persona->exp_per ?? '',
-            'fec_nac_per' => $persona->fec_nac_per ?? '',
-            'gen_per' => $persona->gen_per ?? '',
+            'fec_nac_per' => $persona->fec_nac_per?->format('Y-m-d') ?? '',
+            'gen_per' => $this->normalizarGenero($persona->gen_per) ?? '',
             'tel_per' => $persona->tel_per ?? '',
             'ema_per' => $persona->ema_per ?? '',
 
@@ -838,6 +864,7 @@ class GestionPersonas extends Component
         ];
 
         $this->personaEditando = $persona->cod_per;
+        $this->aplicarDireccionInteligenteEditar();
         $this->analizarFormularioEditar();
         $this->modalEditar = true;
     }
@@ -1024,7 +1051,13 @@ class GestionPersonas extends Component
                 continue;
             }
 
-            $segmentoLower = mb_strtolower($segmento);
+            if (preg_match('/(?:#|\b(?:nro\.?|n°|numero|número))\s*([a-zA-Z0-9\-\/]+)/iu', $segmento, $numero)) {
+                $resultado['num_per'] = $this->normalizarNumeroDomicilio($numero[1]);
+                $segmento = trim(str_replace($numero[0], '', $segmento));
+            }
+            if ($segmento === '') {
+                continue;
+            }
 
             if (preg_match('/\b(zona|barrio|urb\.?|urbanizacion|urbanización)\b\s*(.+)/iu', $segmento, $m)) {
                 $resultado['zona_per'] = $this->normalizarTitulo($m[2]);
@@ -1032,13 +1065,13 @@ class GestionPersonas extends Component
                 continue;
             }
 
-            if (preg_match('/\b(avenida|av\.?|avda\.?)\b\s*(.+)/iu', $segmento, $m)) {
+            if (preg_match('/\b(avenida|avda|av)\.?\s+(.+)/iu', $segmento, $m)) {
                 $resultado['ave_per'] = $this->normalizarTitulo($m[2]);
 
                 continue;
             }
 
-            if (preg_match('/\b(calle|c\/)\b\s*(.+)/iu', $segmento, $m)) {
+            if (preg_match('/\b(calle|c\/)\s+(.+)/iu', $segmento, $m)) {
                 $resultado['cal_per'] = $this->normalizarTitulo($m[2]);
 
                 continue;
@@ -1089,18 +1122,6 @@ class GestionPersonas extends Component
 
         if (! $resultado['cal_per'] && preg_match('/(?:calle|c\/)\s+([^,#;]+)/iu', $textoOriginal, $m)) {
             $resultado['cal_per'] = $this->normalizarTitulo($m[1]);
-        }
-
-        if (! $resultado['ciu_per']) {
-            $resultado['ciu_per'] = $this->form['ciu_per'] ?? 'La Paz';
-        }
-
-        if (! $resultado['mun_per']) {
-            $resultado['mun_per'] = $this->form['mun_per'] ?? 'La Paz';
-        }
-
-        if (! $resultado['dep_per']) {
-            $resultado['dep_per'] = $this->form['dep_per'] ?? 'La Paz';
         }
 
         return $resultado;
@@ -1227,6 +1248,7 @@ class GestionPersonas extends Component
     public function guardarPersona(): void
     {
         Gate::authorize('create', Persona::class);
+        $this->form['est_per'] = 1;
         $this->normalizarFormularioCrearFinal();
         $this->analisisPersona = $this->soportePersona()->analizarRegistro($this->payloadParaPersonaInteligente($this->form));
 
@@ -1243,7 +1265,9 @@ class GestionPersonas extends Component
                 $rutaFoto = $this->foto->store('personas', 'public');
             }
 
-            $persona = Persona::create($this->payloadGuardarPersona($this->form, $rutaFoto));
+            $persona = new Persona;
+            // El payload está validado y enumera los únicos campos editables.
+            $persona->forceFill($this->payloadGuardarPersona($this->form, $rutaFoto))->save();
 
             $persona = $persona->fresh();
 
@@ -1300,7 +1324,10 @@ class GestionPersonas extends Component
                 $rutaFoto = $this->fotoEditar->store('personas', 'public');
             }
 
-            $persona->update($this->payloadGuardarPersona($this->formEditar, $rutaFoto));
+            $payload = $this->payloadGuardarPersona($this->formEditar, $rutaFoto);
+            // El estado se administra mediante la acción dedicada, no al editar identidad.
+            $payload['est_per'] = (bool) $persona->est_per;
+            $persona->forceFill($payload)->save();
 
             $personaActualizada = $persona->fresh();
 
@@ -1361,92 +1388,8 @@ class GestionPersonas extends Component
     }
 
     // ============================================================
-    // DESACTIVAR / REACTIVAR / FOTO
+    // FOTOGRAFÍA
     // ============================================================
-
-    public function desactivarPersona(string $codPer): void
-    {
-        Gate::authorize('update', Persona::findOrFail($codPer));
-        DB::transaction(function () use ($codPer) {
-            $persona = Persona::where('cod_per', $codPer)->first();
-
-            if (! $persona) {
-                $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
-
-                return;
-            }
-
-            if (! $persona->est_per) {
-                $this->dispatch('error-general', mensaje: 'La persona ya se encuentra inactiva.');
-
-                return;
-            }
-
-            $valoresAnteriores = $persona->toArray();
-
-            $persona->update(['est_per' => false]);
-
-            $personaActualizada = $persona->fresh();
-
-            $this->registrarBitacora(
-                accion: 'DESACTIVAR_PERSONA',
-                tabla: 'persona',
-                registro: $personaActualizada->cod_per,
-                nombreRegistro: $this->nombreCompleto($personaActualizada),
-                descripcion: 'Se desactivó el registro de una persona. No se realizó eliminación física.',
-                nivel: 'WARNING',
-                resultado: 'EXITOSO',
-                valoresAnteriores: $valoresAnteriores,
-                valoresNuevos: $personaActualizada->toArray()
-            );
-
-            $this->dispatch('persona-desactivada');
-            $this->dispatch('success-general', mensaje: 'Persona desactivada correctamente.');
-            $this->actualizarGraficos();
-        });
-    }
-
-    public function reactivarPersona(string $codPer): void
-    {
-        Gate::authorize('update', Persona::findOrFail($codPer));
-        DB::transaction(function () use ($codPer) {
-            $persona = Persona::where('cod_per', $codPer)->first();
-
-            if (! $persona) {
-                $this->dispatch('error-general', mensaje: 'No se encontró la persona seleccionada.');
-
-                return;
-            }
-
-            if ($persona->est_per) {
-                $this->dispatch('error-general', mensaje: 'La persona ya se encuentra activa.');
-
-                return;
-            }
-
-            $valoresAnteriores = $persona->toArray();
-
-            $persona->update(['est_per' => true]);
-
-            $personaActualizada = $persona->fresh();
-
-            $this->registrarBitacora(
-                accion: 'REACTIVAR_PERSONA',
-                tabla: 'persona',
-                registro: $personaActualizada->cod_per,
-                nombreRegistro: $this->nombreCompleto($personaActualizada),
-                descripcion: 'Se reactivó el registro de una persona en el sistema.',
-                nivel: 'SUCCESS',
-                resultado: 'EXITOSO',
-                valoresAnteriores: $valoresAnteriores,
-                valoresNuevos: $personaActualizada->toArray()
-            );
-
-            $this->dispatch('persona-reactivada');
-            $this->dispatch('success-general', mensaje: 'Persona reactivada correctamente.');
-            $this->actualizarGraficos();
-        });
-    }
 
     public function eliminarFotoEditar(): void
     {
@@ -1496,6 +1439,26 @@ class GestionPersonas extends Component
 
     private function personasQuery()
     {
+        $filtros = ['search' => '', 'direccion' => '', 'genero' => '', 'estado' => '', 'cuentaUsuario' => '', 'perPage' => 10, 'pendientes' => []];
+        $validacion = Validator::make(array_map(fn ($campo) => $this->{$campo}, array_combine(array_keys($filtros), array_keys($filtros))), [
+            'search' => ['string', 'max:150'],
+            'direccion' => ['string', 'max:255'],
+            'genero' => ['nullable', Rule::in(['M', 'F'])],
+            'estado' => ['nullable', Rule::in(['0', '1'])],
+            'cuentaUsuario' => ['nullable', Rule::in(['con_usuario', 'sin_usuario'])],
+            'perPage' => ['integer', Rule::in([10, 20, 50])],
+            'pendientes' => ['array', 'max:5'],
+            'pendientes.*' => [Rule::in(['telefono', 'correo', 'direccion', 'nacimiento', 'foto'])],
+        ], ['perPage.in' => 'Elige 10, 20 o 50 registros por página.', 'pendientes.*.in' => 'El criterio de revisión no es válido.']);
+
+        if ($validacion->fails()) {
+            foreach ($validacion->errors()->messages() as $campo => $mensajes) {
+                $propiedad = explode('.', $campo)[0];
+                $this->{$propiedad} = $filtros[$propiedad];
+                $this->addError($propiedad, $mensajes[0]);
+            }
+        }
+
         return Persona::query()
             ->with('usuario')
             ->when($this->search, function ($query) {
@@ -1512,9 +1475,9 @@ class GestionPersonas extends Component
                         ->orWhere('tel_per', $like, "%{$search}%")
                         ->orWhere('ema_per', $like, "%{$search}%")
                         ->orWhereRaw(
-                            $driver === 'pgsql'
-                                ? "CONCAT(nom_per, ' ', ape_pat_per, ' ', COALESCE(ape_mat_per, '')) ILIKE ?"
-                                : "CONCAT(nom_per, ' ', ape_pat_per, ' ', COALESCE(ape_mat_per, '')) LIKE ?",
+                            $driver === 'sqlite'
+                                ? "(nom_per || ' ' || ape_pat_per || ' ' || COALESCE(ape_mat_per, '')) LIKE ?"
+                                : "CONCAT(nom_per, ' ', ape_pat_per, ' ', COALESCE(ape_mat_per, '')) {$like} ?",
                             ["%{$search}%"]
                         );
                 });
@@ -1546,7 +1509,17 @@ class GestionPersonas extends Component
                     }
                 });
             })
-            ->orderByDesc('created_at');
+            ->when($this->pendientes, function ($query) {
+                foreach ($this->pendientes as $pendiente) {
+                    $campo = ['telefono' => 'tel_per', 'correo' => 'ema_per', 'direccion' => 'dir_per', 'nacimiento' => 'fec_nac_per', 'foto' => 'fot_per'][$pendiente];
+                    if ($campo === 'fec_nac_per') {
+                        $query->whereNull($campo);
+                    } else {
+                        $query->whereRaw("TRIM(COALESCE({$campo}, '')) = ''");
+                    }
+                }
+            })
+            ->orderByDesc('created_at')->orderBy('cod_per');
     }
 
     // ============================================================
@@ -1651,7 +1624,7 @@ class GestionPersonas extends Component
 
     private function normalizarCi(?string $valor): ?string
     {
-        $valor = preg_replace('/\D+/', '', (string) $valor);
+        $valor = $this->soportePersona()->normalizarCi($valor);
 
         return $valor === '' ? null : $valor;
     }
@@ -1736,6 +1709,7 @@ class GestionPersonas extends Component
             && filled($this->form['exp_per'] ?? null)
             && filled($this->form['fec_nac_per'] ?? null)
             && filled($this->form['gen_per'] ?? null)
+            && ! ($this->analisisPersona['coincidencias']['duplicado_ci'] ?? false)
             && (($this->analisisPersona['puede_continuar'] ?? true) === true);
     }
 
@@ -1748,12 +1722,13 @@ class GestionPersonas extends Component
             && filled($this->formEditar['exp_per'] ?? null)
             && filled($this->formEditar['fec_nac_per'] ?? null)
             && filled($this->formEditar['gen_per'] ?? null)
+            && ! ($this->analisisPersonaEditar['coincidencias']['duplicado_ci'] ?? false)
             && (($this->analisisPersonaEditar['puede_continuar'] ?? true) === true);
     }
 
     private function soportePersona(): PersonaInteligente
     {
-        return app(PersonaInteligente::class);
+        return $this->soporteEnSolicitud ??= app(PersonaInteligente::class);
     }
 
     private function expedicionesPermitidas(): array
@@ -1831,11 +1806,7 @@ class GestionPersonas extends Component
 
     public function getDatosGraficosProperty(): array
     {
-        return [
-            'genero' => $this->datosGraficoGenero,
-            'estado' => $this->datosGraficoEstado,
-            'usuarios' => $this->datosGraficoUsuarios,
-        ];
+        return app(IndicadoresPersonas::class)->analizar($this->personasQuery());
     }
 
     public function actualizarGraficos(): void

@@ -11,13 +11,18 @@ from app.contracts.v2 import (
     AttendanceEvidenceProfileV2,
     DeclaredInterestEvidenceProfileV2,
     HistoricalEvidenceProfileV2,
+    InformationalExternalCareer,
     LearningActivityEvidenceProfileV2,
     StudentAnalyticalSnapshotV2,
     TechnicalEvidenceProfileV2,
     TraceabilityV2,
     VocationalInterestEvidenceProfile,
 )
-from app.knowledge.registry import load_career_catalog
+from app.knowledge.registry import (
+    CareerCatalog,
+    load_career_catalog,
+    load_external_information_registry,
+)
 from app.learning_analytics.academic_performance import (
     build_academic_evidence_profile_v2,
     build_academic_profile,
@@ -79,6 +84,47 @@ def _source_union(profiles_sources: list[list[SourceReference]]) -> list[SourceR
     return [by_id[source_id] for source_id in sorted(by_id)]
 
 
+def _informational_external_careers(
+    catalog: CareerCatalog,
+) -> list[InformationalExternalCareer]:
+    entries = {item.external_id: item for item in load_external_information_registry().entries}
+    universities = {
+        item.university_id: f"{item.name}, {item.campus}" for item in catalog.universities
+    }
+    result: list[InformationalExternalCareer] = []
+    for career in sorted(
+        (item for item in catalog.careers if not item.recommendation_eligible),
+        key=lambda item: item.career_id,
+    ):
+        if career.evidence_layer == "CORPUS_VALIDADO":
+            continue
+        sources = [entries[source_id] for source_id in career.source_ids]
+        result.append(
+            InformationalExternalCareer(
+                career_id=career.career_id,
+                career_name=career.name,
+                university_id=career.university_id,
+                university=universities[career.university_id],
+                status=career.status,
+                evidence_layer=career.evidence_layer,
+                source_ids=career.source_ids,
+                sources=[
+                    SourceReference(
+                        source_id=source.external_id,
+                        title=source.title,
+                        institution=source.institution,
+                        reference=source.url,
+                        official=source.official,
+                        evidence_layer=source.evidence_layer,
+                    )
+                    for source in sources
+                ],
+                limitations=[limitation for source in sources for limitation in source.limitations],
+            )
+        )
+    return result
+
+
 def analyze_student_v2(
     request: AnalysisV2Request,
     trace_id: str | None = None,
@@ -93,9 +139,7 @@ def analyze_student_v2(
     crosswalk = crosswalk_result or load_default_occupational_crosswalk()
     vocational = score_riasec(request.vocational) if request.vocational else None
     academic_for_matching = (
-        build_academic_profile(request.academic, request.attendance)
-        if request.academic
-        else None
+        build_academic_profile(request.academic, request.attendance) if request.academic else None
     )
     academic_v2 = build_academic_evidence_profile_v2(request.academic)
     activity = (
@@ -114,15 +158,11 @@ def analyze_student_v2(
 
     technical_specialty = request.technical.specialty if request.technical else None
     technical_competencies = (
-        sorted(item.name for item in request.technical.competencies)
-        if request.technical
-        else []
+        sorted(item.name for item in request.technical.competencies) if request.technical else []
     )
     technical_evidence = (
         sorted(
-            item.evidence
-            for item in request.technical.competencies
-            if item.evidence is not None
+            item.evidence for item in request.technical.competencies if item.evidence is not None
         )
         if request.technical
         else []
@@ -182,14 +222,11 @@ def analyze_student_v2(
                 if request.attendance is not None
                 else AvailabilityStatus.UNAVAILABLE
             ),
-            attended_classes=(
-                request.attendance.attended_classes if request.attendance else None
-            ),
+            attended_classes=(request.attendance.attended_classes if request.attendance else None),
             total_classes=request.attendance.total_classes if request.attendance else None,
             attendance_ratio=(
                 round(
-                    request.attendance.attended_classes
-                    / request.attendance.total_classes,
+                    request.attendance.attended_classes / request.attendance.total_classes,
                     2,
                 )
                 if request.attendance
@@ -264,6 +301,7 @@ def analyze_student_v2(
         analysis_status=_analysis_status(request),
         student_snapshot=snapshot,
         career_evidence_profiles=recommendations.profiles,
+        informational_external_careers=_informational_external_careers(catalog),
         traceability=TraceabilityV2(
             input_hash=canonical_input_hash_v2(request),
             engine_version=ENGINE_VERSION,

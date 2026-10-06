@@ -6,11 +6,11 @@ namespace App\Models\Oficial\Academico;
 
 use App\Models\Oficial\AulaVirtual\Cuestionario;
 use App\Models\Oficial\AulaVirtual\Tarea;
-use App\Models\Soporte\CodigoInstitucional;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-/** Modelo del contrato canónico; atributos históricos redundantes permanecen en Legado. */
+/** Modelo único de la tabla oficial; atributos y relaciones del contrato canónico. */
 class PeriodoEvaluacion extends Model
 {
     use CodigoInstitucional;
@@ -56,5 +56,10 @@ class PeriodoEvaluacion extends Model
     public function calificacionRegistros(): HasMany
     {
         return $this->hasMany(Calificacion::class, 'cod_pev', 'cod_pev');
+    }
+
+    public function calificaciones(): HasMany
+    {
+        return $this->calificacionRegistros();
     }
 }

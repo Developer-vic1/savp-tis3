@@ -1,4 +1,4 @@
-# Rendimiento medido — PETER 3
+# Rendimiento medido — Aporte Ingenieril SAVP
 
 Medición del 2026-10-01 en VicDev, Windows 11 `10.0.26200`, Python 3.12.10,
 CPU AMD64 Family 23 Model 160 (4 núcleos físicos, 8 lógicos), 6.26 GB de RAM.

@@ -5,13 +5,13 @@
 @endphp
 
 <div
-    class="relative overflow-hidden rounded-[1.8rem] border border-[var(--ui-border)] bg-[var(--ui-card)] p-5 shadow-sm sm:p-6">
+    class="relative overflow-hidden rounded-[1.8rem] border border-[var(--ui-border)] bg-[var(--ui-surface)] p-5 shadow-sm sm:p-6">
 
     {{-- Fondos suaves --}}
-    <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-sky-400/10 blur-3xl"></div>
-    <div class="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full bg-emerald-400/10 blur-3xl">
+    <div class="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[var(--ui-primary-soft)] blur-3xl"></div>
+    <div class="pointer-events-none absolute -bottom-24 left-10 h-64 w-64 rounded-full bg-[var(--ui-primary-soft)] blur-3xl">
     </div>
-    <div class="pointer-events-none absolute bottom-0 right-1/3 h-52 w-52 rounded-full bg-violet-400/10 blur-3xl"></div>
+    <div class="pointer-events-none absolute bottom-0 right-1/3 h-52 w-52 rounded-full bg-[var(--ui-primary-soft)] blur-3xl"></div>
 
     <div class="relative space-y-6">
 
@@ -22,7 +22,7 @@
             <div class="max-w-3xl">
                 <div class="flex flex-wrap items-center gap-2">
                     <span
-                        class="inline-flex items-center gap-2 rounded-full border border-sky-200/70 bg-sky-50 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-sky-700 dark:border-sky-400/20 dark:bg-sky-400/10 dark:text-sky-200">
+                        class="inline-flex items-center gap-2 rounded-full border border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                                 d="M12 3.75 4.5 6.75v5.625c0 4.038 3.06 7.82 7.5 8.875 4.44-1.055 7.5-4.837 7.5-8.875V6.75L12 3.75Z" />
@@ -32,12 +32,12 @@
 
                     @if ($otrasSesiones > 0)
                         <span
-                            class="inline-flex rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+                            class="inline-flex rounded-full border border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-warning)] border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]">
                             {{ $otrasSesiones }} {{ $otrasSesiones === 1 ? 'sesión externa' : 'sesiones externas' }}
                         </span>
                     @else
                         <span
-                            class="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
+                            class="inline-flex rounded-full border border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]">
                             Sin accesos externos activos
                         </span>
                     @endif
@@ -54,7 +54,7 @@
             </div>
 
             <div class="grid grid-cols-2 gap-3 xl:min-w-[300px]">
-                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] px-4 py-3">
+                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-4 py-3">
                     <p class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--ui-muted)]">
                         Total
                     </p>
@@ -66,12 +66,12 @@
                     </p>
                 </div>
 
-                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] px-4 py-3">
+                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] px-4 py-3">
                     <p class="text-xs font-bold uppercase tracking-[0.12em] text-[var(--ui-muted)]">
                         Externas
                     </p>
                     <p
-                        class="mt-1 text-3xl font-black {{ $otrasSesiones > 0 ? 'text-amber-600 dark:text-amber-300' : 'text-emerald-600 dark:text-emerald-300' }}">
+                        class="mt-1 text-3xl font-black {{ $otrasSesiones > 0 ? 'text-[var(--ui-warning)] text-[var(--ui-warning)]' : 'text-[var(--ui-primary)] text-[var(--ui-primary)]' }}">
                         {{ $otrasSesiones }}
                     </p>
                     <p class="mt-1 text-xs text-[var(--ui-muted)]">
@@ -87,8 +87,8 @@
         <div
             class="rounded-2xl border px-4 py-4 text-sm leading-6
             {{ $otrasSesiones > 0
-    ? 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200'
-    : 'border-sky-200 bg-sky-50 text-sky-800 dark:border-sky-400/20 dark:bg-sky-400/10 dark:text-sky-200' }}">
+    ? 'border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] text-[var(--ui-warning)] border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]'
+    : 'border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' }}">
             @if ($otrasSesiones > 0)
                 Se
                 {{ $otrasSesiones === 1 ? 'cerrará 1 sesión activa en otro dispositivo' : 'cerrarán ' . $otrasSesiones . ' sesiones activas en otros dispositivos' }}.
@@ -117,13 +117,13 @@
                 <div class="grid gap-3">
                     @foreach ($this->sessions as $session)
                         <article
-                            class="group rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] p-4 transition hover:border-[var(--ui-primary)]/40 hover:bg-[var(--ui-card)]">
+                            class="group rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] p-4 transition hover:border-[var(--ui-primary)]/40 hover:bg-[var(--ui-surface)]">
                             <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
                                 <div class="flex min-w-0 items-start gap-4">
                                     {{-- ICONO --}}
                                     <div
-                                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] text-[var(--ui-muted)] transition group-hover:text-[var(--ui-primary)]">
+                                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] text-[var(--ui-muted)] transition group-hover:text-[var(--ui-primary)]">
                                         @if ($session->agent->isDesktop())
                                             <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                                 stroke-width="1.7">
@@ -149,13 +149,13 @@
 
                                         <div class="mt-2 flex flex-wrap gap-2 text-xs">
                                             <span
-                                                class="rounded-full border border-[var(--ui-border)] bg-[var(--ui-card)] px-3 py-1 font-semibold text-[var(--ui-muted)]">
+                                                class="rounded-full border border-[var(--ui-border)] bg-[var(--ui-surface)] px-3 py-1 font-semibold text-[var(--ui-muted)]">
                                                 IP: {{ $session->ip_address }}
                                             </span>
 
                                             @unless ($session->is_current_device)
                                                 <span
-                                                    class="rounded-full border border-[var(--ui-border)] bg-[var(--ui-card)] px-3 py-1 font-semibold text-[var(--ui-muted)]">
+                                                    class="rounded-full border border-[var(--ui-border)] bg-[var(--ui-surface)] px-3 py-1 font-semibold text-[var(--ui-muted)]">
                                                     Última actividad {{ $session->last_active }}
                                                 </span>
                                             @endunless
@@ -166,12 +166,12 @@
                                 <div class="shrink-0">
                                     @if ($session->is_current_device)
                                         <span
-                                            class="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300">
+                                            class="inline-flex rounded-full border border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-primary)] border-[var(--ui-primary-border)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]">
                                             Este dispositivo
                                         </span>
                                     @else
                                         <span
-                                            class="inline-flex rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300">
+                                            class="inline-flex rounded-full border border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] px-3 py-1 text-xs font-bold text-[var(--ui-warning)] border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]">
                                             Sesión externa
                                         </span>
                                     @endif
@@ -198,12 +198,12 @@
             </div>
 
             <div class="flex flex-wrap items-center gap-3">
-                <x-action-message class="text-sm font-bold text-emerald-700 dark:text-emerald-300" on="loggedOut">
+                <x-action-message class="text-sm font-bold text-[var(--ui-primary)] text-[var(--ui-primary)]" on="loggedOut">
                     Sesiones cerradas correctamente.
                 </x-action-message>
 
                 <button type="button" wire:click="confirmLogout" wire:loading.attr="disabled"
-                    class="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 to-sky-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
+                    class="inline-flex items-center gap-2 rounded-2xl ui-btn-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
                             d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-7.5A2.25 2.25 0 0 0 3.75 5.25v13.5A2.25 2.25 0 0 0 6 21h7.5a2.25 2.25 0 0 0 2.25-2.25V15m-6-3h12m0 0-3-3m3 3-3 3" />
@@ -221,7 +221,7 @@
         <x-slot name="title">
             <div class="flex items-center gap-3">
                 <div
-                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">
+                    class="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-7.5A2.25 2.25 0 0 0 3.75 5.25v13.5A2.25 2.25 0 0 0 6 21h7.5a2.25 2.25 0 0 0 2.25-2.25V15m-6-3h12m0 0-3-3m3 3-3 3" />
@@ -247,7 +247,7 @@
                 </p>
 
                 <div
-                    class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200">
+                    class="rounded-2xl border border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] px-4 py-3 text-sm leading-6 text-[var(--ui-warning)] border-[var(--ui-warning-border)] bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]">
                     @if ($otrasSesiones > 0)
                         Se
                         {{ $otrasSesiones === 1 ? 'cerrará 1 sesión externa' : 'cerrarán ' . $otrasSesiones . ' sesiones externas' }}.
@@ -258,7 +258,7 @@
                     @endif
                 </div>
 
-                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-soft)] p-4"
+                <div class="rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface-soft)] p-4"
                     x-data="{ showPassword: false }"
                     x-on:confirming-logout-other-browser-sessions.window="setTimeout(() => $refs.password.focus(), 250)">
                     <label for="password" class="block text-sm font-bold text-[var(--ui-text)]">
@@ -300,12 +300,12 @@
 
         <x-slot name="footer">
             <button type="button" wire:click="$toggle('confirmingLogout')" wire:loading.attr="disabled"
-                class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-card)] px-5 py-3 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-soft)] disabled:cursor-not-allowed disabled:opacity-60">
+                class="inline-flex items-center justify-center rounded-2xl border border-[var(--ui-border)] bg-[var(--ui-surface)] px-5 py-3 text-sm font-bold text-[var(--ui-text)] transition hover:bg-[var(--ui-surface-soft)] disabled:cursor-not-allowed disabled:opacity-60">
                 Cancelar
             </button>
 
             <button type="button" wire:click="logoutOtherBrowserSessions" wire:loading.attr="disabled"
-                class="ms-3 inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-600 to-sky-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
+                class="ms-3 inline-flex items-center justify-center rounded-2xl ui-btn-primary px-5 py-3 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60">
                 Confirmar cierre
             </button>
         </x-slot>

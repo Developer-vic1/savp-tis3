@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\Docente;
-use App\Models\Estudiante;
-use App\Models\Persona;
-use App\Models\Role;
-use App\Models\User;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\Persona;
+use App\Models\Oficial\Sistema\Role;
+use App\Models\Oficial\Sistema\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -61,7 +61,7 @@ class OperationalAccountService
                     throw ValidationException::withMessages(['form.role' => 'La persona no tiene un perfil activo para esa cuenta.']);
                 }
                 $role = Role::where('name', $data['role'])->where('guard_name', 'web')->firstOrFail();
-                $user = new User(['cod_usu' => 'USU_'.Str::upper(Str::random(16)), 'cod_per' => $person->cod_per, 'est_usu' => 'ACTIVO']);
+                $user = new User(['cod_per' => $person->cod_per, 'est_usu' => 'ACTIVO']);
             }
             $before = $user->exists ? $user->only(['email', 'est_usu']) : [];
             $user->email = $data['email'];

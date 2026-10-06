@@ -116,9 +116,9 @@
       ]
     },
     {
-      "reference_id": "PETER3-V2-FOUNDATION-2026",
+      "reference_id": "APORTE-V2-FOUNDATION-2026",
       "reference_kind": "INTERNAL_ARTIFACT",
-      "organization": "SAVP-TIS3 Peter 3",
+      "organization": "SAVP-TIS3 Aporte Ingenieril",
       "title": "Analytical Model V2 governance specification",
       "url": null,
       "local_path": "../docs/peter3/ANALYTICAL_MODEL_V2.md",
@@ -130,9 +130,9 @@
       "limitations": ["Internal design authority; not an external scientific source."]
     },
     {
-      "reference_id": "PETER3-RETRIEVAL-BENCHMARK-2026",
+      "reference_id": "APORTE-RETRIEVAL-BENCHMARK-2026",
       "reference_kind": "INTERNAL_ARTIFACT",
-      "organization": "SAVP-TIS3 Peter 3",
+      "organization": "SAVP-TIS3 Aporte Ingenieril",
       "title": "Retrieval benchmark result artifact",
       "url": null,
       "local_path": "data/evaluation/retrieval_results.json",
@@ -144,9 +144,9 @@
       "limitations": ["Results are valid only for the committed corpus, query split, environment, and index manifests recorded by the artifact."]
     },
     {
-      "reference_id": "PETER3-PROMPT-GOVERNANCE-2026",
+      "reference_id": "APORTE-PROMPT-GOVERNANCE-2026",
       "reference_kind": "INTERNAL_ARTIFACT",
-      "organization": "SAVP-TIS3 Peter 3",
+      "organization": "SAVP-TIS3 Aporte Ingenieril",
       "title": "Prompt system governance",
       "url": null,
       "local_path": "../docs/peter3/PROMPT_ENGINEERING.md",
@@ -158,9 +158,9 @@
       "limitations": ["Internal operational control; effectiveness is bounded by the tested scenario set."]
     },
     {
-      "reference_id": "PETER3-ARCHITECTURE-2026",
+      "reference_id": "APORTE-ARCHITECTURE-2026",
       "reference_kind": "INTERNAL_ARTIFACT",
-      "organization": "SAVP-TIS3 Peter 3",
+      "organization": "SAVP-TIS3 Aporte Ingenieril",
       "title": "AI service architecture",
       "url": null,
       "local_path": "../docs/peter3/ARCHITECTURE.md",

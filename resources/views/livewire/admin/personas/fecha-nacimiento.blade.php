@@ -1,0 +1,1 @@
+<x-calendario-institucional :modelo="$prefijo.'.fec_nac_per'" identificador="persona-fec_nac_per" nombre="fec_nac_per" etiqueta="Fecha de nacimiento" :minimo="now()->subYears(120)->toDateString()" :maximo="now()->toDateString()" :inicio="now()->subYears(15)->toDateString()" :requerido="true" :validacion-local="true" />

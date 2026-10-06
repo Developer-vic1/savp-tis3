@@ -156,6 +156,19 @@ class TraceabilityV2(V2ContractModel):
     trace_id: str
 
 
+class InformationalExternalCareer(V2ContractModel):
+    career_id: str
+    career_name: str
+    university_id: str
+    university: str
+    status: str
+    evidence_layer: Literal["FUENTE_OFICIAL_EXTERNA", "WEB_NO_VERIFICADA"]
+    recommendation_eligible: Literal[False] = False
+    source_ids: list[str]
+    sources: list[SourceReference]
+    limitations: list[str]
+
+
 class AnalysisV2Response(V2ContractModel):
     schema_version: Literal["2.0"] = "2.0"
     engine_version: str
@@ -165,6 +178,7 @@ class AnalysisV2Response(V2ContractModel):
     analysis_status: AnalysisStatus
     student_snapshot: StudentAnalyticalSnapshotV2
     career_evidence_profiles: list[CareerEvidenceProfile]
+    informational_external_careers: list[InformationalExternalCareer]
     traceability: TraceabilityV2
     warnings: list[str]
     limitations: list[Limitation]

@@ -2,15 +2,15 @@
 
 namespace Tests\Unit;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\MaterialClase;
-use App\Models\AulaVirtual\Tarea;
-use App\Models\Calificacion;
-use App\Models\Curso;
-use App\Models\Estudiante;
-use App\Models\ReporteGenerado;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AulaVirtual\MaterialClase;
+use App\Models\Oficial\AulaVirtual\Tarea;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Academico\Curso;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\ReporteGenerado;
+use App\Models\Oficial\Sistema\User;
 use App\Policies\AulaVirtualEntregaPolicy;
 use App\Policies\AulaVirtualMaterialPolicy;
 use App\Policies\AulaVirtualTareaPolicy;

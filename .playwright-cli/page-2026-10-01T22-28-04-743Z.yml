@@ -1,0 +1,34 @@
+- generic [ref=f3e4]:
+  - generic [ref=f3e6]:
+    - img "Logo Franz Tamayo N°3" [ref=f3e8]
+    - generic [ref=f3e11]:
+      - paragraph [ref=f3e12]: Franz Tamayo N°3
+      - paragraph [ref=f3e13]: Sistema SAVP – TIS 3
+  - generic [ref=f3e14]:
+    - link "Volver al inicio" [ref=f3e15] [cursor=pointer]:
+      - /url: http://127.0.0.1:8012
+    - button "Cambiar tema" [ref=f3e18] [cursor=pointer]
+    - generic [ref=f3e21]:
+      - generic [ref=f3e22]:
+        - generic [ref=f3e23]: Acceso institucional
+        - heading "Bienvenido" [level=1] [ref=f3e25]
+        - paragraph [ref=f3e26]: Inicia sesión para acceder al sistema de la Unidad Educativa Franz Tamayo N°3 .
+      - generic [ref=f3e27]:
+        - generic [ref=f3e28]:
+          - generic [ref=f3e29]: Correo electrónico
+          - textbox "Correo electrónico" [active] [ref=f3e31]:
+            - /placeholder: usuario@gmail.com
+        - generic [ref=f3e32]:
+          - generic [ref=f3e33]: Contraseña
+          - generic [ref=f3e34]:
+            - textbox "Contraseña" [ref=f3e35]:
+              - /placeholder: Ingresa tu contraseña
+            - button "Mostrar u ocultar contraseña" [ref=f3e36] [cursor=pointer]
+        - generic [ref=f3e39]:
+          - generic [ref=f3e40]:
+            - checkbox "Recordarme" [ref=f3e41]
+            - generic [ref=f3e42]: Recordarme
+          - link "¿Olvidaste tu contraseña?" [ref=f3e43] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/forgot-password
+        - button "Ingresar al sistema" [disabled] [ref=f3e45]
+      - paragraph [ref=f3e50]: Acceso exclusivo para usuarios autorizados del sistema institucional.

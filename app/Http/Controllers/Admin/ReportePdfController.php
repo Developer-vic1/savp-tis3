@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ReporteGenerado;
+use App\Models\Oficial\Academico\ReporteGenerado;
 use App\Services\ReportAccessService;
 use App\Services\Reportes\DatosReporteAcademicoService;
 use App\Services\Reportes\DatosReporteAdministrativoService;
@@ -63,8 +63,18 @@ class ReportePdfController extends Controller
     public function calificaciones()
     {
         app(ReportAccessService::class)->authorize(auth()->user(), ['Reportes_Academicos']);
+        $filtros = request()->validate([
+            'gestion' => ['nullable', 'exists:gestion_academica,cod_gea'],
+            'periodo' => ['nullable', 'exists:periodo_evaluacion,cod_pev'],
+            'asignatura' => ['nullable', 'exists:asignatura,cod_asi'],
+            'especialidad' => ['nullable', 'exists:especialidad_tecnica,cod_esp'],
+            'estudiante' => ['nullable', 'exists:estudiante,cod_est'],
+        ]);
         try {
-            $datos = $this->datosAcademico->obtener();
+            $datos = $this->datosAcademico->obtener($filtros);
+            if ($datos['total_registros'] > 1500) {
+                return back()->with('error', 'El listado supera 1.500 notas. Selecciona gestión, periodo, asignatura o estudiante antes de descargar el PDF. Los datos y el historial se conservan íntegros.');
+            }
             $ruta = $this->mpdf->generarCalificaciones($datos);
 
             $path = Storage::disk('local')->path($ruta);

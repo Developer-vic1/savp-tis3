@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\AulaVirtual;
 
-use App\Models\AulaVirtual\OrientacionPregunta;
+use App\Models\Oficial\AporteAcademicoVocacional\OrientacionPregunta;
 use Illuminate\Database\Seeder;
 
 class AulaVirtualOrientacionPreguntasSeeder extends Seeder

@@ -5,6 +5,7 @@ namespace App\Models\Oficial\AulaVirtual;
 use App\Models\Oficial\Academico\AsistenciaClase;
 use App\Models\Oficial\Academico\PlanAsignatura;
 use App\Models\Oficial\Academico\PlanEspecialidad;
+use App\Support\Modelos\CodigoInstitucional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class ClaseVirtual extends Model
 {
+    use CodigoInstitucional;
+
     protected $table = 'clase_virtual';
 
     protected $primaryKey = 'cod_cla';
@@ -37,15 +40,6 @@ class ClaseVirtual extends Model
         'fec_fin_cla' => 'date',
         'vis_cla' => 'boolean',
     ];
-
-    protected static function booted(): void
-    {
-        static::creating(function (ClaseVirtual $claseVirtual) {
-            if (! $claseVirtual->cod_cla) {
-                $claseVirtual->cod_cla = 'CLA_'.strtoupper(bin2hex(random_bytes(8)));
-            }
-        });
-    }
 
     public function planAsignatura(): BelongsTo
     {

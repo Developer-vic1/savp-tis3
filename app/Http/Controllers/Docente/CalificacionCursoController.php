@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Docente;
 
 use App\Http\Controllers\Controller;
-use App\Models\Calificacion;
+use App\Models\Oficial\Academico\Calificacion;
 use App\Services\GradeService;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Illuminate\Http\Request;
@@ -23,7 +23,7 @@ class CalificacionCursoController extends Controller
         ]);
 
         $course = $courses->cursoParaDocente($request->user(), $curso);
-        abort_unless($course && $calificacion->cod_pas === $course->cod_pas, 403);
+        abort_unless($course && ($course->cod_pas ? $calificacion->cod_pas === $course->cod_pas : $calificacion->cod_pes === $course->cod_pes), 403);
         $grades->update($request->user(), $calificacion, (float) $data['not_cal'], $data['obs_cal'] ?? null);
 
         return back()->with('status', 'Calificación actualizada correctamente.');
@@ -34,8 +34,8 @@ class CalificacionCursoController extends Controller
         $course = $courses->cursoParaDocente($request->user(), $curso);
         abort_unless($course, 403);
         $data = $request->validate(['cod_est' => ['required', 'string'], 'cod_pev' => ['required', 'string'],
-            'not_cal' => ['required', 'numeric', 'between:0,100'], 'obs_cal' => ['nullable', 'string', 'max:255']]);
-        $grades->save($request->user(), $course->cod_pas, $data['cod_est'], $data['cod_pev'], (float) $data['not_cal'], $data['obs_cal'] ?? null);
+            'not_cal' => ['required', 'numeric', 'between:0,100'], 'obs_cal' => ['nullable', 'string', 'max:255'], 'fea_cal' => ['required', 'date_format:Y-m-d']]);
+        $grades->save($request->user(), $course->cod_pas ?? $course->cod_pes, $data['cod_est'], $data['cod_pev'], (float) $data['not_cal'], $data['obs_cal'] ?? null, fechaAcademica: $data['fea_cal']);
 
         return back()->with('status', 'Nota oficial registrada para la gestión de esta asignación.');
     }

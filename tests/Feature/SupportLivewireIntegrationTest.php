@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Livewire\Admin\GestionPersonas;
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Support\Personas\PersonaInteligente;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;

@@ -1,8 +1,8 @@
-# Handoff PETER 3 ↔ artefactos de datos
+# Handoff Aporte Ingenieril SAVP ↔ artefactos de datos
 
 ## Artefactos consumidos sin modificación
 
-PETER 3 lee, pero no edita:
+Aporte Ingenieril SAVP lee, pero no edita:
 
 - `ai-service/data/bridge/secondary_university_v2.json`;
 - `ai-service/data/crosswalk/career_occupation_v1.json`;
@@ -26,5 +26,5 @@ ocupacional documentado. Si falta, el resto del análisis continúa con estado `
   `INSUFFICIENT_EVIDENCE`;
 - toda relación debe conservar versión, justificación y limitaciones.
 
-Un cambio de schema o versión debe acompañarse de fixture y prueba de loader. PETER 3 no
+Un cambio de schema o versión debe acompañarse de fixture y prueba de loader. Aporte Ingenieril SAVP no
 requiere cambios Laravel, migraciones ni coordinación con PETER 2 para ejecutar su E2E.

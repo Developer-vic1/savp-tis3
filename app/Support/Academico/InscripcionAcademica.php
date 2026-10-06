@@ -1779,10 +1779,11 @@ class InscripcionAcademica
 
         if ($codGea && $codCur && $codPar && $codTur && Schema::hasTable('horario') && Schema::hasTable('plantilla_horaria')) {
             $existeHorario = DB::table('horario')
+                ->join('grupo_academico as grupo_inscripcion_horario', 'grupo_inscripcion_horario.cod_gac', '=', 'horario.cod_gac')
                 ->join('plantilla_horaria', 'plantilla_horaria.cod_pho', '=', 'horario.cod_pho')
-                ->where('horario.cod_gea', $codGea)
-                ->where('horario.cod_cur', $codCur)
-                ->where('horario.cod_par', $codPar)
+                ->where('grupo_inscripcion_horario.cod_gea', $codGea)
+                ->where('grupo_inscripcion_horario.cod_cur', $codCur)
+                ->where('grupo_inscripcion_horario.cod_par', $codPar)
                 ->where('plantilla_horaria.cod_tur', $codTur)
                 ->exists();
 

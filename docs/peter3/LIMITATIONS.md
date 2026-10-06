@@ -1,4 +1,4 @@
-# Limitaciones reales — PETER 3
+# Limitaciones reales — Aporte Ingenieril SAVP
 
 Revalidación técnica del 2026-10-01: Torch 2.14.0 y el módulo nativo de
 scikit-learn 1.9.1 fueron rechazados por Windows Code Integrity en VicDev.

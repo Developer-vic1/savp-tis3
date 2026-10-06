@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AcademicAccessService;
 use App\Services\RoleDashboardResolver;
 

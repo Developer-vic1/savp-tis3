@@ -1,3 +1,5 @@
+@import './plegable-institucional.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -899,3 +901,16 @@
         opacity: 0.75;
     }
 }
+
+/* Lectura documental compartida: progreso real indeterminado, sin porcentajes ficticios. */
+.ui-lector-documento{padding:1rem;border:1px solid var(--ui-border);border-radius:1rem;background:var(--ui-surface-soft)}
+.ui-lector-cabecera{display:flex;align-items:flex-start;gap:.75rem}.ui-lector-cabecera>i{font-size:2rem;color:var(--ui-primary)}
+.ui-lector-escaneo{align-items:center;gap:1rem;padding:1rem;border:1px solid var(--ui-primary-border);border-radius:.85rem;background:var(--ui-primary-soft)}
+.ui-lector-hoja{position:relative;overflow:hidden;flex:none;width:3rem;height:3.5rem;display:grid;place-items:center;border:1px solid var(--ui-primary-border);border-radius:.5rem;color:var(--ui-primary);background:var(--ui-surface)}.ui-lector-hoja i{font-size:2rem}.ui-lector-hoja>span{position:absolute;left:0;right:0;height:3px;background:var(--ui-primary);box-shadow:0 0 12px var(--ui-primary);animation:uiLeerDocumento 1.8s ease-in-out infinite alternate}
+.ui-lector-progreso{height:3px;overflow:hidden;border-radius:1rem;background:var(--ui-border);margin-top:.65rem}.ui-lector-progreso>span{display:block;width:35%;height:100%;background:var(--ui-primary);animation:uiProgresoDocumento 1.4s ease-in-out infinite alternate}
+@keyframes uiLeerDocumento{from{top:10%}to{top:85%}}@keyframes uiProgresoDocumento{from{transform:translateX(-100%)}to{transform:translateX(285%)}}
+@media(prefers-reduced-motion:reduce){.ui-lector-hoja>span,.ui-lector-progreso>span{animation:none}.ui-lector-hoja>span{top:50%}}
+
+.ui-lector-documento input[type=file]::file-selector-button{border:1px solid var(--ui-border);border-radius:.65rem;padding:.45rem .7rem;margin-right:.7rem;background:var(--ui-surface);color:var(--ui-text);font:inherit;cursor:pointer}
+
+.contacto-institucional-enlace{display:inline-flex;align-items:center;gap:.4rem;color:var(--ui-primary);max-width:100%;word-break:break-word;text-decoration:underline;text-underline-offset:3px}.contacto-institucional-enlace i{flex-shrink:0}.contacto-institucional-telefono{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem}.contacto-institucional-llamada{display:inline-flex;align-items:center;gap:.3rem;color:var(--ui-text);font-size:.75rem;padding:.3rem .45rem;border:1px solid var(--ui-border);border-radius:.45rem}.contacto-institucional-enlace:focus-visible,.contacto-institucional-llamada:focus-visible{outline:2px solid var(--ui-primary);outline-offset:3px}

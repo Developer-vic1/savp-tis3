@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Calificacion;
-use App\Models\User;
+use App\Models\Oficial\Academico\Calificacion;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AcademicAccessService;
 
 class CalificacionPolicy
@@ -15,6 +15,6 @@ class CalificacionPolicy
 
     public function update(User $user, Calificacion $grade): bool
     {
-        return app(AcademicAccessService::class)->canManageGrade($user, $grade->cod_est, $grade->cod_asi, $grade->cod_pas);
+        return app(AcademicAccessService::class)->canManageGrade($user, $grade->cod_est, $grade->cod_asi, $grade->cod_pas ?? $grade->cod_pes, $grade->fea_cal?->format('Y-m-d'));
     }
 }

@@ -6,7 +6,7 @@ ADR-BD-001. Fecha: 2026-10-01. **Estado: PROPUESTO, pendiente de revisión arqui
 
 El checkout declara 64 tablas históricas y propone otras 14 en seis archivos no ejecutados. El volcado histórico contiene 33 tablas, una de ellas `migrations` creada por infraestructura. No conocemos el schema ni las filas actuales de la institución. El inventario une fuentes con origen explícito; no afirma que 79 tablas estén desplegadas.
 
-Se compararon tres opciones: conservar todo y añadir tablas por pantalla; sustituir el núcleo por un schema nuevo; evolucionar las entidades actuales, añadiendo solo hechos faltantes. Se propone la tercera. Permite conservar identidad, notas históricas, matrícula y ownership del LMS, y evita duplicar Curso/Asignatura/Tarea/Bitácora. Exige conciliar datos y garantizar compatibilidad de lectores durante cada extensión. No se propone un reemplazo masivo ni un nuevo CRUD Peter 3 sobre PostgreSQL.
+Se compararon tres opciones: conservar todo y añadir tablas por pantalla; sustituir el núcleo por un schema nuevo; evolucionar las entidades actuales, añadiendo solo hechos faltantes. Se propone la tercera. Permite conservar identidad, notas históricas, matrícula y ownership del LMS, y evita duplicar Curso/Asignatura/Tarea/Bitácora. Exige conciliar datos y garantizar compatibilidad de lectores durante cada extensión. No se propone un reemplazo masivo ni un nuevo CRUD Aporte Ingenieril SAVP sobre PostgreSQL.
 
 ## Entidades existentes y modificaciones
 
@@ -102,9 +102,9 @@ PUBLIC solo para información institucional explícitamente publicable; no hay p
 
 Las FK no crean automáticamente índices del lado referente en PostgreSQL; PK/UNIQUE sí tienen respaldo de índice. No duplicar ese respaldo ni indexar booleans indiscriminadamente. Las recomendaciones IDX de la auditoría se basan en filtros observados y son propuestas sujetas a EXPLAIN en ambiente aislado. CHECK/UNIQUE no sustituyen autorización, correlación de contexto ni concurrencia.
 
-## Peter 3: frontera de datos y resultados
+## Aporte Ingenieril SAVP: frontera de datos y resultados
 
-Laravel controla lectura/escritura de PostgreSQL, ownership, Policy, validación y auditoría. Peter 3 recibe DTO y devuelve datos de un contrato; acceso directo DB: **NO**. AcademicAnalysisData contiene student_id, período, notas con escala, asistencia agregada, intereses declarados y especialidad; AporteIngenierilClient sustituye student_id por HMAC antes del HTTP. No envía Persona, CI, dirección, teléfono, contraseña ni contexto Kardex. La clave HMAC actual proviene de app.key: rotación altera pseudónimo y exige política de integración.
+Laravel controla lectura/escritura de PostgreSQL, ownership, Policy, validación y auditoría. Aporte Ingenieril SAVP recibe DTO y devuelve datos de un contrato; acceso directo DB: **NO**. AcademicAnalysisData contiene student_id, período, notas con escala, asistencia agregada, intereses declarados y especialidad; AporteIngenierilClient sustituye student_id por HMAC antes del HTTP. No envía Persona, CI, dirección, teléfono, contraseña ni contexto Kardex. La clave HMAC actual proviene de app.key: rotación altera pseudónimo y exige política de integración.
 
 | Funcionalidad | Origen / DTO | Personal/agregado | Persistencia objetivo |
 |---|---|---|---|
@@ -113,7 +113,7 @@ Laravel controla lectura/escritura de PostgreSQL, ownership, Policy, validación
 | Asistente de estudio | question/schema_version → TutorService | Texto libre potencialmente personal; no historial automático | NO_PERSIST por defecto; SESSION efímera opcional; HISTORY_OPT_IN futura requiere consentimiento/retención y contrato. Sin tabla de chat ahora. |
 | RIASEC/carreras/cognitivo | Instrumento aprobado y escala específica aún no equivalente | Respuestas sensibles solo por consentimiento/contrato mínimo | FUTURO, no convertir respuestas locales ni guardar diagnóstico inferido del promedio. |
 
-Validar contratos, autorización, resultado insuficiente y fallback; Peter 3 no dicta Role, sanción, nota oficial, evento ni matrícula. Laravel revisa decisión humana antes de convertir una recomendación en hecho. Las tablas de orientación local se extienden cuando el concepto coincide; no se duplica `orientacion_resultados` con `peter3_results` universal.
+Validar contratos, autorización, resultado insuficiente y fallback; Aporte Ingenieril SAVP no dicta Role, sanción, nota oficial, evento ni matrícula. Laravel revisa decisión humana antes de convertir una recomendación en hecho. Las tablas de orientación local se extienden cuando el concepto coincide; no se duplica `orientacion_resultados` con `peter3_results` universal.
 
 ## Plan de aplicación futura y testing
 
@@ -125,7 +125,7 @@ Validar contratos, autorización, resultado insuficiente y fallback; Peter 3 no 
 4. Crear schema de prueba base autorizado; fixtures/factories sintéticos con Persona y User.cod_usu/cod_per y catálogos mínimos. UserFactory actual usa name y Team inexistente; corregir solo en fase autorizada, sin datos de personas reales. Seeders institucionales no se ejecutan por defecto.
 5. Aplicar futura corrección estructural aprobada MIG-006A (incluye compatibilidad tokens/FK/índices priorizados); después los checks MIG-006B con datos sintéticos inválidos y válidos. Perfilado de datos reales requerirá otro acceso autorizado de solo lectura; no declararlo hecho ahora.
 6. Catálogos/seguimiento/revisiones/evidencias MIG-001 corregida; unidades y enlaces MIG-002; notificaciones MIG-003 corregida; metas/revisión MIG-004; eventos/revisión MIG-005 corregida; edición orientación MIG-007. Cada paquete debe conciliar preexistencia y dependencias; no usar CREATE para sobrescribir una tabla descubierta.
-7. Pruebas PG de PK textual/morphs, UNIQUE y NULL, FK cruzadas, rangos CHECK, histórico sin cod_pas, actualización de fila histórica bajo NOT VALID, concurrencia de códigos/entrega/notas, rollback vacío y rechazo con historia, append-only, scope RBAC por seis actores y revocación. API fakes para Peter 3 y pruebas de ausencia de PII en payload/logs.
+7. Pruebas PG de PK textual/morphs, UNIQUE y NULL, FK cruzadas, rangos CHECK, histórico sin cod_pas, actualización de fila histórica bajo NOT VALID, concurrencia de códigos/entrega/notas, rollback vacío y rechazo con historia, append-only, scope RBAC por seis actores y revocación. API fakes para Aporte Ingenieril SAVP y pruebas de ausencia de PII en payload/logs.
 8. Pruebas de lectura/escritura real y UX autenticada; habilitar flags solo con evidencia y contrato aprobado. Un archivo de migration o php -l nunca certifica PASS de una ventana.
 
 Paquetes objetivo: MIG-001, MIG-002, MIG-003, MIG-004, MIG-005, MIG-006A estructural, MIG-006B escalas y MIG-007 orientación versionada: **8 propuestas de aplicación futura**, derivadas de siete necesidades de dominio/integridad; no son ocho archivos creados. Los seis archivos físicos anteriores se preservan como evidencia. Al revisar, decidir nombres y sustitución de MIG-006 sin registrar dos veces sus constraints. Cambios de CI, perfiles, cupos, períodos anuales y resultados científicos futuros pueden requerir paquetes adicionales según perfilado/contrato: no se incluyen a ciegas en el conteo cerrado de esta fase.

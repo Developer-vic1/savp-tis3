@@ -1,0 +1,41 @@
+{
+  "version": "conversation-catalog-1.1.0",
+  "entries": {
+    "SOCIAL": {
+      "answer": "¡Hola! Estoy listo para ayudarte. Puedo buscar información en las fuentes validadas de SAVP sobre carreras, universidades, materias y normativa educativa. ¿Qué quieres consultar?",
+      "suggested_topics": [
+        "Comparar carreras",
+        "Revisar materias iniciales",
+        "Consultar una fuente oficial"
+      ]
+    },
+    "THANKS": {
+      "answer": "¡De nada! Si quieres, podemos ampliar el tema o revisar juntos la fuente que respalda la respuesta.",
+      "suggested_topics": ["Ampliar el tema", "Revisar la fuente oficial"]
+    },
+    "FAREWELL": {
+      "answer": "¡Hasta luego! Cuando vuelvas, podemos continuar con tus dudas académicas y las fuentes disponibles.",
+      "suggested_topics": ["Continuar mi consulta", "Explorar las fuentes disponibles"]
+    },
+    "WELLBEING": {
+      "answer": "¡Hola! Estoy disponible para ayudarte con tus consultas académicas. ¿Qué tema te gustaría revisar?",
+      "suggested_topics": ["Comparar carreras", "Revisar materias", "Consultar fuentes oficiales"]
+    },
+    "CAPABILITIES": {
+      "answer": "Trabajo con el conocimiento validado que se carga en SAVP. Puedo localizar fuentes, mostrar la evidencia que respalda una respuesta y relacionarla con tu contexto académico autorizado. Si una fuente o dato no está cargado, lo indicaré en lugar de inventarlo.",
+      "suggested_topics": [
+        "¿Qué materias tiene una carrera?",
+        "Compara dos planes de estudio",
+        "¿Qué fuentes tiene el tutor?"
+      ]
+    },
+    "KNOWLEDGE_GAP": {
+      "answer": "No encontré evidencia oficial suficiente en el corpus. Indica la carrera, institución, asignatura o gestión; si tienes una fuente oficial, incorpórala al corpus para que el tutor pueda consultarla.",
+      "suggested_topics": [
+        "Agregar una fuente oficial",
+        "Precisar institución o carrera",
+        "Consultar fuentes disponibles"
+      ]
+    }
+  }
+}

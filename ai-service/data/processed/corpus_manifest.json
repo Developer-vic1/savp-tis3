@@ -1,8 +1,8 @@
 {
   "corpus_version": "bo-official-corpus-1.0.0",
-  "source_manifest_version": "2.1.0",
-  "source_count": 12,
-  "chunk_count": 773,
+  "source_manifest_version": "2.2.0",
+  "source_count": 16,
+  "chunk_count": 814,
   "statistics": [
     {
       "source_id": "BO-ME-CURRICULO-BASE-2012",
@@ -111,6 +111,38 @@
       "chunks": 27,
       "digital_pages": 10,
       "ocr_pages": 2,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UNIFRANZ-LP-SISID-PROFILE-2026",
+      "segments": 7,
+      "chunks": 7,
+      "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UNIFRANZ-LP-SISID-MALLA-2026",
+      "segments": 8,
+      "chunks": 12,
+      "digital_pages": 6,
+      "ocr_pages": 2,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UPB-LP-SISC-PROFILE-2026",
+      "segments": 17,
+      "chunks": 17,
+      "digital_pages": 0,
+      "ocr_pages": 0,
+      "warnings": []
+    },
+    {
+      "source_id": "BO-UPB-LP-SISC-MALLA-2026",
+      "segments": 2,
+      "chunks": 5,
+      "digital_pages": 2,
+      "ocr_pages": 0,
       "warnings": []
     }
   ]

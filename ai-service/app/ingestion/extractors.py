@@ -8,7 +8,6 @@ from bs4 import BeautifulSoup
 from PIL import Image
 
 from app.ingestion.models import DocumentExtraction, ExtractedSegment
-from app.ingestion.ocr import EasyOcrSpanish, OcrEngine
 from app.knowledge.registry import SERVICE_ROOT, SourceRecord
 
 if TYPE_CHECKING:
@@ -31,7 +30,6 @@ def _render_page(page: pymupdf.Page, dpi: int = OCR_DPI) -> Image.Image:
 def extract_pdf(
     path: Path,
     source_id: str,
-    ocr_engine: OcrEngine | None = None,
 ) -> DocumentExtraction:
     import pymupdf
 
@@ -55,24 +53,9 @@ def extract_pdf(
                 digital_pages.append(page_number)
                 continue
 
-            engine = ocr_engine or EasyOcrSpanish()
-            ocr_text, confidence = engine.extract(_render_page(page))
-            cleaned_ocr = _clean_text(ocr_text)
-            if cleaned_ocr:
-                segments.append(
-                    ExtractedSegment(
-                        text=cleaned_ocr,
-                        page=page_number,
-                        extraction_method="OCR",
-                        confidence=confidence,
-                        ocr_engine=engine.engine_name,
-                        ocr_language=engine.language,
-                        ocr_version=engine.engine_version,
-                    )
-                )
-                ocr_pages.append(page_number)
-            else:
-                warnings.append(f"Página {page_number} sin texto recuperable.")
+            warnings.append(
+                f"Página {page_number} sin texto digital recuperable; OCR automático deshabilitado."
+            )
     return DocumentExtraction(
         source_id=source_id,
         segments=segments,
@@ -163,12 +146,11 @@ def extract_text(path: Path, source_id: str) -> DocumentExtraction:
 
 def extract_source(
     source: SourceRecord,
-    ocr_engine: OcrEngine | None = None,
 ) -> DocumentExtraction:
     path = SERVICE_ROOT / source.local_path
     suffix = path.suffix.casefold()
     if suffix == ".pdf":
-        return extract_pdf(path, source.source_id, ocr_engine)
+        return extract_pdf(path, source.source_id)
     if suffix in {".html", ".htm"}:
         return extract_html(path, source.source_id)
     if suffix in {".txt", ".md"}:

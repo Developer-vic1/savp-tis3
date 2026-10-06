@@ -1,0 +1,13 @@
+{
+    "entorno": "PostgreSQL aislado 5543",
+    "base": "savp_fresh_solo_18bd1560",
+    "base_institucional_modificada": false,
+    "casos": {
+        "up_en_base_instalada_con_datos": "ACEPTADO SIN CAMBIOS",
+        "down_conserva_datos_y_funciones": "ACEPTADO",
+        "dependencia_ajena_restrict_y_rollback_atomico": "RECHAZADO 2BP01; RUTINAS CONSERVADAS",
+        "limpieza_diez_firmas_y_funcion_ajena_preservada": "ACEPTADO",
+        "reconstruccion_recrea_las_diez_firmas": "ACEPTADO: 104 TABLAS"
+    },
+    "casos_correctos": 5
+}

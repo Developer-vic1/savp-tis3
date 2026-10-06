@@ -1,6 +1,6 @@
 > **Nota histórica (2026-09-30):** Este documento describe la línea base de esa fecha. El estado vigente de corpus, FAISS y gates está en `FINAL_STATUS.md`.
 
-# Registro de desarrollo PETER 3
+# Registro de desarrollo Aporte Ingenieril SAVP
 
 ## Consolidación final — 2026-09-29
 

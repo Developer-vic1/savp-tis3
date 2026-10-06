@@ -1,0 +1,414 @@
+- generic [ref=f10e3]:
+  - complementary "Navegación de Estudiante" [ref=f10e4]:
+    - generic [ref=f10e5]:
+      - link "Logo de la Unidad Educativa Franz Tamayo N°3 Franz Tamayo N°3 SAVP · TIS 3" [ref=f10e6] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - img "Logo de la Unidad Educativa Franz Tamayo N°3" [ref=f10e8]
+        - generic [ref=f10e9]:
+          - generic [ref=f10e10]: Franz Tamayo N°3
+          - generic [ref=f10e11]: SAVP · TIS 3
+      - button "Contraer menú" [expanded] [ref=f10e12] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f10e13]: 
+      - text: 
+    - generic [ref=f10e14]:
+      - generic [aria-hidden] [ref=f10e16]: 
+      - generic [ref=f10e17]:
+        - generic [ref=f10e18]: Estudiante
+        - generic [ref=f10e19]: Espacio de trabajo institucional
+    - navigation "Módulos autorizados" [ref=f10e20]:
+      - generic [ref=f10e21]: Principal
+      - link "Inicio" [ref=f10e22] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/estudiante
+        - generic [aria-hidden] [ref=f10e24]: 
+      - region "Académico" [ref=f10e26]:
+        - button "Grupo Académico" [ref=f10e27] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f10e29]: 
+          - generic [ref=f10e30]: Académico
+          - generic [aria-hidden] [ref=f10e31]: 
+        - text:    
+      - region "Orientación" [ref=f10e32]:
+        - button "Grupo Orientación" [expanded] [ref=f10e33] [cursor=pointer]:
+          - generic [aria-hidden] [ref=f10e35]: 
+          - generic [ref=f10e36]: Orientación
+          - generic [aria-hidden] [ref=f10e37]: 
+        - group "Grupo Orientación" [ref=f10e38]:
+          - link "Mis intereses" [ref=f10e39] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/intereses
+            - generic [aria-hidden] [ref=f10e41]: 
+          - link "Mi futuro académico" [ref=f10e43] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/futuro
+            - generic [aria-hidden] [ref=f10e45]: 
+          - link "Mi preparación" [ref=f10e47] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/preparacion
+            - generic [aria-hidden] [ref=f10e49]: 
+          - link "Mi plan" [ref=f10e51] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/plan
+            - generic [aria-hidden] [ref=f10e53]: 
+          - link "Fuentes académicas" [ref=f10e55] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/fuentes
+            - generic [aria-hidden] [ref=f10e57]: 
+          - link "Asistente de estudio" [ref=f10e59] [cursor=pointer]:
+            - /url: http://127.0.0.1:8012/estudiante/asistente
+            - generic [aria-hidden] [ref=f10e61]: 
+    - generic [ref=f10e63]:
+      - link "Mi perfil" [ref=f10e64] [cursor=pointer]:
+        - /url: http://127.0.0.1:8012/user/profile
+        - generic [aria-hidden] [ref=f10e66]: 
+      - button "Cerrar sesión" [ref=f10e69] [cursor=pointer]:
+        - generic [aria-hidden] [ref=f10e71]: 
+  - generic [ref=f10e73]:
+    - banner [ref=f10e74]:
+      - generic [ref=f10e76]:
+        - generic [ref=f10e77]: 01/10/2026
+        - generic [ref=f10e81]:
+          - generic [ref=f10e82]: Buscar áreas de trabajo autorizadas
+          - searchbox "Buscar áreas de trabajo autorizadas" [ref=f10e83]
+        - button "Notificaciones" [ref=f10e85] [cursor=pointer]: 🔔
+        - button "Cambiar tema" [ref=f10e86] [cursor=pointer]
+        - button [ref=f10e90] [cursor=pointer]:
+          - generic [ref=f10e91]:
+            - img "Jose Luis Quispe Callisaya" [ref=f10e92]
+            - generic [ref=f10e93]:
+              - paragraph [ref=f10e94]: Jose Luis Quispe Callisaya
+              - paragraph [ref=f10e95]: Estudiante
+    - main [ref=f10e98]:
+      - generic [ref=f10e99]:
+        - generic [ref=f10e100]:
+          - generic [ref=f10e101]:
+            - generic [ref=f10e102]:
+              - generic [ref=f10e103]:
+                - generic [ref=f10e104]: Orientación académica y vocacional
+                - generic [ref=f10e105]: Perfil listo
+              - heading "Conoce tus intereses y explora tus opciones" [level=1] [ref=f10e106]
+              - paragraph [ref=f10e107]: El sistema analiza por separado tus intereses, tu preparación académica observada y la evidencia disponible. No predice tu éxito, no mide tu inteligencia y no decide una carrera por ti.
+            - generic [ref=f10e108]:
+              - generic [ref=f10e109]:
+                - generic [ref=f10e110]: Requisitos obligatorios
+                - generic [ref=f10e111]: 4/4
+              - paragraph [ref=f10e114]: 100% de los requisitos mínimos completados.
+          - navigation "Secciones de orientación" [ref=f10e115]:
+            - link "Perfil Revisa si tienes la información mínima para continuar." [ref=f10e116] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=perfil
+              - generic [ref=f10e118]:
+                - generic [ref=f10e119]: Perfil
+                - generic [ref=f10e120]: Revisa si tienes la información mínima para continuar.
+            - link "RIASEC Explora tus intereses mediante el cuestionario vocacional." [ref=f10e121] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=riasec
+              - generic [ref=f10e123]:
+                - generic [ref=f10e124]: RIASEC
+                - generic [ref=f10e125]: Explora tus intereses mediante el cuestionario vocacional.
+            - link "Análisis Consulta la evidencia académica y vocacional disponible." [ref=f10e126] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=analisis
+              - generic [ref=f10e128]:
+                - generic [ref=f10e129]: Análisis
+                - generic [ref=f10e130]: Consulta la evidencia académica y vocacional disponible.
+            - link "Fuentes Consulta información recuperada desde fuentes documentadas." [ref=f10e131] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=fuentes
+              - generic [ref=f10e133]:
+                - generic [ref=f10e134]: Fuentes
+                - generic [ref=f10e135]: Consulta información recuperada desde fuentes documentadas.
+            - link "Tutor Formula preguntas sobre carreras y evidencia disponible." [ref=f10e136] [cursor=pointer]:
+              - /url: http://127.0.0.1:8012/aula-virtual/mi-orientacion?section=tutor
+              - generic [ref=f10e138]:
+                - generic [ref=f10e139]: Tutor
+                - generic [ref=f10e140]: Formula preguntas sobre carreras y evidencia disponible.
+        - generic [ref=f10e141]:
+          - generic [ref=f10e142]:
+            - generic [ref=f10e143]:
+              - paragraph [ref=f10e144]: Análisis multidimensional
+              - heading "Mi análisis y perfiles de carrera" [level=2] [ref=f10e145]
+              - paragraph [ref=f10e146]: La afinidad de intereses, la preparación académica y la cobertura de evidencia son dimensiones distintas. Una no sustituye a las otras.
+            - generic [ref=f10e147]: Perfil habilitado
+          - button "Actualizar análisis con mis datos" [ref=f10e150] [cursor=pointer]
+        - generic [ref=f10e152]:
+          - generic [ref=f10e153]:
+            - generic [ref=f10e154]:
+              - paragraph [ref=f10e155]: Cobertura de datos
+              - heading "Evidencia disponible de mi perfil" [level=2] [ref=f10e156]
+            - generic [ref=f10e157]: COMPLETE
+          - generic [ref=f10e158]:
+            - article [ref=f10e159]:
+              - generic [ref=f10e162]:
+                - heading "Datos académicos" [level=3] [ref=f10e163]
+                - generic [ref=f10e164]: Disponible
+            - article [ref=f10e165]:
+              - generic [ref=f10e168]:
+                - heading "Asistencia" [level=3] [ref=f10e169]
+                - generic [ref=f10e170]: Disponible
+            - article [ref=f10e171]:
+              - generic [ref=f10e174]:
+                - heading "Actividad de aprendizaje" [level=3] [ref=f10e175]
+                - generic [ref=f10e176]: Parcial
+            - article [ref=f10e177]:
+              - generic [ref=f10e180]:
+                - heading "Historia académica" [level=3] [ref=f10e181]
+                - generic [ref=f10e182]: Disponible
+            - article [ref=f10e183]:
+              - generic [ref=f10e186]:
+                - heading "Formación técnica BTH" [level=3] [ref=f10e187]
+                - generic [ref=f10e188]: Disponible
+            - article [ref=f10e189]:
+              - generic [ref=f10e192]:
+                - heading "Intereses declarados" [level=3] [ref=f10e193]
+                - generic [ref=f10e194]: Sin evidencia disponible
+          - paragraph [ref=f10e196]:
+            - strong [ref=f10e197]: "Importante:"
+            - text: un componente sin evidencia permanece como desconocido o no observado. No se interpreta como un desempeño de cero.
+        - region [ref=f10e198]:
+          - generic [ref=f10e199]:
+            - generic [ref=f10e200]:
+              - paragraph [ref=f10e201]: Comparativa completa
+              - heading "Opciones de carrera por dimensiones" [level=2] [ref=f10e202]
+              - paragraph [ref=f10e203]: "La tabla permite revisar todas las opciones en una sola vista. Las filas siguen el orden del catálogo: intereses, preparación, BTH y cobertura se leen por separado y no se convierten en un puesto ni en un porcentaje de compatibilidad."
+            - generic [ref=f10e204]: 5 opción(es) comparadas
+          - table [ref=f10e206]:
+            - caption [ref=f10e207]: Comparativa completa de las opciones de carrera analizadas.
+            - rowgroup [ref=f10e208]:
+              - row [ref=f10e209]:
+                - columnheader "Opción" [ref=f10e210]
+                - columnheader "Intereses" [ref=f10e211]
+                - columnheader "Preparación observada" [ref=f10e212]
+                - columnheader "BTH relacionado" [ref=f10e213]
+                - columnheader "Cobertura de evidencia" [ref=f10e214]
+            - rowgroup [ref=f10e215]:
+              - row [ref=f10e216]:
+                - rowheader "Ingeniería Ambiental Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f10e217]:
+                  - generic [ref=f10e218]: Ingeniería Ambiental
+                  - generic [ref=f10e219]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Parcial" [ref=f10e220]
+                - cell [ref=f10e222]:
+                  - paragraph [ref=f10e223]: 2 de 4 relaciones documentadas
+                  - paragraph [ref=f10e224]: 2 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f10e225]
+                - cell [ref=f10e227]:
+                  - paragraph [ref=f10e228]: 16 registros
+                  - paragraph [ref=f10e229]: 8 materias · 2 periodos
+              - row [ref=f10e230]:
+                - rowheader "Ingeniería Civil Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f10e231]:
+                  - generic [ref=f10e232]: Ingeniería Civil
+                  - generic [ref=f10e233]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Disponible" [ref=f10e234]
+                - cell [ref=f10e236]:
+                  - paragraph [ref=f10e237]: 3 de 4 relaciones documentadas
+                  - paragraph [ref=f10e238]: 1 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f10e239]
+                - cell [ref=f10e241]:
+                  - paragraph [ref=f10e242]: 16 registros
+                  - paragraph [ref=f10e243]: 8 materias · 2 periodos
+              - row [ref=f10e244]:
+                - rowheader "Ingeniería de Sistemas Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f10e245]:
+                  - generic [ref=f10e246]: Ingeniería de Sistemas
+                  - generic [ref=f10e247]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Parcial" [ref=f10e248]
+                - cell [ref=f10e250]:
+                  - paragraph [ref=f10e251]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f10e252]: 1 área(s) de refuerzo señalada(s)
+                - cell "Disponible" [ref=f10e253]
+                - cell [ref=f10e255]:
+                  - paragraph [ref=f10e256]: 16 registros
+                  - paragraph [ref=f10e257]: 8 materias · 2 periodos
+              - row [ref=f10e258]:
+                - rowheader "Psicología Universidad Católica Boliviana San Pablo, Sede La Paz" [ref=f10e259]:
+                  - generic [ref=f10e260]: Psicología
+                  - generic [ref=f10e261]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                - cell "Disponible" [ref=f10e262]
+                - cell [ref=f10e264]:
+                  - paragraph [ref=f10e265]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f10e266]: 1 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f10e267]
+                - cell [ref=f10e269]:
+                  - paragraph [ref=f10e270]: 16 registros
+                  - paragraph [ref=f10e271]: 8 materias · 2 periodos
+              - row [ref=f10e272]:
+                - rowheader "Ingeniería Civil Universidad Mayor de San Andrés, La Paz" [ref=f10e273]:
+                  - generic [ref=f10e274]: Ingeniería Civil
+                  - generic [ref=f10e275]: Universidad Mayor de San Andrés, La Paz
+                - cell "Disponible" [ref=f10e276]
+                - cell [ref=f10e278]:
+                  - paragraph [ref=f10e279]: 2 de 3 relaciones documentadas
+                  - paragraph [ref=f10e280]: 1 área(s) de refuerzo señalada(s)
+                - cell "Insuficiente" [ref=f10e281]
+                - cell [ref=f10e283]:
+                  - paragraph [ref=f10e284]: 16 registros
+                  - paragraph [ref=f10e285]: 8 materias · 2 periodos
+          - paragraph [ref=f10e286]: "Lectura de estados: “Disponible” indica una relación documentada; “Parcial” conserva una relación con límites explícitos; “Insuficiente” y “Sin evidencia disponible” señalan información por revisar sin asumir bajo desempeño."
+        - generic [ref=f10e287]:
+          - generic [ref=f10e288]:
+            - generic [ref=f10e289]:
+              - paragraph [ref=f10e290]: Exploración académica
+              - heading "Perfiles de carrera analizados" [level=2] [ref=f10e291]
+            - generic [ref=f10e292]: 5 opciones documentadas en el catálogo actual
+          - generic [ref=f10e293]:
+            - article [ref=f10e294]:
+              - generic [ref=f10e295]:
+                - generic [ref=f10e296]:
+                  - paragraph [ref=f10e297]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                  - heading "Ingeniería Ambiental" [level=3] [ref=f10e298]
+                - generic [ref=f10e299]:
+                  - generic [ref=f10e300]: "Afinidad: Parcial"
+                  - generic [ref=f10e301]: "BTH: Insuficiente"
+              - generic [ref=f10e302]:
+                - generic [ref=f10e303]:
+                  - heading "Afinidad de intereses" [level=4] [ref=f10e305]
+                  - paragraph [ref=f10e306]: Parcial
+                  - paragraph [ref=f10e307]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                - generic [ref=f10e308]:
+                  - heading "Preparación académica" [level=4] [ref=f10e310]
+                  - paragraph [ref=f10e311]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                - generic [ref=f10e312]:
+                  - heading "Cobertura de evidencia" [level=4] [ref=f10e314]
+                  - generic [ref=f10e315]:
+                    - generic [ref=f10e316]:
+                      - term [ref=f10e317]: Observaciones
+                      - definition [ref=f10e318]: "16"
+                    - generic [ref=f10e319]:
+                      - term [ref=f10e320]: Materias distintas
+                      - definition [ref=f10e321]: "8"
+                    - generic [ref=f10e322]:
+                      - term [ref=f10e323]: Periodos ordenados
+                      - definition [ref=f10e324]: "2"
+              - generic [ref=f10e325]:
+                - group [ref=f10e326]:
+                  - generic "Evidencia y áreas de refuerzo" [ref=f10e327] [cursor=pointer]
+                - group [ref=f10e328]:
+                  - generic "Fuentes y limitaciones" [ref=f10e329] [cursor=pointer]
+            - article [ref=f10e330]:
+              - generic [ref=f10e331]:
+                - generic [ref=f10e332]:
+                  - paragraph [ref=f10e333]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                  - heading "Ingeniería Civil" [level=3] [ref=f10e334]
+                - generic [ref=f10e335]:
+                  - generic [ref=f10e336]: "Afinidad: Disponible"
+                  - generic [ref=f10e337]: "BTH: Insuficiente"
+              - generic [ref=f10e338]:
+                - generic [ref=f10e339]:
+                  - heading "Afinidad de intereses" [level=4] [ref=f10e341]
+                  - paragraph [ref=f10e342]: Disponible
+                  - paragraph [ref=f10e343]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                - generic [ref=f10e344]:
+                  - heading "Preparación académica" [level=4] [ref=f10e346]
+                  - paragraph [ref=f10e347]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                - generic [ref=f10e348]:
+                  - heading "Cobertura de evidencia" [level=4] [ref=f10e350]
+                  - generic [ref=f10e351]:
+                    - generic [ref=f10e352]:
+                      - term [ref=f10e353]: Observaciones
+                      - definition [ref=f10e354]: "16"
+                    - generic [ref=f10e355]:
+                      - term [ref=f10e356]: Materias distintas
+                      - definition [ref=f10e357]: "8"
+                    - generic [ref=f10e358]:
+                      - term [ref=f10e359]: Periodos ordenados
+                      - definition [ref=f10e360]: "2"
+              - generic [ref=f10e361]:
+                - group [ref=f10e362]:
+                  - generic "Evidencia y áreas de refuerzo" [ref=f10e363] [cursor=pointer]
+                - group [ref=f10e364]:
+                  - generic "Fuentes y limitaciones" [ref=f10e365] [cursor=pointer]
+            - article [ref=f10e366]:
+              - generic [ref=f10e367]:
+                - generic [ref=f10e368]:
+                  - paragraph [ref=f10e369]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                  - heading "Ingeniería de Sistemas" [level=3] [ref=f10e370]
+                - generic [ref=f10e371]:
+                  - generic [ref=f10e372]: "Afinidad: Parcial"
+                  - generic [ref=f10e373]: "BTH: Disponible"
+              - generic [ref=f10e374]:
+                - generic [ref=f10e375]:
+                  - heading "Afinidad de intereses" [level=4] [ref=f10e377]
+                  - paragraph [ref=f10e378]: Parcial
+                  - paragraph [ref=f10e379]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                - generic [ref=f10e380]:
+                  - heading "Preparación académica" [level=4] [ref=f10e382]
+                  - paragraph [ref=f10e383]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                - generic [ref=f10e384]:
+                  - heading "Cobertura de evidencia" [level=4] [ref=f10e386]
+                  - generic [ref=f10e387]:
+                    - generic [ref=f10e388]:
+                      - term [ref=f10e389]: Observaciones
+                      - definition [ref=f10e390]: "16"
+                    - generic [ref=f10e391]:
+                      - term [ref=f10e392]: Materias distintas
+                      - definition [ref=f10e393]: "8"
+                    - generic [ref=f10e394]:
+                      - term [ref=f10e395]: Periodos ordenados
+                      - definition [ref=f10e396]: "2"
+              - generic [ref=f10e397]:
+                - group [ref=f10e398]:
+                  - generic "Evidencia y áreas de refuerzo" [ref=f10e399] [cursor=pointer]
+                - group [ref=f10e400]:
+                  - generic "Fuentes y limitaciones" [ref=f10e401] [cursor=pointer]
+            - article [ref=f10e402]:
+              - generic [ref=f10e403]:
+                - generic [ref=f10e404]:
+                  - paragraph [ref=f10e405]: Universidad Católica Boliviana San Pablo, Sede La Paz
+                  - heading "Psicología" [level=3] [ref=f10e406]
+                - generic [ref=f10e407]:
+                  - generic [ref=f10e408]: "Afinidad: Disponible"
+                  - generic [ref=f10e409]: "BTH: Insuficiente"
+              - generic [ref=f10e410]:
+                - generic [ref=f10e411]:
+                  - heading "Afinidad de intereses" [level=4] [ref=f10e413]
+                  - paragraph [ref=f10e414]: Disponible
+                  - paragraph [ref=f10e415]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                - generic [ref=f10e416]:
+                  - heading "Preparación académica" [level=4] [ref=f10e418]
+                  - paragraph [ref=f10e419]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                - generic [ref=f10e420]:
+                  - heading "Cobertura de evidencia" [level=4] [ref=f10e422]
+                  - generic [ref=f10e423]:
+                    - generic [ref=f10e424]:
+                      - term [ref=f10e425]: Observaciones
+                      - definition [ref=f10e426]: "16"
+                    - generic [ref=f10e427]:
+                      - term [ref=f10e428]: Materias distintas
+                      - definition [ref=f10e429]: "8"
+                    - generic [ref=f10e430]:
+                      - term [ref=f10e431]: Periodos ordenados
+                      - definition [ref=f10e432]: "2"
+              - generic [ref=f10e433]:
+                - group [ref=f10e434]:
+                  - generic "Evidencia y áreas de refuerzo" [ref=f10e435] [cursor=pointer]
+                - group [ref=f10e436]:
+                  - generic "Fuentes y limitaciones" [ref=f10e437] [cursor=pointer]
+            - article [ref=f10e438]:
+              - generic [ref=f10e439]:
+                - generic [ref=f10e440]:
+                  - paragraph [ref=f10e441]: Universidad Mayor de San Andrés, La Paz
+                  - heading "Ingeniería Civil" [level=3] [ref=f10e442]
+                - generic [ref=f10e443]:
+                  - generic [ref=f10e444]: "Afinidad: Disponible"
+                  - generic [ref=f10e445]: "BTH: Insuficiente"
+              - generic [ref=f10e446]:
+                - generic [ref=f10e447]:
+                  - heading "Afinidad de intereses" [level=4] [ref=f10e449]
+                  - paragraph [ref=f10e450]: Disponible
+                  - paragraph [ref=f10e451]: Describe la relación observada entre intereses y evidencia ocupacional documentada. No representa aptitud.
+                - generic [ref=f10e452]:
+                  - heading "Preparación académica" [level=4] [ref=f10e454]
+                  - paragraph [ref=f10e455]: Las observaciones describen evidencia académica relacionada mediante un bridge trazable. No forman un porcentaje global de preparación ni una probabilidad de éxito.
+                - generic [ref=f10e456]:
+                  - heading "Cobertura de evidencia" [level=4] [ref=f10e458]
+                  - generic [ref=f10e459]:
+                    - generic [ref=f10e460]:
+                      - term [ref=f10e461]: Observaciones
+                      - definition [ref=f10e462]: "16"
+                    - generic [ref=f10e463]:
+                      - term [ref=f10e464]: Materias distintas
+                      - definition [ref=f10e465]: "8"
+                    - generic [ref=f10e466]:
+                      - term [ref=f10e467]: Periodos ordenados
+                      - definition [ref=f10e468]: "2"
+              - generic [ref=f10e469]:
+                - group [ref=f10e470]:
+                  - generic "Evidencia y áreas de refuerzo" [ref=f10e471] [cursor=pointer]
+                - group [ref=f10e472]:
+                  - generic "Fuentes y limitaciones" [ref=f10e473] [cursor=pointer]
+        - generic [ref=f10e477]:
+          - heading "Limitaciones del análisis" [level=2] [ref=f10e478]
+          - list [ref=f10e479]:
+            - listitem [ref=f10e480]: SAVP apoya la exploración y no decide una carrera.
+            - listitem [ref=f10e481]: La salida no estima probabilidad de éxito universitario.
+            - listitem [ref=f10e482]: V1 permanece como LEGACY_EXPERIMENTAL_BASELINE y no fundamenta las conclusiones V2.
+          - group [ref=f10e483]:
+            - generic "Trazabilidad técnica" [ref=f10e484] [cursor=pointer]

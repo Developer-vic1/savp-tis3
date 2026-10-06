@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Livewire\Shared\KardexDraft;
-use App\Models\SeguimientoAcademico;
-use App\Models\User;
+use App\Models\Oficial\Academico\SeguimientoAcademico;
+use App\Models\Oficial\Sistema\User;
 use App\Support\Academico\KardexInteligente;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;

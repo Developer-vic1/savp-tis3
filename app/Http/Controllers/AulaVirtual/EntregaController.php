@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\AulaVirtual;
 
 use App\Http\Controllers\Controller;
-use App\Models\AulaVirtual\EntregaArchivo;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\AulaVirtual\Tarea;
+use App\Models\Oficial\AulaVirtual\EntregaArchivo;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\AulaVirtual\Tarea;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\AulaVirtual\EntregaService;
 use App\Support\PrivateFilePath;

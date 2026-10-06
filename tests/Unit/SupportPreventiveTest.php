@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
-use App\Models\EspecialidadTecnica;
-use App\Models\InstitucionProcedencia;
-use App\Models\TipoVinculacionEstudiante;
+use App\Models\Oficial\Academico\EspecialidadTecnica;
+use App\Models\Oficial\Academico\InstitucionProcedencia;
+use App\Models\Oficial\Academico\TipoVinculacionEstudiante;
 use App\Support\Academico\AsignaturaInteligente;
 use App\Support\Academico\CursoInteligente;
 use App\Support\Academico\EspecialidadTecnicaInteligente;
@@ -226,7 +226,7 @@ return $query;
     #[PreserveGlobalState(false)]
     public function test_period_order_collision_preserves_catalog_suggestions(): void
     {
-        $model = Mockery::mock('alias:App\Models\PeriodoEvaluacion');
+        $model = Mockery::mock('alias:App\Models\Oficial\Academico\PeriodoEvaluacion');
         $model->shouldReceive('all')->andReturn(collect());
         $query = Mockery::mock();
         $model->shouldReceive('query')->andReturn($query);
@@ -242,7 +242,7 @@ return $query;
     #[PreserveGlobalState(false)]
     public function test_calificacion_range_duplicate_and_observation_use_local_rules(): void
     {
-        $model = Mockery::mock('alias:App\Models\Calificacion');
+        $model = Mockery::mock('alias:App\Models\Oficial\Academico\Calificacion');
         $query = Mockery::mock();
         $model->shouldReceive('query')->andReturn($query);
         $query->shouldReceive('when', 'where')->andReturnSelf();

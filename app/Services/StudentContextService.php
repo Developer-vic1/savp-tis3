@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\AulaVirtual\AsistenciaEstudiante;
-use App\Models\AulaVirtual\EntregaTarea;
-use App\Models\Estudiante;
-use App\Models\User;
+use App\Models\Oficial\Academico\AsistenciaEstudiante;
+use App\Models\Oficial\AulaVirtual\EntregaTarea;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use Illuminate\Support\Facades\Gate;
 
@@ -39,10 +39,11 @@ class StudentContextService
         Gate::forUser($user)->authorize('view', $student);
         $enrollments = $student->inscripciones()->with('curso', 'paralelo', 'gestionAcademica');
         if ($class) {
-            $plan = $class->planAsignatura;
-            foreach (['cod_gea', 'cod_cur', 'cod_par', 'cod_tur'] as $field) {
-                $enrollments->where($field, $plan->$field);
-            }
+            $plan = $class->planAsignatura ?? $class->planEspecialidad;
+            $enrollments->where('cod_gea', $plan->cod_gea)
+                ->whereHas('inscripcionVigenciaRegistros', fn ($vigencia) => $vigencia
+                    ->where('cod_gac', $plan->cod_gac)
+                    ->where('cod_esp_tec', $class->cod_pes ? $plan->cod_esp : null));
         } elseif ($actor === 'Regente') {
             app(RegencyAccessService::class)->constrain($enrollments->getQuery(), $user, 'inscripcion_estudiante');
         }

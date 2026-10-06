@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\ReporteGenerado;
-use App\Models\User;
+use App\Models\Oficial\Academico\ReporteGenerado;
+use App\Models\Oficial\Sistema\User;
 use App\Services\HistoricalReportAccessService;
 use App\Services\RoleDashboardResolver;
 

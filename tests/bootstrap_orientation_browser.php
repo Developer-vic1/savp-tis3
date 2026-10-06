@@ -10,5 +10,5 @@ if (config('database.default') !== 'sqlite' || str_replace('\\', '/', config('da
 }
 if (! is_file($expected)) touch($expected);
 if (Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]) !== 0) throw new RuntimeException('Isolated migration failed.');
-if (! App\Models\User::where('email', 'orientation@example.test')->exists()) Tests\OrientationFixture::create();
+if (! App\Models\Oficial\Sistema\User::where('email', 'orientation@example.test')->exists()) Tests\OrientationFixture::create();
 echo "ISOLATED UI FIXTURE READY\n";

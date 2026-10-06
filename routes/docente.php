@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('docente')->name('docente.')->middleware('actor:Docente')->group(function () {
     Route::get('/', [WorkspaceController::class, 'docente'])->name('dashboard');
+    Route::get('/gestion-cursos', [\App\Http\Controllers\Admin\GestionCursosController::class, 'index'])
+        ->middleware('can:cursos.gestionar.global')->name('gestion-cursos');
     Route::redirect('/cursos', '/aula-virtual/mis-cursos')->middleware('can:Aula_Virtual_Docente')->name('cursos');
     Route::get('/cursos/{curso}', [CursoVirtualController::class, 'showDocente'])
         ->middleware(['can:Acceso_Aula_Virtual', 'can:Aula_Virtual_Docente'])->name('curso');

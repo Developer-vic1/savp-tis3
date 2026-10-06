@@ -29,6 +29,7 @@ from app.recommendation.config import BridgeRelation
 from app.recommendation.evidence_config import load_recommendation_v2_policy
 from app.recommendation.evidence_models import (
     AcademicEvidence,
+    CareerAcademicProgram,
     CareerEvidenceProfile,
     DeclaredInterestEvidence,
     EvidenceQuality,
@@ -177,9 +178,7 @@ def _declared_interest_values(request: AnalysisInput) -> list[str]:
 def _catalog_values(career: Career) -> list[tuple[CatalogField, str]]:
     values: list[tuple[CatalogField, str]] = [("career_name", career.name)]
     values.extend(("career_alias", alias) for alias in career.aliases)
-    values.extend(
-        ("official_knowledge_area", value) for value in career.official_knowledge_areas
-    )
+    values.extend(("official_knowledge_area", value) for value in career.official_knowledge_areas)
     values.extend(("initial_subject", value) for value in career.initial_subjects)
     return values
 
@@ -244,9 +243,7 @@ def build_evidence_quality(
         "declared_interest": declared_count > 0,
         "historical": history_count > 0,
     }
-    missing_components.extend(
-        name for name, present in component_presence.items() if not present
-    )
+    missing_components.extend(name for name, present in component_presence.items() if not present)
     temporal_coverage = academic.temporal_coverage.ratio if academic else None
     notes: list[str] = []
     if not records:
@@ -276,9 +273,7 @@ def build_evidence_quality(
 
 def _source_references(source_ids: set[str] | list[str]) -> list[SourceReference]:
     manifest = {item.source_id: item for item in load_source_manifest().sources}
-    registry = {
-        item.reference_id: item for item in load_reference_registry().references
-    }
+    registry = {item.reference_id: item for item in load_reference_registry().references}
     references: list[SourceReference] = []
     for source_id in sorted(source_ids):
         source = manifest.get(source_id)
@@ -292,9 +287,11 @@ def _source_references(source_ids: set[str] | list[str]) -> list[SourceReference
                     source_id=external.reference_id,
                     title=external.title,
                     institution=external.organization,
+                    source_type=external.reference_kind,
                     reference=external.url or external.local_path,
                     version=external.version,
                     official=external.reference_kind == "EXTERNAL_OFFICIAL",
+                    evidence_layer="EXTERNAL_REFERENCE",
                 )
             )
             continue
@@ -303,9 +300,11 @@ def _source_references(source_ids: set[str] | list[str]) -> list[SourceReference
                 source_id=source.source_id,
                 title=source.title,
                 institution=source.institution,
+                source_type=source.source_type,
                 reference=source.url,
                 version=source.version,
                 official=source.official,
+                evidence_layer=source.evidence_layer,
             )
         )
     return references
@@ -313,6 +312,49 @@ def _source_references(source_ids: set[str] | list[str]) -> list[SourceReference
 
 def _limitation(code: str, message: str, scope: str) -> Limitation:
     return Limitation(code=code, message=message, scope=scope)
+
+
+def _academic_program(career: Career) -> CareerAcademicProgram:
+    sources = _source_references(career.source_ids)
+    curriculum_sources = [
+        source for source in sources if source.source_type == "OFFICIAL_CURRICULUM_PDF"
+    ]
+    duration = career.duration_text
+    if duration is None and career.duration_semesters is not None:
+        duration = f"{career.duration_semesters} semestres"
+
+    if career.initial_subjects:
+        curriculum_status = AvailabilityStatus.PARTIAL
+        curriculum_scope = "DOCUMENTED_INITIAL_SUBJECTS"
+        curriculum_note = (
+            "Se muestran las materias iniciales documentadas en el catálogo. "
+            "La malla completa debe verificarse en la fuente oficial enlazada."
+        )
+    elif curriculum_sources:
+        curriculum_status = AvailabilityStatus.PARTIAL
+        curriculum_scope = "OFFICIAL_CURRICULUM_SOURCE_ONLY"
+        curriculum_note = (
+            "Existe una malla oficial en las fuentes revisadas, pero este resumen no publica una lista "
+            "de materias suficientemente estructurada. Consulta la fuente original."
+        )
+    else:
+        curriculum_status = AvailabilityStatus.UNAVAILABLE
+        curriculum_scope = "UNAVAILABLE"
+        curriculum_note = (
+            "No hay una malla curricular verificable disponible para resumir sin inferencias."
+        )
+
+    return CareerAcademicProgram(
+        degree=career.degree,
+        duration=duration,
+        professional_profile=career.professional_profile,
+        knowledge_areas=career.official_knowledge_areas,
+        documented_subjects=career.initial_subjects,
+        curriculum_status=curriculum_status,
+        curriculum_scope=curriculum_scope,
+        curriculum_note=curriculum_note,
+        sources=curriculum_sources,
+    )
 
 
 def _vocational_relation(
@@ -362,15 +404,12 @@ def _vocational_relation(
     ):
         status = AvailabilityStatus.INSUFFICIENT
     elif any(
-        relation.evidence_status is BridgeRelationStatus.HYPOTHESIS
-        for relation in comparable
+        relation.evidence_status is BridgeRelationStatus.HYPOTHESIS for relation in comparable
     ):
         status = AvailabilityStatus.PARTIAL
     else:
         status = AvailabilityStatus.AVAILABLE
-    source_ids = {
-        source_id for relation in comparable for source_id in relation.source_ids
-    }
+    source_ids = {source_id for relation in comparable for source_id in relation.source_ids}
     return EvidenceRelation(
         status=status,
         evidence=evidence,
@@ -386,8 +425,7 @@ def _technical_relation(
     if not observations:
         status = AvailabilityStatus.UNAVAILABLE
     elif not evidence or all(
-        item.relation_status is BridgeRelationStatus.INSUFFICIENT_EVIDENCE
-        for item in evidence
+        item.relation_status is BridgeRelationStatus.INSUFFICIENT_EVIDENCE for item in evidence
     ):
         status = AvailabilityStatus.INSUFFICIENT
     elif all(
@@ -410,8 +448,7 @@ def _technical_relation(
             ),
             source_ids=[item.source_secondary, item.source_university],
             relation_id=item.relation_id,
-            is_inference=item.relation_status
-            is not BridgeRelationStatus.DIRECTLY_DOCUMENTED,
+            is_inference=item.relation_status is not BridgeRelationStatus.DIRECTLY_DOCUMENTED,
         )
         for item in evidence
     ]
@@ -504,8 +541,7 @@ def _occupational_relation(
             ),
             source_ids=relation.source_ids,
             relation_id=relation.occupation_id,
-            is_inference=relation.evidence_status
-            is not BridgeRelationStatus.DIRECTLY_DOCUMENTED,
+            is_inference=relation.evidence_status is not BridgeRelationStatus.DIRECTLY_DOCUMENTED,
         )
         for relation in occupation_relations
     ]
@@ -675,6 +711,7 @@ def _career_profile(
         career_id=career.career_id,
         career_name=career.name,
         university=university,
+        academic_program=_academic_program(career),
         vocational_interest_relation=_vocational_relation(vocational, occupation_relations),
         technical_relation=_technical_relation(technical_observations, technical_evidence),
         declared_interest_relation=_declared_relation(
@@ -694,9 +731,7 @@ def _career_profile(
         technical_evidence=technical_evidence,
         declared_interest_evidence=declared_evidence,
         evidence_quality=quality,
-        areas_observed=sorted(
-            {item.competency for item in academic_evidence}, key=_normalize_text
-        ),
+        areas_observed=sorted({item.competency for item in academic_evidence}, key=_normalize_text),
         areas_without_evidence=[item.competency for item in missing_relations],
         sources=_source_references(source_ids),
         source_ids=sorted(source_ids),
@@ -741,7 +776,10 @@ def build_career_evidence_profiles(
             relations=relations_by_career.get(career.career_id, []),
             occupation_relations=occupation_relations_by_career.get(career.career_id, []),
         )
-        for career in sorted(catalog.careers, key=lambda item: item.career_id)
+        for career in sorted(
+            (item for item in catalog.careers if item.recommendation_eligible),
+            key=lambda item: item.career_id,
+        )
     ]
     warnings = [
         "V2 no produce un ranking global ni un porcentaje de compatibilidad.",
@@ -750,9 +788,7 @@ def build_career_evidence_profiles(
         *loaded_crosswalk.warnings,
     ]
     if loaded_bridge.bridge is None:
-        warnings.append(
-            "No hay bridge disponible; los perfiles de carrera se limitan al catálogo."
-        )
+        warnings.append("No hay bridge disponible; los perfiles de carrera se limitan al catálogo.")
     return RecommendationV2Result(
         criteria_version=policy.criteria_version,
         aggregation_policy=policy.aggregation_policy,

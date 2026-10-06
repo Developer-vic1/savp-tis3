@@ -11,9 +11,56 @@ use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+use App\Models\Oficial\Academico\Curso;
+use App\Services\BitacoraService;
+use App\Support\Academico\ConsultaCursosInstitucionales;
+use App\Support\Academico\RespaldoCursoInstitucional;
+use App\Support\Academico\PlanificacionClaseInteligente;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
+use Livewire\WithFileUploads;
+
 class GestionCurso extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
+
+    public array $filtroParalelos = [];
+    public array $filtroTurnos = [];
+    public string $ordenar = 'grado';
+    public bool $modalFormulario = false;
+    public string $seccionDetalle = 'ficha';
+    #[Locked] public array $eventosHorario = [];
+    #[Locked] public array $periodosHorario = [];
+    public string $periodoHorario = '';
+    #[Locked] public array $bloquesHorario = [];
+    #[Locked] public array $opcionesClase = [];
+    #[Locked] public array $analisisClase = [];
+    #[Locked] public array $asignaciones = [];
+    #[Locked] public ?string $cursoCambio = null;
+    #[Locked] public string $operacion = 'crear';
+    public string $entradaCurso = '';
+    #[Locked] public array $interpretacion = [];
+    public string $motivo = '';
+    public string $causaInstitucional = '';
+    public string $autoridadEmisora = '';
+    public string $verificacionAutoridad = '';
+    public string $numeroResolucion = '';
+    public string $normaAdicional = '';
+    public string $fechaResolucion = '';
+    public $respaldoPdf = null;
+    public bool $autenticidadConfirmada = false;
+    public bool $confirmarCambio = false;
+    public string $modalidadParalelos = 'uno';
+    public array $paralelosNuevos = [];
+    public string $turnoNuevo = '';
+    #[Locked] public array $analisisDocumento = [];
+    #[Locked] public int $faseCurso = 1;
+    #[Locked] public string $rechazoDocumentoRegistrado = '';
+    #[Locked] public string $pdfEscaneado = '';
+    #[Locked] public array $datosEscaneados = [];
 
     protected $paginationTheme = 'tailwind';
 
@@ -49,6 +96,7 @@ class GestionCurso extends Component
     public bool $modalDetalle = false;
     public bool $modalPlanificar = false;
     public bool $modalClaseHorario = false;
+    #[Locked] public bool $verOtrosDocentesClase = false;
 
     /*
     |--------------------------------------------------------------------------
@@ -56,8 +104,8 @@ class GestionCurso extends Component
     |--------------------------------------------------------------------------
     */
 
-    public ?string $cursoSeleccionado = null;
-    public ?array $cursoDetalle = null;
+    #[Locked] public ?string $cursoSeleccionado = null;
+    #[Locked] public ?array $cursoDetalle = null;
 
     /*
     |--------------------------------------------------------------------------
@@ -83,7 +131,7 @@ class GestionCurso extends Component
     |--------------------------------------------------------------------------
     */
 
-    public array $claseContexto = [
+    #[Locked] public array $claseContexto = [
         'dia_hor' => '',
         'num_blo_hor' => '',
         'cod_hbl' => '',
@@ -238,20 +286,8 @@ class GestionCurso extends Component
 
     public function mount(): void
     {
-        $gestionActiva = $this->gestionActiva();
-
-        if ($gestionActiva && isset($gestionActiva->cod_gea)) {
-            $this->horarioGestion = $gestionActiva->cod_gea;
-        }
-
-        $this->horarioParalelo = $this->primerParaleloDisponible();
-
-        $turnoManana = $this->codTurnoPorVista('MANANA');
-        $this->horarioTurno = $turnoManana ?: $this->primerTurnoDisponible();
-
-        if (! $this->horarioVista) {
-            $this->horarioVista = 'MANANA';
-        }
+        $this->autorizar();
+        $this->gestionFiltro = DB::table('gestion_academica')->where('est_gea', 'ACTIVO')->value('cod_gea') ?? '';
     }
 
     /*
@@ -512,7 +548,17 @@ class GestionCurso extends Component
 
     public function updatedHorarioParalelo(): void
     {
-        $this->refrescarDetalleCurso();
+        $this->autorizar();
+        $this->prepararPeriodosHorario();
+        $this->cargarSeccion();
+    }
+
+    public function updatedPeriodoHorario(): void { $this->cargarSeccion(); }
+
+    private function prepararPeriodosHorario(): void
+    {
+        $this->periodosHorario = $this->cursoSeleccionado && $this->gestionFiltro ? app(ConsultaCursosInstitucionales::class)->periodosHorario($this->cursoSeleccionado,$this->gestionFiltro,$this->horarioParalelo) : [];
+        $this->periodoHorario = collect($this->periodosHorario)->firstWhere('aplicado',true)['valor'] ?? $this->periodosHorario[0]['valor'] ?? '';
     }
 
     public function updatedHorarioTurno(): void
@@ -790,323 +836,40 @@ class GestionCurso extends Component
 
     public function abrirModalClaseHorario(string $dia, int $bloque, string $horaInicio, string $horaFin): void
     {
-        if (! $this->cursoSeleccionado) {
-            $this->dispatch('error-general', mensaje: 'Primero debes seleccionar un curso.');
-            return;
-        }
-
-        if (! $this->estructuraHorarioDisponible()) {
-            $this->dispatch('error-general', mensaje: 'La estructura de horarios no está completa. Verifica horario, horario_bloque y horario_detalle.');
-            return;
-        }
-
-        if (! $this->horarioGestion) {
-            $this->dispatch('error-general', mensaje: 'Selecciona una gestión académica para crear la clase.');
-            return;
-        }
-
-        if (! $this->horarioParalelo) {
-            $this->dispatch('error-general', mensaje: 'Selecciona un paralelo para crear la clase.');
-            return;
-        }
-
-        if (! $this->horarioTurno) {
-            $this->dispatch('error-general', mensaje: 'Selecciona un turno para crear la clase.');
-            return;
-        }
-
-        $dia = strtoupper($dia);
-
-        if (! in_array($dia, $this->diasInstitucionales(), true)) {
-            $this->dispatch('error-general', mensaje: 'El día seleccionado no es válido.');
-            return;
-        }
-
-        $bloqueRegistro = $this->bloqueHorarioPorNumero($bloque);
-
-        if (! $bloqueRegistro) {
-            $this->dispatch('error-general', mensaje: 'No se encontró el bloque horario seleccionado para este turno.');
-            return;
-        }
-
-        if ($this->buscarRegistroHorario($this->cursoSeleccionado, $dia, $bloque)) {
-            $this->dispatch('error-general', mensaje: 'Este bloque ya tiene una clase asignada.');
-            return;
-        }
-
-        $this->resetValidation();
-
-        $tipoSugerido = $this->horarioVista === 'TARDE'
-            ? 'ESPECIALIDAD'
-            : 'MATERIA';
-
-        $this->claseContexto = [
-            'dia_hor' => $dia,
-            'num_blo_hor' => (int) $bloque,
-            'cod_hbl' => $bloqueRegistro->cod_hbl,
-            'hor_ini_hor' => substr((string) $bloqueRegistro->hor_ini_hbl, 0, 5),
-            'hor_fin_hor' => substr((string) $bloqueRegistro->hor_fin_hbl, 0, 5),
-        ];
-
-        $this->formClaseHorario = [
-            'tipo_plan' => $tipoSugerido,
-            'cod_mat' => '',
-            'cod_esp' => '',
-            'cod_doc' => '',
-            'carga_horaria' => 1,
-            'aul_hor' => '',
-            'obs_hor' => '',
-            'est_hor' => 'ACTIVO',
-        ];
-
-        $this->modalClaseHorario = true;
+        $this->autorizar();
+        $codBloque=DB::table('horario_bloque as b')->join('horario as h','h.cod_pho','=','b.cod_pho')->where('h.cod_hor',$this->periodoHorario)->where('b.num_hbl',$bloque)->value('b.cod_hbl');
+        abort_unless($codBloque,422);
+        $this->crearClaseDesdeBloque(strtoupper($dia),$codBloque);
     }
 
     public function cerrarModalClaseHorario(): void
     {
-        $this->modalClaseHorario = false;
-
-        $this->claseContexto = [
-            'dia_hor' => '',
-            'num_blo_hor' => '',
-            'cod_hbl' => '',
-            'hor_ini_hor' => '',
-            'hor_fin_hor' => '',
-        ];
-
-        $this->formClaseHorario = [
-            'tipo_plan' => 'MATERIA',
-            'cod_mat' => '',
-            'cod_esp' => '',
-            'cod_doc' => '',
-            'carga_horaria' => 1,
-            'aul_hor' => '',
-            'obs_hor' => '',
-            'est_hor' => 'ACTIVO',
-        ];
-
+        $this->modalClaseHorario=false;
+        $this->claseContexto=[];
+        $this->analisisClase=[];
         $this->resetValidation();
     }
 
     public function guardarClaseHorario(): void
     {
-        if (! $this->cursoSeleccionado) {
-            $this->dispatch('error-general', mensaje: 'No se pudo identificar el curso seleccionado.');
-            return;
-        }
-
-        if (! $this->estructuraHorarioDisponible()) {
-            $this->dispatch('error-general', mensaje: 'La estructura de horarios no está completa. Verifica horario, horario_bloque y horario_detalle.');
-            return;
-        }
-
-        $this->validate($this->rulesClaseHorario(), $this->messages);
-
-        $tipoPlan = $this->formClaseHorario['tipo_plan'];
-        $dia = strtoupper((string) ($this->claseContexto['dia_hor'] ?? ''));
-        $numeroBloque = (int) ($this->claseContexto['num_blo_hor'] ?? 0);
-
-        if (! in_array($dia, $this->diasInstitucionales(), true)) {
-            $this->dispatch('error-general', mensaje: 'El día seleccionado no es válido.');
-            return;
-        }
-
-        if ($numeroBloque <= 0) {
-            $this->dispatch('error-general', mensaje: 'El bloque seleccionado no es válido.');
-            return;
-        }
-
-        if ($tipoPlan === 'MATERIA' && empty($this->formClaseHorario['cod_mat'])) {
-            $this->addError('formClaseHorario.cod_mat', 'Debes seleccionar una materia.');
-            return;
-        }
-
-        if ($tipoPlan === 'ESPECIALIDAD' && empty($this->formClaseHorario['cod_esp'])) {
-            $this->addError('formClaseHorario.cod_esp', 'Debes seleccionar una especialidad técnica.');
-            return;
-        }
-
-        $bloque = $this->bloqueHorarioPorNumero($numeroBloque);
-
-        if (! $bloque) {
-            $this->dispatch('error-general', mensaje: 'No existe el bloque horario seleccionado para el turno actual.');
-            return;
-        }
-
-        if ($this->buscarRegistroHorario($this->cursoSeleccionado, $dia, $numeroBloque)) {
-            $this->dispatch('error-general', mensaje: 'Este bloque ya fue ocupado por otra clase.');
-            return;
-        }
-
-        if ($this->existeCruceDocenteDirecto(
-            codDoc: $this->formClaseHorario['cod_doc'],
-            dia: $dia,
-            bloque: $numeroBloque
-        )) {
-            $this->dispatch('error-general', mensaje: 'El docente ya tiene una clase asignada en este mismo día, turno y bloque.');
-            return;
-        }
-
+        $this->autorizar();
+        abort_unless(!$this->modalFormulario&&$this->modalDetalle&&$this->seccionDetalle==='horario'&&$this->modalClaseHorario&&!empty($this->claseContexto['cod_hor']),422);
+        $this->validarAmbitoClase();
         try {
-            DB::transaction(function () use ($tipoPlan, $dia, $bloque) {
-                $codPas = null;
-                $codPes = null;
-
-                if ($tipoPlan === 'MATERIA') {
-                    $codPas = $this->resolverPlanAsignaturaDesdeMateria();
-                }
-
-                if ($tipoPlan === 'ESPECIALIDAD') {
-                    $codPes = $this->resolverPlanEspecialidadDesdeEspecialidad();
-                }
-
-                if ($tipoPlan === 'MATERIA' && ! $codPas) {
-                    throw new \RuntimeException('No se pudo crear o recuperar el Plan de Asignatura.');
-                }
-
-                if ($tipoPlan === 'ESPECIALIDAD' && ! $codPes) {
-                    throw new \RuntimeException('No se pudo crear o recuperar el Plan de Especialidad.');
-                }
-
-                $horario = $this->obtenerOCrearHorarioCabecera();
-
-                if (! $horario || empty($horario->cod_hor)) {
-                    throw new \RuntimeException('No se pudo crear o recuperar la cabecera del horario.');
-                }
-
-                $codHde = $this->generarCodigo('horario_detalle', 'cod_hde', 'HDE');
-
-                $data = [
-                    'cod_hde' => $codHde,
-                    'cod_hor' => $horario->cod_hor,
-                    'cod_hbl' => $bloque->cod_hbl,
-                    'dia_hde' => $dia,
-                    'cod_pas' => $tipoPlan === 'MATERIA' ? $codPas : null,
-                    'cod_pes' => $tipoPlan === 'ESPECIALIDAD' ? $codPes : null,
-                    'aul_hde' => $this->limpiarTexto($this->formClaseHorario['aul_hor']),
-                    'obs_hde' => $this->limpiarTexto($this->formClaseHorario['obs_hor']),
-                    'est_hde' => $this->valorEstadoParaBase('horario_detalle', 'est_hde', $this->formClaseHorario['est_hor']),
-                ];
-
-                if ($this->columnaExiste('horario_detalle', 'created_at')) {
-                    $data['created_at'] = now();
-                }
-
-                if ($this->columnaExiste('horario_detalle', 'updated_at')) {
-                    $data['updated_at'] = now();
-                }
-
-                DB::table('horario_detalle')->insert($data);
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'CREAR_CLASE_HORARIO',
-                    tabla: 'horario_detalle',
-                    registro: $codHde,
-                    nombreRegistro: $this->nombreCurso($this->cursoSeleccionado),
-                    descripcion: 'Se registró una clase en la matriz semanal del horario institucional.',
-                    nivel: 'SUCCESS',
-                    resultado: 'EXITOSO',
-                    valoresNuevos: $data
-                );
-
-                $this->cerrarModalClaseHorario();
-
-                $this->cursoDetalle = $this->obtenerCursoDetalle($this->cursoSeleccionado);
-
-                $this->dispatch('clase-horario-creada');
-                $this->dispatch('success-general', mensaje: 'Clase agregada correctamente al horario.');
-                $this->dispatch('actualizar-graficos-cursos', data: $this->datosGraficos);
-            });
-        } catch (\Throwable $e) {
-            report($e);
-
-            $this->registrarBitacoraSeguro(
-                accion: 'CREAR_CLASE_HORARIO',
-                tabla: 'horario_detalle',
-                registro: null,
-                nombreRegistro: $this->nombreCurso($this->cursoSeleccionado),
-                descripcion: 'No se pudo registrar la clase dentro del horario.',
-                nivel: 'ERROR',
-                resultado: 'FALLIDO',
-                valoresNuevos: [
-                    'contexto' => $this->claseContexto,
-                    'formulario' => $this->formClaseHorario,
-                ],
-                error: $e->getMessage()
-            );
-
-            $mensaje = app()->environment('local')
-                ? 'Error técnico: ' . $e->getMessage()
-                : 'No se pudo crear la clase. Verifica los datos e intenta nuevamente.';
-
-            $this->dispatch('error-general', mensaje: $mensaje);
-        }
+            app(PlanificacionClaseInteligente::class)->guardar($this->claseContexto['cod_hor'],$this->claseContexto['cod_hbl'],$this->claseContexto['dia_hor'],$this->formClaseHorario);
+            $this->cerrarModalClaseHorario();
+            unset($this->resumen);
+            $this->cargarSeccion();
+            $this->dispatch('clase-horario-creada');
+            $this->dispatch('success-general',mensaje:'Clase organizada. Su materia, docente y bloque quedaron registrados; la historia académica se conserva.');
+        } catch(ValidationException $e){throw $e;}
+        catch(\Throwable $e){report($e);$this->addError('clase','No pudimos registrar la clase. Conservamos el horario; vuelve a revisar la disponibilidad.');}
     }
 
     public function quitarClaseHorario(string $codigo): void
     {
-        if (! $this->tablaExiste('horario_detalle') || ! $this->columnaExiste('horario_detalle', 'cod_hde')) {
-            $this->dispatch('error-general', mensaje: 'La tabla de detalle de horarios no está disponible.');
-            return;
-        }
-
-        try {
-            DB::transaction(function () use ($codigo) {
-                $registro = DB::table('horario_detalle')
-                    ->where('cod_hde', $codigo)
-                    ->first();
-
-                if (! $registro) {
-                    $registro = DB::table('horario_detalle')
-                        ->where('cod_hor', $codigo)
-                        ->first();
-                }
-
-                if (! $registro) {
-                    $this->dispatch('error-general', mensaje: 'No se encontró la clase seleccionada.');
-                    return;
-                }
-
-                $valoresAnteriores = (array) $registro;
-
-                DB::table('horario_detalle')
-                    ->where('cod_hde', $registro->cod_hde)
-                    ->delete();
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'QUITAR_CLASE_HORARIO',
-                    tabla: 'horario_detalle',
-                    registro: $registro->cod_hde,
-                    nombreRegistro: $this->nombreCurso($this->cursoSeleccionado),
-                    descripcion: 'Se retiró una clase de la matriz institucional de horarios.',
-                    nivel: 'WARNING',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: $valoresAnteriores
-                );
-
-                if ($this->cursoSeleccionado) {
-                    $this->cursoDetalle = $this->obtenerCursoDetalle($this->cursoSeleccionado);
-                }
-
-                $this->dispatch('clase-horario-quitada');
-                $this->dispatch('success-general', mensaje: 'Clase retirada correctamente del horario.');
-                $this->dispatch('actualizar-graficos-cursos', data: $this->datosGraficos);
-            });
-        } catch (\Throwable $e) {
-            report($e);
-
-            $this->registrarBitacoraSeguro(
-                accion: 'QUITAR_CLASE_HORARIO',
-                tabla: 'horario_detalle',
-                registro: $codigo,
-                descripcion: 'No se pudo retirar la clase del horario.',
-                nivel: 'ERROR',
-                resultado: 'FALLIDO',
-                error: $e->getMessage()
-            );
-
-            $this->dispatch('error-general', mensaje: 'No se pudo retirar la clase del horario.');
-        }
+        $this->autorizar();
+        $this->dispatch('advertencia-general',mensaje:'Las clases registradas conservan su historia. Su retiro requiere una revisión con motivo y no se realiza desde Agregar clase.');
     }
 
     /*
@@ -1342,160 +1105,16 @@ class GestionCurso extends Component
 
     public function guardarCurso(): void
     {
-        if (! $this->tablaExiste('curso')) {
-            $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
-            return;
-        }
-
-        if (! $this->prepararCursoInteligenteAntesDeGuardar()) {
-            return;
-        }
-
-        $this->validate($this->rulesCrear(), $this->messages);
-
-        try {
-            DB::transaction(function () {
-                $codCur = $this->generarCodigo('curso', 'cod_cur', 'CUR');
-
-                $data = $this->payloadCurso(
-                    codCur: $codCur,
-                    nombre: $this->form['nom_cur'],
-                    orden: $this->form['ord_cur'],
-                    nivel: $this->form['niv_cur'],
-                    descripcion: $this->form['des_cur'],
-                    estado: $this->form['est_cur']
-                );
-
-                DB::table('curso')->insert($data);
-
-                $cursoNuevo = DB::table('curso')
-                    ->where('cod_cur', $codCur)
-                    ->first();
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'CREAR_CURSO',
-                    tabla: 'curso',
-                    registro: $codCur,
-                    nombreRegistro: $cursoNuevo->nom_cur ?? $this->form['nom_cur'],
-                    descripcion: 'Se registró un curso académico base dentro de la estructura institucional mediante interpretación inteligente.',
-                    nivel: 'SUCCESS',
-                    resultado: 'EXITOSO',
-                    valoresNuevos: array_merge(
-                        $cursoNuevo ? (array) $cursoNuevo : $data,
-                        [
-                            'interpretacion' => $this->cursoInteligente,
-                        ]
-                    )
-                );
-
-                $this->cerrarModalCrear();
-
-                $this->dispatch('curso-creado');
-                $this->dispatch('success-general', mensaje: 'Curso registrado correctamente.');
-                $this->dispatch('actualizar-graficos-cursos', data: $this->datosGraficos);
-            });
-        } catch (\Throwable $e) {
-            report($e);
-
-            $this->registrarBitacoraSeguro(
-                accion: 'CREAR_CURSO',
-                tabla: 'curso',
-                descripcion: 'No se pudo registrar el curso académico.',
-                nivel: 'ERROR',
-                resultado: 'FALLIDO',
-                valoresNuevos: [
-                    'formulario' => $this->form,
-                    'interpretacion' => $this->cursoInteligente,
-                ],
-                error: $e->getMessage()
-            );
-
-            $mensaje = app()->environment('local')
-                ? 'Error técnico: ' . $e->getMessage()
-                : 'No se pudo registrar el curso. Revisa los datos e intenta nuevamente.';
-
-            $this->dispatch('error-general', mensaje: $mensaje);
-        }
+        $this->autorizar();
+        abort_unless($this->operacion === 'crear', 422);
+        $this->guardarCambioCurso();
     }
 
     public function actualizarCurso(): void
     {
-        if (! $this->tablaExiste('curso')) {
-            $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
-            return;
-        }
-
-        $this->validate($this->rulesEditar(), $this->messages);
-
-        try {
-            DB::transaction(function () {
-                $curso = DB::table('curso')
-                    ->where('cod_cur', $this->formEditar['cod_cur'])
-                    ->first();
-
-                if (! $curso) {
-                    $this->dispatch('error-general', mensaje: 'No se encontró el curso seleccionado.');
-                    return;
-                }
-
-                $valoresAnteriores = (array) $curso;
-
-                $data = $this->payloadCurso(
-                    codCur: $this->formEditar['cod_cur'],
-                    nombre: $this->formEditar['nom_cur'],
-                    orden: $this->formEditar['ord_cur'],
-                    nivel: $this->formEditar['niv_cur'],
-                    descripcion: $this->formEditar['des_cur'],
-                    estado: $this->formEditar['est_cur'],
-                    incluirCodigo: false
-                );
-
-                DB::table('curso')
-                    ->where('cod_cur', $this->formEditar['cod_cur'])
-                    ->update($data);
-
-                $cursoActualizado = DB::table('curso')
-                    ->where('cod_cur', $this->formEditar['cod_cur'])
-                    ->first();
-
-                $this->registrarBitacoraSeguro(
-                    accion: 'ACTUALIZAR_CURSO',
-                    tabla: 'curso',
-                    registro: $this->formEditar['cod_cur'],
-                    nombreRegistro: $cursoActualizado->nom_cur ?? $this->formEditar['nom_cur'],
-                    descripcion: 'Se actualizó la información institucional de un curso académico.',
-                    nivel: 'INFO',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: $valoresAnteriores,
-                    valoresNuevos: $cursoActualizado ? (array) $cursoActualizado : $data
-                );
-
-                $this->cerrarModalEditar();
-
-                if ($this->cursoSeleccionado === ($cursoActualizado->cod_cur ?? null)) {
-                    $this->cursoDetalle = $this->obtenerCursoDetalle($this->cursoSeleccionado);
-                }
-
-                $this->dispatch('curso-actualizado');
-                $this->dispatch('success-general', mensaje: 'Curso actualizado correctamente.');
-                $this->dispatch('actualizar-graficos-cursos', data: $this->datosGraficos);
-            });
-        } catch (\Throwable $e) {
-            report($e);
-
-            $this->registrarBitacoraSeguro(
-                accion: 'ACTUALIZAR_CURSO',
-                tabla: 'curso',
-                registro: $this->formEditar['cod_cur'] ?? null,
-                descripcion: 'No se pudo actualizar el curso académico.',
-                nivel: 'ERROR',
-                resultado: 'FALLIDO',
-                valoresNuevos: $this->formEditar,
-                error: $e->getMessage()
-            );
-
-            $this->dispatch('error-general', mensaje: 'No se pudo actualizar el curso. Revisa los datos e intenta nuevamente.');
-        }
+        $this->autorizar();
+        abort_unless($this->operacion === 'editar', 422);
+        $this->guardarCambioCurso();
     }
 
     public function desactivarCurso(string $codCur): void
@@ -1510,102 +1129,7 @@ class GestionCurso extends Component
 
     private function cambiarEstadoCurso(string $codCur, string $estadoNuevo): void
     {
-        if (! $this->tablaExiste('curso')) {
-            $this->dispatch('error-general', mensaje: 'La tabla de cursos no existe.');
-            return;
-        }
-
-        try {
-            DB::transaction(function () use ($codCur, $estadoNuevo) {
-                $curso = DB::table('curso')
-                    ->where('cod_cur', $codCur)
-                    ->first();
-
-                if (! $curso) {
-                    $this->dispatch('error-general', mensaje: 'No se encontró el curso seleccionado.');
-                    return;
-                }
-
-                $estadoActual = $this->normalizarEstadoParaFormulario($curso->est_cur ?? 'ACTIVO');
-
-                if ($estadoActual === $estadoNuevo) {
-                    $this->dispatch(
-                        'error-general',
-                        mensaje: $estadoNuevo === 'ACTIVO'
-                            ? 'El curso ya se encuentra activo.'
-                            : 'El curso ya se encuentra inactivo.'
-                    );
-
-                    return;
-                }
-
-                $valoresAnteriores = (array) $curso;
-                $payload = [];
-
-                if ($this->columnaExiste('curso', 'est_cur')) {
-                    $payload['est_cur'] = $this->valorEstadoParaBase('curso', 'est_cur', $estadoNuevo);
-                }
-
-                if ($this->columnaExiste('curso', 'updated_at')) {
-                    $payload['updated_at'] = now();
-                }
-
-                DB::table('curso')
-                    ->where('cod_cur', $codCur)
-                    ->update($payload);
-
-                $cursoActualizado = DB::table('curso')
-                    ->where('cod_cur', $codCur)
-                    ->first();
-
-                $accion = $estadoNuevo === 'ACTIVO'
-                    ? 'REACTIVAR_CURSO'
-                    : 'DESACTIVAR_CURSO';
-
-                $this->registrarBitacoraSeguro(
-                    accion: $accion,
-                    tabla: 'curso',
-                    registro: $codCur,
-                    nombreRegistro: $cursoActualizado->nom_cur ?? 'Curso',
-                    descripcion: $estadoNuevo === 'ACTIVO'
-                        ? 'Se reactivó un curso académico base en el sistema.'
-                        : 'Se desactivó un curso académico base sin eliminar información histórica.',
-                    nivel: $estadoNuevo === 'ACTIVO' ? 'SUCCESS' : 'WARNING',
-                    resultado: 'EXITOSO',
-                    valoresAnteriores: $valoresAnteriores,
-                    valoresNuevos: $cursoActualizado ? (array) $cursoActualizado : $payload
-                );
-
-                if ($this->cursoSeleccionado === $codCur) {
-                    $this->cursoDetalle = $this->obtenerCursoDetalle($codCur);
-                }
-
-                $this->dispatch($estadoNuevo === 'ACTIVO' ? 'curso-reactivado' : 'curso-desactivado');
-
-                $this->dispatch(
-                    'success-general',
-                    mensaje: $estadoNuevo === 'ACTIVO'
-                        ? 'Curso reactivado correctamente.'
-                        : 'Curso desactivado correctamente.'
-                );
-
-                $this->dispatch('actualizar-graficos-cursos', data: $this->datosGraficos);
-            });
-        } catch (\Throwable $e) {
-            report($e);
-
-            $this->registrarBitacoraSeguro(
-                accion: $estadoNuevo === 'ACTIVO' ? 'REACTIVAR_CURSO' : 'DESACTIVAR_CURSO',
-                tabla: 'curso',
-                registro: $codCur,
-                descripcion: 'No se pudo cambiar el estado del curso académico.',
-                nivel: 'ERROR',
-                resultado: 'FALLIDO',
-                error: $e->getMessage()
-            );
-
-            $this->dispatch('error-general', mensaje: 'No se pudo cambiar el estado del curso.');
-        }
+        $this->abrirFormularioCurso($estadoNuevo === 'ACTIVO' ? 'reactivar' : 'desactivar', $codCur);
     }
 
     /*
@@ -1631,17 +1155,7 @@ class GestionCurso extends Component
 
     public function irAHorarios(?string $codCur = null): void
     {
-        $this->modalDetalle = true;
-
-        if ($codCur) {
-            $this->cursoSeleccionado = $codCur;
-            $this->cursoDetalle = $this->obtenerCursoDetalle($codCur);
-        }
-
-        $this->dispatch(
-            'success-general',
-            mensaje: 'Ya estás en la vista institucional de horarios. Puedes crear clases presionando una celda libre de la matriz.'
-        );
+        $this->consultarCurso($codCur ?: $this->cursoSeleccionado, 'horario');
     }
 
     public function irAPlanAsignatura(?string $codCur = null): void
@@ -1693,16 +1207,7 @@ class GestionCurso extends Component
 
     public function limpiarFiltros(): void
     {
-        $this->reset([
-            'search',
-            'estado',
-            'nivel',
-            'gestionFiltro',
-            'filtroPlanAsignatura',
-            'filtroPlanEspecialidad',
-            'filtroHorario',
-        ]);
-
+        $this->reset('search','estado','nivel','filtroHorario','filtroPlanAsignatura','filtroPlanEspecialidad','filtroParalelos','filtroTurnos','ordenar');
         $this->resetPage();
     }
 
@@ -1868,28 +1373,9 @@ class GestionCurso extends Component
             ->through(fn($curso) => $this->mapearCurso($curso));
     }
 
-    public function getGestionesProperty(): Collection
+    public function getGestionesProperty()
     {
-        if (! $this->tablaExiste('gestion_academica')) {
-            return collect();
-        }
-
-        $select = [];
-
-        foreach (['cod_gea', 'ani_gea', 'est_gea'] as $columna) {
-            if ($this->columnaExiste('gestion_academica', $columna)) {
-                $select[] = $columna;
-            }
-        }
-
-        if (empty($select)) {
-            return collect();
-        }
-
-        return DB::table('gestion_academica')
-            ->select($select)
-            ->when($this->columnaExiste('gestion_academica', 'ani_gea'), fn($q) => $q->orderByDesc('ani_gea'))
-            ->get();
+        return DB::table('gestion_academica')->orderByDesc('ani_gea')->get();
     }
 
     public function getParalelosProperty(): Collection
@@ -3914,34 +3400,415 @@ class GestionCurso extends Component
 
     public function render()
     {
-        return view('livewire.admin.gestion-curso', [
-            'cursos' => $this->cursos,
-            'gestiones' => $this->gestiones,
-            'paralelos' => $this->paralelos,
-            'turnos' => $this->turnos,
-            'nivelesDisponibles' => $this->nivelesDisponibles,
-
-            'materiasHorario' => $this->materiasHorario,
-            'especialidadesHorario' => $this->especialidadesHorario,
-            'docentesHorario' => $this->docentesHorario,
-            'catalogoCursosInstitucionales' => $this->catalogoCursosInstitucionales,
-
-            'planesAsignaturaHorario' => $this->planesAsignaturaHorario,
-            'planesEspecialidadHorario' => $this->planesEspecialidadHorario,
-
-            'totalCursos' => $this->totalCursos,
-            'totalActivos' => $this->totalActivos,
-            'totalInactivos' => $this->totalInactivos,
-            'totalConPlanAsignatura' => $this->totalConPlanAsignatura,
-            'totalSinPlanAsignatura' => $this->totalSinPlanAsignatura,
-            'totalConPlanEspecialidad' => $this->totalConPlanEspecialidad,
-            'totalSinPlanEspecialidad' => $this->totalSinPlanEspecialidad,
-            'totalConHorarios' => $this->totalConHorarios,
-            'totalSinHorarios' => $this->totalSinHorarios,
-            'totalInscritos' => $this->totalInscritos,
-
-            'gestionActiva' => $this->gestionActiva(),
-            'datosGraficos' => $this->datosGraficos,
+        $this->autorizar();
+        if($this->modalClaseHorario&&$this->claseContexto){
+            $this->analisisClase=app(PlanificacionClaseInteligente::class)->analizar($this->claseContexto['cod_hor'],$this->claseContexto['cod_hbl'],$this->claseContexto['dia_hor'],$this->formClaseHorario);
+        }
+        $resumen = $this->resumen;
+        $filtrados = $resumen->filter(function ($c) {
+            if ($this->search !== '' && !str_contains(CursoInteligente::normalizar($c['nombre'].' '.$c['etapa']),CursoInteligente::normalizar($this->search))) return false;
+            if ($this->estado && $c['estado'] !== $this->estado) return false;
+            if ($this->nivel === 'general' && $c['orden'] > 3 || $this->nivel === 'tecnica' && $c['orden'] < 4) return false;
+            if ($this->filtroHorario === 'con' && !$c['horarios'] || $this->filtroHorario === 'sin' && $c['horarios']) return false;
+            if ($this->filtroPlanAsignatura === 'con' && !$c['planes'] || $this->filtroPlanAsignatura === 'sin' && $c['planes']) return false;
+            if ($this->filtroPlanEspecialidad === 'con' && !$c['planes_tecnicos'] || $this->filtroPlanEspecialidad === 'sin' && $c['planes_tecnicos']) return false;
+            return !$this->filtroParalelos && !$this->filtroTurnos || collect($c['contextos'])->contains(fn($g)=>(!$this->filtroParalelos || in_array($g['cod_par'],$this->filtroParalelos,true)) && (!$this->filtroTurnos || in_array($g['cod_tur'],$this->filtroTurnos,true)));
+        });
+        $filtrados = match ($this->ordenar) {'estudiantes_desc'=>$filtrados->sortByDesc('estudiantes'),'estudiantes_asc'=>$filtrados->sortBy('estudiantes'),'nombre'=>$filtrados->sortBy('nombre'),default=>$filtrados->sortBy('orden')};
+        $porPagina = in_array($this->perPage,[10,20,50]) ? $this->perPage : 10;
+        $pagina = max(1,(int)$this->getPage());
+        $cursos = new \Illuminate\Pagination\LengthAwarePaginator($filtrados->values()->forPage($pagina,$porPagina),$filtrados->count(),$porPagina,$pagina);
+        return view('livewire.admin.gestion-curso',[
+            'cursos'=>$cursos,'resumen'=>$resumen,'gestion'=>$this->gestion,'gestiones'=>$this->gestiones,
+            'trayectoria'=>app(ConsultaCursosInstitucionales::class)->trayectoria(),
+            'paralelos'=>DB::table('paralelo')->orderBy('nom_par')->get(),'turnos'=>DB::table('turno')->orderBy('nom_tur')->get(),
+            'turnosNuevos'=>$this->turnosDisponiblesParaCrear(),
+            'control'=>$this->modalFormulario ? $this->control : null,
         ]);
+    }
+    private function autorizar(): void
+    {
+        \App\Support\AccesoGestionCursos::autorizar();
+    }
+
+    public function getGestionProperty(): ?object
+    {
+        return $this->gestiones->firstWhere('cod_gea', $this->gestionFiltro);
+    }
+
+    public function getResumenProperty()
+    {
+        return $this->gestion ? app(ConsultaCursosInstitucionales::class)->resumen($this->gestionFiltro) : collect();
+    }
+
+    public function updated($campo): void
+    {
+        if ($campo === 'formClaseHorario.cod_doc') $this->formClaseHorario['motivo_especialidad']='';
+        if ($campo === 'formClaseHorario.modalidad_aula') {
+            $this->formClaseHorario['aul_hor']=($this->formClaseHorario['modalidad_aula']==='curso') ? ($this->claseContexto['curso']??'').' · '.($this->claseContexto['paralelo']??'') : '';
+        }
+        if (in_array($campo, ['respaldoPdf','entradaCurso','gestionFiltro'])) {
+            $this->pdfEscaneado = '';
+            $this->datosEscaneados = [];
+        }
+        if ($campo === 'numeroResolucion') $this->validateOnly('numeroResolucion', ['numeroResolucion'=>['required','string','min:3','max:120','regex:/^[\p{L}\p{N}][\p{L}\p{N} .\/\-]*\d[\p{L}\p{N} .\/\-]*$/u']], ['numeroResolucion.regex'=>'Usa el número oficial, por ejemplo DDE-123/2026. No se aceptan letras sin referencia numérica.']);
+        if (in_array($campo, ['search','gestionFiltro','estado','nivel','filtroHorario','filtroPlanAsignatura','filtroPlanEspecialidad','filtroParalelos','filtroTurnos','ordenar','perPage']) || str_starts_with($campo, 'filtroParalelos.') || str_starts_with($campo, 'filtroTurnos.')) {
+            $this->resetPage();
+            if ($campo === 'gestionFiltro') {
+                $this->modalDetalle = false;
+                $this->modalFormulario = false;
+                $this->cursoDetalle = null;
+                $this->eventosHorario = [];
+            }
+        }
+        if (in_array($campo, ['entradaCurso','normaAdicional','numeroResolucion','fechaResolucion','respaldoPdf','causaInstitucional','autoridadEmisora','motivo','modalidadParalelos','turnoNuevo','paralelosNuevos']) || str_starts_with($campo, 'paralelosNuevos.')) {
+            $this->analisisDocumento = [];
+            $this->autenticidadConfirmada = false;
+            $this->confirmarCambio = false;
+            if($this->faseCurso===3)$this->faseCurso=2;
+        }
+    }
+
+    public function consultarCurso(string $codigo, string $seccion = 'ficha'): void
+    {
+        $this->autorizar();
+        abort_unless(in_array($seccion, ['ficha','horario','carga']), 422);
+        $curso = $this->resumen->firstWhere('cod_cur', $codigo);
+        abort_unless($curso, 404);
+        $this->modalClaseHorario=false;
+        $this->claseContexto=[];
+        $this->cursoSeleccionado = $codigo;
+        $this->cursoDetalle = $curso;
+        $this->seccionDetalle = $seccion;
+        $this->eventosHorario = [];
+        $this->asignaciones = [];
+        $this->horarioParalelo = $curso['paralelos'][0]['valor'] ?? '';
+        if ($seccion === 'horario') $this->prepararPeriodosHorario();
+        $this->cargarSeccion();
+        $this->modalDetalle = true;
+    }
+
+    public function cambiarSeccion(string $seccion): void
+    {
+        $this->autorizar();
+        abort_unless(in_array($seccion, ['ficha','horario','carga']), 422);
+        $this->seccionDetalle = $seccion;
+        if ($seccion === 'horario') $this->prepararPeriodosHorario();
+        $this->cargarSeccion();
+    }
+
+    private function cargarSeccion(): void
+    {
+        $this->autorizar();
+        if (!$this->cursoSeleccionado || !$this->gestion) return;
+        $consulta = app(ConsultaCursosInstitucionales::class);
+        if ($this->seccionDetalle === 'horario') {
+            abort_unless(collect($this->cursoDetalle['paralelos'] ?? [])->pluck('valor')->contains($this->horarioParalelo) || $this->horarioParalelo === '', 422);
+            abort_unless(collect($this->periodosHorario)->contains('valor',$this->periodoHorario) || !$this->periodosHorario,422);
+            $this->bloquesHorario=$this->periodoHorario?DB::table('horario_bloque as b')->join('horario as h','h.cod_pho','=','b.cod_pho')->where('h.cod_hor',$this->periodoHorario)->where('b.est_hbl','ACTIVO')->where('b.tip_hbl','CLASE')->orderBy('b.num_hbl')->get(['b.cod_hbl','b.num_hbl','b.hor_ini_hbl','b.hor_fin_hbl'])->map(fn($b)=>['codigo'=>$b->cod_hbl,'numero'=>$b->num_hbl,'inicio'=>substr($b->hor_ini_hbl,0,5),'fin'=>substr($b->hor_fin_hbl,0,5)])->all():[];
+            $this->eventosHorario = $this->periodoHorario ? $consulta->horario($this->cursoSeleccionado, $this->gestionFiltro, $this->horarioParalelo, $this->periodoHorario) : [];
+        } elseif (in_array($this->seccionDetalle, ['ficha', 'carga'], true)) {
+            $this->asignaciones = $consulta->materias($this->cursoSeleccionado, $this->gestionFiltro);
+        }
+    }
+
+    public function getControlProperty(): array
+    {
+        $gestion = $this->gestion;
+        $bloqueos = [];
+        if (!$gestion || !in_array($gestion->est_gea, ['ACTIVO','PLANIFICADA'])) $bloqueos[] = 'Esta gestión es histórica. Conservamos sus cursos y horarios para consulta.';
+        if ($gestion && now()->startOfDay()->gte(Carbon::parse($gestion->fii_gea)->startOfDay())) $bloqueos[] = 'Las clases de esta gestión ya comenzaron. Los cambios de grados se preparan antes del inicio del ciclo.';
+        if ($gestion && DB::table('calificacion as n')->join('inscripcion_estudiante as i','i.cod_ins','=','n.cod_ins')->where('i.cod_gea',$gestion->cod_gea)->where('n.est_cal','<>','ANULADA')->exists()) $bloqueos[] = 'Ya existen notas en esta gestión. No se puede cambiar la estructura de grados.';
+        return ['puede' => !$bloqueos, 'bloqueos'=>$bloqueos, 'fuente'=>RespaldoCursoInstitucional::FUENTE];
+    }
+
+    public function abrirFormularioCurso(string $operacion = 'crear', ?string $codigo = null): void
+    {
+        $this->autorizar();
+        abort_unless(in_array($operacion, ['crear','editar','desactivar','reactivar']),422);
+        $this->cerrarModalClaseHorario();
+        $this->modalDetalle = false;
+        $this->resetValidation();
+        $this->reset('entradaCurso','interpretacion','motivo','causaInstitucional','autoridadEmisora','verificacionAutoridad','numeroResolucion','fechaResolucion','respaldoPdf','autenticidadConfirmada','confirmarCambio','analisisDocumento','paralelosNuevos','turnoNuevo','modalidadParalelos');
+        $this->reset('faseCurso','rechazoDocumentoRegistrado','normaAdicional','pdfEscaneado','datosEscaneados');
+        $this->operacion = $operacion;
+        $this->cursoCambio = $codigo;
+        if ($operacion !== 'crear') {
+            $curso = Curso::findOrFail($codigo);
+            $this->entradaCurso = $curso->nom_cur;
+            $this->interpretacion = CursoInteligente::desdeOrden((int)$curso->ord_cur);
+        }
+        $this->modalFormulario = true;
+    }
+
+    public function interpretarCurso(): void
+    {
+        $this->autorizar();
+        $this->interpretacion = CursoInteligente::interpretar($this->entradaCurso);
+        $this->pdfEscaneado = '';
+        $this->datosEscaneados = [];
+        $this->analisisDocumento = [];
+        $this->autenticidadConfirmada = false;
+    }
+
+    public function elegirGrado(int $grado): void
+    {
+        $this->autorizar();
+        $this->interpretacion = CursoInteligente::desdeOrden($grado);
+        $this->entradaCurso = $this->interpretacion['nombre'];
+        $this->pdfEscaneado = '';
+        $this->datosEscaneados = [];
+        $this->analisisDocumento = [];
+        $this->autenticidadConfirmada = false;
+    }
+
+    private function validarRespaldo(bool $comprobarAutoridad=true): void
+    {
+        if (!$this->pdfEscaneado || !$this->respaldoPdf || $this->pdfEscaneado !== hash_file('sha256', $this->respaldoPdf->getRealPath())) throw ValidationException::withMessages(['respaldoPdf'=>'Primero escanea un PDF correcto para habilitar los datos del respaldo.']);
+        $this->validate([
+            'motivo'=>['required','string','min:15','max:1500'],
+            'causaInstitucional'=>['required',Rule::in(['demanda','infraestructura','reorganizacion','rectificacion','otro'])],
+            'autoridadEmisora'=>['required','string','min:8','max:200'],
+            'verificacionAutoridad'=>[$comprobarAutoridad?'required':'nullable','string','min:15','max:500'],
+            'numeroResolucion'=>['required','string','min:3','max:120','regex:/^[\p{L}\p{N}][\p{L}\p{N} .\/\-]*\d[\p{L}\p{N} .\/\-]*$/u'],
+            'fechaResolucion'=>['required','date','before_or_equal:'.now('America/La_Paz')->toDateString()],
+            'respaldoPdf'=>['required','file','mimes:pdf','mimetypes:application/pdf','max:8192'],
+        ], ['motivo.min'=>'Explica el cambio en al menos 15 caracteres. Este motivo quedará en la bitácora.',
+            'respaldoPdf.required'=>'Adjunta la autorización en PDF.', 'respaldoPdf.max'=>'El PDF admite hasta 8 MB.',
+            'fechaResolucion.before_or_equal'=>'La fecha de emisión no puede ser futura.',
+            'numeroResolucion.regex'=>'Usa una referencia con número, por ejemplo DDE-123/2026, tal como figura en el PDF.',
+            '*.required'=>'Completa este dato para revisar el respaldo.']);
+        if (!\App\Support\Academico\ExpedienteParaleloInstitucional::justificacionComprensible($this->motivo)) throw ValidationException::withMessages(['motivo'=>'Explica la necesidad en al menos cinco palabras comprensibles. Ejemplo: Nueva infraestructura habilitada para ampliar la oferta educativa.']);
+        if (!($this->interpretacion['valido'] ?? false)) throw ValidationException::withMessages(['entradaCurso'=>'Escribe un grado de secundaria reconocido. Los grados adicionales requieren autorización expresa.']);
+        if($this->interpretacion['extraordinario']??false)$this->validate(['normaAdicional'=>'required|string|min:5|max:150'],['normaAdicional.required'=>'Identifica la norma que habilita la ampliación del grado. Debe aparecer en el respaldo.']);
+    }
+
+    public function escanearRespaldo(): void
+    {
+        $this->autorizar();
+        abort_unless($this->modalFormulario && $this->faseCurso === 2, 422);
+        $this->resetValidation();
+        $this->pdfEscaneado = '';
+        $this->datosEscaneados = [];
+        $this->autenticidadConfirmada = false;
+        $this->confirmarCambio = false;
+        $this->analisisDocumento = [];
+        $this->validate(['respaldoPdf'=>['required','file','mimes:pdf','max:8192']], ['respaldoPdf.required'=>'Adjunta la autorización en PDF antes de escanear.']);
+        $this->interpretacion = CursoInteligente::interpretar($this->entradaCurso);
+        abort_unless($this->interpretacion['valido'] ?? false, 422);
+        $servicio = app(RespaldoCursoInstitucional::class);
+        $lectura = $servicio->leer($this->respaldoPdf->getRealPath());
+        $datos = \App\Support\Academico\ExpedienteParaleloInstitucional::detectar($lectura['texto']);
+        preg_match_all('/\bnorma\s*(?:n(?:ro|umero|o)?[.°º\s]*)?([0-9]+\s*\/\s*20[0-9]{2})/iu', $lectura['texto'], $normas);
+        $normas = array_values(array_unique($normas[1] ?? []));
+        $norma = count($normas) === 1 ? $normas[0] : '';
+        $revision = $servicio->analizar($lectura, $datos['numero'], $datos['fecha'] ?: '1900-01-01', (int)$this->interpretacion['orden'], $this->operacion, (int)$this->gestion->ani_gea, $norma);
+        $revision['reglas'] += ['Número de resolución identificable y único'=>$datos['numero'] !== '',
+            'Fecha de emisión identificable y única'=>$datos['fecha'] !== '',
+            'Autoridad emisora identificable y única'=>$datos['autoridad'] !== '',
+            'Resolución administrativa identificada'=>$datos['tipo'] === 'resolucion',
+            'Fecha no futura'=>$datos['fecha'] !== '' && $datos['fecha'] <= now('America/La_Paz')->toDateString(),
+            'Gestión detectada coincide'=>$datos['gestion'] === (string)$this->gestion->ani_gea];
+        $revision['coherente'] = !in_array(false, $revision['reglas'], true);
+        $this->analisisDocumento = $revision;
+        if (!$revision['coherente']) {
+            $this->datosEscaneados = $datos;
+            $this->registrarRechazoDocumento();
+            $this->addError('respaldoPdf','El documento no supera la revisión. Corrige las observaciones o adjunta otro PDF; el formulario sigue bloqueado y tus datos se conservan.');
+            return;
+        }
+        $this->numeroResolucion = $datos['numero'];
+        $this->fechaResolucion = $datos['fecha'];
+        $this->autoridadEmisora = $datos['autoridad'];
+        if ($this->interpretacion['extraordinario'] ?? false) $this->normaAdicional = $norma;
+        $this->datosEscaneados = $datos;
+        $this->pdfEscaneado = $lectura['sha256'];
+        $this->analisisDocumento['contexto'] = $this->contextoDocumento();
+    }
+
+    public function analizarRespaldo(): void
+    {
+        $this->autorizar();
+        $this->interpretacion = CursoInteligente::interpretar($this->entradaCurso);
+        $this->validarRespaldo(false);
+
+        $servicio = app(RespaldoCursoInstitucional::class);
+        $lectura = $servicio->leer($this->respaldoPdf->getRealPath());
+        $this->analisisDocumento = $servicio->analizar($lectura,$this->numeroResolucion,$this->fechaResolucion,(int)$this->interpretacion['orden'],$this->operacion,(int)$this->gestion->ani_gea,$this->normaAdicional,$this->alcanceDocumento());
+        $this->analisisDocumento['contexto'] = $this->contextoDocumento();
+        $this->autenticidadConfirmada = false;
+        $this->confirmarCambio = false;
+        if(!$this->analisisDocumento['coherente'])$this->registrarRechazoDocumento();
+    }
+
+    private function registrarRechazoDocumento(): void
+    {
+        $huella=hash('sha256',$this->analisisDocumento['sha256'].$this->contextoDocumento());
+        if($this->rechazoDocumentoRegistrado===$huella)return;
+        if(!Schema::hasTable('bitacora'))throw ValidationException::withMessages(['respaldoPdf'=>'No pudimos registrar la revisión en bitácora. El cambio sigue bloqueado. Solicita revisar el registro institucional.']);
+        $ruta=$this->respaldoPdf->store('respaldos/cursos/rechazados','local');
+        if(!$ruta)throw ValidationException::withMessages(['respaldoPdf'=>'No pudimos conservar el respaldo rechazado. El cambio permanece bloqueado.']);
+        try{
+            BitacoraService::registrar(accion:'INTENTO_'.mb_strtoupper($this->operacion).'_CURSO_PDF_RECHAZADO',tabla:'curso',registro:$this->cursoCambio,modulo:'Gestión de Cursos',nombreRegistro:$this->entradaCurso,
+                descripcion:'El PDF leído no cumple las coincidencias del cambio solicitado. No se creó ni modificó el grado ni sus paralelos.',nivel:'WARNING',resultado:'BLOQUEADO',
+                valoresNuevos:['solicitud'=>['grado'=>$this->entradaCurso,'gestion'=>$this->gestionFiltro,'operacion'=>$this->operacion,'motivo'=>$this->motivo,'paralelos'=>$this->paralelosNuevos,'turno'=>$this->turnoNuevo],
+                    'documento'=>['ruta'=>$ruta,'nombre'=>$this->respaldoPdf->getClientOriginalName(),'numero'=>$this->numeroResolucion,'fecha'=>$this->fechaResolucion,'detectados'=>$this->datosEscaneados,'sha256'=>$this->analisisDocumento['sha256']], 'revision'=>$this->analisisDocumento['reglas']]);
+            $this->rechazoDocumentoRegistrado=$huella;
+        }catch(\Throwable $e){Storage::disk('local')->delete($ruta);report($e);throw ValidationException::withMessages(['respaldoPdf'=>'No pudimos conservar el intento en bitácora. No se guardó ningún cambio; vuelve a solicitar la revisión.']);}
+    }
+
+    public function continuarFaseCurso(): void
+    {
+        $this->autorizar();abort_unless($this->modalFormulario,422);$this->resetValidation();
+        if($this->faseCurso===1){
+            $this->interpretacion=CursoInteligente::interpretar($this->entradaCurso);
+            if(!($this->interpretacion['valido']??false))throw ValidationException::withMessages(['entradaCurso'=>'Escribe un grado reconocido para continuar con su autorización.']);
+            if(in_array($this->operacion,['crear','editar'])&&Curso::where('ord_cur',$this->interpretacion['orden'])->when($this->cursoCambio,fn($q)=>$q->where('cod_cur','<>',$this->cursoCambio))->exists())throw ValidationException::withMessages(['entradaCurso'=>'Este grado ya existe. Para otro grupo utiliza Registrar paralelo.']);
+
+            $this->faseCurso=2;return;
+        }
+        if($this->faseCurso===2){
+            $this->analizarRespaldo();
+            if(!$this->analisisDocumento['coherente']){$this->addError('respaldoPdf','El PDF leído fue rechazado y el intento quedó en bitácora. Revisa las observaciones o adjunta el respaldo correcto.');return;}
+            $this->faseCurso=3;
+        }
+    }
+
+    public function volverFaseCurso(): void
+    {
+        $this->autorizar();$this->faseCurso=max(1,$this->faseCurso-1);$this->confirmarCambio=false;$this->autenticidadConfirmada=false;$this->resetValidation();
+    }
+
+    private function validarGruposNuevos(): void
+    {
+        $this->validate(['modalidadParalelos'=>['required',Rule::in(['uno','elegidos'])], 'paralelosNuevos'=>['required','array','min:1','max:3'], 'paralelosNuevos.*'=>['required','distinct',Rule::exists('paralelo','cod_par')->where('est_par','ACTIVO')], 'turnoNuevo'=>['required',Rule::exists('turno','cod_tur')->where('est_tur','ACTIVO')]],['paralelosNuevos.required'=>'Selecciona los paralelos autorizados.','turnoNuevo.required'=>'Elige el turno de los grupos nuevos.']);
+        if($this->modalidadParalelos==='uno'&&count($this->paralelosNuevos)!==1)throw ValidationException::withMessages(['paralelosNuevos'=>'Elige un solo paralelo o cambia a varios paralelos.']);
+        if(!$this->turnosDisponiblesParaCrear()->contains('cod_tur',$this->turnoNuevo))throw ValidationException::withMessages(['turnoNuevo'=>'Este turno aún no está incorporado para nuevos grupos. Primero debe habilitarse con su autorización institucional.']);
+    }
+
+    private function turnosDisponiblesParaCrear(): Collection
+    {
+        // La disponibilidad operativa se configura por institución; el catálogo histórico no habilita un turno nuevo.
+        return DB::table('turno')->where('est_tur','ACTIVO')->get()->filter(fn($t)=>in_array(CursoInteligente::normalizar($t->nom_tur),config('academico.turnos_habilitados',['manana']),true))->values();
+    }
+
+    private function alcanceDocumento(): array
+    {
+        return [];
+    }
+
+    private function contextoDocumento(): string
+    {
+        return hash('sha256',json_encode([$this->gestionFiltro,$this->numeroResolucion,$this->fechaResolucion,$this->entradaCurso,$this->normaAdicional,$this->operacion,$this->causaInstitucional,$this->autoridadEmisora,$this->motivo,$this->modalidadParalelos,$this->paralelosNuevos,$this->turnoNuevo]));
+    }
+
+    public function guardarCambioCurso(): void
+    {
+        $this->autorizar();
+        abort_unless($this->modalFormulario&&$this->faseCurso===3,422);
+        $this->interpretacion = CursoInteligente::interpretar($this->entradaCurso);
+        $this->validarRespaldo();
+        $this->validate(['autenticidadConfirmada'=>['accepted'],'confirmarCambio'=>['accepted']],[
+            'autenticidadConfirmada.accepted'=>'Verifica la autorización con la autoridad emisora antes de confirmar.',
+            'confirmarCambio.accepted'=>'Confirma que deseas aplicar este cambio y registrar su motivo.',
+        ]);
+        if (!($this->analisisDocumento['coherente'] ?? false) || ($this->analisisDocumento['contexto'] ?? '') !== $this->contextoDocumento() || ($this->analisisDocumento['sha256'] ?? '') !== hash_file('sha256',$this->respaldoPdf->getRealPath())) throw ValidationException::withMessages(['respaldoPdf'=>'Revisa este respaldo con los datos actuales antes de guardar.']);
+        $servicio = app(RespaldoCursoInstitucional::class);
+        $revisionFinal = $servicio->analizar($servicio->leer($this->respaldoPdf->getRealPath()), $this->numeroResolucion, $this->fechaResolucion, (int)$this->interpretacion['orden'], $this->operacion, (int)$this->gestion->ani_gea,$this->normaAdicional,$this->alcanceDocumento());
+        if (!$revisionFinal['coherente']) throw ValidationException::withMessages(['respaldoPdf'=>'La revisión final detectó omisiones en el respaldo. Los datos se conservan.']);
+        $ruta = null;
+        try {
+            DB::transaction(function () use (&$ruta) {
+                if(!Schema::hasTable('bitacora'))throw ValidationException::withMessages(['cambio'=>'La bitácora no está disponible. Conservamos los datos sin aplicar el cambio.']);
+                // Serializa los cambios de estructura y verifica nuevamente la gestión en el servidor.
+                DB::table('gestion_academica')->where('cod_gea',$this->gestionFiltro)->lockForUpdate()->first();
+                unset($this->gestion,$this->gestiones,$this->control);
+                if (!$this->control['puede']) throw ValidationException::withMessages(['cambio'=>implode(' ',$this->control['bloqueos'])]);
+                $grado = (int)$this->interpretacion['orden'];
+                $curso = $this->operacion === 'crear' ? new Curso : Curso::whereKey($this->cursoCambio)->lockForUpdate()->firstOrFail();
+                $antes = $curso->exists ? $curso->getAttributes() : null;
+                if ($this->operacion === 'crear' || $this->operacion === 'editar') {
+                    if (Curso::where('ord_cur',$grado)->when($curso->exists,fn($q)=>$q->where('cod_cur','<>',$curso->cod_cur))->exists()) throw ValidationException::withMessages(['entradaCurso'=>'Este grado ya está registrado. Para otro grupo se crea un paralelo, sin duplicar el grado.']);
+                    $curso->nom_cur = $this->interpretacion['nombre'];
+                    $curso->ord_cur = $grado;
+                    $curso->niv_cur = 'Secundaria';
+                    if (!$curso->exists) $curso->est_cur = 'ACTIVO';
+                } else {
+                    if ($this->operacion === 'desactivar' && DB::table('inscripcion_estudiante')->where('cod_cur',$curso->cod_cur)->where('cod_gea',$this->gestionFiltro)->where('est_ins','ACTIVA')->exists()) throw ValidationException::withMessages(['cambio'=>'Este grado tiene estudiantes inscritos. Debes resolver sus trayectorias antes de desactivarlo.']);
+                    $curso->est_cur = $this->operacion === 'reactivar' ? 'ACTIVO' : 'INACTIVO';
+                }
+                $ruta = $this->respaldoPdf->store('respaldos/cursos','local');
+                if(!$ruta)throw new \RuntimeException('No se pudo conservar el respaldo institucional.');
+                $curso->save();
+                BitacoraService::registrar(accion:mb_strtoupper($this->operacion).'_CURSO',tabla:'curso',registro:$curso->cod_cur,modulo:'Gestión de Cursos',nombreRegistro:$curso->nom_cur,
+                    descripcion:trim($this->motivo),nivel:'INFO',resultado:'EXITOSO',valoresAnteriores:$antes,
+                    valoresNuevos:['curso'=>$curso->getAttributes(),'gestion'=>$this->gestionFiltro,'alcance'=>'Catálogo del grado; no crea grupos ni clases.','respaldo'=>['ruta'=>$ruta,'nombre'=>$this->respaldoPdf->getClientOriginalName(),'numero'=>$this->numeroResolucion,'fecha'=>$this->fechaResolucion,'norma_ampliacion'=>$this->normaAdicional,'causa'=>$this->causaInstitucional,'autoridad'=>$this->autoridadEmisora,'verificacion'=>$this->verificacionAutoridad,'sha256'=>$this->analisisDocumento['sha256'],'revision'=>$this->analisisDocumento['reglas'],'autenticidad_confirmada_por'=>auth()->id()]]);
+            });
+        } catch (\Throwable $e) {
+            if ($ruta) Storage::disk('local')->delete($ruta);
+            if ($e instanceof ValidationException) throw $e;
+            report($e);
+            $this->addError('cambio','No pudimos completar el cambio. Conservamos los datos y el historial; vuelve a intentarlo.');
+            return;
+        }
+        $this->modalFormulario = false;
+        $this->modalDetalle = false;
+        $this->respaldoPdf = null;
+        unset($this->resumen);
+        $this->dispatch('success-general',mensaje:'El cambio y su respaldo quedaron registrados en la bitácora.');
+    }
+    public function crearClaseDesdeBloque(string $dia,string $bloque): void
+    {
+        $this->autorizar();
+        abort_unless(!$this->modalFormulario&&$this->modalDetalle&&$this->seccionDetalle==='horario'&&$this->cursoSeleccionado,422);
+        $servicio=app(PlanificacionClaseInteligente::class);
+        $ctx=$servicio->contexto($this->periodoHorario,$bloque,$dia);
+        if(!$ctx['horario']||!$ctx['bloque'])throw ValidationException::withMessages(['clase'=>implode(' ',$ctx['bloqueos'])]);
+        abort_unless($ctx['horario']['cod_cur']===$this->cursoSeleccionado&&$ctx['horario']['cod_gea']===$this->gestionFiltro&&$ctx['horario']['cod_par']===$this->horarioParalelo,422);
+        $this->resetValidation();
+        $this->claseContexto=['cod_hor'=>$this->periodoHorario,'cod_hbl'=>$bloque,'dia_hor'=>$dia,'num_blo_hor'=>$ctx['bloque']['num_hbl'],'hor_ini_hor'=>substr($ctx['bloque']['hor_ini_hbl'],0,5),'hor_fin_hor'=>substr($ctx['bloque']['hor_fin_hbl'],0,5),'curso'=>$ctx['horario']['nom_cur'],'orden'=>(int)$ctx['horario']['ord_cur'],'paralelo'=>$ctx['horario']['nom_par'],'turno'=>$ctx['horario']['nom_tur'],'periodo'=>$ctx['horario']['fii_hor'].' — '.$ctx['horario']['ffi_hor']];
+        $this->formClaseHorario=['tipo_plan'=>'MATERIA','cod_mat'=>'','cod_esp'=>'','cod_doc'=>'','carga_horaria'=>1,'aul_hor'=>$ctx['horario']['nom_cur'].' · '.$ctx['horario']['nom_par'],'modalidad_aula'=>'curso','motivo_especialidad'=>'','obs_hor'=>'','est_hor'=>'ACTIVO','confirmar_plan'=>false];
+        $this->opcionesClase=$servicio->opciones($this->periodoHorario);
+        $this->verOtrosDocentesClase=false;
+        $this->modalClaseHorario=true;
+    }
+
+    private function validarAmbitoClase(): void
+    {
+        $h=DB::table('horario as h')->join('grupo_academico as g','g.cod_gac','=','h.cod_gac')->where('h.cod_hor',$this->claseContexto['cod_hor'])->first(['g.cod_cur','g.cod_gea','g.cod_par']);
+        abort_unless($h&&$h->cod_cur===$this->cursoSeleccionado&&$h->cod_gea===$this->gestionFiltro&&$h->cod_par===$this->horarioParalelo&&$this->periodoHorario===$this->claseContexto['cod_hor'],422);
+    }
+
+    public function elegirMateriaClase(string $codigo,string $tipo='MATERIA'): void
+    {
+        $this->autorizar();abort_unless($this->modalClaseHorario&&in_array($tipo,['MATERIA','ESPECIALIDAD'],true),422);
+        $opcion=collect($this->opcionesClase[$tipo==='MATERIA'?'materias':'especialidades']??[])->firstWhere('valor',$codigo);
+        abort_unless($opcion,422);
+        $this->formClaseHorario['tipo_plan']=$tipo;
+        $this->formClaseHorario['cod_mat']=$tipo==='MATERIA'?$codigo:'';
+        $this->formClaseHorario['cod_esp']=$tipo==='ESPECIALIDAD'?$codigo:'';
+        $compatibles=app(PlanificacionClaseInteligente::class)->docentesDelArea($this->opcionesClase['docentes']??[], $opcion['etiqueta'], $tipo==='ESPECIALIDAD');
+        $planificados=array_values(array_intersect($opcion['docentes'],array_column($compatibles,'valor')));
+        $this->formClaseHorario['cod_doc']=count($planificados)===1?$planificados[0]:'';
+        $this->verOtrosDocentesClase=false;
+        $this->formClaseHorario['carga_horaria']=(int)($opcion['horas']??1);
+        $this->formClaseHorario['confirmar_plan']=false;
+        $this->formClaseHorario['motivo_especialidad']='';
+    }
+
+    public function alternarOtrosDocentesClase(): void
+    {
+        $this->autorizar();
+        abort_unless($this->modalClaseHorario && !$this->modalFormulario,422);
+        $this->verOtrosDocentesClase=!$this->verOtrosDocentesClase;
+        if(!$this->verOtrosDocentesClase){
+            $tipo=$this->formClaseHorario['tipo_plan'];
+            $materia=collect($this->opcionesClase[$tipo==='MATERIA'?'materias':'especialidades']??[])->firstWhere('valor',$this->formClaseHorario[$tipo==='MATERIA'?'cod_mat':'cod_esp']??'');
+            $compatibles=app(PlanificacionClaseInteligente::class)->docentesDelArea($this->opcionesClase['docentes']??[], $materia['etiqueta']??'', $tipo==='ESPECIALIDAD');
+            if(!in_array($this->formClaseHorario['cod_doc'],array_column($compatibles,'valor'),true)){
+                $this->formClaseHorario['cod_doc']='';
+                $this->formClaseHorario['motivo_especialidad']='';
+            }
+        }
     }
 }

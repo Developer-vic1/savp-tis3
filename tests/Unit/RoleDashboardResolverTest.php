@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Http\Middleware\EnsureActorRole;
-use App\Models\User;
+use App\Models\Oficial\Sistema\User;
 use App\Services\RoleDashboardResolver;
 use Illuminate\Http\Request;
 use Mockery;

@@ -3,11 +3,9 @@ from pathlib import Path
 
 from app.knowledge.registry import known_evidence_reference_ids
 from app.retrieval.service import (
-    EVIDENCE_SCORE_THRESHOLD,
     EXCERPT_MAX_CHARS,
     MIN_QUERY_TERM_OVERLAP,
 )
-from app.tutor.local_llm import LLM_MAX_TOKENS, LLM_SEED
 from app.tutor.service import TUTOR_CANDIDATE_K, TUTOR_CONTEXT_K
 
 SERVICE_ROOT = Path(__file__).resolve().parents[2]
@@ -72,11 +70,9 @@ def test_parameter_registry_integrity() -> None:
 
     by_id = {parameter["parameter_id"]: parameter for parameter in parameters}
     for parameter_id in (
-        "PARAM-IR-RRF-CONSTANT-K",
         "PARAM-IR-BM25-K1",
         "PARAM-IR-BM25-B",
         "PARAM-IR-TOP-K-RETRIEVAL",
-        "PARAM-LLM-TEMPERATURE",
     ):
         assert by_id[parameter_id]["classification"] == "EXPERIMENTAL"
 
@@ -86,14 +82,8 @@ def test_parameter_registry_integrity() -> None:
     assert by_id["PARAM-IR-CHUNK-OVERLAP-CHARS"]["unit"] == "caracteres"
     assert by_id["PARAM-IR-TOP-K-RETRIEVAL"]["value"] == TUTOR_CONTEXT_K
     assert (
-        by_id["PARAM-IR-EVIDENCE-SCORE-THRESHOLD"]["value"]
-        == EVIDENCE_SCORE_THRESHOLD
-    )
-    assert (
         by_id["PARAM-IR-MIN-QUERY-TERM-OVERLAP"]["value"]
         == MIN_QUERY_TERM_OVERLAP
     )
     assert by_id["PARAM-IR-EXCERPT-MAX-CHARS"]["value"] == EXCERPT_MAX_CHARS
     assert by_id["PARAM-TUTOR-CANDIDATE-K"]["value"] == TUTOR_CANDIDATE_K
-    assert by_id["PARAM-LLM-MAX-TOKENS"]["value"] == LLM_MAX_TOKENS
-    assert by_id["PARAM-LLM-SEED"]["value"] == LLM_SEED

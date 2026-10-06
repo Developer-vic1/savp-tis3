@@ -1,0 +1,17 @@
+.ui-selector {min-width:0;}
+.ui-selector-control {display:flex;width:100%;align-items:center;justify-content:space-between;gap:.75rem;text-align:left;min-height:2.75rem;cursor:pointer;}
+.ui-selector-control > span {overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ui-selector-control:disabled {cursor:not-allowed;opacity:.6;}
+.ui-selector-control i {transition:transform 180ms ease;flex:none;}
+.ui-selector-flecha-abierta {transform:rotate(180deg);}
+.ui-selector-panel {position:fixed;inset:auto;margin:0;padding:.4rem;border:1px solid var(--ui-border);border-radius:1rem;background:var(--ui-surface);color:var(--ui-text);box-shadow:var(--ui-shadow-lg);overflow:auto;z-index:200;}
+.ui-selector-panel:popover-open {display:block;animation:selectorAbrir 140ms ease-out;}
+.ui-selector-buscar {display:flex;align-items:center;gap:.5rem;padding:.65rem .6rem;border-bottom:1px solid var(--ui-border);position:sticky;top:-.4rem;background:var(--ui-surface);z-index:1;}
+.ui-selector-buscar input {border:0;background:transparent;color:var(--ui-text);width:100%;font-size:.85rem;padding:0;box-shadow:none;}
+.ui-selector-lista button {display:flex;width:100%;align-items:center;justify-content:space-between;gap:.5rem;text-align:left;border-radius:.6rem;padding:.75rem;font-size:.85rem;color:var(--ui-text);min-height:2.75rem;}
+.ui-selector-lista button[aria-selected="true"] {font-weight:700;color:var(--ui-primary);background:var(--ui-primary-soft);}
+.ui-selector-lista button:hover,.ui-selector-opcion-activa {background:var(--ui-surface-soft);}
+.ui-selector-lista button:focus-visible,.ui-selector-control:focus-visible {outline:2px solid var(--ui-primary);outline-offset:2px;}
+@keyframes selectorAbrir {from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:translateY(0);}}
+@media(prefers-reduced-motion:reduce){.ui-selector-panel:popover-open {animation:none;}.ui-selector-control i{transition:none;}}
+.ui-seleccion-multiple{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.65rem;max-width:100%}.ui-seleccion-multiple button{display:inline-flex;align-items:center;gap:.4rem;max-width:100%;padding:.45rem .65rem;white-space:normal;text-align:left}.ui-seleccion-multiple span{overflow-wrap:anywhere}

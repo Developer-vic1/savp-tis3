@@ -2,11 +2,11 @@
 
 namespace Tests\Unit;
 
-use App\Models\AulaVirtual\ClaseVirtual;
-use App\Models\Docente;
-use App\Models\Estudiante;
-use App\Models\InscripcionEstudiante;
-use App\Models\User;
+use App\Models\Oficial\AulaVirtual\ClaseVirtual;
+use App\Models\Oficial\Academico\Docente;
+use App\Models\Oficial\Academico\Estudiante;
+use App\Models\Oficial\Academico\InscripcionEstudiante;
+use App\Models\Oficial\Sistema\User;
 use App\Services\AulaVirtual\CursoVirtualService;
 use App\Services\RegencyAccessService;
 use Mockery;

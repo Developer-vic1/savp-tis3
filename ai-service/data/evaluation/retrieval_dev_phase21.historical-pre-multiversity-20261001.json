@@ -1,0 +1,1065 @@
+{
+  "split": "DEV",
+  "dataset_version": "retrieval-bo-dev-v2.0.0",
+  "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde",
+  "evaluated_at": "2026-10-01T17:54:05.335268+00:00",
+  "environment": {
+    "python": "3.14.0",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "query_count": 15,
+  "models": [
+    {
+      "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "index_manifest": {
+        "index_version": "faiss-flat-ip-v1.0.0",
+        "model_id": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        "model_slug": "sentence_transformers__paraphrase_multilingual_minilm_l12_v2",
+        "dimension": 384,
+        "chunk_count": 773,
+        "embedding_rows": 773,
+        "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
+        "normalized_l2": true,
+        "exact": true,
+        "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde",
+        "build_seconds": 81.7445,
+        "built_at": "2026-10-01T17:52:56.989581+00:00",
+        "python_version": "3.14.0",
+        "dependencies": {
+          "torch": "2.13.0+cpu",
+          "sentence-transformers": "6.1.0",
+          "transformers": "5.17.0",
+          "faiss-cpu": "1.15.1"
+        },
+        "model_revision": null,
+        "model_revision_status": "UNAVAILABLE_FROM_RUNTIME"
+      },
+      "metrics_scope": "QUERIES_WITH_RELEVANT_CHUNKS",
+      "positive_query_count": 13,
+      "no_relevant_chunk_count": 2,
+      "semantic": {
+        "metrics": {
+          "recall_at_1": 0.0897,
+          "recall_at_3": 0.2051,
+          "recall_at_5": 0.2821,
+          "mrr": 0.2718,
+          "ndcg_at_5": 0.2173
+        },
+        "latency": {
+          "median_ms": 27.896,
+          "p95_ms": 24162.9386
+        }
+      },
+      "hybrid": {
+        "metrics": {
+          "recall_at_1": 0.141,
+          "recall_at_3": 0.2821,
+          "recall_at_5": 0.3846,
+          "mrr": 0.3489,
+          "ndcg_at_5": 0.3066
+        },
+        "latency": {
+          "median_ms": 37.1268,
+          "p95_ms": 48.2568
+        }
+      },
+      "per_query": [
+        {
+          "query_id": "Q01",
+          "category": "BTH",
+          "relevant_chunk_ids": [
+            "112fcaa01158b48859b7417d",
+            "cc18195d0d2595b17f84a383"
+          ],
+          "semantic_top_chunk_ids": [
+            "e464c44997113e539d934ec0",
+            "bc0e8e1358cf8cd695210e29",
+            "2dce5db24f634a41ed7b63af",
+            "2a4734f51fde6f27ff110d53",
+            "88ba15c7f31717b25e2b5b6a",
+            "6366dc77a265f60174bc894d",
+            "50abf013a88726c53bd31867",
+            "6f9ce8c02bcd2315c221e09d",
+            "77fb7563dbe82edc35f4e93c",
+            "2df6a7767a530b54fb4c80f1"
+          ],
+          "hybrid_top_chunk_ids": [
+            "2dce5db24f634a41ed7b63af",
+            "e464c44997113e539d934ec0",
+            "cf1eb3865c7c8a1359bcaf12",
+            "4531afdc116b9b1edd130148",
+            "6701495f4f5109fd026e9e09",
+            "39665a5826bbea238f66a375",
+            "e2e85b5b8c6d503dc7f90941",
+            "d1647e47fda4e5f8fc2486b7",
+            "6366dc77a265f60174bc894d",
+            "cc18195d0d2595b17f84a383"
+          ]
+        },
+        {
+          "query_id": "Q03",
+          "category": "BTH",
+          "relevant_chunk_ids": [
+            "0881e0b29f0978c7bd8c2335"
+          ],
+          "semantic_top_chunk_ids": [
+            "e464c44997113e539d934ec0",
+            "6b4582541c3cc3b02ffa1f57",
+            "64e2fd23fef58075c1005a27",
+            "48d65194c679f545e542ce5c",
+            "0d2404fd8820a44581249117",
+            "bc0e8e1358cf8cd695210e29",
+            "ba95d284aee43ea5612a633b",
+            "b1f8c1646cd8c6d6a42c4704",
+            "88ec175eb64d6e631db064d6",
+            "cf80dbf10a5660c17d7ab072"
+          ],
+          "hybrid_top_chunk_ids": [
+            "bc0e8e1358cf8cd695210e29",
+            "b1f8c1646cd8c6d6a42c4704",
+            "64e2fd23fef58075c1005a27",
+            "0d2404fd8820a44581249117",
+            "404a083dbb2bd473f9ee7a31",
+            "e464c44997113e539d934ec0",
+            "5b4759b445e13bd6888db799",
+            "6b4582541c3cc3b02ffa1f57",
+            "b72b204624defd39eef6ba9e",
+            "1a7afa3329ff627ac382d1ce"
+          ]
+        },
+        {
+          "query_id": "Q05",
+          "category": "CURRICULUM",
+          "relevant_chunk_ids": [
+            "bd9ab3adc2977f5f4e4e15f7"
+          ],
+          "semantic_top_chunk_ids": [
+            "75b04b518ea79f1f0e43d194",
+            "e65320d6b6ae693cc6937819",
+            "3f885ad507cf16811e487794",
+            "feab410576be6bf0dcc5d213",
+            "c945bdaa95b67ec8d6d0329b",
+            "228d7ddab256d6d3e4c05b76",
+            "41d5c140ca62462077d4219b",
+            "2f72a072807e415bb5945cf3",
+            "5f45ead91fdd1a0a47c829d0",
+            "46044fd874bf4751b7c154c2"
+          ],
+          "hybrid_top_chunk_ids": [
+            "c945bdaa95b67ec8d6d0329b",
+            "228d7ddab256d6d3e4c05b76",
+            "015ac1e9600d7e55bc046603",
+            "75b04b518ea79f1f0e43d194",
+            "7a3f224857983258cafa9306",
+            "74765112b88696b40d10441f",
+            "3f885ad507cf16811e487794",
+            "2958c2086d5593e5ce8bfa86",
+            "3aed1e8f8ade6d62cd8fb1f6",
+            "a58558fb216d20421b9b8542"
+          ]
+        },
+        {
+          "query_id": "Q07",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd"
+          ],
+          "semantic_top_chunk_ids": [
+            "959b63cbc686020e590c2090",
+            "2778c66ba9d49d68a36ecc0f",
+            "21b69739cd8f55f039992acd",
+            "48d65194c679f545e542ce5c",
+            "6b4582541c3cc3b02ffa1f57",
+            "6215426042d47c231786daa5",
+            "9b65a7af8f71a8edb4d46405",
+            "e8dd2c85c774af95eb162d8d",
+            "497314e4093a1b9c03e6a81d",
+            "b986f3a29b1e9ee1647e6fba"
+          ],
+          "hybrid_top_chunk_ids": [
+            "959b63cbc686020e590c2090",
+            "21b69739cd8f55f039992acd",
+            "2778c66ba9d49d68a36ecc0f",
+            "2ebca67b3ab7175b06ccfbc9",
+            "44fc9f24e79bf1da79017dab",
+            "6b4582541c3cc3b02ffa1f57",
+            "48d65194c679f545e542ce5c",
+            "6bfc18d0fbb7230422218a15",
+            "497314e4093a1b9c03e6a81d",
+            "6215426042d47c231786daa5"
+          ]
+        },
+        {
+          "query_id": "Q09",
+          "category": "CAREER",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd",
+            "497314e4093a1b9c03e6a81d"
+          ],
+          "semantic_top_chunk_ids": [
+            "497314e4093a1b9c03e6a81d",
+            "21b69739cd8f55f039992acd",
+            "6b4582541c3cc3b02ffa1f57",
+            "f0a0e8e01ae26ea67067f298",
+            "2778c66ba9d49d68a36ecc0f",
+            "6215426042d47c231786daa5",
+            "959b63cbc686020e590c2090",
+            "648a7e203786c8df3f3009fe",
+            "3125abf240b457a47aa07655",
+            "1ff50cb4440bddb92f3e2faf"
+          ],
+          "hybrid_top_chunk_ids": [
+            "497314e4093a1b9c03e6a81d",
+            "21b69739cd8f55f039992acd",
+            "f0a0e8e01ae26ea67067f298",
+            "6b4582541c3cc3b02ffa1f57",
+            "959b63cbc686020e590c2090",
+            "2778c66ba9d49d68a36ecc0f",
+            "6215426042d47c231786daa5",
+            "7c2fa2800a58c50ba2884bc8",
+            "48d65194c679f545e542ce5c",
+            "ba95d284aee43ea5612a633b"
+          ]
+        },
+        {
+          "query_id": "Q11",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "bf3385cad0814354f9d0daa5"
+          ],
+          "semantic_top_chunk_ids": [
+            "3313dd6467165d18ac2c22a8",
+            "f6dcc30fb3b9f4bc48817e9f",
+            "953883df7131001d77261c2b",
+            "f6911012bef638e2fac53332",
+            "078bd7127f58aff4f44173d1",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "50d99d4e4e7f222e6a921b5a",
+            "6a59a926ea1c539dbfbd9036",
+            "e7e044980aa7f642c2c37bba",
+            "5b2619fcfc4e9c5aa0588fa7"
+          ],
+          "hybrid_top_chunk_ids": [
+            "f6dcc30fb3b9f4bc48817e9f",
+            "953883df7131001d77261c2b",
+            "078bd7127f58aff4f44173d1",
+            "3313dd6467165d18ac2c22a8",
+            "bf3385cad0814354f9d0daa5",
+            "606f98cffc3bf6988782356f",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "f6911012bef638e2fac53332",
+            "6a59a926ea1c539dbfbd9036",
+            "959b63cbc686020e590c2090"
+          ]
+        },
+        {
+          "query_id": "Q13",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "bf3385cad0814354f9d0daa5"
+          ],
+          "semantic_top_chunk_ids": [
+            "3313dd6467165d18ac2c22a8",
+            "953883df7131001d77261c2b",
+            "f6911012bef638e2fac53332",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "606f98cffc3bf6988782356f",
+            "363416761b913bfac3ec5491",
+            "f6dcc30fb3b9f4bc48817e9f",
+            "2d6f6287d0abde9c184efb95",
+            "078bd7127f58aff4f44173d1",
+            "5b2619fcfc4e9c5aa0588fa7"
+          ],
+          "hybrid_top_chunk_ids": [
+            "953883df7131001d77261c2b",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "363416761b913bfac3ec5491",
+            "3313dd6467165d18ac2c22a8",
+            "606f98cffc3bf6988782356f",
+            "078bd7127f58aff4f44173d1",
+            "f6911012bef638e2fac53332",
+            "f6dcc30fb3b9f4bc48817e9f",
+            "bf3385cad0814354f9d0daa5",
+            "8d98bf262a9de351fdebb611"
+          ]
+        },
+        {
+          "query_id": "Q15",
+          "category": "CAREER",
+          "relevant_chunk_ids": [
+            "3f38670bababa54cd31213f4",
+            "7c2fa2800a58c50ba2884bc8",
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic_top_chunk_ids": [
+            "7c2fa2800a58c50ba2884bc8",
+            "12b04d54b340f4e2501c4d39",
+            "83333ef0cc651530bb887bda",
+            "7f7d5eca21f40433cac2ded5",
+            "31a85799f671e2cb105138e3",
+            "77d7ec2b529ebfdc62d24eea",
+            "5c0d89366dc8743fe262b435",
+            "44fc9f24e79bf1da79017dab",
+            "2ebca67b3ab7175b06ccfbc9",
+            "6bfc18d0fbb7230422218a15"
+          ],
+          "hybrid_top_chunk_ids": [
+            "83333ef0cc651530bb887bda",
+            "7c2fa2800a58c50ba2884bc8",
+            "2ebca67b3ab7175b06ccfbc9",
+            "44fc9f24e79bf1da79017dab",
+            "12b04d54b340f4e2501c4d39",
+            "77d7ec2b529ebfdc62d24eea",
+            "7899e8cd8acee890339fdf51",
+            "5c0d89366dc8743fe262b435",
+            "6bfc18d0fbb7230422218a15",
+            "7f7d5eca21f40433cac2ded5"
+          ]
+        },
+        {
+          "query_id": "Q17",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "12b04d54b340f4e2501c4d39"
+          ],
+          "semantic_top_chunk_ids": [
+            "7c2fa2800a58c50ba2884bc8",
+            "133a965246d33d142557611c",
+            "7f7d5eca21f40433cac2ded5",
+            "b986f3a29b1e9ee1647e6fba",
+            "12b04d54b340f4e2501c4d39",
+            "77d7ec2b529ebfdc62d24eea",
+            "7899e8cd8acee890339fdf51",
+            "5c0d89366dc8743fe262b435",
+            "d8edb3de939d14078de572a4",
+            "83333ef0cc651530bb887bda"
+          ],
+          "hybrid_top_chunk_ids": [
+            "12b04d54b340f4e2501c4d39",
+            "77d7ec2b529ebfdc62d24eea",
+            "2ebca67b3ab7175b06ccfbc9",
+            "44fc9f24e79bf1da79017dab",
+            "83333ef0cc651530bb887bda",
+            "5c0d89366dc8743fe262b435",
+            "133a965246d33d142557611c",
+            "b986f3a29b1e9ee1647e6fba",
+            "7c2fa2800a58c50ba2884bc8",
+            "6bfc18d0fbb7230422218a15"
+          ]
+        },
+        {
+          "query_id": "Q19",
+          "category": "CAREER",
+          "relevant_chunk_ids": [
+            "63b146c360d0d2fd9e011467",
+            "d67f7473489bdcdad639a7ea",
+            "d83de654303d08c2b7ec79ee"
+          ],
+          "semantic_top_chunk_ids": [
+            "d67f7473489bdcdad639a7ea",
+            "5afbed48ee4f176de34c0a7e",
+            "dbddf8834837f42eac6dc1c4",
+            "39dd7e3346332e6cdd4301ab",
+            "9554eb4b58ce28db98b5fdb8",
+            "b813299563f38cf6afdf591e",
+            "63b146c360d0d2fd9e011467",
+            "c4e2dbc05a56d4e232669da9",
+            "ccfdcf685e0820739c1dea4e",
+            "5deb89334dbc44c243a7ebe8"
+          ],
+          "hybrid_top_chunk_ids": [
+            "d67f7473489bdcdad639a7ea",
+            "5afbed48ee4f176de34c0a7e",
+            "dbddf8834837f42eac6dc1c4",
+            "63b146c360d0d2fd9e011467",
+            "7c2fa2800a58c50ba2884bc8",
+            "5e920a51d5286fba952624bc",
+            "5deb89334dbc44c243a7ebe8",
+            "d83de654303d08c2b7ec79ee",
+            "7899e8cd8acee890339fdf51",
+            "39dd7e3346332e6cdd4301ab"
+          ]
+        },
+        {
+          "query_id": "Q21",
+          "category": "PARAPHRASE",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd"
+          ],
+          "semantic_top_chunk_ids": [
+            "377c382ad47665c42375ac25",
+            "34087146aea21b42e30bd5d3",
+            "888ce986e29c66ebfea5ee8d",
+            "314c77b0e68b9259b5ccf366",
+            "79bdae32799b425b669d127b",
+            "a761bbfe48b4a34d2a270d1f",
+            "54626c84547702c789b2c3f6",
+            "baf285f5e3d0a2710df64221",
+            "bd9ab3adc2977f5f4e4e15f7",
+            "5e2bab1eaccfb3efa8b9e03b"
+          ],
+          "hybrid_top_chunk_ids": [
+            "25cdbaa5177f4235bdc60a2e",
+            "34087146aea21b42e30bd5d3",
+            "1a1fb95b9faaf8a605dfcbca",
+            "9d8362d378cf17d3ccf8676d",
+            "f183f5937637bbc3b5b6427f",
+            "959b63cbc686020e590c2090",
+            "42e6dba7ffcf9e0d9fc7d3d4",
+            "f6dcc30fb3b9f4bc48817e9f",
+            "2778c66ba9d49d68a36ecc0f",
+            "6690ef3178d3394307302ea9"
+          ]
+        },
+        {
+          "query_id": "Q23",
+          "category": "SYNONYM",
+          "relevant_chunk_ids": [
+            "0881e0b29f0978c7bd8c2335"
+          ],
+          "semantic_top_chunk_ids": [
+            "497314e4093a1b9c03e6a81d",
+            "6b4582541c3cc3b02ffa1f57",
+            "48d65194c679f545e542ce5c",
+            "6fd1d403d2b4d673089ec76c",
+            "64e2fd23fef58075c1005a27",
+            "0be6167ff21a6e574980386f",
+            "6cff8d8a9dce97e603764d3a",
+            "7c99177526c1797a9f3e8cb8",
+            "2778c66ba9d49d68a36ecc0f",
+            "51d27c34e833a8942e89c787"
+          ],
+          "hybrid_top_chunk_ids": [
+            "497314e4093a1b9c03e6a81d",
+            "627e15272ea6738638476d4e",
+            "bc0e8e1358cf8cd695210e29",
+            "959b63cbc686020e590c2090",
+            "f0a0e8e01ae26ea67067f298",
+            "acda41279c301a74fec3d7ca",
+            "21b69739cd8f55f039992acd",
+            "05d014a4fb08d0ca95031350",
+            "e40385a959cc78552141b1ce",
+            "e464c44997113e539d934ec0"
+          ]
+        },
+        {
+          "query_id": "Q25",
+          "category": "AMBIGUOUS",
+          "relevant_chunk_ids": [
+            "5e920a51d5286fba952624bc",
+            "7778bf4a6926dfd3edcf6f19",
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic_top_chunk_ids": [
+            "2778c66ba9d49d68a36ecc0f",
+            "7f7d5eca21f40433cac2ded5",
+            "b986f3a29b1e9ee1647e6fba",
+            "d8edb3de939d14078de572a4",
+            "48d65194c679f545e542ce5c",
+            "c696663f52ea0007d1a1df63",
+            "66b29df67e8633668b691153",
+            "9a2828e211b77675552a6e02",
+            "bf8fb5f92b8b180b2fddc3e8",
+            "714189b5b8a2805c8ea39e2c"
+          ],
+          "hybrid_top_chunk_ids": [
+            "143ff2548a3825fe43de791d",
+            "17f1eba62dd7ed936a8fe634",
+            "6a88d1e1b2bb12b645902e78",
+            "6bfc18d0fbb7230422218a15",
+            "aebf03ab454fd5a5cef5fba9",
+            "eb08b5fde5990c21ba479b85",
+            "ed056364deaf7c6de671a825",
+            "9b65a7af8f71a8edb4d46405",
+            "b986f3a29b1e9ee1647e6fba",
+            "12b04d54b340f4e2501c4d39"
+          ]
+        },
+        {
+          "query_id": "Q27",
+          "category": "NO_ANSWER",
+          "relevant_chunk_ids": [],
+          "semantic_top_chunk_ids": [
+            "fcd14d0c233cb2335b5b1d0f",
+            "b451c3e908e7b4985b12c887",
+            "b64c81211729957072212b4e",
+            "078bd7127f58aff4f44173d1",
+            "363416761b913bfac3ec5491",
+            "c6fb2bc74d75124360ad6eb2",
+            "7b49d7fc0affc30bce0a9693",
+            "1cb7b7f267b629d270d88276",
+            "49474b877aa317f868aeeb2f",
+            "75c3acedb21fbde03b209de1"
+          ],
+          "hybrid_top_chunk_ids": [
+            "bc4cf380d0bdb4f334ff760f",
+            "fcd14d0c233cb2335b5b1d0f",
+            "b451c3e908e7b4985b12c887",
+            "b64c81211729957072212b4e",
+            "078bd7127f58aff4f44173d1",
+            "363416761b913bfac3ec5491",
+            "c6fb2bc74d75124360ad6eb2",
+            "7b49d7fc0affc30bce0a9693",
+            "1cb7b7f267b629d270d88276",
+            "49474b877aa317f868aeeb2f"
+          ]
+        },
+        {
+          "query_id": "Q29",
+          "category": "ADVERSARIAL",
+          "relevant_chunk_ids": [],
+          "semantic_top_chunk_ids": [
+            "8e8f671dca1f676bfc1bb3b2",
+            "a312b0ea5a7af950da7fcd70",
+            "d5f2c9d0c28e88f99009083c",
+            "100b9e59566c1d007f9723ce",
+            "02b75fc220bb796eeb3585fd",
+            "3f4231d45088c3c2bd7ea5d4",
+            "717199a1b2bd4e4a973d178b",
+            "e65683789dc8d1e23b7d053d",
+            "005cb00bd9ea6c88cea5330a",
+            "fec1fe5e1c8e05e69d8cce53"
+          ],
+          "hybrid_top_chunk_ids": [
+            "f4a358601049bace8e85e2e0",
+            "0e155095ac13339829c0cfbe",
+            "a312b0ea5a7af950da7fcd70",
+            "02b75fc220bb796eeb3585fd",
+            "8743e30c3dce5faa141f3923",
+            "8e8f671dca1f676bfc1bb3b2",
+            "5f0621c9f451440b2fc3149f",
+            "2d6f6287d0abde9c184efb95",
+            "543ad2522232eb744830fcd0",
+            "717199a1b2bd4e4a973d178b"
+          ]
+        }
+      ]
+    },
+    {
+      "model_id": "intfloat/multilingual-e5-small",
+      "index_manifest": {
+        "index_version": "faiss-flat-ip-v1.0.0",
+        "model_id": "intfloat/multilingual-e5-small",
+        "model_slug": "intfloat__multilingual_e5_small",
+        "dimension": 384,
+        "chunk_count": 773,
+        "embedding_rows": 773,
+        "metric": "COSINE_VIA_NORMALIZED_INNER_PRODUCT",
+        "normalized_l2": true,
+        "exact": true,
+        "corpus_sha256": "3d46bde6855fc0ea23ef8f02d16f865bd797db1b5bed996b5b9d06152b2affde",
+        "build_seconds": 96.4972,
+        "built_at": "2026-10-01T17:51:35.179098+00:00",
+        "python_version": "3.14.0",
+        "dependencies": {
+          "torch": "2.13.0+cpu",
+          "sentence-transformers": "6.1.0",
+          "transformers": "5.17.0",
+          "faiss-cpu": "1.15.1"
+        },
+        "model_revision": null,
+        "model_revision_status": "UNAVAILABLE_FROM_RUNTIME"
+      },
+      "metrics_scope": "QUERIES_WITH_RELEVANT_CHUNKS",
+      "positive_query_count": 13,
+      "no_relevant_chunk_count": 2,
+      "semantic": {
+        "metrics": {
+          "recall_at_1": 0.1667,
+          "recall_at_3": 0.2692,
+          "recall_at_5": 0.5128,
+          "mrr": 0.3943,
+          "ndcg_at_5": 0.3621
+        },
+        "latency": {
+          "median_ms": 45.502,
+          "p95_ms": 8265.0034
+        }
+      },
+      "hybrid": {
+        "metrics": {
+          "recall_at_1": 0.2564,
+          "recall_at_3": 0.4744,
+          "recall_at_5": 0.6026,
+          "mrr": 0.5238,
+          "ndcg_at_5": 0.4817
+        },
+        "latency": {
+          "median_ms": 56.363,
+          "p95_ms": 199.0111
+        }
+      },
+      "per_query": [
+        {
+          "query_id": "Q01",
+          "category": "BTH",
+          "relevant_chunk_ids": [
+            "112fcaa01158b48859b7417d",
+            "cc18195d0d2595b17f84a383"
+          ],
+          "semantic_top_chunk_ids": [
+            "a02061e1b69333dbbbb8eb10",
+            "416358d59f4409173751f42b",
+            "c945bdaa95b67ec8d6d0329b",
+            "112fcaa01158b48859b7417d",
+            "bc0e8e1358cf8cd695210e29",
+            "cc18195d0d2595b17f84a383",
+            "3c178c0a41fd310fbbef2373",
+            "4826ff978f789034c836b72b",
+            "85d00ad272d3c783e157f531",
+            "fec1fe5e1c8e05e69d8cce53"
+          ],
+          "hybrid_top_chunk_ids": [
+            "cc18195d0d2595b17f84a383",
+            "112fcaa01158b48859b7417d",
+            "d1647e47fda4e5f8fc2486b7",
+            "2bb3fe14b06d6a7abf6d0652",
+            "c319bc00dbdf9c2b0fb0ad08",
+            "e464c44997113e539d934ec0",
+            "17fb07b7e4e07e1b5aa4aee5",
+            "80c587494262ffc046cd98a5",
+            "69bf97d2c220cdf9f85bbdf2",
+            "2c04430b98f87b42ae792fbc"
+          ]
+        },
+        {
+          "query_id": "Q03",
+          "category": "BTH",
+          "relevant_chunk_ids": [
+            "0881e0b29f0978c7bd8c2335"
+          ],
+          "semantic_top_chunk_ids": [
+            "8a53094b7f96237137267ef3",
+            "b1f8c1646cd8c6d6a42c4704",
+            "113a2bb9cd46d91aaa09ae23",
+            "404a083dbb2bd473f9ee7a31",
+            "0936a7a745179ec7724530d2",
+            "e358ed24c2f1f2443e663956",
+            "0d2404fd8820a44581249117",
+            "416358d59f4409173751f42b",
+            "aeaa1e965bc669a5519baf72",
+            "9d8362d378cf17d3ccf8676d"
+          ],
+          "hybrid_top_chunk_ids": [
+            "e358ed24c2f1f2443e663956",
+            "b1f8c1646cd8c6d6a42c4704",
+            "8a53094b7f96237137267ef3",
+            "6f9ce8c02bcd2315c221e09d",
+            "e9b2783b422868c4bd18e075",
+            "404a083dbb2bd473f9ee7a31",
+            "416358d59f4409173751f42b",
+            "0881e0b29f0978c7bd8c2335",
+            "0d2404fd8820a44581249117",
+            "0936a7a745179ec7724530d2"
+          ]
+        },
+        {
+          "query_id": "Q05",
+          "category": "CURRICULUM",
+          "relevant_chunk_ids": [
+            "bd9ab3adc2977f5f4e4e15f7"
+          ],
+          "semantic_top_chunk_ids": [
+            "c0afc0ff33768630a7189b41",
+            "9ba100bede5b54ad973a6e18",
+            "293aa636ace69f281ee1c3f5",
+            "3f885ad507cf16811e487794",
+            "74765112b88696b40d10441f",
+            "1f71d47bac8b359bf61dd007",
+            "3aed1e8f8ade6d62cd8fb1f6",
+            "1febb0e3a15d09522d400117",
+            "882f6a763703139b708f8175",
+            "960eae5f9564950183843e28"
+          ],
+          "hybrid_top_chunk_ids": [
+            "74765112b88696b40d10441f",
+            "c0afc0ff33768630a7189b41",
+            "9ba100bede5b54ad973a6e18",
+            "3aed1e8f8ade6d62cd8fb1f6",
+            "58c02ba289726353efefa28b",
+            "293aa636ace69f281ee1c3f5",
+            "43b59f0a4ec4f53cccf7d597",
+            "bd9ab3adc2977f5f4e4e15f7",
+            "42f6915516076f2bb1f79363",
+            "015ac1e9600d7e55bc046603"
+          ]
+        },
+        {
+          "query_id": "Q07",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd"
+          ],
+          "semantic_top_chunk_ids": [
+            "959b63cbc686020e590c2090",
+            "ba95d284aee43ea5612a633b",
+            "ea301807129365c01fbc91a5",
+            "02b75fc220bb796eeb3585fd",
+            "21b69739cd8f55f039992acd",
+            "2778c66ba9d49d68a36ecc0f",
+            "6215426042d47c231786daa5",
+            "79c7a44eb01ab0fdac53cd23",
+            "b986f3a29b1e9ee1647e6fba",
+            "7778bf4a6926dfd3edcf6f19"
+          ],
+          "hybrid_top_chunk_ids": [
+            "959b63cbc686020e590c2090",
+            "21b69739cd8f55f039992acd",
+            "143ff2548a3825fe43de791d",
+            "ea301807129365c01fbc91a5",
+            "17f1eba62dd7ed936a8fe634",
+            "6a88d1e1b2bb12b645902e78",
+            "7778bf4a6926dfd3edcf6f19",
+            "2778c66ba9d49d68a36ecc0f",
+            "aebf03ab454fd5a5cef5fba9",
+            "eb08b5fde5990c21ba479b85"
+          ]
+        },
+        {
+          "query_id": "Q09",
+          "category": "CAREER",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd",
+            "497314e4093a1b9c03e6a81d"
+          ],
+          "semantic_top_chunk_ids": [
+            "497314e4093a1b9c03e6a81d",
+            "6b4582541c3cc3b02ffa1f57",
+            "2778c66ba9d49d68a36ecc0f",
+            "f0a0e8e01ae26ea67067f298",
+            "48d65194c679f545e542ce5c",
+            "ba95d284aee43ea5612a633b",
+            "6215426042d47c231786daa5",
+            "39dd7e3346332e6cdd4301ab",
+            "02b75fc220bb796eeb3585fd",
+            "d67f7473489bdcdad639a7ea"
+          ],
+          "hybrid_top_chunk_ids": [
+            "497314e4093a1b9c03e6a81d",
+            "f0a0e8e01ae26ea67067f298",
+            "6b4582541c3cc3b02ffa1f57",
+            "2778c66ba9d49d68a36ecc0f",
+            "6215426042d47c231786daa5",
+            "48d65194c679f545e542ce5c",
+            "21b69739cd8f55f039992acd",
+            "959b63cbc686020e590c2090",
+            "02b75fc220bb796eeb3585fd",
+            "ba95d284aee43ea5612a633b"
+          ]
+        },
+        {
+          "query_id": "Q11",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "bf3385cad0814354f9d0daa5"
+          ],
+          "semantic_top_chunk_ids": [
+            "bf3385cad0814354f9d0daa5",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "363416761b913bfac3ec5491",
+            "606f98cffc3bf6988782356f",
+            "46831d820c8093d4423d1fd1",
+            "3313dd6467165d18ac2c22a8",
+            "953883df7131001d77261c2b",
+            "e3a0ca49cdc4c572f2e1ed15",
+            "3b6336453ac1b0acd860afd0",
+            "c0afc0ff33768630a7189b41"
+          ],
+          "hybrid_top_chunk_ids": [
+            "bf3385cad0814354f9d0daa5",
+            "363416761b913bfac3ec5491",
+            "606f98cffc3bf6988782356f",
+            "953883df7131001d77261c2b",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "46831d820c8093d4423d1fd1",
+            "f6dcc30fb3b9f4bc48817e9f",
+            "3313dd6467165d18ac2c22a8",
+            "c1010a65bec478728a842f71",
+            "078bd7127f58aff4f44173d1"
+          ]
+        },
+        {
+          "query_id": "Q13",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "bf3385cad0814354f9d0daa5"
+          ],
+          "semantic_top_chunk_ids": [
+            "363416761b913bfac3ec5491",
+            "078bd7127f58aff4f44173d1",
+            "606f98cffc3bf6988782356f",
+            "3313dd6467165d18ac2c22a8",
+            "bf3385cad0814354f9d0daa5",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "953883df7131001d77261c2b",
+            "46831d820c8093d4423d1fd1",
+            "f6911012bef638e2fac53332",
+            "8d98bf262a9de351fdebb611"
+          ],
+          "hybrid_top_chunk_ids": [
+            "bf3385cad0814354f9d0daa5",
+            "0513afdc94ef6a9cb4c1cbb2",
+            "953883df7131001d77261c2b",
+            "363416761b913bfac3ec5491",
+            "078bd7127f58aff4f44173d1",
+            "606f98cffc3bf6988782356f",
+            "3313dd6467165d18ac2c22a8",
+            "c0afc0ff33768630a7189b41",
+            "293aa636ace69f281ee1c3f5",
+            "f6911012bef638e2fac53332"
+          ]
+        },
+        {
+          "query_id": "Q15",
+          "category": "CAREER",
+          "relevant_chunk_ids": [
+            "3f38670bababa54cd31213f4",
+            "7c2fa2800a58c50ba2884bc8",
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic_top_chunk_ids": [
+            "7c2fa2800a58c50ba2884bc8",
+            "7899e8cd8acee890339fdf51",
+            "3f38670bababa54cd31213f4",
+            "66b29df67e8633668b691153",
+            "bf8fb5f92b8b180b2fddc3e8",
+            "6bfc18d0fbb7230422218a15",
+            "44fc9f24e79bf1da79017dab",
+            "98290dbcc4d7530c4c2066cb",
+            "12b04d54b340f4e2501c4d39",
+            "e82f1d4171807fe8cd321c46"
+          ],
+          "hybrid_top_chunk_ids": [
+            "7899e8cd8acee890339fdf51",
+            "66b29df67e8633668b691153",
+            "7c2fa2800a58c50ba2884bc8",
+            "44fc9f24e79bf1da79017dab",
+            "6bfc18d0fbb7230422218a15",
+            "2ebca67b3ab7175b06ccfbc9",
+            "3f38670bababa54cd31213f4",
+            "bf8fb5f92b8b180b2fddc3e8",
+            "83333ef0cc651530bb887bda",
+            "12b04d54b340f4e2501c4d39"
+          ]
+        },
+        {
+          "query_id": "Q17",
+          "category": "UNIVERSITY_PLAN",
+          "relevant_chunk_ids": [
+            "12b04d54b340f4e2501c4d39"
+          ],
+          "semantic_top_chunk_ids": [
+            "b986f3a29b1e9ee1647e6fba",
+            "0b3f5d84d21535e65806a89f",
+            "7c728cdb35e81b3e4625c0bb",
+            "3f38670bababa54cd31213f4",
+            "e82f1d4171807fe8cd321c46",
+            "89749489ddaf98eb35fcb8d5",
+            "133a965246d33d142557611c",
+            "0349355f440d901ce6768442",
+            "adcbb49d64ea81411913b49b",
+            "d83de654303d08c2b7ec79ee"
+          ],
+          "hybrid_top_chunk_ids": [
+            "0b3f5d84d21535e65806a89f",
+            "89749489ddaf98eb35fcb8d5",
+            "adcbb49d64ea81411913b49b",
+            "12b04d54b340f4e2501c4d39",
+            "44fc9f24e79bf1da79017dab",
+            "b986f3a29b1e9ee1647e6fba",
+            "2ebca67b3ab7175b06ccfbc9",
+            "7778bf4a6926dfd3edcf6f19",
+            "83333ef0cc651530bb887bda",
+            "77d7ec2b529ebfdc62d24eea"
+          ]
+        },
+        {
+          "query_id": "Q19",
+          "category": "CAREER",
+          "relevant_chunk_ids": [
+            "63b146c360d0d2fd9e011467",
+            "d67f7473489bdcdad639a7ea",
+            "d83de654303d08c2b7ec79ee"
+          ],
+          "semantic_top_chunk_ids": [
+            "d67f7473489bdcdad639a7ea",
+            "dbddf8834837f42eac6dc1c4",
+            "5afbed48ee4f176de34c0a7e",
+            "63b146c360d0d2fd9e011467",
+            "d83de654303d08c2b7ec79ee",
+            "d2ac7d14b20d9003857aa5ba",
+            "5e920a51d5286fba952624bc",
+            "7bb8c2b9a733d6791b1510d4",
+            "43dcf0b3275b26c8594d2c25",
+            "e82f1d4171807fe8cd321c46"
+          ],
+          "hybrid_top_chunk_ids": [
+            "d67f7473489bdcdad639a7ea",
+            "5afbed48ee4f176de34c0a7e",
+            "dbddf8834837f42eac6dc1c4",
+            "d83de654303d08c2b7ec79ee",
+            "63b146c360d0d2fd9e011467",
+            "5e920a51d5286fba952624bc",
+            "7bb8c2b9a733d6791b1510d4",
+            "7c2fa2800a58c50ba2884bc8",
+            "7899e8cd8acee890339fdf51",
+            "adcbb49d64ea81411913b49b"
+          ]
+        },
+        {
+          "query_id": "Q21",
+          "category": "PARAPHRASE",
+          "relevant_chunk_ids": [
+            "21b69739cd8f55f039992acd"
+          ],
+          "semantic_top_chunk_ids": [
+            "ea301807129365c01fbc91a5",
+            "959b63cbc686020e590c2090",
+            "21b69739cd8f55f039992acd",
+            "6215426042d47c231786daa5",
+            "4954a943ea94dc4641b3f77c",
+            "02b75fc220bb796eeb3585fd",
+            "b986f3a29b1e9ee1647e6fba",
+            "363416761b913bfac3ec5491",
+            "3aed1e8f8ade6d62cd8fb1f6",
+            "8d98bf262a9de351fdebb611"
+          ],
+          "hybrid_top_chunk_ids": [
+            "ea301807129365c01fbc91a5",
+            "959b63cbc686020e590c2090",
+            "21b69739cd8f55f039992acd",
+            "6215426042d47c231786daa5",
+            "ee28db79fbb62ce79ac5fb54",
+            "f6dcc30fb3b9f4bc48817e9f",
+            "02b75fc220bb796eeb3585fd",
+            "2778c66ba9d49d68a36ecc0f",
+            "0349355f440d901ce6768442",
+            "f0a0e8e01ae26ea67067f298"
+          ]
+        },
+        {
+          "query_id": "Q23",
+          "category": "SYNONYM",
+          "relevant_chunk_ids": [
+            "0881e0b29f0978c7bd8c2335"
+          ],
+          "semantic_top_chunk_ids": [
+            "8a53094b7f96237137267ef3",
+            "a9c44fb6cda2d5fb8e196883",
+            "fe371926e3d3f7f8e9e96230",
+            "3c178c0a41fd310fbbef2373",
+            "3125abf240b457a47aa07655",
+            "b813299563f38cf6afdf591e",
+            "e314c27affdf98beec3cb4f6",
+            "6cff8d8a9dce97e603764d3a",
+            "9867148302c1b60fffe336cf",
+            "07e6ffa94a9a5ea91e9af39d"
+          ],
+          "hybrid_top_chunk_ids": [
+            "e314c27affdf98beec3cb4f6",
+            "6215426042d47c231786daa5",
+            "b813299563f38cf6afdf591e",
+            "8a53094b7f96237137267ef3",
+            "627e15272ea6738638476d4e",
+            "07e6ffa94a9a5ea91e9af39d",
+            "5b6314bf054931201ee286bc",
+            "813fada855d349d02b41e7cb",
+            "f772386dac04ee6e0f9bda17",
+            "04db6c228e8ee78027043c36"
+          ]
+        },
+        {
+          "query_id": "Q25",
+          "category": "AMBIGUOUS",
+          "relevant_chunk_ids": [
+            "5e920a51d5286fba952624bc",
+            "7778bf4a6926dfd3edcf6f19",
+            "9b65a7af8f71a8edb4d46405"
+          ],
+          "semantic_top_chunk_ids": [
+            "6a88d1e1b2bb12b645902e78",
+            "17f1eba62dd7ed936a8fe634",
+            "143ff2548a3825fe43de791d",
+            "ed056364deaf7c6de671a825",
+            "eb08b5fde5990c21ba479b85",
+            "aebf03ab454fd5a5cef5fba9",
+            "7778bf4a6926dfd3edcf6f19",
+            "12b04d54b340f4e2501c4d39",
+            "9b65a7af8f71a8edb4d46405",
+            "21b69739cd8f55f039992acd"
+          ],
+          "hybrid_top_chunk_ids": [
+            "6a88d1e1b2bb12b645902e78",
+            "143ff2548a3825fe43de791d",
+            "17f1eba62dd7ed936a8fe634",
+            "ed056364deaf7c6de671a825",
+            "aebf03ab454fd5a5cef5fba9",
+            "eb08b5fde5990c21ba479b85",
+            "7778bf4a6926dfd3edcf6f19",
+            "21b69739cd8f55f039992acd",
+            "9b65a7af8f71a8edb4d46405",
+            "7c728cdb35e81b3e4625c0bb"
+          ]
+        },
+        {
+          "query_id": "Q27",
+          "category": "NO_ANSWER",
+          "relevant_chunk_ids": [],
+          "semantic_top_chunk_ids": [
+            "363416761b913bfac3ec5491",
+            "606f98cffc3bf6988782356f",
+            "ea301807129365c01fbc91a5",
+            "21b69739cd8f55f039992acd",
+            "4954a943ea94dc4641b3f77c",
+            "e82f1d4171807fe8cd321c46",
+            "6215426042d47c231786daa5",
+            "133a965246d33d142557611c",
+            "62ce4b631d2aa52a0fc51948",
+            "6e479392941b54073d1ded39"
+          ],
+          "hybrid_top_chunk_ids": [
+            "bc4cf380d0bdb4f334ff760f",
+            "363416761b913bfac3ec5491",
+            "606f98cffc3bf6988782356f",
+            "ea301807129365c01fbc91a5",
+            "21b69739cd8f55f039992acd",
+            "4954a943ea94dc4641b3f77c",
+            "e82f1d4171807fe8cd321c46",
+            "6215426042d47c231786daa5",
+            "133a965246d33d142557611c",
+            "62ce4b631d2aa52a0fc51948"
+          ]
+        },
+        {
+          "query_id": "Q29",
+          "category": "ADVERSARIAL",
+          "relevant_chunk_ids": [],
+          "semantic_top_chunk_ids": [
+            "f46114e182c0067eabd01624",
+            "21b69739cd8f55f039992acd",
+            "4954a943ea94dc4641b3f77c",
+            "d83de654303d08c2b7ec79ee",
+            "1e8a3283f68e0c823d73fb0d",
+            "02b75fc220bb796eeb3585fd",
+            "ee28db79fbb62ce79ac5fb54",
+            "1d9e4334e2ce4382b99b8c63",
+            "8af4b87b85c7c6ae2cb2a044",
+            "5e920a51d5286fba952624bc"
+          ],
+          "hybrid_top_chunk_ids": [
+            "f4a358601049bace8e85e2e0",
+            "4954a943ea94dc4641b3f77c",
+            "668297407d0600d0c866beb3",
+            "21b69739cd8f55f039992acd",
+            "293aa636ace69f281ee1c3f5",
+            "7778bf4a6926dfd3edcf6f19",
+            "5b9bdd6baab9c92144ebb759",
+            "d83de654303d08c2b7ec79ee",
+            "17a354aa0dc3ed5ccd87406c",
+            "f54229ea01a530d71d349c80"
+          ]
+        }
+      ]
+    }
+  ]
+}

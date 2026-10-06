@@ -2,7 +2,7 @@
 
 namespace Database\Seeders\Oficial\REALES;
 
-use App\Models\Asignatura;
+use App\Models\Oficial\Academico\Asignatura;
 use Illuminate\Database\Seeder;
 
 class AsignaturasOficialesSeeder extends Seeder

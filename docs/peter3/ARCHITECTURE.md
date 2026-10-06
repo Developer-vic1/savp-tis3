@@ -12,7 +12,7 @@ PostgreSQL → Laravel (auth, permisos, privacidad) → DTO JSON
                                        respuesta versionada y explicable
 ```
 
-PETER 3 no conoce tablas, Eloquent, controladores, vistas, roles ni dashboards. Solo procesa el contrato público y datos mínimos ya autorizados.
+Aporte Ingenieril SAVP no conoce tablas, Eloquent, controladores, vistas, roles ni dashboards. Solo procesa el contrato público y datos mínimos ya autorizados.
 
 ## Capas
 
