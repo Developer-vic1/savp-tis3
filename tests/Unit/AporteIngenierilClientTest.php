@@ -123,6 +123,26 @@ class AporteIngenierilClientTest extends TestCase
         Http::assertSent(fn ($request) => $request['schema_version'] === '1.0' && $request['question'] === 'Explica álgebra' && ! isset($request['student_id']) && ! isset($request['academic_context']));
     }
 
+    public function test_tutor_accepts_a_server_supplied_institutional_count(): void
+    {
+        Http::fake(['aporte.test/*' => Http::response([
+            'schema_version' => '1.0', 'trace_id' => 'test', 'answer' => '60 en el directorio.',
+            'answer_mode' => 'STRUCTURED', 'sources' => [], 'warnings' => [],
+            'suggested_topics' => [], 'insufficient_evidence' => false,
+        ])]);
+
+        $result = app(AporteIngenierilClient::class)->tutor([
+            'schema_version' => '1.0',
+            'question' => 'Cuántas universidades tenemos registradas',
+            'academic_context' => ['institutional_university_count' => 5],
+        ]);
+
+        $this->assertTrue($result->available);
+        Http::assertSent(fn ($request) => $request['academic_context'] === [
+            'institutional_university_count' => 5,
+        ]);
+    }
+
     public function test_tutor_sends_only_allowlisted_context_and_recent_conversation(): void
     {
         Http::fake(['aporte.test/*' => Http::response(['schema_version' => '1.0', 'trace_id' => 'test', 'answer' => 'Explicación contextual',
@@ -208,5 +228,67 @@ class AporteIngenierilClientTest extends TestCase
         config()->set('services.aporte_ingenieril.allowed_hosts', ['aporte.test']);
         $this->assertFalse(app(AporteIngenierilClient::class)->analysis($this->payload())->available);
         Http::assertNothingSent();
+    }
+
+    private function vistaPreviaUniversitaria(array $documentos = []): array
+    {
+        return ['schema_version' => '1.0', 'trace_id' => 'preview-test', 'requested_url' => 'https://www.upb.edu/carreras',
+            'status' => 'VERIFICADA', 'can_use' => true, 'title' => 'Carreras de la universidad',
+            'message' => 'Página institucional disponible.', 'excerpt' => 'Mallas y reglamentos publicados.',
+            'assessment' => ['status' => 'ACEPTADA'], 'checked_at' => '2026-10-07T12:00:00Z',
+            'suggested_fields' => [], 'warnings' => [], 'duplicate' => null, 'reachable' => true,
+            'http_status' => 200, 'document_hash' => 'sha256:'.str_repeat('a', 64), 'documents' => $documentos];
+    }
+
+    public function test_documentos_publicados_son_opcionales_y_se_conservan_sin_descargarlos(): void
+    {
+        $documentos = [
+            ['url' => 'https://documentos.upb.edu/malla.PDF?v=2026', 'title' => str_repeat('Á', 240), 'kind' => 'malla'],
+            ['url' => 'https://www.upb.edu/reglamento.pdf', 'title' => 'Reglamento académico', 'kind' => 'reglamento'],
+        ];
+        $previa = $this->vistaPreviaUniversitaria($documentos);
+        $sinDocumentos = $this->vistaPreviaUniversitaria();
+        unset($sinDocumentos['documents']);
+        Http::preventStrayRequests();
+        Http::fakeSequence()->push($previa)->push($sinDocumentos);
+        $cliente = app(AporteIngenierilClient::class);
+        $resultado = $cliente->inspectKnowledgeSource(['url' => $previa['requested_url']]);
+        $this->assertTrue($resultado->available);
+        $this->assertSame($documentos, $resultado->data['documents']);
+        $this->assertTrue($cliente->inspectKnowledgeSource(['url' => $sinDocumentos['requested_url']])->available);
+        Http::assertSentCount(2);
+        Http::assertSent(fn ($request) => str_ends_with($request->url(), '/api/v1/knowledge/governance/preview'));
+    }
+
+    public function test_documentos_corruptos_ajenos_o_excesivos_no_habilitan_vista_previa(): void
+    {
+        $valido = ['url' => 'https://www.upb.edu/malla.pdf', 'title' => 'Malla académica', 'kind' => 'malla'];
+        $invalidos = [
+            'más de seis' => array_fill(0, 7, $valido),
+            'diccionario en lugar de lista' => ['documento' => $valido],
+            'campo desconocido' => [$valido + ['can_use' => true]],
+            'título demasiado largo' => [array_replace($valido, ['title' => str_repeat('a', 241)])],
+            'título vacío' => [array_replace($valido, ['title' => ''])],
+            'tipo falso' => [array_replace($valido, ['kind' => 'oficial'])],
+            'tipo ausente' => [array_diff_key($valido, ['kind' => null])],
+            'credenciales' => [array_replace($valido, ['url' => 'https://usuario:clave@www.upb.edu/malla.pdf'])],
+            'puerto' => [array_replace($valido, ['url' => 'https://www.upb.edu:8090/malla.pdf'])],
+            'HTTP' => [array_replace($valido, ['url' => 'http://www.upb.edu/malla.pdf'])],
+            'institución distinta' => [array_replace($valido, ['url' => 'https://www.umsa.bo/malla.pdf'])],
+            'dominio desconocido .bo' => [array_replace($valido, ['url' => 'https://evil.bo/malla.pdf'])],
+            'subdominio engañoso' => [array_replace($valido, ['url' => 'https://upb.edu.evil.bo/malla.pdf'])],
+            'enlace HTML' => [array_replace($valido, ['url' => 'https://www.upb.edu/malla'])],
+            'estructura corrupta' => ['no es un documento'],
+        ];
+        Http::preventStrayRequests();
+        $secuencia = Http::fakeSequence();
+        foreach ($invalidos as $documentos) $secuencia->push($this->vistaPreviaUniversitaria($documentos));
+        $cliente = app(AporteIngenierilClient::class);
+        foreach ($invalidos as $caso => $documentos) {
+            $resultado = $cliente->inspectKnowledgeSource(['url' => 'https://www.upb.edu/carreras']);
+            $this->assertFalse($resultado->available, $caso);
+            $this->assertSame([], $resultado->data, $caso);
+        }
+        Http::assertSentCount(count($invalidos));
     }
 }

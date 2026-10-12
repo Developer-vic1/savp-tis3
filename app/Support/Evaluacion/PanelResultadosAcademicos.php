@@ -87,6 +87,8 @@ class PanelResultadosAcademicos
     public function consulta(array $f): Builder
     {
         $notas = DB::table('calificacion')->whereIn('est_cal', ['VIGENTE', 'RECTIFICADA'])
+            // Acotar antes de agrupar evita recorrer todas las gestiones para consultar una sola.
+            ->when($f['gestion'] ?? '', fn ($q, $v) => $q->whereIn('cod_ins', DB::table('inscripcion_estudiante')->select('cod_ins')->where('cod_gea', $v)))
             ->when($f['periodo'] ?? '', fn ($q, $v) => $q->where('cod_pev', $v))
             ->selectRaw("cod_ins, COUNT(*) AS notas, AVG(not_cal) AS promedio, SUM(CASE WHEN not_cal <= 50 THEN 1 ELSE 0 END) AS bajas, SUM(CASE WHEN UPPER(COALESCE(obs_cal,'')) LIKE '%SINTETIC%' THEN 1 ELSE 0 END) AS sinteticas")->groupBy('cod_ins');
         $ultimas = DB::table('orientacion_actividades')->selectRaw('MAX(id) AS id')->groupBy('cod_est', 'cod_gea');

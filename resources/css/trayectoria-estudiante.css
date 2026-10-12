@@ -1,0 +1,31 @@
+.trayectoria-estudiante,.trayectoria-gestion{min-width:0;max-width:100%}
+.trayectoria-filtro{display:grid;grid-template-columns:minmax(0,20rem) minmax(0,1fr);gap:1rem;align-items:end;margin-top:1.5rem}
+.trayectoria-filtro>p{font-size:.875rem;line-height:1.6}
+.trayectoria-resumen{margin-top:1.5rem;padding:1rem;border:1px solid var(--ui-border);border-radius:.85rem;background:var(--ui-surface-soft)}
+.trayectoria-resumen h3{font-size:1rem;line-height:1.5}
+.trayectoria-conteos{display:flex;flex-wrap:wrap;gap:.75rem 1.25rem;margin-top:.6rem;color:var(--ui-text-soft);font-size:.85rem}
+.trayectoria-conteos strong{color:var(--ui-text)}
+.trayectoria-comparacion{margin-top:1.4rem}
+.trayectoria-vistas{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:1rem}
+.trayectoria-vistas [aria-pressed="true"]{background:var(--ui-primary-soft);border-color:var(--ui-primary);color:var(--ui-primary)}
+.trayectoria-barras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.9rem 1.5rem;margin-top:1rem;list-style:none}
+.trayectoria-barras>li{min-width:0;padding:.8rem;border:1px solid var(--ui-border);border-radius:.75rem;background:var(--ui-surface)}
+.trayectoria-barra-cabecera{display:flex;justify-content:space-between;align-items:start;gap:.75rem;font-size:.9rem}
+.trayectoria-barra-cabecera>strong{overflow-wrap:anywhere}
+.trayectoria-barra-cabecera>span{font-weight:800;text-align:right;flex:none}
+.trayectoria-barra-cabecera small{display:block;font-size:.75rem;font-weight:400;color:var(--ui-text-soft)}
+.trayectoria-barra-pista{height:.45rem;border-radius:1rem;background:var(--ui-surface-muted);overflow:hidden;margin-top:.65rem}
+.trayectoria-barra-pista>span{display:block;height:100%;border-radius:inherit;background:var(--ui-primary)}
+.trayectoria-barras p{font-size:.8rem;line-height:1.5;color:var(--ui-text-soft);margin-top:.6rem}
+.trayectoria-tabla-contenedor{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;border:1px solid var(--ui-border);border-radius:.75rem}
+.trayectoria-tabla{width:100%;border-collapse:collapse;text-align:left;font-size:.875rem}
+.trayectoria-tabla caption{text-align:left;padding:.85rem;font-weight:700;background:var(--ui-surface-soft);color:var(--ui-text)}
+.trayectoria-tabla th,.trayectoria-tabla td{padding:.8rem;vertical-align:top;border-top:1px solid var(--ui-border);min-width:7rem;line-height:1.5}
+.trayectoria-tabla thead th{background:var(--ui-surface-muted);font-size:.8rem;color:var(--ui-text-soft)}
+.trayectoria-tabla tbody th{min-width:9rem;color:var(--ui-text)}
+.trayectoria-tabla small{display:block;margin-top:.25rem;font-size:.75rem;color:var(--ui-text-soft)}
+.trayectoria-tabla td:last-child{min-width:13rem}
+.trayectoria-nota{display:inline-block;margin-right:.35rem;font-variant-numeric:tabular-nums}
+.trayectoria-limite{margin-top:1rem;border-left:3px solid var(--ui-info);padding:.5rem .9rem;color:var(--ui-text-soft);font-size:.85rem;line-height:1.6}
+.trayectoria-tabla-contenedor:focus-visible{outline:2px solid var(--ui-primary);outline-offset:3px}
+@media(max-width:680px){.trayectoria-filtro,.trayectoria-barras{grid-template-columns:minmax(0,1fr)}.trayectoria-conteos{gap:.5rem 1rem}.trayectoria-barra-cabecera{font-size:.85rem}.trayectoria-tabla th,.trayectoria-tabla td{padding:.65rem}}

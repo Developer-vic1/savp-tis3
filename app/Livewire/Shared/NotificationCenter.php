@@ -41,7 +41,7 @@ class NotificationCenter extends Component
     {
         abort_unless(auth()->user(), 403);
 
-        return view('livewire.shared.notification-center', $service->snapshot(auth()->user(), $this->filtro, $this->origen) + ['service' => $service]);
+        return view('livewire.shared.notification-center', $service->snapshot(auth()->user(), $this->filtro, $this->origen, $this->abierta) + ['service' => $service]);
     }
 
     public function archive(string $id, bool $archivar): void

@@ -1,0 +1,17 @@
+.savp-navegacion-estado{position:fixed;left:0;right:0;top:0;z-index:120;pointer-events:none;visibility:hidden}
+.savp-navegacion-progreso{height:3px;background:var(--ui-border);overflow:hidden}
+.savp-navegacion-progreso::after{content:'';display:block;width:35%;height:100%;background:var(--ui-primary);transform:translateX(-100%)}
+.savp-navegando .savp-navegacion-estado{visibility:visible}
+.savp-navegando .savp-navegacion-progreso::after{animation:savp-avance 1.1s ease-in-out infinite}
+@keyframes savp-avance{to{transform:translateX(385%)}}
+@media(prefers-reduced-motion:no-preference){
+    @view-transition{navigation:auto}
+    :root{view-transition-name:none}
+    .savp-workspace-main{view-transition-name:savp-contenido}
+    ::view-transition-group(savp-contenido){animation-duration:140ms}
+    ::view-transition-old(savp-contenido){animation:140ms ease-out both savp-salida}
+    ::view-transition-new(savp-contenido){animation:140ms ease-out both savp-entrada}
+}
+@keyframes savp-salida{to{opacity:0}}
+@keyframes savp-entrada{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.savp-navegando .savp-navegacion-progreso::after{animation:none;transform:none;width:100%}}

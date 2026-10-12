@@ -1,0 +1,370 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="QA_SYNTHETIC_ONLY"><title>Prueba visual · Mi análisis</title><link rel="stylesheet" href="/build/assets/app-C1LONlFc.css"><link rel="stylesheet" href="/build/assets/app-zvyyYlg5.css"><style>[x-cloak]{display:none!important}body{background:var(--ui-bg);color:var(--ui-text);font-family:Figtree,system-ui,sans-serif;padding:1rem}.qa-banner{padding:1rem;border:1px solid var(--ui-warning-border);background:var(--ui-warning-soft);border-radius:1rem;max-width:80rem;margin:0 auto 1rem}.qa-header{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}.qa-main{max-width:80rem;margin:auto}</style></head><body><header class="qa-banner"><strong>Datos de prueba, no un resultado personal</strong><p>Respuestas y trayectoria artificiales. Puntajes, estudio y fuentes calculados por el servicio real. Ninguna escritura institucional.</p><nav class="qa-header"><a class="ui-btn-secondary" href="/__qa/intereses">Cuestionario</a><a class="ui-btn-secondary" href="/__qa/analisis">Mi análisis</a><a class="ui-btn-secondary" href="/__qa/futuro">Carreras y universidades</a><a class="ui-btn-secondary" href="/__qa/plan">Mi plan</a><button class="ui-btn-secondary" id="qa-tema">Cambiar tema</button></nav></header><main class="qa-main"><div class="intereses-espacio">
+    <section class="intereses-hero" aria-labelledby="analisis-cabecera"><div><div class="intereses-etiqueta"><i class="ph-duotone ph-fingerprint" aria-hidden="true"></i>2 · Comprender</div><h1 id="analisis-cabecera">Entiende tu perfil. Encuentra tu siguiente paso.</h1><p>Lee qué expresan tus respuestas, cómo aporta tu trayectoria y qué referencias puedes investigar para explorar carreras.</p><div class="intereses-acciones"><a class="ui-btn-primary" href="#mi-analisis">Revisar mi estudio<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a><a class="ui-btn-secondary" href="/__qa/futuro">Explorar carreras y universidades</a></div></div><div class="intereses-ilustracion" aria-hidden="true"><div class="intereses-orbita"><i class="ph-duotone ph-fingerprint"></i><span>Tus intereses</span></div><div class="intereses-orbita"><i class="ph-duotone ph-path"></i><span>Tu trayectoria</span></div><div class="intereses-orbita"><i class="ph-duotone ph-lightbulb"></i><span>Tus motivos</span></div></div></section>
+    <nav class="intereses-ruta" aria-label="Tu recorrido de orientación">
+            <a href="/__qa/intereses" ><span class="intereses-ruta-numero">1</span><span><strong>Responder</strong><small>Cuestionario de intereses</small></span></a>
+            <a href="/__qa/analisis"  aria-current="step" ><span class="intereses-ruta-numero">2</span><span><strong>Comprender</strong><small>Mi perfil y sus motivos</small></span></a>
+            <a href="/__qa/futuro" ><span class="intereses-ruta-numero">3</span><span><strong>Explorar</strong><small>Carreras y universidades</small></span></a>
+            <a href="#qa-fuera-de-alcance" ><span class="intereses-ruta-numero">4</span><span><strong>Prepararme</strong><small>Una meta, un primer paso</small></span></a>
+    </nav>
+                <section class="intereses-panel intereses-estudio" id="mi-analisis" aria-labelledby="analisis-titulo">
+    <div class="intereses-cabecera"><div><p class="intereses-etiqueta">Tu estudio, tu punto de partida</p><h2 id="analisis-titulo" class="mt-2">Mi análisis</h2><p class="intereses-texto mt-2">Descubre cómo se relacionan tus intereses con las opciones que quieres estudiar. Después elige una meta y prepara tu siguiente paso.</p></div>
+        <form method="POST" action="/__qa/enviar" x-data="crearEstudioIntereses()" @submit.prevent="analizar($event)" :aria-busy="enviando" class="w-full lg:w-auto">
+            <input type="hidden" name="_token" value="utjcatk00i27hqpyh7kBp8DjE01G8g9oMWKZlLkR" autocomplete="off">            <button class="ui-btn-primary" type="submit"  :disabled="enviando || false"><i class="ph-duotone ph-sparkle" aria-hidden="true"></i><span x-text="enviando ? 'Preparando tu estudio…' : 'Actualizar mi análisis'">Actualizar mi análisis</span></button>
+            <div class="intereses-carga" x-show="enviando" x-cloak role="status" aria-live="polite"><span class="intereses-spinner" aria-hidden="true"></span><div><h3>Tu estudio está en curso</h3><p class="intereses-texto">Estamos revisando tus respuestas y la información disponible. El resultado aparecerá cuando esté guardado.</p></div></div>
+            <div class="intereses-aviso mt-3" x-ref="aviso" tabindex="-1" x-show="aviso" x-cloak role="alert"><h3 x-text="aviso?.title"></h3><p x-text="aviso?.message"></p><p x-text="aviso?.preserved"></p><p x-text="aviso?.next_step"></p></div>
+        </form>
+    </div>
+                <div class="intereses-estudio-confirmado">
+            <div><p class="intereses-chip" role="status"><i class="ph-duotone ph-check-circle" aria-hidden="true"></i>Estudio guardado  · 08/10/2026 09:08 (Bolivia) </p><h3 class="mt-3">Tus resultados acompañan tu elección</h3><p class="intereses-texto mt-2">Puedes explorar una carrera aunque no comparta tus áreas destacadas. Tus metas importan; el plan te ayudará a decidir qué aprender y qué reforzar.</p></div>
+            <div class="intereses-estudio-perfil"><span class="intereses-etiqueta">Tus áreas destacadas</span><strong>RIA</strong><p>Hay áreas empatadas; revisa el perfil completo.</p></div>
+        </div>
+        <p class="intereses-texto mt-3">Las seis áreas tienen el mismo puntaje. Mostramos el perfil completo porque ninguna destaca.</p>        <details class="ui-plegable ui-plegable-compacto mt-4" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-info" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Qué significa esta coincidencia</span>
+            <span class="ui-plegable-descripcion">Entiende qué podemos comparar y qué información falta.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p class="intereses-texto">Contamos áreas compartidas entre tus intereses destacados y los códigos de ocupaciones relacionadas con cada carrera. Partimos de las tres áreas más altas y conservamos todas las empatadas. Una referencia puede tener una, dos o tres áreas. Este conteo no mide posibilidades de ingreso ni éxito y no equivale a un porcentaje de compatibilidad personal.</p><p class="intereses-texto mt-2">Para comparar perfiles completos con el método O*NET se necesitan seis puntajes de ambas partes. Conservamos la diferencia entre una carrera universitaria y una ocupación.</p><a href="https://www.onetcenter.org/reports/IP_Career_Returns.html" class="ui-btn-secondary mt-3" target="_blank" rel="noopener noreferrer">Consultar el método O*NET<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div>
+</details>
+    </section>
+    <section class="intereses-panel" aria-labelledby="carreras-titulo">
+        <div class="intereses-cabecera"><div><p class="intereses-etiqueta">Conecta tus intereses con una meta</p><h2 id="carreras-titulo" class="mt-2">¿Qué podrías aprender en estas carreras?</h2><p class="intereses-texto mt-2">Revisa las áreas que comparten contigo, las materias documentadas y cómo empezar a prepararte. Puedes comparar otras opciones antes de elegir.</p></div><a class="ui-btn-secondary" href="/__qa/futuro?explore=compare"><i class="ph-duotone ph-scales" aria-hidden="true"></i>Comparar otras carreras</a></div>
+        <div class="intereses-carreras">
+                                            <article class="intereses-carrera intereses-carrera-explicada">
+                    <div class="intereses-carrera-titulo"><i class="ph-duotone ph-graduation-cap" aria-hidden="true"></i><span>Universidad Católica Boliviana San Pablo, Sede La Paz</span></div><h3>Ingeniería Ambiental</h3>
+                    <div class="intereses-coincidencia">
+                                                    <strong>Perfil con empate</strong><p>Las seis áreas tienen el mismo puntaje. Ninguna destaca; mostramos tus puntajes sin convertirlos en una coincidencia numérica.</p>
+                                            </div>
+                    <div class="intereses-mapa" role="group" aria-label="Tus intereses y las áreas de esta referencia">
+    <div class="intereses-mapa-leyenda"><span><i class="ph-duotone ph-user" aria-hidden="true"></i>Tus respuestas, de 0 a 20</span><span><i class="ph-duotone ph-link" aria-hidden="true"></i>Área de la referencia</span></div>
+    <ul class="intereses-mapa-barras" aria-label="Tus seis puntajes de interés">
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">R</span><span class="intereses-mapa-nombre">Realista</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">I</span><span class="intereses-mapa-nombre">Investigador</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">A</span><span class="intereses-mapa-nombre">Artístico</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">S</span><span class="intereses-mapa-nombre">Social</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">E</span><span class="intereses-mapa-nombre">Emprendedor</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">C</span><span class="intereses-mapa-nombre">Convencional</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+            </ul>
+            <p class="intereses-texto">Las áreas marcadas pertenecen a la referencia <strong>IRC</strong>. Las barras muestran tus respuestas; la referencia no aporta seis puntajes para calcular una correlación.</p>
+    </div>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-link" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Qué conecta esta opción contigo</span>
+            <span class="ui-plegable-descripcion">Mira las áreas compartidas y la referencia que las respalda.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="intereses-referencia"><h4>IRC · Environmental Engineers</h4><p class="intereses-texto">La relación entre esta carrera y la ocupación necesita comprobación adicional.</p> <a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-ambiental/" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">Ingeniería Ambiental — Perfil Profesional y Áreas de Estudio<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a><a href="https://www.onetcenter.org/database.html" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">O*NET 31.0 Database and O*NET OnLine occupational profiles<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div><div class="intereses-referencia"><h4>IRC · Environmental Scientists and Specialists</h4><p class="intereses-texto">La relación entre esta carrera y la ocupación necesita comprobación adicional.</p> <a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-ambiental/" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">Ingeniería Ambiental — Perfil Profesional y Áreas de Estudio<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a><a href="https://www.onetcenter.org/database.html" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">O*NET 31.0 Database and O*NET OnLine occupational profiles<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div></div>
+</details>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias que podrías estudiar</span>
+            <span class="ui-plegable-descripcion">Conoce los contenidos iniciales documentados del programa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="intereses-materias"><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Biología General y Laboratorio</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Cálculo I</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Química General I y Laboratorio</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Desarrollo Sostenible e Integral</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Ecología Integral y Gestión Sociocomunitaria</li></ul><p class="intereses-texto mt-2">Son materias documentadas del programa; consulta la malla completa y confirma sede y gestión.</p></div>
+</details>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-brain" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por dónde empezar a prepararte</span>
+            <span class="ui-plegable-descripcion">Revisa qué contenidos conviene reforzar según el estudio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="intereses-referencia"><h4>Comprensión de ecosistemas y ciclos biológicos</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Biología General y Laboratorio / Ecología Integral y Gestión Sociocomunitaria.</p></div><div class="intereses-referencia"><h4>Prácticas técnico-productivas y educación ambiental</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Desarrollo Sostenible e Integral.</p></div><div class="intereses-referencia"><h4>Estequiometría, enlaces y reacciones químicas</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Química General I y Laboratorio.</p></div>                        <p class="intereses-texto mt-3">Una coincidencia menor no cierra esta meta. Puedes elegirla y construir una preparación con tus propios objetivos.</p></div>
+</details>
+                    <div class="intereses-acciones"><a class="ui-btn-primary" href="#qa-fuera-de-alcance">Preparar mi plan<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a><a class="ui-btn-secondary" href="/__qa/futuro?explore=all&amp;career=ingenieria-ambiental">Ver carrera y malla</a></div>
+                </article>
+                                            <article class="intereses-carrera intereses-carrera-explicada">
+                    <div class="intereses-carrera-titulo"><i class="ph-duotone ph-graduation-cap" aria-hidden="true"></i><span>Universidad Católica Boliviana San Pablo, Sede La Paz</span></div><h3>Ingeniería Civil</h3>
+                    <div class="intereses-coincidencia">
+                                                    <strong>Perfil con empate</strong><p>Las seis áreas tienen el mismo puntaje. Ninguna destaca; mostramos tus puntajes sin convertirlos en una coincidencia numérica.</p>
+                                            </div>
+                    <div class="intereses-mapa" role="group" aria-label="Tus intereses y las áreas de esta referencia">
+    <div class="intereses-mapa-leyenda"><span><i class="ph-duotone ph-user" aria-hidden="true"></i>Tus respuestas, de 0 a 20</span><span><i class="ph-duotone ph-link" aria-hidden="true"></i>Área de la referencia</span></div>
+    <ul class="intereses-mapa-barras" aria-label="Tus seis puntajes de interés">
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">R</span><span class="intereses-mapa-nombre">Realista</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">I</span><span class="intereses-mapa-nombre">Investigador</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">A</span><span class="intereses-mapa-nombre">Artístico</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">S</span><span class="intereses-mapa-nombre">Social</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">E</span><span class="intereses-mapa-nombre">Emprendedor</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">C</span><span class="intereses-mapa-nombre">Convencional</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+            </ul>
+            <p class="intereses-texto">Las áreas marcadas pertenecen a la referencia <strong>RIC</strong>. Las barras muestran tus respuestas; la referencia no aporta seis puntajes para calcular una correlación.</p>
+    </div>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-link" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Qué conecta esta opción contigo</span>
+            <span class="ui-plegable-descripcion">Mira las áreas compartidas y la referencia que las respalda.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="intereses-referencia"><h4>RIC · Civil Engineers</h4><p class="intereses-texto">La relación entre esta carrera y la ocupación necesita comprobación adicional.</p> <a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-civil/" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">Ingeniería Civil — Perfil Profesional y Áreas de Estudio<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a><a href="https://www.onetcenter.org/database.html" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">O*NET 31.0 Database and O*NET OnLine occupational profiles<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div></div>
+</details>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias que podrías estudiar</span>
+            <span class="ui-plegable-descripcion">Conoce los contenidos iniciales documentados del programa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="intereses-materias"><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Química General I y Laboratorio</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Física I y Laboratorio</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Álgebra Lineal</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Cálculo I</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Dibujo Técnico Computarizado</li></ul><p class="intereses-texto mt-2">Son materias documentadas del programa; consulta la malla completa y confirma sede y gestión.</p></div>
+</details>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-brain" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por dónde empezar a prepararte</span>
+            <span class="ui-plegable-descripcion">Revisa qué contenidos conviene reforzar según el estudio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="intereses-referencia"><h4>Representación y procesos constructivos básicos</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Dibujo Técnico Computarizado.</p></div><div class="intereses-referencia"><h4>Estructura de la materia, enlaces y reacciones químicas</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Química General I y Laboratorio.</p></div>                        <p class="intereses-texto mt-3">Una coincidencia menor no cierra esta meta. Puedes elegirla y construir una preparación con tus propios objetivos.</p></div>
+</details>
+                    <div class="intereses-acciones"><a class="ui-btn-primary" href="#qa-fuera-de-alcance">Preparar mi plan<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a><a class="ui-btn-secondary" href="/__qa/futuro?explore=all&amp;career=ingenieria-civil">Ver carrera y malla</a></div>
+                </article>
+                                            <article class="intereses-carrera intereses-carrera-explicada">
+                    <div class="intereses-carrera-titulo"><i class="ph-duotone ph-graduation-cap" aria-hidden="true"></i><span>Universidad Católica Boliviana San Pablo, Sede La Paz</span></div><h3>Ingeniería de Sistemas</h3>
+                    <div class="intereses-coincidencia">
+                                                    <strong>Perfil con empate</strong><p>Las seis áreas tienen el mismo puntaje. Ninguna destaca; mostramos tus puntajes sin convertirlos en una coincidencia numérica.</p>
+                                            </div>
+                    <div class="intereses-mapa" role="group" aria-label="Tus intereses y las áreas de esta referencia">
+    <div class="intereses-mapa-leyenda"><span><i class="ph-duotone ph-user" aria-hidden="true"></i>Tus respuestas, de 0 a 20</span><span><i class="ph-duotone ph-link" aria-hidden="true"></i>Área de la referencia</span></div>
+    <ul class="intereses-mapa-barras" aria-label="Tus seis puntajes de interés">
+                    <li >
+                <span class="intereses-mapa-codigo">R</span><span class="intereses-mapa-nombre">Realista</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">I</span><span class="intereses-mapa-nombre">Investigador</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">A</span><span class="intereses-mapa-nombre">Artístico</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">S</span><span class="intereses-mapa-nombre">Social</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li >
+                <span class="intereses-mapa-codigo">E</span><span class="intereses-mapa-nombre">Emprendedor</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label=""  aria-hidden="true" ></i>
+            </li>
+                    <li  data-referencia >
+                <span class="intereses-mapa-codigo">C</span><span class="intereses-mapa-nombre">Convencional</span>
+                                    <span class="intereses-mapa-pista" aria-hidden="true"><span style="width: 50%"></span></span><strong>10<small>/20</small></strong>
+                                <i class="ph-duotone ph-link intereses-mapa-enlace" aria-label="Esta área aparece en la referencia" ></i>
+            </li>
+            </ul>
+            <p class="intereses-texto">Las áreas marcadas pertenecen a la referencia <strong>IC</strong>. Las barras muestran tus respuestas; la referencia no aporta seis puntajes para calcular una correlación.</p>
+    </div>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-link" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Qué conecta esta opción contigo</span>
+            <span class="ui-plegable-descripcion">Mira las áreas compartidas y la referencia que las respalda.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="intereses-referencia"><h4>IC · Software Developers</h4><p class="intereses-texto">La relación entre esta carrera y la ocupación necesita comprobación adicional.</p> <a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">Ingeniería de Sistemas — Perfil Profesional y Áreas de Estudio<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a><a href="https://www.onetcenter.org/database.html" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">O*NET 31.0 Database and O*NET OnLine occupational profiles<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div><div class="intereses-referencia"><h4>IC · Computer Systems Analysts</h4><p class="intereses-texto">La relación entre esta carrera y la ocupación necesita comprobación adicional.</p> <a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">Ingeniería de Sistemas — Perfil Profesional y Áreas de Estudio<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a><a href="https://www.onetcenter.org/database.html" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">O*NET 31.0 Database and O*NET OnLine occupational profiles<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div><div class="intereses-referencia"><h4>ICR · Computer Network Architects</h4><p class="intereses-texto">La relación entre esta carrera y la ocupación necesita comprobación adicional.</p> <a href="https://lpz.ucb.edu.bo/pregrado/ingenieria-de-sistemas/" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">Ingeniería de Sistemas — Perfil Profesional y Áreas de Estudio<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a><a href="https://www.onetcenter.org/database.html" target="_blank" rel="noopener noreferrer" class="ui-btn-secondary mt-2">O*NET 31.0 Database and O*NET OnLine occupational profiles<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div></div>
+</details>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias que podrías estudiar</span>
+            <span class="ui-plegable-descripcion">Conoce los contenidos iniciales documentados del programa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="intereses-materias"><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Álgebra Lineal</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Matemáticas Discretas</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Introducción a la Programación</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Ingeniería de Sistemas</li><li><i class="ph-duotone ph-book-open-text" aria-hidden="true"></i>Pensamiento Crítico</li></ul><p class="intereses-texto mt-2">Son materias documentadas del programa; consulta la malla completa y confirma sede y gestión.</p></div>
+</details>
+                    <details class="ui-plegable ui-plegable-compacto" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-brain" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por dónde empezar a prepararte</span>
+            <span class="ui-plegable-descripcion">Revisa qué contenidos conviene reforzar según el estudio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="intereses-referencia"><h4>Fundamentos de programación y algoritmos</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Introducción a la Programación.</p></div><div class="intereses-referencia"><h4>Comprensión, argumentación y análisis discursivo</h4><p class="intereses-texto">Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p><p class="intereses-texto mt-2">Lo encontrarás en Pensamiento Crítico.</p></div>                        <p class="intereses-texto mt-3">Una coincidencia menor no cierra esta meta. Puedes elegirla y construir una preparación con tus propios objetivos.</p></div>
+</details>
+                    <div class="intereses-acciones"><a class="ui-btn-primary" href="#qa-fuera-de-alcance">Preparar mi plan<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a><a class="ui-btn-secondary" href="/__qa/futuro?explore=all&amp;career=ingenieria-de-sistemas">Ver carrera y malla</a></div>
+                </article>
+                    </div>
+        <div class="intereses-alternativa"><i class="ph-duotone ph-compass" aria-hidden="true"></i><div><h3>¿No aparece la carrera que imaginabas?</h3><p class="intereses-texto">Compara otras carreras del catálogo. Revisa qué quieres aprender y qué necesitarías preparar; tu objetivo también guía el plan.</p></div><a class="ui-btn-secondary" href="/__qa/futuro?explore=compare">Elegir otras opciones<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a></div>
+    </section>
+    <section class="intereses-panel" aria-labelledby="siguiente-titulo"><p class="intereses-etiqueta">De la elección a una acción</p><h2 id="siguiente-titulo" class="mt-2">Tu siguiente paso tiene un propósito</h2><p class="intereses-texto mt-2">Elige lo que necesitas resolver hoy. Puedes volver a explorar antes de comprometerte con una carrera.</p>
+        <div class="intereses-pasos-accion">
+            <a href="/__qa/futuro?explore=compare"><i class="ph-duotone ph-scales" aria-hidden="true"></i><strong>Comparar para decidir</strong><span>Contrasta intereses, materias y preparación de otras opciones.</span><b>Ver comparación<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></b></a>
+            <a href="#qa-fuera-de-alcance"><i class="ph-duotone ph-target" aria-hidden="true"></i><strong>Construir mi meta</strong><span>Elige una carrera y una acción concreta. Guarda el plan y revisa tu avance.</span><b>Abrir Mi plan<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></b></a>
+            <a href="#qa-fuera-de-alcance"><i class="ph-duotone ph-brain" aria-hidden="true"></i><strong>Prepararme con apoyo</strong><span>Revisa tus pendientes y lleva el plan a tu docente u orientador para acordar apoyo.</span><b>Ver Mi preparación<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></b></a>
+        </div>
+    </section>
+            <details class="ui-plegable" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-fingerprint" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Cómo se forma tu perfil de intereses</span>
+            <span class="ui-plegable-descripcion">Revisa tus seis áreas, el código Holland y el cálculo de tus respuestas.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><section id="mi-perfil" class="intereses-panel" aria-labelledby="perfil-titulo">
+    <div class="intereses-cabecera"><div><p class="intereses-etiqueta">Resultado guardado</p><h2 id="perfil-titulo" class="mt-2">Mi perfil de intereses</h2><p class="intereses-texto mt-2">Es una fotografía de lo que disfrutas hoy. Puedes descubrir nuevos intereses con el tiempo.</p></div><span class="intereses-chip"><i class="ph-duotone ph-check-circle" aria-hidden="true"></i>08/10/2026</span></div>
+    <div class="intereses-perfil">
+        <div role="list" aria-label="Puntajes por área de interés">
+                            <div class="intereses-area" role="listitem"  data-destacada ><i class="ph-duotone ph-wrench" aria-hidden="true"></i><div><strong>Realista</strong><div class="intereses-area-barra" aria-hidden="true"><span style="width: 50%"></span></div></div><strong aria-label="Realista: 10 de 20">10<small>/20</small></strong></div>
+                            <div class="intereses-area" role="listitem"  data-destacada ><i class="ph-duotone ph-flask" aria-hidden="true"></i><div><strong>Investigador</strong><div class="intereses-area-barra" aria-hidden="true"><span style="width: 50%"></span></div></div><strong aria-label="Investigador: 10 de 20">10<small>/20</small></strong></div>
+                            <div class="intereses-area" role="listitem"  data-destacada ><i class="ph-duotone ph-palette" aria-hidden="true"></i><div><strong>Artístico</strong><div class="intereses-area-barra" aria-hidden="true"><span style="width: 50%"></span></div></div><strong aria-label="Artístico: 10 de 20">10<small>/20</small></strong></div>
+                            <div class="intereses-area" role="listitem"  data-destacada ><i class="ph-duotone ph-users-three" aria-hidden="true"></i><div><strong>Social</strong><div class="intereses-area-barra" aria-hidden="true"><span style="width: 50%"></span></div></div><strong aria-label="Social: 10 de 20">10<small>/20</small></strong></div>
+                            <div class="intereses-area" role="listitem"  data-destacada ><i class="ph-duotone ph-megaphone" aria-hidden="true"></i><div><strong>Emprendedor</strong><div class="intereses-area-barra" aria-hidden="true"><span style="width: 50%"></span></div></div><strong aria-label="Emprendedor: 10 de 20">10<small>/20</small></strong></div>
+                            <div class="intereses-area" role="listitem"  data-destacada ><i class="ph-duotone ph-list-checks" aria-hidden="true"></i><div><strong>Convencional</strong><div class="intereses-area-barra" aria-hidden="true"><span style="width: 50%"></span></div></div><strong aria-label="Convencional: 10 de 20">10<small>/20</small></strong></div>
+                    </div>
+        <div class="intereses-lectura"><p class="intereses-etiqueta">Código Holland</p><p class="intereses-codigo">RIA</p>
+            <h3>Hoy no destaca una sola área</h3><p class="intereses-texto mt-2">Las seis áreas tienen el mismo puntaje. El orden de las letras resuelve el empate; no significa que unas te interesen más.</p>
+                        <p class="intereses-texto mt-3">No mide inteligencia ni aptitud. Tampoco predice éxito o admisión.</p>
+        </div>
+    </div>
+    <details class="ui-plegable mt-5" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-chart-bar" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Entender el porqué de mi resultado</span>
+            <span class="ui-plegable-descripcion">Revisa cómo se suman tus respuestas y qué expresa cada área.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p class="intereses-texto mt-2">Cada área reúne cinco actividades. La escala de respuesta de 1 a 5 se convierte a 0 a 4 y se suma: el máximo por área es 20. Un puntaje mayor indica más interés declarado en esas actividades, no más capacidad.</p>
+        <div class="intereses-periodos"><article class="intereses-periodo"><strong>R · Realista</strong><p>Actividades prácticas para construir, reparar o trabajar con objetos.</p><p>10 de 20 en tus respuestas.</p></article><article class="intereses-periodo"><strong>I · Investigador</strong><p>Actividades que requieren preguntas, análisis y búsqueda de explicaciones.</p><p>10 de 20 en tus respuestas.</p></article><article class="intereses-periodo"><strong>A · Artístico</strong><p>Actividades de creación, imaginación y expresión de ideas.</p><p>10 de 20 en tus respuestas.</p></article><article class="intereses-periodo"><strong>S · Social</strong><p>Actividades de colaboración, enseñanza y acompañamiento a otras personas.</p><p>10 de 20 en tus respuestas.</p></article><article class="intereses-periodo"><strong>E · Emprendedor</strong><p>Actividades para impulsar ideas, liderar o negociar.</p><p>10 de 20 en tus respuestas.</p></article><article class="intereses-periodo"><strong>C · Convencional</strong><p>Actividades con información ordenada, registros y procedimientos.</p><p>10 de 20 en tus respuestas.</p></article></div>
+        <p class="intereses-texto mt-3">En un empate no hay una preferencia superior entre esas áreas. El orden estable de las letras solo permite presentar el código.</p><a class="ui-btn-secondary mt-3" href="https://www.onetcenter.org/reports/IP_Manual.html" target="_blank" rel="noopener noreferrer">Consultar el manual O*NET<span class="sr-only">(abre otra pestaña)</span><i class="ph-duotone ph-arrow-square-out" aria-hidden="true"></i></a></div>
+</details>
+</section></div>
+</details>
+        <details class="ui-plegable" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-student" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Tus notas y tu trayectoria</span>
+            <span class="ui-plegable-descripcion">Consulta tus calificaciones por gestión y compara los promedios de tus materias.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><section class="intereses-panel trayectoria-estudiante" id="mi-trayectoria" aria-labelledby="trayectoria-titulo" x-data="{ gestion: 'QA_2026', vista: 'notas' }">
+    <div class="intereses-cabecera">
+        <div><p class="intereses-etiqueta">Tu punto de partida</p><h2 id="trayectoria-titulo" class="mt-2">Tus notas por gestión y materia</h2><p class="intereses-texto mt-2">Revisa cada nota, compara las materias y descubre de dónde sale su promedio. Tus intereses se interpretan por separado.</p></div>
+        <a class="ui-btn-secondary" href="#qa-fuera-de-alcance">Ver Mi preparación<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a>
+    </div>
+            <div class="trayectoria-filtro"><div class="ui-selector" x-data="selectorInstitucional(null, JSON.parse('[{\u0022valor\u0022:\u0022QA_2026\u0022,\u0022etiqueta\u0022:\u0022Gestión 2026 · Actual\u0022},{\u0022valor\u0022:\u0022QA_2025\u0022,\u0022etiqueta\u0022:\u0022Gestión 2025 · Histórica\u0022}]'), 'trayectoria-gestion', false, false, 'QA_2026')" x-modelable="valor"  x-model="gestion"  x-on:keydown="teclado($event)" wire:key="selector-trayectoria-gestion-fef22eca0ff38ec741568ceecc4f6595">
+    <label id="trayectoria-gestion-etiqueta" for="trayectoria-gestion" class="ui-label">Gestión que quieres revisar</label>
+    <button id="trayectoria-gestion" x-ref="control" type="button" class="ui-selector-control ui-input mt-2" role="combobox" aria-haspopup="listbox" aria-controls="trayectoria-gestion-lista" aria-labelledby="trayectoria-gestion-etiqueta" aria-required="false"  aria-describedby="trayectoria-gestion-ayuda"   :aria-expanded="abierto" :aria-activedescendant="abierto && filtradas[indice] ? identificador+'-opcion-'+indice : null" x-on:click="abrir()" ><span x-text="seleccionada"></span><i class="ph-duotone ph-caret-down" :class="{'ui-selector-flecha-abierta':abierto}" aria-hidden="true"></i></button>
+        <div x-ref="panel" popover="manual" x-show="abierto" x-cloak :style="posicion" class="ui-selector-panel" x-on:click.outside="if(!$refs.control.contains($event.target)) cerrar()" x-transition.opacity.duration.140ms>
+        <div class="ui-selector-buscar" x-show="mostrarBusqueda" x-cloak><i class="ph-duotone ph-magnifying-glass" aria-hidden="true"></i><input x-ref="buscar" type="search" x-model="busqueda" x-on:input.stop="indice=primerIndice()" x-on:change.stop aria-label="Buscar opción: Gestión que quieres revisar" :aria-controls="identificador+'-lista'" :aria-activedescendant="abierto && filtradas[indice] ? identificador+'-opcion-'+indice : null" placeholder="Buscar opción…" autocomplete="off" /></div>
+        <div id="trayectoria-gestion-lista" role="listbox"  aria-labelledby="trayectoria-gestion-etiqueta" class="ui-selector-lista"><template x-for="(opcion,i) in filtradas" :key="String(opcion.valor)"><button type="button" role="option" :id="identificador+'-opcion-'+i" :data-indice="i" :aria-selected="estaElegida(opcion)" :disabled="!!opcion.deshabilitada" :class="{'ui-selector-opcion-activa':indice===i}" x-on:mouseenter="indice=i" x-on:click="elegir(opcion)"><span x-text="opcion.etiqueta"></span><i class="ph-duotone ph-check" x-show="estaElegida(opcion)" aria-hidden="true"></i></button></template><p class="ui-muted p-3 text-sm" x-show="!filtradas.length">No hay opciones con esa búsqueda.</p></div>
+    </div>
+        </div>
+<p id="trayectoria-gestion-ayuda" class="intereses-texto">Cada gestión conserva sus propias materias y períodos. Cambiar la selección solo cambia esta consulta.</p></div>
+        <div class="trayectoria-vistas" role="group" aria-label="Cómo quieres revisar tus materias">
+            <button type="button" class="ui-btn-secondary" @click="vista = 'notas'" :aria-pressed="vista === 'notas'"><i class="ph-duotone ph-table" aria-hidden="true"></i>Ver notas y cálculo</button>
+            <button type="button" class="ui-btn-secondary" @click="vista = 'comparar'" :aria-pressed="vista === 'comparar'"><i class="ph-duotone ph-chart-bar" aria-hidden="true"></i>Comparar materias</button>
+        </div>
+                    <div x-show="gestion === 'QA_2026'"  class="trayectoria-gestion">
+                <div class="trayectoria-resumen"><h3>Gestión 2026 · Actual</h3><div class="trayectoria-conteos"><span><strong>2</strong> materias</span><span><strong>2</strong> notas disponibles</span><span><strong>1</strong> períodos registrados</span><span><strong>1</strong> trimestres identificados</span></div></div>
+                                    <div x-show="vista === 'comparar'" x-cloak class="trayectoria-comparacion"><h4>Compara los promedios de tus materias</h4><p class="intereses-texto mt-2">Promedio de notas disponibles, sin ponderación. Una materia con menos notas no resume el mismo recorrido que otra con más registros.</p><ul class="trayectoria-barras" aria-label="Comparación de promedios por materia"><li><div class="trayectoria-barra-cabecera"><strong>Física</strong><span>68<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 68%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li><li><div class="trayectoria-barra-cabecera"><strong>Matemática</strong><span>72<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 72%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li></ul></div>
+                    <details class="ui-plegable mt-5" x-show="vista === 'notas'"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-table" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Tus notas y el promedio de cada materia</span>
+            <span class="ui-plegable-descripcion">Consulta los valores de cada período y cómo se obtiene el promedio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="trayectoria-tabla-contenedor" tabindex="0" role="region" aria-label="Notas por materia de Gestión 2026 · Actual">
+                            <table class="trayectoria-tabla"><caption>Gestión 2026 · Actual · Notas disponibles por período y promedio simple</caption><thead><tr><th scope="col">Materia</th><th scope="col">Primer trimestre</th><th scope="col">Promedio de notas disponibles</th><th scope="col">Cómo se calcula</th></tr></thead><tbody>
+                            <tr><th scope="row">Física</th><td><span class="trayectoria-nota">68</span> </td><td><strong>68</strong><small>1 nota(s)</small></td><td><span>(68) ÷ 1</span><small>Suma 68 ÷ 1 = 68</small> </td></tr><tr><th scope="row">Matemática</th><td><span class="trayectoria-nota">72</span> </td><td><strong>72</strong><small>1 nota(s)</small></td><td><span>(72) ÷ 1</span><small>Suma 72 ÷ 1 = 72</small> </td></tr>                            </tbody></table>
+                        </div>
+                        <p class="intereses-texto mt-3">«—» significa que no hay una nota disponible; una nota de 0 sí participa del cálculo. Los períodos mostrados son los que aparecen en los registros de esta gestión: no sabemos si faltan otros períodos por registrar.</p></div>
+</details>
+                                <p class="trayectoria-limite">Este promedio describe las notas que puedes ver aquí. No es un promedio anual oficial, no aplica ponderaciones institucionales y no determina aprobación, aptitud ni una carrera para ti.</p>
+            </div>
+                    <div x-show="gestion === 'QA_2025'"  x-cloak  class="trayectoria-gestion">
+                <div class="trayectoria-resumen"><h3>Gestión 2025 · Histórica</h3><div class="trayectoria-conteos"><span><strong>2</strong> materias</span><span><strong>2</strong> notas disponibles</span><span><strong>1</strong> períodos registrados</span><span><strong>1</strong> trimestres identificados</span></div></div>
+                                    <div x-show="vista === 'comparar'" x-cloak class="trayectoria-comparacion"><h4>Compara los promedios de tus materias</h4><p class="intereses-texto mt-2">Promedio de notas disponibles, sin ponderación. Una materia con menos notas no resume el mismo recorrido que otra con más registros.</p><ul class="trayectoria-barras" aria-label="Comparación de promedios por materia"><li><div class="trayectoria-barra-cabecera"><strong>Lenguaje</strong><span>77<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 77%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li><li><div class="trayectoria-barra-cabecera"><strong>Matemática</strong><span>65<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 65%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li></ul></div>
+                    <details class="ui-plegable mt-5" x-show="vista === 'notas'"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-table" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Tus notas y el promedio de cada materia</span>
+            <span class="ui-plegable-descripcion">Consulta los valores de cada período y cómo se obtiene el promedio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="trayectoria-tabla-contenedor" tabindex="0" role="region" aria-label="Notas por materia de Gestión 2025 · Histórica">
+                            <table class="trayectoria-tabla"><caption>Gestión 2025 · Histórica · Notas disponibles por período y promedio simple</caption><thead><tr><th scope="col">Materia</th><th scope="col">Primer trimestre</th><th scope="col">Promedio de notas disponibles</th><th scope="col">Cómo se calcula</th></tr></thead><tbody>
+                            <tr><th scope="row">Lenguaje</th><td><span class="trayectoria-nota">77</span> </td><td><strong>77</strong><small>1 nota(s)</small></td><td><span>(77) ÷ 1</span><small>Suma 77 ÷ 1 = 77</small> </td></tr><tr><th scope="row">Matemática</th><td><span class="trayectoria-nota">65</span> </td><td><strong>65</strong><small>1 nota(s)</small></td><td><span>(65) ÷ 1</span><small>Suma 65 ÷ 1 = 65</small> </td></tr>                            </tbody></table>
+                        </div>
+                        <p class="intereses-texto mt-3">«—» significa que no hay una nota disponible; una nota de 0 sí participa del cálculo. Los períodos mostrados son los que aparecen en los registros de esta gestión: no sabemos si faltan otros períodos por registrar.</p></div>
+</details>
+                                <p class="trayectoria-limite">Este promedio describe las notas que puedes ver aquí. No es un promedio anual oficial, no aplica ponderaciones institucionales y no determina aprobación, aptitud ni una carrera para ti.</p>
+            </div>
+            </section></div>
+</details>
+</div>
+
+</main><script type="module">import "/build/assets/app-dlW34FkG.js";await import("/__qa/alpine.js");document.querySelector("#qa-tema").addEventListener("click",()=>document.documentElement.classList.toggle("dark"));</script></body></html>

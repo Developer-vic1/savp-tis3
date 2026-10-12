@@ -28,7 +28,7 @@ class NotificationService
             ->where(fn ($n) => $n->whereNull('permiso')->orWhereIn('permiso', $permisos)));
     }
 
-    public function snapshot(User $user, string $filtro = 'TODAS', string $origen = 'TODOS'): array
+    public function snapshot(User $user, string $filtro = 'TODAS', string $origen = 'TODOS', bool $incluirBandeja = true): array
     {
         $this->authorize($user);
         validator(compact('filtro', 'origen'), [
@@ -41,6 +41,10 @@ class NotificationService
 
         $base = $this->bandeja($user);
         $unread = (clone $base)->whereNull('archivada_en')->whereNull('leida_en')->count();
+        // La campana cerrada conserva el contador autorizado sin cargar mensajes ni vigencias.
+        if (! $incluirBandeja) {
+            return ['available' => true, 'unread' => $unread, 'rows' => null, 'vigencias' => []];
+        }
         $base->when($filtro === 'ARCHIVADAS', fn ($q) => $q->whereNotNull('archivada_en'), fn ($q) => $q->whereNull('archivada_en'))
             ->when($filtro === 'LEIDAS', fn ($q) => $q->whereNotNull('leida_en'))
             ->when($filtro === 'NO_LEIDAS', fn ($q) => $q->whereNull('leida_en'))

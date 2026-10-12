@@ -75,12 +75,9 @@ class AdminDashboardController extends Controller
                 $estructuraAcademica[] = compact('label', 'route', 'descripcion', 'icono') + ['value' => $model::where($state, 'ACTIVO')->count()];
             }
         }
-        $chartRoles = $user->can('Gestion_Usuarios') ? DB::table('model_has_roles as mhr')->join('roles as r', 'r.id', '=', 'mhr.role_id')
-            ->where('mhr.model_type', User::class)->where('r.guard_name', 'web')->whereIn('r.name', app(InstitutionalRoleGovernance::class)->rolesInstitucionales())
-            ->select('r.name', DB::raw('COUNT(*) AS total'))->groupBy('r.name')->orderBy('r.name')->pluck('total', 'name')->all() : [];
-        $chartEspecialidades = $user->can('Estudiantes') ? DB::table('estudiante as e')->join('especialidad_tecnica as et', 'et.cod_esp', '=', 'e.cod_esp')
-            ->where('e.est_est', 'ACTIVO')->where('et.est_esp', 'ACTIVO')->select('et.nom_esp', DB::raw('COUNT(*) AS total'))
-            ->groupBy('et.nom_esp')->orderByDesc('total')->limit(6)->pluck('total', 'nom_esp')->all() : [];
+        $comunidad = app(\App\Support\MetricasComunidadInstitucional::class);
+        $chartRoles = $comunidad->roles($user);
+        $chartEspecialidades = $comunidad->especialidades($user, $gestion?->cod_gea, $fechaControl->toDateString());
         $chartInscripciones = $user->can('Inscripciones') && $gestion ? DB::table('inscripcion_estudiante as ie')->join('curso as c', 'c.cod_cur', '=', 'ie.cod_cur')
             ->where('ie.est_ins', 'ACTIVA')->where('ie.cod_gea', $gestion->cod_gea)->select('c.nom_cur', DB::raw('COUNT(*) AS total'))
             ->groupBy('c.nom_cur')->orderBy('c.nom_cur')->pluck('total', 'nom_cur')->all() : [];

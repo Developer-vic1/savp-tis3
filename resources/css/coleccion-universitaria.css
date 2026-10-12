@@ -1,0 +1,18 @@
+.cu-semestres { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+@media (min-width: 1100px) { .cu-semestres { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.cu-carpeta { display: grid; justify-items: start; gap: .4rem; min-height: 7rem; padding: 1rem; border: 1px solid var(--ui-border); border-radius: .9rem; background: var(--ui-surface); color: var(--ui-text); text-align: left; }
+.cu-carpeta > i { color: var(--ui-primary); font-size: 1.6rem; }
+.cu-carpeta[aria-pressed="true"] { border-color: var(--ui-primary); background: var(--ui-primary-soft, var(--ui-surface)); box-shadow: inset 0 0 0 1px var(--ui-primary); }
+.cu-carpeta:focus-visible { outline: 3px solid var(--ui-primary); outline-offset: 3px; }
+.cu-materias { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: .65rem; padding: 0; list-style: none; }
+.cu-materia { display: flex; align-items: flex-start; gap: .65rem; padding: .85rem; border: 1px solid var(--ui-border); border-radius: .7rem; background: var(--ui-surface); color: var(--ui-text); }
+.cu-materia > i { color: var(--ui-primary); margin-top: .2rem; }
+.cu-lectura { display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--ui-border); border-radius: 1rem; background: var(--ui-surface); }
+.cu-escaneo { flex: 0 0 3rem; position: relative; display: grid; place-items: center; height: 3.5rem; border: 1px solid var(--ui-border); border-radius: .5rem; overflow: hidden; color: var(--ui-primary); font-size: 1.75rem; }
+.cu-escaneo::after { content: ''; position: absolute; inset-inline: .25rem; top: .3rem; height: 2px; background: var(--ui-primary); }
+@media (prefers-reduced-motion: no-preference) {
+    .cu-carpeta { transition: background-color 150ms, border-color 150ms, transform 150ms; }
+    .cu-carpeta:hover { transform: translateY(-2px); }
+    .cu-escaneo::after { animation: cu-leer 1.4s ease-in-out infinite alternate; }
+    @keyframes cu-leer { to { transform: translateY(2.75rem); } }
+}

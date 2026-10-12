@@ -12,7 +12,8 @@ final class ContratoAporteIngenieril
         $rules = match ($operation) {
             'tutor' => [
                 'schema_version' => 'required|in:1.0', 'question' => 'required|string|min:2|max:2000',
-                'academic_context' => 'sometimes|array:academic_period,areas_to_reinforce,course,preparation_route,strengths',
+                'academic_context' => 'sometimes|array:academic_period,areas_to_reinforce,course,preparation_route,strengths,institutional_university_count',
+                'academic_context.institutional_university_count' => 'sometimes|integer|min:0',
                 'student_context' => 'sometimes|array:affinity_label,areas_to_reinforce,preparation_label,riasec_code,strengths,technical_specialty',
                 'conversation_history' => 'sometimes|array|max:8',
                 'conversation_history.*' => 'array:role,content',

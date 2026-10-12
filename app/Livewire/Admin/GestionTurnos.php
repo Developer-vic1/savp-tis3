@@ -111,6 +111,9 @@ class GestionTurnos extends Component
 
     protected TurnoInteligente $soporte;
 
+    private array $tablasDisponibles = [];
+    private ?array $lecturasRender = null;
+
     public function boot(TurnoInteligente $soporte): void
     {
         $this->soporte = $soporte;
@@ -146,22 +149,30 @@ class GestionTurnos extends Component
 
     public function render(): View
     {
-        return view('livewire.admin.gestion-turnos', [
-            'gestionTrabajo' => $this->gestionTrabajo(),
-            'turnos' => $this->turnosPaginados(),
-            'turnosCatalogo' => $this->turnosCatalogo(),
-            'plantillasCatalogo' => $this->plantillasCatalogo(),
-            'plantillasAgrupadas' => $this->plantillasAgrupadas(),
-            'bloquesPlantillaSeleccionada' => $this->bloquesPlantillaSeleccionada(),
-            'resumen' => $this->resumenGeneral(),
-            'auditoria' => $this->auditoriaEstructura,
-            'vistaPrevia' => $this->vistaPreviaAplicacion,
-            'recomendaciones' => $this->recomendacionesSistema(),
-            'tiposPlantilla' => ['REGULAR', 'INVIERNO'],
-            'tiposPlantillaExtra' => ['AJUSTE', 'EMERGENCIA'],
-            'tiposBloque' => ['CLASE', 'RECREO', 'DESCANSO', 'FORMACION', 'SALIDA', 'OTRO'],
-            'estadosRegistro' => ['ACTIVO', 'INACTIVO'],
-        ]);
+        // Sólo se reutilizan lecturas durante este render; las acciones validan datos frescos.
+        $this->lecturasRender = [];
+        try {
+            $this->prepararConteosRender();
+            $plantillas = $this->plantillasCatalogo();
+            return view('livewire.admin.gestion-turnos', [
+                'gestionTrabajo' => $this->gestionTrabajo(),
+                'turnos' => $this->turnosPaginados(),
+                'turnosCatalogo' => $this->turnosCatalogo(),
+                'plantillasCatalogo' => $plantillas,
+                'plantillasAgrupadas' => $plantillas->groupBy('cod_tur'),
+                'bloquesPlantillaSeleccionada' => $this->bloquesPlantillaSeleccionada(),
+                'resumen' => $this->resumenGeneral(),
+                'auditoria' => $this->auditoriaEstructura,
+                'vistaPrevia' => $this->vistaPreviaAplicacion,
+                'recomendaciones' => $this->recomendacionesSistema(),
+                'tiposPlantilla' => ['REGULAR', 'INVIERNO'],
+                'tiposPlantillaExtra' => ['AJUSTE', 'EMERGENCIA'],
+                'tiposBloque' => ['CLASE', 'RECREO', 'DESCANSO', 'FORMACION', 'SALIDA', 'OTRO'],
+                'estadosRegistro' => ['ACTIVO', 'INACTIVO'],
+            ]);
+        } finally {
+            $this->lecturasRender = null;
+        }
     }
 
     public function updatingSearch(): void
@@ -1604,6 +1615,9 @@ class GestionTurnos extends Component
     private function mapearTurno(object $turno): array
     {
         $codTur = (string) $turno->cod_tur;
+        if ($this->lecturasRender !== null && isset($this->lecturasRender['turno:'.$codTur])) {
+            return $this->lecturasRender['turno:'.$codTur];
+        }
 
         $plantillas = $this->plantillasPorTurno($codTur);
         $regular = $plantillas->firstWhere('tipo', 'REGULAR');
@@ -1617,7 +1631,7 @@ class GestionTurnos extends Component
             'est_tur' => $turno->est_tur ?? 'ACTIVO',
         ], $codTur, false);
 
-        return [
+        $resultado = [
             'cod_tur' => $codTur,
             'nombre' => $turno->nom_tur ?? 'Turno',
             'hora_inicio' => $this->formatearHora($turno->hor_ini_tur ?? null),
@@ -1637,14 +1651,20 @@ class GestionTurnos extends Component
             'advertencias' => $analisis['advertencias'] ?? [],
             'sugerencias' => $analisis['sugerencias'] ?? [],
         ];
+        if ($this->lecturasRender !== null) $this->lecturasRender['turno:'.$codTur] = $resultado;
+        return $resultado;
     }
 
     private function mapearPlantilla(object $plantilla): array
     {
         $codPho = (string) $plantilla->cod_pho;
+        if ($this->lecturasRender !== null && isset($this->lecturasRender['plantilla:'.$codPho])) {
+            return $this->lecturasRender['plantilla:'.$codPho];
+        }
         $turno = $this->buscarTurno($plantilla->cod_tur ?? null);
+        $detalles = $this->contarDetallesPlantilla($codPho);
 
-        return [
+        $resultado = [
             'cod_pho' => $codPho,
             'cod_tur' => $plantilla->cod_tur ?? null,
             'turno' => $turno,
@@ -1659,11 +1679,13 @@ class GestionTurnos extends Component
             'aplicada' => (bool) ($plantilla->act_pho ?? false),
             'activa' => (bool) ($plantilla->est_pho ?? true),
             'bloques_total' => $this->contarBloquesPlantilla($codPho),
-            'detalles_total' => $this->contarDetallesPlantilla($codPho),
-            'uso_academico' => $this->contarDetallesPlantilla($codPho) > 0
-                ? $this->contarDetallesPlantilla($codPho) . ' registros en horario'
+            'detalles_total' => $detalles,
+            'uso_academico' => $detalles > 0
+                ? $detalles . ' registros en horario'
                 : 'Sin uso académico',
         ];
+        if ($this->lecturasRender !== null) $this->lecturasRender['plantilla:'.$codPho] = $resultado;
+        return $resultado;
     }
 
     private function mapearBloque(object $bloque): array
@@ -1690,6 +1712,9 @@ class GestionTurnos extends Component
         if (! $codTur || ! $this->tablaExiste('turno')) {
             return null;
         }
+        if ($this->lecturasRender !== null && array_key_exists('turno-basico:'.$codTur, $this->lecturasRender)) {
+            return $this->lecturasRender['turno-basico:'.$codTur];
+        }
 
         $turno = DB::table('turno')
             ->where('cod_tur', $codTur)
@@ -1699,7 +1724,7 @@ class GestionTurnos extends Component
             return null;
         }
 
-        return [
+        $resultado = [
             'cod_tur' => $turno->cod_tur,
             'nombre' => $turno->nom_tur ?? 'Turno',
             'hora_inicio' => $this->formatearHora($turno->hor_ini_tur ?? null),
@@ -1707,6 +1732,8 @@ class GestionTurnos extends Component
             'rango' => $this->rangoTexto($turno->hor_ini_tur ?? null, $turno->hor_fin_tur ?? null),
             'estado' => $turno->est_tur ?? 'ACTIVO',
         ];
+        if ($this->lecturasRender !== null) $this->lecturasRender['turno-basico:'.$codTur] = $resultado;
+        return $resultado;
     }
 
     private function buscarPlantilla(?string $codPho): ?array
@@ -1890,6 +1917,9 @@ class GestionTurnos extends Component
 
     private function contarBloquesTurno(string $codTur): int
     {
+        if ($this->lecturasRender !== null && isset($this->lecturasRender['bloques-turno'])) {
+            return (int) ($this->lecturasRender['bloques-turno'][$codTur] ?? 0);
+        }
         if (! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('plantilla_horaria')) {
             return 0;
         }
@@ -1902,6 +1932,9 @@ class GestionTurnos extends Component
 
     private function contarBloquesSinPlantillaTurno(string $codTur): int
     {
+        if ($this->lecturasRender !== null && array_key_exists('bloques-huerfanos', $this->lecturasRender)) {
+            return $this->lecturasRender['bloques-huerfanos'];
+        }
         // horario_bloque ya no tiene cod_tur; los huérfanos se detectan globalmente por cod_pho vacío
         if (! $this->tablaExiste('horario_bloque') || ! Schema::hasColumn('horario_bloque', 'cod_pho')) {
             return 0;
@@ -1917,6 +1950,9 @@ class GestionTurnos extends Component
 
     private function contarBloquesPlantilla(string $codPho): int
     {
+        if ($this->lecturasRender !== null && isset($this->lecturasRender['bloques-plantilla'])) {
+            return (int) ($this->lecturasRender['bloques-plantilla'][$codPho] ?? 0);
+        }
         return $this->tablaExiste('horario_bloque')
             ? DB::table('horario_bloque')->where('cod_pho', $codPho)->count()
             : 0;
@@ -1924,6 +1960,9 @@ class GestionTurnos extends Component
 
     private function contarHorariosTurno(string $codTur): int
     {
+        if ($this->lecturasRender !== null && isset($this->lecturasRender['horarios-turno'])) {
+            return (int) ($this->lecturasRender['horarios-turno'][$codTur] ?? 0);
+        }
         if (! $this->tablaExiste('horario') || ! $this->tablaExiste('plantilla_horaria')) {
             return 0;
         }
@@ -1936,6 +1975,9 @@ class GestionTurnos extends Component
 
     private function contarDetallesPlantilla(string $codPho): int
     {
+        if ($this->lecturasRender !== null && isset($this->lecturasRender['detalles-plantilla'])) {
+            return (int) ($this->lecturasRender['detalles-plantilla'][$codPho] ?? 0);
+        }
         if (! $this->tablaExiste('horario_bloque') || ! $this->tablaExiste('horario_detalle')) {
             return 0;
         }
@@ -1951,6 +1993,33 @@ class GestionTurnos extends Component
         return DB::table('horario_detalle')
             ->whereIn('cod_hbl', $bloques)
             ->count();
+    }
+
+    private function prepararConteosRender(): void
+    {
+        if ($this->tablaExiste('horario_bloque')) {
+            $this->lecturasRender['bloques-plantilla'] = DB::table('horario_bloque')
+                ->selectRaw("COALESCE(cod_pho, '') AS cod_pho, COUNT(*) AS cantidad")
+                ->groupByRaw("COALESCE(cod_pho, '')")->pluck('cantidad', 'cod_pho')->all();
+            if (Schema::hasColumn('horario_bloque', 'cod_pho')) {
+                $this->lecturasRender['bloques-huerfanos'] = (int) ($this->lecturasRender['bloques-plantilla'][''] ?? 0);
+            }
+            if ($this->tablaExiste('plantilla_horaria')) {
+                $this->lecturasRender['bloques-turno'] = DB::table('horario_bloque as b')
+                    ->join('plantilla_horaria as p', 'p.cod_pho', '=', 'b.cod_pho')
+                    ->selectRaw('p.cod_tur, COUNT(*) AS cantidad')->groupBy('p.cod_tur')->pluck('cantidad', 'cod_tur')->all();
+            }
+            if ($this->tablaExiste('horario_detalle')) {
+                $this->lecturasRender['detalles-plantilla'] = DB::table('horario_detalle as d')
+                    ->join('horario_bloque as b', 'b.cod_hbl', '=', 'd.cod_hbl')
+                    ->selectRaw('b.cod_pho, COUNT(*) AS cantidad')->groupBy('b.cod_pho')->pluck('cantidad', 'cod_pho')->all();
+            }
+        }
+        if ($this->tablaExiste('horario') && $this->tablaExiste('plantilla_horaria')) {
+            $this->lecturasRender['horarios-turno'] = DB::table('horario as h')
+                ->join('plantilla_horaria as p', 'p.cod_pho', '=', 'h.cod_pho')
+                ->selectRaw('p.cod_tur, COUNT(*) AS cantidad')->groupBy('p.cod_tur')->pluck('cantidad', 'cod_tur')->all();
+        }
     }
 
     private function bloqueTieneUso(?string $codHbl): bool
@@ -2104,7 +2173,7 @@ class GestionTurnos extends Component
     private function tablaExiste(string $tabla): bool
     {
         try {
-            return Schema::hasTable($tabla);
+            return $this->tablasDisponibles[$tabla] ??= Schema::hasTable($tabla);
         } catch (Throwable) {
             return false;
         }

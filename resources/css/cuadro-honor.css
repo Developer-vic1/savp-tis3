@@ -1,0 +1,76 @@
+.honor-panel { display: grid; gap: 1.25rem; color: var(--ui-text); animation: honor-entrada 280ms ease-out both; }
+.honor-portada { padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; background: linear-gradient(120deg, var(--ui-primary-soft), var(--ui-surface) 65%); }
+.honor-portada > div:nth-child(2) { flex: 1; min-width: 0; }
+.honor-portada h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; margin: .3rem 0 .55rem; }
+.honor-portada .ui-muted { font-size: .875rem; line-height: 1.65; max-width: 62rem; }
+.honor-portada-icono { display: grid; place-items: center; flex: 0 0 4.5rem; height: 4.5rem; border: 1px solid var(--ui-primary-border); border-radius: 1.25rem; background: var(--ui-surface); color: var(--ui-primary); font-size: 2.5rem; }
+.honor-seccion { padding: 1.5rem; }
+.honor-encabezado { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
+.honor-encabezado > div { flex: 1; min-width: min(100%, 16rem); }
+.honor-encabezado > .ui-badge, .honor-portada > .ui-badge-info { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.honor-encabezado h3 { margin-top: .35rem; font-size: 1.25rem; font-weight: 900; }
+.honor-encabezado .ui-help { margin-top: .5rem; line-height: 1.65; }
+.honor-promocion-grid { margin-top: 1.5rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.honor-categoria { display: flex; gap: .5rem; align-items: center; margin-bottom: .6rem; color: var(--ui-text-soft); font-weight: 800; font-size: .85rem; }
+.honor-categoria i { font-size: 1.25rem; color: var(--ui-primary); }
+.honor-grados { display: grid; gap: 1.2rem; }
+.honor-grado { padding: 1.25rem; }
+.honor-grado-cabecera { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .65rem; margin-bottom: 1rem; }
+.honor-grado-cabecera h4 { display: flex; align-items: center; gap: .65rem; min-width: 0; max-width: 100%; font-size: 1rem; font-weight: 900; }
+.honor-grado-cabecera h4 span { min-width: 0; overflow-wrap: anywhere; }
+.honor-grado-cabecera h4 i { flex-shrink: 0; color: var(--ui-primary); font-size: 1.5rem; }
+.honor-podio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .85rem; align-items: stretch; }
+.honor-ficha { --honor-acento: var(--ui-info); --honor-fondo: var(--ui-info-soft); --honor-borde: var(--ui-info-border); display: flex; flex-direction: column; min-width: 0; padding: 1.2rem; border: 1px solid var(--ui-border); border-top: 3px solid var(--honor-acento); border-radius: 1rem; background: var(--ui-surface); box-shadow: var(--ui-shadow-sm); transition: border-color 180ms ease, box-shadow 180ms ease; }
+.honor-ficha-primera { --honor-acento: var(--ui-primary); --honor-fondo: var(--ui-primary-soft); --honor-borde: var(--ui-primary-border); background: linear-gradient(160deg, var(--ui-primary-soft), var(--ui-surface) 55%); }
+.honor-ficha-tercera { --honor-acento: var(--ui-violet); --honor-fondo: var(--ui-violet-soft); --honor-borde: var(--ui-violet-border); }
+.honor-podio .honor-ficha-primera { border-top-width: 5px; }
+.honor-podio .honor-ficha-primera .honor-iniciales { border-radius: 50%; }
+.honor-ficha:focus-within { border-color: var(--honor-acento); box-shadow: var(--ui-shadow-md); }
+.honor-ficha-cabecera { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: space-between; align-items: center; }
+.honor-puesto { display: inline-flex; align-items: center; gap: .4rem; font-weight: 800; color: var(--ui-info-hover); font-size: .8rem; }
+.honor-ficha-primera .honor-puesto { color: var(--ui-primary-hover); }
+.honor-ficha-tercera .honor-puesto { color: var(--ui-violet-hover); }
+.honor-puesto i { font-size: 1.4rem; }
+.honor-persona { display: flex; gap: .8rem; align-items: center; margin-top: 1.15rem; }
+.honor-iniciales { flex: 0 0 2.9rem; height: 2.9rem; display: grid; place-items: center; border: 1px solid var(--honor-borde); border-radius: .9rem; color: var(--honor-acento); background: var(--honor-fondo); font-size: 1rem; font-weight: 900; }
+.honor-persona-texto { min-width: 0; }
+.honor-persona h4 { font-weight: 900; line-height: 1.4; overflow-wrap: anywhere; }
+.honor-persona p { margin-top: .3rem; font-size: .75rem; color: var(--ui-muted); line-height: 1.5; overflow-wrap: anywhere; }
+.honor-promedio { display: flex; gap: .7rem; align-items: center; margin: 1.25rem 0; }
+.honor-promedio strong { font-size: clamp(2rem, 4vw, 2.8rem); line-height: 1.1; font-weight: 900; letter-spacing: -.05em; color: var(--honor-acento); font-variant-numeric: tabular-nums; }
+.honor-promedio > span { color: var(--ui-muted); font-size: .75rem; line-height: 1.5; }
+.honor-ficha-evidencia { display: grid; gap: .55rem; font-size: .75rem; color: var(--ui-text-soft); line-height: 1.55; overflow-wrap: anywhere; }
+.honor-ficha-evidencia > span { display: flex; align-items: flex-start; gap: .4rem; }
+.honor-ficha-evidencia i { margin-top: .1rem; font-size: 1rem; flex-shrink: 0; }
+.honor-estado { color: var(--ui-muted); }
+.honor-accion { width: 100%; margin-top: auto; min-height: 44px; }
+.honor-ficha-evidencia + .honor-accion, .honor-carreras + .honor-accion { margin-top: 1.15rem; }
+.honor-accion span { flex: 1; min-width: 0; white-space: normal; text-align: left; }
+.honor-accion > i { flex-shrink: 0; }
+.honor-carreras { padding: .9rem 0 0; margin-top: 1rem; border-top: 1px solid var(--ui-border); }
+.honor-carreras > p + p { margin-top: .5rem; }
+.honor-carreras strong { display: block; font-size: .8rem; color: var(--ui-text); overflow-wrap: anywhere; }
+.honor-carreras span { display: block; font-size: .75rem; color: var(--ui-muted); margin-top: .2rem; overflow-wrap: anywhere; }
+.honor-enlace { color: var(--ui-info-hover); text-decoration: underline; text-underline-offset: 3px; }
+.honor-enlace:focus-visible { outline: 2px solid var(--ui-info); outline-offset: 3px; border-radius: .2rem; }
+.honor-vacio { grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1.25rem; border-radius: 1rem; background: var(--ui-surface-soft); }
+.honor-vacio > i { font-size: 2.5rem; color: var(--ui-primary); }
+.honor-vacio h4 { font-weight: 800; margin-top: .75rem; }
+.honor-vacio p { max-width: 40rem; color: var(--ui-muted); font-size: .875rem; line-height: 1.65; margin-top: .45rem; }
+.honor-historial { display: grid; gap: 1.5rem; }
+.honor-anio { padding-left: 1.25rem; border-left: 3px solid var(--ui-primary-border); }
+.honor-anio-cabecera { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+.honor-anio-cabecera h3 { font-size: 1.6rem; color: var(--ui-primary); font-weight: 900; line-height: 1.2; margin-top: .3rem; }
+.honor-historial-fichas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+.honor-ficha-compacta { padding: 1rem; box-shadow: none; }
+.honor-ficha-compacta .honor-promedio { margin: .8rem 0; }
+.honor-ficha-compacta .honor-promedio strong { font-size: 2rem; }
+.honor-criterios { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.honor-criterios article { display: flex; align-items: flex-start; gap: .8rem; }
+.honor-criterios article > i { flex-shrink: 0; font-size: 1.5rem; color: var(--ui-primary); }
+.honor-criterios h3 { font-size: .875rem; font-weight: 800; }
+.honor-criterios p { margin-top: .4rem; font-size: .8rem; color: var(--ui-muted); line-height: 1.65; }
+@keyframes honor-entrada { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 1100px) { .honor-podio { grid-template-columns: repeat(2, minmax(0, 1fr)); } .honor-portada { flex-wrap: wrap; } }
+@media (max-width: 680px) { .honor-promocion-grid, .honor-podio, .honor-historial-fichas, .honor-criterios { grid-template-columns: minmax(0, 1fr); } .honor-portada, .honor-seccion { padding: 1.1rem; } .honor-portada-icono { flex-basis: 3.25rem; height: 3.25rem; font-size: 1.8rem; } .honor-portada > .ui-badge-info { margin-left: 0; } .honor-grado { padding: 1rem; } .honor-anio { padding-left: .8rem; } .honor-anio-cabecera .ui-btn-secondary { min-height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .honor-panel { animation: none; } .honor-ficha { transition: none; } }

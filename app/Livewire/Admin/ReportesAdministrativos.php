@@ -32,11 +32,16 @@ class ReportesAdministrativos extends Component
 
     public function render()
     {
+        // El resumen necesita conteos, no todos los modelos y sus atributos de inscripción.
+        $estadosInscripcion = InscripcionEstudiante::query()->toBase()
+            ->selectRaw("COALESCE(est_ins, '') AS estado, COUNT(*) AS cantidad")
+            ->groupByRaw("COALESCE(est_ins, '')")->pluck('cantidad', 'estado')
+            ->map(fn ($cantidad) => (int) $cantidad)->sortDesc();
         $metricas = [
             'Usuarios activos' => User::where('est_usu', 'ACTIVO')->count(),
             'Estudiantes registrados' => Estudiante::count(),
             'Docentes registrados' => Docente::count(),
-            'Inscripciones' => InscripcionEstudiante::count(),
+            'Inscripciones' => $estadosInscripcion->sum(),
             'Asignaturas' => Asignatura::count(),
             'Especialidades técnicas' => EspecialidadTecnica::count(),
             'Cursos' => Curso::count(),
@@ -48,7 +53,8 @@ class ReportesAdministrativos extends Component
         ];
 
         $actividad = Bitacora::query()
-            ->with('usuario.persona')
+            // La tabla no presenta usuarios ni los JSON de valores anteriores/nuevos.
+            ->select(['cod_bit', 'fec_bit', 'mod_bit', 'acc_bit', 'nom_reg_bit', 'reg_bit', 'res_bit'])
             ->when($this->search !== '', function (Builder $query) {
                 $search = trim($this->search);
                 $query->where(function (Builder $sub) use ($search) {
@@ -66,8 +72,8 @@ class ReportesAdministrativos extends Component
             'metricas' => $metricas,
             'diagnostico' => app(ReporteAdministrativoInteligente::class)->diagnostico($metricas),
             'actividad' => $actividad,
-            'modulos' => Bitacora::query()->whereNotNull('mod_bit')->pluck('mod_bit')->unique()->sort()->values(),
-            'estadosInscripcion' => InscripcionEstudiante::all()->countBy('est_ins')->sortDesc(),
+            'modulos' => Bitacora::query()->whereNotNull('mod_bit')->distinct()->pluck('mod_bit')->sort()->values(),
+            'estadosInscripcion' => $estadosInscripcion,
         ]);
     }
 }

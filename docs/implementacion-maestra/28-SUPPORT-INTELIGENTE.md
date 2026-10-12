@@ -1,5 +1,9 @@
 # Support inteligente local — preservación y conexiones
 
+## Extensión del 07/10/2026: fuentes universitarias
+
+`app/Support/Conocimiento/FuenteUniversitariaInteligente.php` se conecta a `ConocimientoUniversitarioController` antes de analizar o guardar. Centraliza límites, catálogo y reglas de URL/institución/texto; conserva permisos, vista previa verificada y token ligado a la ficha. El frontend aplica prevención inmediata y la extracción documental identifica HTML/PDF y enlaces publicados mediante reglas, sin modelos de IA. Esta extensión no altera los totales del inventario histórico siguiente. Contrato, respaldo, advertencias, recuperación y casos extremos: [Support de fuentes universitarias](../sistema/SUPPORT-FUENTES-UNIVERSITARIAS.md).
+
 REUSE → PRESERVE → CONNECT → CORRECT → REFACTOR → EXTEND. Support conserva prevención, normalización, coincidencias y recomendaciones. Policies y Services conservan autorización, alcance y escritura. Aporte Ingenieril SAVP complementa esta capa; las reglas locales no dependen de Python, FastAPI, Internet ni sus flags.
 
 Inventario completo: 22 clases; 19 Supports inteligentes locales (18 existentes en HEAD y KardexInteligente nuevo); 3 utilidades. Todas tienen referencias de producción. Caller significa referencia estática/importación/herencia; no certifica ejecución de cada rama en PostgreSQL.

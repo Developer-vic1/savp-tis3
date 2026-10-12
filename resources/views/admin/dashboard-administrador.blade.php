@@ -27,7 +27,7 @@
         ['id' => 'chartRoles', 'titulo' => 'Roles de la comunidad', 'categoria' => 'Comunidad institucional', 'datos' => $chartRoles, 'vistas' => $vistasRoles,
             'descripcion' => 'Equipo y estudiantes por separado. Una cuenta puede tener varios roles.', 'tipo' => 'bar', 'horizontal' => true, 'color' => '--ui-primary', 'unidad' => 'asignaciones'],
         ['id' => 'chartEspecialidades', 'titulo' => 'Estudiantes por especialidad', 'categoria' => 'Formación técnica', 'datos' => $chartEspecialidades,
-            'descripcion' => 'Las seis especialidades con más estudiantes activos.', 'tipo' => 'bar', 'horizontal' => true, 'color' => '--ui-info', 'unidad' => 'estudiantes'],
+            'descripcion' => 'Las seis especialidades con más estudiantes inscritos activos y vigencia técnica a la fecha en esta gestión.', 'tipo' => 'bar', 'horizontal' => true, 'color' => '--ui-info', 'unidad' => 'estudiantes'],
         ['id' => 'chartInscripciones', 'titulo' => 'Distribución de inscripciones', 'categoria' => 'Gestión '.$gestionActual, 'datos' => $chartInscripciones, 'vistas' => $vistasInscripciones,
             'descripcion' => count($vistasInscripciones) > 1 ? 'Inscripciones activas por curso o turno en esta gestión.' : 'Inscripciones activas por curso en esta gestión.', 'tipo' => 'bar', 'color' => '--ui-violet', 'unidad' => 'inscripciones'],
     ];

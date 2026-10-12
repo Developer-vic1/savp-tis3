@@ -51,6 +51,7 @@ final class WorkspaceNavigation
         'Mi progreso' => 'ph-chart-line-up',
         'Mi asistencia' => 'ph-calendar-check',
         'Mis intereses' => 'ph-compass',
+        'Mi análisis' => 'ph-chart-bar',
         'Mi futuro académico' => 'ph-path',
         'Mi preparación' => 'ph-brain',
         'Mi plan' => 'ph-target',
@@ -75,7 +76,8 @@ final class WorkspaceNavigation
         'docente.cursos' => ['aula-virtual.docente.cursos', 'aula-virtual.docente.curso', 'docente.curso', 'docente.cursos.calificaciones'],
         'estudiante.materias' => ['aula-virtual.estudiante.asignaturas', 'aula-virtual.estudiante.curso', 'estudiante.materia'],
         'estudiante.asistencia' => ['aula-virtual.estudiante.asistencia'],
-        'estudiante.intereses' => ['estudiante.intereses.guardar', 'estudiante.intereses.analizar', 'aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados', 'aula-virtual.estudiante.orientacion.aporte', 'aula-virtual.estudiante.orientacion.aporte.score', 'aula-virtual.estudiante.orientacion.aporte.analysis', 'aula-virtual.estudiante.orientacion.aporte.query'],
+        'estudiante.intereses' => ['estudiante.intereses.guardar', 'aula-virtual.estudiante.orientacion', 'aula-virtual.estudiante.orientacion.explorador', 'aula-virtual.estudiante.orientacion.resultados', 'aula-virtual.estudiante.orientacion.aporte', 'aula-virtual.estudiante.orientacion.aporte.score', 'aula-virtual.estudiante.orientacion.aporte.query'],
+        'estudiante.analisis' => ['estudiante.intereses.analizar', 'aula-virtual.estudiante.orientacion.aporte.analysis'],
         'estudiante.asistente' => ['estudiante.asistente.query', 'estudiante.asistente.reset'],
     ];
 
@@ -112,8 +114,8 @@ final class WorkspaceNavigation
     public function for(User $user): array
     {
         $actor = app(RoleDashboardResolver::class)->roleFor($user);
-        return array_values(array_filter($this->catalogo($actor), fn ($link) =>
-            $link['permission'] === null || $user->can($link['permission'])));
+
+        return array_values(array_filter($this->catalogo($actor), fn ($link) => $link['permission'] === null || $user->can($link['permission'])));
     }
 
     /** Catálogo de navegación real, sin confundirlo con una concesión de acceso. */
@@ -174,6 +176,7 @@ final class WorkspaceNavigation
                 ['Mi asistencia', 'estudiante.asistencia', 'Asistencia_Aula', 'Académico'],
                 ['Calendario', 'estudiante.calendario', 'Calendario_Aula', 'Académico'],
                 ['Mis intereses', 'estudiante.intereses', 'Orientacion_Academica_Profesional', 'Orientación'],
+                ['Mi análisis', 'estudiante.analisis', 'Orientacion_Academica_Profesional', 'Orientación'],
                 ['Mi futuro académico', 'estudiante.futuro', 'Orientacion_Academica_Profesional', 'Orientación'],
                 ['Mi preparación', 'estudiante.preparacion', 'Perfil_Academico', 'Orientación'],
                 ['Mi plan', 'estudiante.plan', 'Perfil_Academico', 'Orientación'],

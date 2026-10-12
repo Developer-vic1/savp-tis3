@@ -11,6 +11,7 @@ use Throwable;
 
 class TurnoInteligente
 {
+    private array $tablasDisponibles = [];
     public const ESTADO_VALIDO = 'VALIDO';
     public const ESTADO_ADVERTENCIA = 'ADVERTENCIA';
     public const ESTADO_OBSERVADO = 'OBSERVADO';
@@ -2178,7 +2179,7 @@ class TurnoInteligente
     private function tablaExiste(string $tabla): bool
     {
         try {
-            return Schema::hasTable($tabla);
+            return $this->tablasDisponibles[$tabla] ??= Schema::hasTable($tabla);
         } catch (Throwable) {
             return false;
         }

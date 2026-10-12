@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Rules\FechaPublicacionAcademica;
 use App\Rules\UrlFuenteUniversitaria;
+use App\Services\AporteIngenieril\ActualizacionesFuentes;
 use App\Services\AporteIngenieril\AporteIngenierilClient;
 use App\Services\AporteIngenieril\InspectorConexionAporte;
+use App\Services\NotificationService;
 use App\Services\RoleDashboardResolver;
-use Closure;
+use App\Support\Conocimiento\FuenteUniversitariaInteligente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class ConocimientoUniversitarioController extends Controller
@@ -26,14 +29,11 @@ class ConocimientoUniversitarioController extends Controller
 
         return response()->view('workspaces.conocimiento-universitario', [
             'actor' => $actor,
+            'usuarioNombre' => $this->nombreUsuario($request),
             'fuenteInicial' => $fuenteInicial,
+            'soporteFuente' => app(FuenteUniversitariaInteligente::class)->contratoParaInterfaz(),
             'canReview' => $actor === 'Administrador' && $request->user()->can('conocimiento.revisar'),
             'canPropose' => $request->user()->can('conocimiento.proponer'),
-            'accessPermissions' => [
-                'Ver fuentes y probar tutor' => $request->user()->can('conocimiento.ver'),
-                'Analizar y proponer fuentes' => $request->user()->can('conocimiento.proponer'),
-                'Aprobar o rechazar propuestas' => $actor === 'Administrador' && $request->user()->can('conocimiento.revisar'),
-            ],
             'result' => $cliente->knowledgeGovernance(),
         ])->header('Cache-Control', 'no-store');
     }
@@ -43,6 +43,34 @@ class ConocimientoUniversitarioController extends Controller
         $this->actor($request);
 
         return response()->json($inspector->inspeccionar())->header('Cache-Control', 'no-store');
+    }
+
+    public function resumenDirectorio(Request $request, AporteIngenierilClient $cliente)
+    {
+        $this->actor($request);
+        $resultado = $cliente->nationalDirectory();
+        if (! $resultado->available) {
+            return response()->json(['message' => 'El directorio nacional no está disponible en este momento.'], 503)
+                ->header('Cache-Control', 'no-store');
+        }
+
+        $instituciones = collect(data_get($resultado->data, 'institutions', []));
+        $departamentos = $instituciones
+            ->flatMap(fn ($institucion) => array_unique($institucion['departments'] ?? []))
+            ->countBy()->sortKeys()->all();
+
+        return response()->json([
+            'institution_count' => $instituciones->count(),
+            'departments' => $departamentos,
+            'institutions' => $instituciones
+                ->sortBy('name', SORT_NATURAL | SORT_FLAG_CASE)
+                ->values()
+                ->map(fn ($institucion) => [
+                    'name' => $institucion['name'],
+                    'acronym' => $institucion['acronym'] ?? '',
+                    'departments' => $institucion['departments'] ?? [],
+                ])->all(),
+        ])->header('Cache-Control', 'no-store');
     }
 
     public function probarTutor(Request $request, AporteIngenierilClient $cliente)
@@ -57,17 +85,67 @@ class ConocimientoUniversitarioController extends Controller
             'student_context' => ['prohibited'],
             'academic_context' => ['prohibited'],
         ]);
-        $resultado = $cliente->tutor(['schema_version' => '1.0'] + $entrada);
+        $consulta = ['schema_version' => '1.0'] + $entrada;
+        if (preg_match('/\b(?:universidades|instituciones)\b/iu', $entrada['question'])
+            && preg_match('/\b(?:cu[aá]ntas?|n[uú]mero|total)\b/iu', $entrada['question'])) {
+            $consulta['academic_context'] = [
+                'institutional_university_count' => DB::table('universidad')
+                    ->where('est_uni', 'ACTIVA')
+                    ->whereExists(fn ($query) => $query->selectRaw('1')
+                        ->from('sede_universidad')
+                        ->whereColumn('sede_universidad.cod_uni', 'universidad.cod_uni')
+                        ->where('sede_universidad.est_sed', 'ACTIVA'))
+                    ->count(),
+            ];
+        }
+        $resultado = $cliente->tutor($consulta);
 
-        return response()->json($resultado->available ? $resultado->data : [
-            'message' => 'El tutor no está disponible. Revise la conexión del servicio.',
+        $datos = $resultado->data;
+        if ($resultado->available && preg_match('/^\s*(hola|buen[oa]s?\s+(d[ií]as|tardes|noches)|hey)[!¡,.\s]*$/iu', $entrada['question'])) {
+            $datos['answer'] = 'Hola, '.$this->nombreUsuario($request).'. Puedo ayudarte a consultar carreras, materias y publicaciones universitarias verificadas. No guardo memoria permanente de nuestras conversaciones. ¿Qué publicación quieres revisar?';
+        }
+
+        return response()->json($resultado->available ? $datos : [
+            'message' => 'El asistente documental no está disponible. Conserva tu consulta y vuelve a intentar.',
         ], $resultado->available ? 200 : 503)->header('Cache-Control', 'no-store');
+    }
+
+    public function actualizaciones(Request $request, ActualizacionesFuentes $servicio)
+    {
+        $this->actor($request);
+
+        return response()->json($servicio->snapshot())->header('Cache-Control', 'no-store');
+    }
+
+    public function configurarActualizaciones(Request $request, ActualizacionesFuentes $servicio)
+    {
+        $this->actor($request);
+        $datos = $request->validate(['source_id' => ['required', 'string', 'max:160', 'regex:/^[A-Za-z0-9_-]+$/'], 'cadence' => ['required', Rule::in(array_keys(ActualizacionesFuentes::CADENCIAS))]]);
+
+        return response()->json($servicio->configurar($datos['source_id'], $datos['cadence']))->header('Cache-Control', 'no-store');
+    }
+
+    public function revisarActualizaciones(Request $request, ActualizacionesFuentes $servicio)
+    {
+        $this->actor($request);
+        $datos = $request->validate(['source_id' => ['required', 'string', 'max:160', 'regex:/^[A-Za-z0-9_-]+$/']]);
+
+        return response()->json($servicio->revisar($datos['source_id']))->header('Cache-Control', 'no-store');
+    }
+
+    private function nombreUsuario(Request $request): string
+    {
+        $persona = $request->user()->cod_per ? $request->user()->persona : null;
+        $primerNombre = explode(' ', Str::squish((string) ($persona?->nom_per ?? '')))[0];
+        $primerApellido = trim((string) ($persona?->ape_pat_per ?: $persona?->ape_mat_per));
+
+        return Str::title(trim($primerNombre.' '.$primerApellido)) ?: 'Administrador';
     }
 
     public function guardar(Request $request, AporteIngenierilClient $cliente)
     {
         $actor = $this->actor($request);
-        $entrada = $request->validate($this->reglasFuente() + [
+        $entrada = app(FuenteUniversitariaInteligente::class)->validar($request->all(), [
             'analysis_token' => ['required', 'string', 'size:64'],
         ]);
         $candidato = $this->candidato($entrada);
@@ -94,7 +172,7 @@ class ConocimientoUniversitarioController extends Controller
         }
 
         if ($resultado->data['accepted'] ?? false) {
-            app(\App\Services\NotificationService::class)->publicar([
+            app(NotificationService::class)->publicar([
                 'clave_evento' => 'fuente:'.hash('sha256', $request->user()->getKey().':'.$entrada['analysis_token']),
                 'origen' => 'APORTE', 'tipo' => 'INFORMACION',
                 'titulo' => 'Tu propuesta de fuente quedó registrada',
@@ -113,7 +191,7 @@ class ConocimientoUniversitarioController extends Controller
     public function analizar(Request $request, AporteIngenierilClient $cliente)
     {
         $actor = $this->actor($request);
-        $candidato = $this->candidato($request->validate($this->reglasFuente()));
+        $candidato = $this->candidato(app(FuenteUniversitariaInteligente::class)->validar($request->all()));
         $request->session()->forget('knowledge.source_analysis');
         $this->exigirVistaPreviaVerificada($request, $cliente, $candidato, $actor);
         $resultado = $cliente->analyzeKnowledgeSource($candidato);
@@ -217,6 +295,40 @@ class ConocimientoUniversitarioController extends Controller
         return to_route('conocimiento.fuentes.index')->with('status', $resultado->data['message']);
     }
 
+    public function extraer(string $proposalId, Request $request, AporteIngenierilClient $cliente)
+    {
+        abort_unless($this->actor($request) === 'Administrador', 403);
+        if ($request->except('_token') !== []) {
+            throw ValidationException::withMessages(['fuente' => 'La extracción usa la propuesta ya aprobada; no acepta una URL distinta.']);
+        }
+
+        $gobierno = $cliente->knowledgeGovernance();
+        if (! $gobierno->available) {
+            return response()->json(['message' => 'No pudimos comprobar el estado de la propuesta. Inténtelo de nuevo.'], 503)
+                ->header('Cache-Control', 'no-store');
+        }
+        $propuesta = collect($gobierno->data['proposals'] ?? [])->first(
+            fn ($item) => ($item['proposal_id'] ?? null) === $proposalId
+        );
+        abort_if($propuesta === null, 404);
+        if (($propuesta['status'] ?? null) !== 'APROBADA_PENDIENTE_INGESTA') {
+            return response()->json(['message' => 'La propuesta necesita aprobación antes de extraer el documento.'], 409)
+                ->header('Cache-Control', 'no-store');
+        }
+
+        $resultado = $request->isMethod('get')
+            ? $cliente->readKnowledgeExtraction($proposalId)
+            : $cliente->extractKnowledgeSource($proposalId);
+        if (! $resultado->available
+            || ($resultado->data['proposal_id'] ?? null) !== $proposalId
+            || ($resultado->data['source_url'] ?? null) !== ($propuesta['url'] ?? null)) {
+            return response()->json(['message' => 'No se completó la extracción. La fuente sigue pendiente; compruebe el documento antes de reintentar.'], 503)
+                ->header('Cache-Control', 'no-store');
+        }
+
+        return response()->json($resultado->data)->header('Cache-Control', 'no-store');
+    }
+
     private function actor(Request $request): string
     {
         $actor = app(RoleDashboardResolver::class)->roleFor($request->user());
@@ -227,32 +339,7 @@ class ConocimientoUniversitarioController extends Controller
 
     private function reglasFuente(): array
     {
-        return [
-            'title' => ['required', 'string', 'min:3', 'max:240'],
-            'declared_institution' => ['required', 'string', 'min:3', 'max:240'],
-            'url' => ['bail', 'required', 'string', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
-            'source_type' => ['required', 'in:OFFICIAL_CURRICULUM_PDF,OFFICIAL_CAREER_HTML,OFFICIAL_REGULATION_PDF,OFFICIAL_UNIVERSITY_PAGE'],
-            'scope' => ['required', 'string', 'min:10', 'max:500'],
-            'publication_date' => ['nullable', 'string', new FechaPublicacionAcademica],
-            'version' => ['required', 'string', 'max:120'],
-            'campus' => ['required', 'string', 'min:2', 'max:160'],
-            'city' => ['required', 'string', 'min:2', 'max:120'],
-            'justification' => ['required', 'string', 'min:20', 'max:1000'],
-            'limitations_text' => ['bail', 'nullable', 'string', 'max:2000', function (string $attribute, mixed $value, Closure $fail): void {
-                $lines = $this->limitaciones($value);
-                if (count($lines) > 10) {
-                    $fail('Use como máximo 10 limitaciones; ninguna se descarta automáticamente.');
-                }
-                foreach ($lines as $line) {
-                    if (mb_strlen($line) < 3 || mb_strlen($line) > 500) {
-                        $fail('Cada limitación debe tener entre 3 y 500 caracteres.');
-
-                        break;
-                    }
-                }
-            }],
-            'submitted_by_role' => ['prohibited'],
-        ];
+        return app(FuenteUniversitariaInteligente::class)->reglas();
     }
 
     private function candidato(array $entrada): array
@@ -265,11 +352,7 @@ class ConocimientoUniversitarioController extends Controller
 
     private function limitaciones(?string $value): array
     {
-        return collect(preg_split('/\R+/', $value ?? ''))
-            ->map(fn ($item) => trim((string) $item))
-            ->filter(fn ($item) => $item !== '')
-            ->values()
-            ->all();
+        return app(FuenteUniversitariaInteligente::class)->limitaciones($value);
     }
 
     private function huellaCandidato(array $candidato): string

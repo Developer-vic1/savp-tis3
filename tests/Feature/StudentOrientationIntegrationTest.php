@@ -48,11 +48,12 @@ class StudentOrientationIntegrationTest extends TestCase
         $this->assertSame(10, $activity->riasec_score['scores']['R']);
         $this->assertNotEmpty($activity->riasec_score['trace_id']);
         $this->post('/aula-virtual/mi-orientacion/analisis')->assertRedirect();
-        $activity->refresh();
+        $this->assertNull($activity->refresh()->analysis_snapshot);
+        $activity = OrientacionActividad::latest('id')->firstOrFail();
         $this->assertSame('COMPLETE', $activity->analysis_snapshot['analysis_status']);
         $this->assertNotEmpty($activity->analysis_snapshot['traceability']['input_hash']);
-        $this->get('/aula-virtual/mi-orientacion?section=analisis')->assertRedirect('/estudiante/intereses');
-        $this->get('/estudiante/intereses')->assertOk()->assertSee('Mi análisis')->assertSee('Tú tomas la decisión final');
+        $this->get('/aula-virtual/mi-orientacion?section=analisis')->assertRedirect('/estudiante/analisis');
+        $this->get('/estudiante/analisis')->assertOk()->assertSee('Mi análisis')->assertSee('Tú tomas la decisión final');
         $warmup = app(AporteIngenierilClient::class)->warmUp();
         $this->assertTrue($warmup->available, $warmup->message);
         $this->post('/aula-virtual/mi-orientacion/consulta', ['mode' => 'fuentes', 'question' => 'materias iniciales de Ingeniería Civil'])->assertOk()->assertSee('Trazabilidad');

@@ -16,23 +16,13 @@
     @click="mobileSidebar = false" aria-hidden="true"></div>
 
 <aside id="workspace-sidebar" aria-label="Navegación de {{ $role ?? 'SAVP' }}"
-    x-data="{
-        openGroup: @js($activeGroup),
-        tooltip: '',
-        tooltipY: 0,
-        showTip(label, event) {
-            const bounds = event.currentTarget.getBoundingClientRect();
-            this.tooltip = label;
-            this.tooltipY = bounds.top + bounds.height / 2;
-        }
-    }"
+    x-data="{ openGroup: @js($activeGroup) }"
     x-init="(() => {
         try {
             const saved = localStorage.getItem('savp-sidebar-open');
             if (saved !== null) sidebarOpen = saved === 'true';
         } catch (error) {}
         $watch('sidebarOpen', value => {
-            tooltip = '';
             try { localStorage.setItem('savp-sidebar-open', String(value)); } catch (error) {}
         });
     })()"
@@ -41,10 +31,8 @@
 
     <header class="savp-sidebar-brand">
         <a href="{{ $dashboard ? route($dashboard) : route('dashboard') }}"
-            class="savp-sidebar-brand-link" title="Inicio SAVP-TIS3"
-            @click="mobileSidebar = false"
-            @mouseenter="showTip('Inicio SAVP-TIS3', $event)" @mouseleave="tooltip = ''"
-            @focus="showTip('Inicio SAVP-TIS3', $event)" @blur="tooltip = ''">
+            class="savp-sidebar-brand-link" aria-label="Inicio SAVP-TIS3"
+            @click="mobileSidebar = false">
             <span class="savp-sidebar-logo">
                 <img src="{{ asset('image/LOGO FT3 A.jpg') }}" alt="Logo de la Unidad Educativa Franz Tamayo N°3">
             </span>
@@ -54,15 +42,14 @@
             </span>
         </a>
         <button type="button" class="savp-sidebar-toggle hidden lg:inline-flex"
-            @click="sidebarOpen = !sidebarOpen; tooltip = ''"
+            @click="sidebarOpen = !sidebarOpen"
             :aria-expanded="sidebarOpen"
             :aria-label="sidebarOpen ? 'Contraer menú' : 'Expandir menú'"
-            :title="sidebarOpen ? 'Contraer menú' : 'Expandir menú'"
             aria-controls="workspace-sidebar">
             <i class="ph-duotone ph-sidebar-simple" aria-hidden="true"></i>
         </button>
         <button type="button" class="savp-sidebar-mobile-close lg:hidden"
-            @click="mobileSidebar = false" aria-label="Cerrar menú" title="Cerrar menú">
+            @click="mobileSidebar = false" aria-label="Cerrar menú">
             <i class="ph-duotone ph-x" aria-hidden="true"></i>
         </button>
     </header>
@@ -79,11 +66,8 @@
         @if ($dashboard)
             <div class="savp-sidebar-nav-label" x-show="sidebarOpen || mobileSidebar" x-cloak>Principal</div>
             <a href="{{ route($dashboard) }}"
-                class="savp-sidebar-link savp-sidebar-tone-emerald {{ $homeActive ? 'is-active' : '' }}"
-                title="Inicio" @if ($homeActive) aria-current="page" @endif
-                @click="mobileSidebar = false"
-                @mouseenter="showTip('Inicio', $event)" @mouseleave="tooltip = ''"
-                @focus="showTip('Inicio', $event)" @blur="tooltip = ''">
+                class="savp-sidebar-link savp-sidebar-tone-emerald {{ $homeActive ? 'is-active' : '' }}" aria-label="Inicio" @if ($homeActive) aria-current="page" @endif
+                @click="mobileSidebar = false">
                 <span class="savp-sidebar-link-icon"><i class="ph-duotone ph-house" aria-hidden="true"></i></span>
                 <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-link-label">Inicio</span>
             </a>
@@ -96,8 +80,7 @@
             @endphp
             <section class="savp-sidebar-section" aria-label="{{ $group }}">
                 <button type="button" id="workspace-group-button-{{ $loop->index }}"
-                    class="savp-sidebar-group savp-sidebar-tone-{{ $groupTone }}"
-                    title="{{ $group }}" aria-label="Grupo {{ $group }}"
+                    class="savp-sidebar-group savp-sidebar-tone-{{ $groupTone }}" aria-label="Grupo {{ $group }}"
                     aria-controls="workspace-group-{{ $loop->index }}"
                     :aria-expanded="(sidebarOpen || mobileSidebar) && openGroup === @js($group)"
                     @click="
@@ -107,10 +90,7 @@
                         } else {
                             openGroup = openGroup === @js($group) ? null : @js($group);
                         }
-                        tooltip = '';
-                    "
-                    @mouseenter="showTip(@js($group), $event)" @mouseleave="tooltip = ''"
-                    @focus="showTip(@js($group), $event)" @blur="tooltip = ''">
+                    ">
                     <span class="savp-sidebar-group-icon"><i class="ph-duotone {{ $groupIcon }}" aria-hidden="true"></i></span>
                     <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-group-label">{{ $group }}</span>
                     <i x-show="sidebarOpen || mobileSidebar" x-cloak
@@ -130,8 +110,7 @@
                     @foreach ($sections as $section)
                         @php($active = $navigation->isActive($section))
                         <a href="{{ route($section['route'], $section['params']) }}"
-                            class="savp-sidebar-link savp-sidebar-child savp-sidebar-tone-{{ $section['tone'] }} {{ $active ? 'is-active' : '' }}"
-                            title="{{ $section['label'] }}"
+                            class="savp-sidebar-link savp-sidebar-child savp-sidebar-tone-{{ $section['tone'] }} {{ $active ? 'is-active' : '' }}" aria-label="{{ $section['label'] }}"
                             @if ($active) aria-current="page" @endif
                             @click="mobileSidebar = false">
                             <span class="savp-sidebar-link-icon"><i class="ph-duotone {{ $section['icon'] }}" aria-hidden="true"></i></span>
@@ -144,27 +123,18 @@
     </nav>
 
     <footer class="savp-sidebar-footer">
-        <a href="{{ route('profile.show') }}" class="savp-sidebar-link savp-sidebar-tone-sky {{ request()->routeIs('profile.show') ? 'is-active' : '' }}"
-            title="Mi perfil" @if (request()->routeIs('profile.show')) aria-current="page" @endif
-            @click="mobileSidebar = false"
-            @mouseenter="showTip('Mi perfil', $event)" @mouseleave="tooltip = ''"
-            @focus="showTip('Mi perfil', $event)" @blur="tooltip = ''">
+        <a href="{{ route('profile.show') }}" class="savp-sidebar-link savp-sidebar-tone-sky {{ request()->routeIs('profile.show') ? 'is-active' : '' }}" aria-label="Mi perfil" @if (request()->routeIs('profile.show')) aria-current="page" @endif
+            @click="mobileSidebar = false">
             <span class="savp-sidebar-link-icon"><i class="ph-duotone ph-user-circle" aria-hidden="true"></i></span>
             <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-link-label">Mi perfil</span>
         </a>
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="savp-sidebar-link savp-sidebar-logout"
-                title="Cerrar sesión" aria-label="Cerrar sesión"
-                @mouseenter="showTip('Cerrar sesión', $event)" @mouseleave="tooltip = ''"
-                @focus="showTip('Cerrar sesión', $event)" @blur="tooltip = ''">
+            <button type="submit" class="savp-sidebar-link savp-sidebar-logout" aria-label="Cerrar sesión">
                 <span class="savp-sidebar-link-icon"><i class="ph-duotone ph-sign-out" aria-hidden="true"></i></span>
                 <span x-show="sidebarOpen || mobileSidebar" x-cloak class="savp-sidebar-link-label">Cerrar sesión</span>
             </button>
         </form>
     </footer>
 
-    <div x-show="!sidebarOpen && !mobileSidebar && tooltip" x-cloak
-        class="savp-sidebar-tooltip hidden lg:block" :style="'top: ' + tooltipY + 'px'"
-        x-text="tooltip" aria-hidden="true"></div>
 </aside>

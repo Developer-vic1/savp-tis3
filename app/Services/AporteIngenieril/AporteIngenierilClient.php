@@ -8,6 +8,8 @@ use App\Rules\UrlFuenteUniversitaria;
 use App\Services\AporteIngenieril\DTO\AporteResponse;
 use App\Services\AporteIngenieril\DTO\ContratoAporteIngenieril;
 use App\Services\AporteIngenieril\DTO\ContratoAporteIngenierilV2;
+use App\Support\Conocimiento\ContratoColeccionUniversitaria;
+use App\Support\Conocimiento\FuenteUniversitariaInteligente;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -37,6 +39,30 @@ class AporteIngenierilClient implements SpecializedAcademicClient
         return $this->request('get', config('services.aporte_ingenieril.paths.knowledge_governance') ?: '/api/v1/knowledge/governance', [], 'knowledge_governance');
     }
 
+    public function nationalDirectory(): AporteResponse
+    {
+        return $this->request('get', '/api/v1/knowledge/national-directory', [], 'knowledge_governance_national_directory');
+    }
+
+    public function unifranzCollection(bool $iniciar = false): AporteResponse
+    {
+        return $this->request($iniciar ? 'post' : 'get', '/api/v1/knowledge/collections/unifranz', [], 'knowledge_governance_university_collection');
+    }
+
+    public function analizarColeccionUnifranz(): AporteResponse
+    {
+        return $this->request('post', '/api/v1/knowledge/collections/unifranz/analyze', [], 'knowledge_governance_university_collection');
+    }
+
+    public function documentoUnifranz(string $hash): AporteResponse
+    {
+        if (! preg_match('/^[a-f0-9]{64}$/', $hash)) {
+            return AporteResponse::unavailable();
+        }
+
+        return $this->request('get', '/api/v1/knowledge/collections/unifranz/documents/'.$hash, [], 'knowledge_governance_collection_document');
+    }
+
     public function analyzeKnowledgeSource(array $payload): AporteResponse
     {
         return $this->request('post', '/api/v1/knowledge/governance/analyze', $payload, 'knowledge_governance_analyze');
@@ -52,6 +78,11 @@ class AporteIngenierilClient implements SpecializedAcademicClient
         return $this->request('post', '/api/v1/knowledge/governance/university-preview', $payload, 'knowledge_governance_university_preview');
     }
 
+    public function revisarActualizacionFuente(string $sourceId): AporteResponse
+    {
+        return $this->request('post', '/api/v1/knowledge/governance/check-update', ['source_id' => $sourceId], 'knowledge_governance_update');
+    }
+
     public function submitKnowledgeSource(array $payload): AporteResponse
     {
         return $this->request('post', '/api/v1/knowledge/governance/proposals', $payload, 'knowledge_governance_submit');
@@ -64,6 +95,24 @@ class AporteIngenierilClient implements SpecializedAcademicClient
         }
 
         return $this->request('post', '/api/v1/knowledge/governance/proposals/'.$proposalId.'/review', $payload, 'knowledge_governance_review');
+    }
+
+    public function extractKnowledgeSource(string $proposalId): AporteResponse
+    {
+        if (! preg_match('/^KGI-[A-F0-9]{12}$/', $proposalId)) {
+            return AporteResponse::unavailable();
+        }
+
+        return $this->request('post', '/api/v1/knowledge/governance/proposals/'.$proposalId.'/extract', [], 'knowledge_governance_extract');
+    }
+
+    public function readKnowledgeExtraction(string $proposalId): AporteResponse
+    {
+        if (! preg_match('/^KGI-[A-F0-9]{12}$/', $proposalId)) {
+            return AporteResponse::unavailable();
+        }
+
+        return $this->request('get', '/api/v1/knowledge/governance/proposals/'.$proposalId.'/extract', [], 'knowledge_governance_extract');
     }
 
     public function tutor(array $payload): AporteResponse
@@ -131,6 +180,14 @@ class AporteIngenierilClient implements SpecializedAcademicClient
         $started = hrtime(true);
         $status = null;
         $traceId = null;
+        $timeout = $coldStart
+            ? max(1, min(180, (int) config('services.aporte_ingenieril.cold_start_timeout', 90)))
+            : match (true) {
+                in_array($operation, ['health', 'riasec_instrument', 'riasec_score'], true) => 5,
+                in_array($operation, ['knowledge_governance_preview', 'knowledge_governance_university_preview', 'knowledge_governance_update'], true) => 20,
+                $operation === 'knowledge_governance_extract' => 30,
+                default => max(1, min($operation === 'tutor' ? 120 : 30, (int) config('services.aporte_ingenieril.timeout', 10))),
+            };
         try {
             $request = $this->http
                 ->baseUrl(rtrim($baseUrl, '/'))
@@ -138,13 +195,22 @@ class AporteIngenierilClient implements SpecializedAcademicClient
                 ->withHeaders(array_filter(['X-SAVP-AI-Key' => $apiKey]))
                 ->withoutRedirecting()
                 ->connectTimeout(max(1, min(10, (int) config('services.aporte_ingenieril.connect_timeout', 3))))
-                ->timeout($coldStart ? max(1, min(180, (int) config('services.aporte_ingenieril.cold_start_timeout', 90)))
-                    : (in_array($operation, ['health', 'riasec_instrument', 'riasec_score'], true)
-                        ? 5
-                        : (in_array($operation, ['knowledge_governance_preview','knowledge_governance_university_preview'], true) ? 20
-                        : max(1, min($operation === 'tutor' ? 120 : 30, (int) config('services.aporte_ingenieril.timeout', 10))))));
+                ->timeout($timeout);
             $response = $method === 'get' ? $request->get($path) : $request->post($path, $payload);
             $status = $response->status();
+            if ($operation === 'knowledge_governance_collection_document') {
+                $content = $response->body();
+                $hash = basename($path);
+                $name = rawurldecode((string) $response->header('X-SAVP-Document-Name'));
+                if (! $response->successful() || ! str_starts_with(strtolower((string) $response->header('Content-Type')), 'application/pdf')
+                    || ! str_starts_with($content, '%PDF-') || strlen($content) > 12 * 1024 * 1024
+                    || ! hash_equals($hash, hash('sha256', $content))
+                    || ! preg_match('/^[\p{L}\p{N} ()._-]{1,200}\.pdf$/u', $name)) {
+                    return AporteResponse::unavailable();
+                }
+
+                return new AporteResponse(true, ['content' => $content, 'filename' => $name]);
+            }
             $body = $response->json();
             $traceId = $response->header('X-Trace-Id') ?: (is_array($body) ? ($body['trace_id'] ?? $body['error']['trace_id'] ?? null) : null);
             $traceId = is_string($traceId) && preg_match('/^[A-Za-z0-9._:-]{1,100}$/', $traceId) ? $traceId : null;
@@ -175,6 +241,8 @@ class AporteIngenierilClient implements SpecializedAcademicClient
     private function validKnowledgeGovernanceRequest(string $operation, array $payload): bool
     {
         return match ($operation) {
+            'knowledge_governance_update' => $this->hasExactKeys($payload, ['source_id'])
+                && Validator::make($payload, ['source_id' => ['required', 'string', 'max:160', 'regex:/^[A-Za-z0-9_-]+$/']])->passes(),
             'knowledge_governance_preview', 'knowledge_governance_university_preview' => $this->hasExactKeys($payload, ['url'])
                 && Validator::make($payload, ['url' => ['required', 'string', 'url:https', 'max:2000', new UrlFuenteUniversitaria]])->passes(),
             'knowledge_governance_analyze' => $this->validSourceCandidate($payload),
@@ -183,6 +251,7 @@ class AporteIngenierilClient implements SpecializedAcademicClient
                 && is_bool($payload['approved'])
                 && is_string($payload['review_note']) && mb_strlen($payload['review_note']) <= 800
                 && $payload['reviewed_by_role'] === 'Administrador',
+            'knowledge_governance_extract', 'knowledge_governance_university_collection' => $payload === [],
             default => false,
         };
     }
@@ -194,6 +263,15 @@ class AporteIngenierilClient implements SpecializedAcademicClient
         }
 
         return match ($operation) {
+            'knowledge_governance_national_directory' => $this->validNationalDirectoryResponse($body),
+            'knowledge_governance_update' => Validator::make($body, [
+                'source_id' => ['required', 'string', 'max:160', 'regex:/^[A-Za-z0-9_-]+$/'],
+                'checked_at' => ['required', 'date'],
+                'status' => ['required', 'in:VERIFICADA,BLOQUEADA,NO_DISPONIBLE'],
+                'fingerprint' => ['present', 'nullable', 'regex:/^[a-f0-9]{64}$/'],
+                'message' => ['required', 'string', 'max:500'],
+            ])->passes() && (($body['status'] ?? '') !== 'VERIFICADA' || is_string($body['fingerprint'] ?? null)),
+            'knowledge_governance_university_collection' => ContratoColeccionUniversitaria::valido($body),
             'knowledge_governance_preview', 'knowledge_governance_university_preview' => Validator::make($body, [
                 'requested_url' => ['required', 'string', 'max:2000'],
                 'status' => ['required', 'in:VERIFICADA,DUPLICADA,BLOQUEADA,NO_DISPONIBLE,REQUIERE_REVISION'],
@@ -213,20 +291,40 @@ class AporteIngenierilClient implements SpecializedAcademicClient
                 'warnings.*' => ['string', 'max:1000'],
                 'duplicate' => ['present', 'nullable', 'array:kind,id,title,status,url'],
                 'duplicate.*' => ['string', 'max:2000'],
-                'institutional_url' => ['nullable','url:https','max:2000',new UrlFuenteUniversitaria],
-                'university_key' => ['nullable','string','max:253'],
-                'career_links' => ['sometimes','array','max:30'],
+                'institutional_url' => ['nullable', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+                'university_key' => ['nullable', 'string', 'max:253'],
+                'career_links' => ['sometimes', 'array', 'max:30'],
                 'career_links.*' => ['array:name,url,status'],
-                'career_links.*.name' => ['required','string','max:180'],
-                'career_links.*.url' => ['required','url:https','max:2000',new UrlFuenteUniversitaria],
-                'career_links.*.status' => ['required','in:POR_REVISAR'],
-                'reading_fragments' => ['sometimes','array','max:8'],
+                'career_links.*.name' => ['required', 'string', 'max:180'],
+                'career_links.*.url' => ['required', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+                'career_links.*.status' => ['required', 'in:POR_REVISAR'],
+                'reading_fragments' => ['sometimes', 'array', 'max:8'],
                 'reading_fragments.*' => ['array:id,text,url,document_hash'],
-                'reading_fragments.*.id' => ['required','regex:/^[a-f0-9]{24}$/'],
-                'reading_fragments.*.text' => ['required','string','max:600'],
-                'reading_fragments.*.url' => ['required','url:https','max:2000',new UrlFuenteUniversitaria],
-                'reading_fragments.*.document_hash' => ['required','regex:/^sha256:[a-f0-9]{64}$/'],
+                'reading_fragments.*.id' => ['required', 'regex:/^[a-f0-9]{24}$/'],
+                'reading_fragments.*.text' => ['required', 'string', 'max:600'],
+                'reading_fragments.*.url' => ['required', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+                'reading_fragments.*.document_hash' => ['required', 'regex:/^sha256:[a-f0-9]{64}$/'],
+                'documents' => ['sometimes', 'array', 'max:6'],
+                'documents.*' => ['required', 'array:url,title,kind'],
+                'documents.*.url' => ['required', 'string', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+                'documents.*.title' => ['required', 'string', 'min:3', 'max:240'],
+                'documents.*.kind' => ['required', 'string', 'in:malla,reglamento'],
+                'academic_pages' => ['sometimes', 'array', 'max:6'],
+                'academic_pages.*' => ['required', 'array:url,title,kind'],
+                'academic_pages.*.url' => ['required', 'string', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+                'academic_pages.*.title' => ['required', 'string', 'min:3', 'max:240'],
+                'academic_pages.*.kind' => ['required', 'string', 'in:carrera,plan,reglamento'],
+                'document_kind' => ['sometimes', 'required', 'string', 'in:PUBLIC_DOCUMENT,STUDENT_PORTAL,AUTHENTICATION,UNKNOWN'],
+                'embedding' => ['sometimes', 'required', 'array:allowed,reason', 'required_array_keys:allowed,reason', function ($attribute, $value, $fail) {
+                    if (is_array($value) && array_key_exists('allowed', $value) && $value['allowed'] !== null && ! is_bool($value['allowed'])) {
+                        $fail('Invalid embedding boolean.');
+                    }
+                }],
+                'embedding.reason' => ['nullable', 'string', 'max:1000'],
             ])->passes()
+                && $this->enlacesAcademicosMismaUniversidad($body, 'documents', true)
+                && $this->enlacesAcademicosMismaUniversidad($body, 'academic_pages', false)
+                && $this->contenidoNoAcademicoRestringido($body)
                 && (! $body['can_use'] || ($body['status'] === 'VERIFICADA' && ($body['reachable'] ?? null) === true
                     && ($body['http_status'] ?? null) === 200 && is_string($body['title']) && mb_strlen($body['title']) >= 3
                     && preg_match('/^sha256:[a-f0-9]{64}$/', (string) ($body['document_hash'] ?? '')) === 1)),
@@ -245,8 +343,150 @@ class AporteIngenierilClient implements SpecializedAcademicClient
                 && is_array($body['assessment'] ?? null),
             'knowledge_governance_review' => is_string($body['message'] ?? null)
                 && is_array($body['proposal'] ?? null),
+            'knowledge_governance_extract' => $this->validKnowledgeExtractionResponse($body),
             default => false,
         };
+    }
+
+    private function validNationalDirectoryResponse(array $body): bool
+    {
+        return Validator::make($body, [
+            'generated_at' => ['present', 'nullable', 'string', 'max:80'],
+            'coverage_note' => ['required', 'string', 'max:8000'],
+            'evidence_sources' => ['present', 'array'],
+            'coverage_discrepancies' => ['present', 'array'],
+            'institutions' => ['present', 'array', 'max:500'],
+            'institutions.*.institution_id' => ['required', 'string', 'max:120', 'distinct'],
+            'institutions.*.name' => ['required', 'string', 'max:500'],
+            'institutions.*.regime' => ['required', 'string', 'max:100'],
+            'institutions.*.departments' => ['present', 'array'],
+            'institutions.*.departments.*' => ['string', 'max:120'],
+            'institutions.*.programs' => ['present', 'array'],
+            'institutions.*.programs.*.name' => ['required', 'string', 'max:500'],
+            'institutions.*.programs.*.duration_text' => ['nullable', 'string', 'max:300'],
+            'institutions.*.programs.*.duration_semesters' => ['nullable', 'integer', 'min:1'],
+            'institutions.*.programs.*.initial_subjects' => ['sometimes', 'array'],
+            'institutions.*.programs.*.sources' => ['sometimes', 'array'],
+            'institutions.*.programs.*.curriculum_status' => ['required', 'string', 'max:100'],
+            'institutions.*.collection' => ['present', 'array'],
+            'statistics' => ['required', 'array'],
+            'statistics.institutions' => ['required', 'integer', 'min:0'],
+            'statistics.domains_verified' => ['required', 'integer', 'min:0'],
+            'statistics.documented_programs' => ['required', 'integer', 'min:0'],
+            'statistics.extracted_documents' => ['required', 'integer', 'min:0'],
+            'statistics.pending_urls' => ['required', 'integer', 'min:0'],
+            'collection_updated_at' => ['present', 'nullable', 'string', 'max:80'],
+        ])->passes();
+    }
+
+    private function validKnowledgeExtractionResponse(array $body): bool
+    {
+        $validator = Validator::make($body, [
+            'proposal_id' => ['required', 'regex:/^KGI-[A-F0-9]{12}$/'],
+            'status' => ['required', 'in:EXTRAIDA_PENDIENTE_REVISION,NO_DISPONIBLE'],
+            'source_url' => ['required', 'string', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+            'final_url' => ['sometimes', 'nullable', 'string', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+            'document_hash' => ['sometimes', 'nullable', 'regex:/^sha256:[a-f0-9]{64}$/'],
+            'content_type' => ['sometimes', 'nullable', 'string', 'max:120'],
+            'metrics' => ['present', 'array:pages,segments,chunks,facts'],
+            'metrics.*' => ['integer', 'min:0', 'max:100000'],
+            'facts' => ['present', 'array', 'max:500'],
+            'facts.*' => ['required', 'array:kind,value,evidence,page,section,source_url'],
+            'facts.*.kind' => ['required', 'in:DURACION,MATERIA,CARRERA'],
+            'facts.*.value' => ['required', 'string', 'max:500'],
+            'facts.*.evidence' => ['required', 'string', 'max:2000'],
+            'facts.*.source_url' => ['required', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+            'facts.*.page' => ['sometimes', 'nullable', 'integer', 'min:1'],
+            'facts.*.section' => ['sometimes', 'nullable', 'string', 'max:240'],
+            'chunks' => ['present', 'array', 'max:8'],
+            'chunks.*' => ['required', 'array:chunk_id,text,page,section'],
+            'chunks.*.chunk_id' => ['required', 'string', 'max:120'],
+            'chunks.*.text' => ['required', 'string', 'max:2000'],
+            'chunks.*.page' => ['sometimes', 'nullable', 'integer', 'min:1'],
+            'chunks.*.section' => ['sometimes', 'nullable', 'string', 'max:240'],
+            'embeddings' => ['required', 'array:status,model,vectors,reason', 'required_array_keys:status,model,vectors,reason'],
+            'embeddings.status' => ['required', 'in:NO_GENERADOS,GENERADOS_PENDIENTES_PUBLICACION'],
+            'embeddings.model' => ['present', 'nullable', 'string', 'max:240', 'required_if:embeddings.status,GENERADOS_PENDIENTES_PUBLICACION'],
+            'embeddings.vectors' => ['required', 'integer', 'min:0', 'max:100000'],
+            'embeddings.reason' => ['required', 'string', 'max:1000'],
+            'warnings' => ['present', 'array', 'max:30'],
+            'warnings.*' => ['string', 'max:1000'],
+            'linked_sources' => ['sometimes', 'array', 'max:3'],
+            'linked_sources.*' => ['array:url,title,kind', 'required_array_keys:url,title,kind'],
+            'linked_sources.*.url' => ['required', 'url:https', 'max:2000', new UrlFuenteUniversitaria],
+            'linked_sources.*.title' => ['required', 'string', 'min:3', 'max:240'],
+            'linked_sources.*.kind' => ['required', 'in:malla,reglamento,carrera,plan'],
+            'coverage' => ['sometimes', 'array:fetched_documents,maximum_documents'],
+            'coverage.fetched_documents' => ['sometimes', 'integer', 'min:0', 'max:4'],
+            'coverage.maximum_documents' => ['sometimes', 'integer', 'min:1', 'max:4'],
+        ]);
+        if (! $validator->passes()) {
+            return false;
+        }
+
+        $embeddings = $body['embeddings'];
+        $embeddingsValidos = $embeddings['status'] === 'NO_GENERADOS'
+            ? $embeddings['model'] === null && $embeddings['vectors'] === 0
+            : $body['status'] === 'EXTRAIDA_PENDIENTE_REVISION'
+                && is_int($embeddings['vectors']) && $embeddings['vectors'] > 0
+                && $embeddings['vectors'] === ($body['metrics']['chunks'] ?? null);
+        if (! $embeddingsValidos) {
+            return false;
+        }
+
+        $soporte = app(FuenteUniversitariaInteligente::class);
+        $universidad = $soporte->universidad($body['source_url']);
+        if ($universidad === null) {
+            return false;
+        }
+        foreach ([$body['final_url'] ?? null, ...array_column($body['facts'], 'source_url'), ...array_column($body['linked_sources'] ?? [], 'url')] as $enlace) {
+            if ($enlace !== null && ($soporte->universidad($enlace)['domain'] ?? null) !== $universidad['domain']) {
+                return false;
+            }
+        }
+
+        return $body['status'] === 'NO_DISPONIBLE'
+            || (isset($body['document_hash']) && is_array($body['metrics'])
+                && count(array_intersect(['pages', 'segments', 'chunks', 'facts'], array_keys($body['metrics']))) === 4);
+    }
+
+    private function contenidoNoAcademicoRestringido(array $body): bool
+    {
+        if (! in_array($body['document_kind'] ?? null, ['STUDENT_PORTAL', 'AUTHENTICATION'], true)) {
+            return true;
+        }
+
+        // Un dominio universitario reconocido no convierte un acceso privado en evidencia académica.
+        return $body['can_use'] === false && $body['excerpt'] === ''
+            && ($body['reading_fragments'] ?? []) === []
+            && ($body['academic_pages'] ?? []) === []
+            && ($body['documents'] ?? []) === [] && $body['suggested_fields'] === [];
+    }
+
+    private function enlacesAcademicosMismaUniversidad(array $body, string $campo, bool $pdf): bool
+    {
+        $documentos = $body[$campo] ?? [];
+        if (! array_is_list($documentos)) {
+            return false;
+        }
+        if ($documentos === []) {
+            return true;
+        }
+        $soporte = app(FuenteUniversitariaInteligente::class);
+        $universidad = $soporte->universidad($body['requested_url']);
+        if ($universidad === null || $soporte->errorUrl($body['requested_url']) !== null) {
+            return false;
+        }
+        foreach ($documentos as $documento) {
+            $destino = $soporte->universidad($documento['url']);
+            if ($destino === null || $destino['domain'] !== $universidad['domain']
+                || $soporte->errorUrl($documento['url']) !== null
+                || str_ends_with(strtolower((string) parse_url($documento['url'], PHP_URL_PATH)), '.pdf') !== $pdf) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function validSourceCandidate(array $payload, bool $withRole = false): bool

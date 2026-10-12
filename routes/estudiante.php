@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AulaVirtual\CursoVirtualController;
+use App\Http\Controllers\DirectorioNacionalController;
 use App\Http\Controllers\Estudiante\AsistenteEstudioController;
 use App\Http\Controllers\Estudiante\ExperienciaEstudianteController;
 use App\Http\Controllers\Estudiante\FuturoAcademicoController;
@@ -20,14 +21,28 @@ Route::prefix('estudiante')->name('estudiante.')->middleware('actor:Estudiante')
         ->middleware('can:Orientacion_Academica_Profesional')->name('intereses');
     Route::post('/intereses', [InteresesController::class, 'guardar'])
         ->middleware('can:Orientacion_Academica_Profesional')->name('intereses.guardar');
+    Route::post('/intereses/borrador', [InteresesController::class, 'borrador'])
+        ->middleware('can:Orientacion_Academica_Profesional')->name('intereses.borrador');
     Route::post('/intereses/analizar', [InteresesController::class, 'analizar'])
         ->middleware('can:Orientacion_Academica_Profesional')->name('intereses.analizar');
+    Route::get('/analisis', [InteresesController::class, 'estudio'])
+        ->middleware('can:Orientacion_Academica_Profesional')->name('analisis');
     Route::get('/futuro', [FuturoAcademicoController::class, 'index'])
         ->middleware('can:Orientacion_Academica_Profesional')->name('futuro');
+    Route::get('/directorio-nacional', [DirectorioNacionalController::class, 'index'])
+        ->middleware(['can:Orientacion_Academica_Profesional', 'throttle:30,1,estudiante-directorio:'])->name('directorio-nacional');
     Route::get('/preparacion', [PreparacionAcademicaController::class, 'index'])
         ->middleware('can:Perfil_Academico')->name('preparacion');
     Route::get('/plan', [PlanAcademicoController::class, 'index'])
         ->middleware('can:Perfil_Academico')->name('plan');
+    Route::post('/plan', [PlanAcademicoController::class, 'elegir'])
+        ->middleware('can:Perfil_Academico')->name('plan.elegir');
+    Route::post('/plan/cambiar', [PlanAcademicoController::class, 'cambiar'])
+        ->middleware('can:Perfil_Academico')->name('plan.cambiar');
+    Route::post('/plan/progreso', [PlanAcademicoController::class, 'progreso'])
+        ->middleware('can:Perfil_Academico')->name('plan.progreso');
+    Route::post('/plan/conservar', [PlanAcademicoController::class, 'conservar'])
+        ->middleware('can:Perfil_Academico')->name('plan.conservar');
     Route::get('/asistente', [AsistenteEstudioController::class, 'index'])
         ->middleware('can:Orientacion_Academica_Profesional')->name('asistente');
     Route::post('/asistente', [AsistenteEstudioController::class, 'consultar'])

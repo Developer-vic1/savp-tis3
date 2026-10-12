@@ -3,11 +3,13 @@ namespace App\Livewire\Admin;
 
 use App\Models\Oficial\Academico\{Calificacion, Curso, GestionAcademica, PeriodoEvaluacion};
 use App\Models\Oficial\AporteAcademicoVocacional\OrientacionActividad;
-use App\Support\Evaluacion\PanelResultadosAcademicos;
+use App\Support\Evaluacion\{PanelResultadosAcademicos, CuadroHonorAcademico};
 use App\Services\AporteIngenieril\AporteIngenierilClient;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class Calificaciones extends Component
 {
@@ -17,9 +19,12 @@ class Calificaciones extends Component
     public string $gradoFiltro = '';
     public string $periodoFiltro = '';
     public string $seguimiento = '';
-    public string $vista = 'comparativas';
+    public string $vista = 'honor';
+    public string $orden = 'promedio';
     public int $perPage = 10;
+    #[Locked] public ?string $datosLeidos = null;
     #[Locked] public ?string $seleccionado = null;
+    #[Locked] public bool $detalleHonor = false;
     #[Locked] public string $conexionEstudio = 'sin_comprobar';
     #[Locked] public ?string $conexionComprobada = null;
 
@@ -37,17 +42,44 @@ class Calificaciones extends Component
     {
         if (in_array($property, ['search', 'gestionFiltro', 'gradoFiltro', 'periodoFiltro', 'seguimiento', 'perPage'], true)) {
             $this->seleccionado = null;
+            $this->detalleHonor = false;
             $this->resetPage();
         }
         if (!in_array($this->perPage, [10, 20, 50], true)) $this->perPage = 10;
-        if (!in_array($this->vista, ['comparativas', 'proyecto', 'estudiantes'], true)) $this->vista = 'comparativas';
+        if (!in_array($this->vista, ['honor', 'comparativas', 'proyecto', 'estudiantes'], true)) $this->vista = 'honor';
+        if (!in_array($this->orden, ['promedio', 'nombre'], true)) $this->orden = 'promedio';
+        if ($property === 'orden') $this->resetPage();
+        if ($property === 'gestionFiltro') {
+            $this->limpiarFiltros();
+            $this->vista = 'honor';
+        }
     }
     public function verEstudiante(string $inscripcion): void
     {
         abort_unless(app(PanelResultadosAcademicos::class)->consulta($this->filtros())->where('i.cod_ins', $inscripcion)->exists(), 404);
         $this->seleccionado = $inscripcion;
+        $this->detalleHonor = false;
     }
-    public function cerrarDetalle(): void { $this->seleccionado = null; }
+    public function cerrarDetalle(): void { $this->seleccionado = null; $this->detalleHonor = false; }
+    public function verHonor(string $inscripcion): void
+    {
+        abort_unless(strlen($inscripcion) <= 30 && app(CuadroHonorAcademico::class)->consulta($this->gestionFiltro)->where('i.cod_ins', $inscripcion)->exists(), 404);
+        $this->seleccionado = $inscripcion;
+        $this->detalleHonor = true;
+    }
+    public function cambiarGestionHonor(string $gestion): void
+    {
+        abort_unless(strlen($gestion) <= 30 && GestionAcademica::whereKey($gestion)->exists(), 404);
+        $this->gestionFiltro = $gestion;
+        $this->limpiarFiltros();
+        $this->vista = 'honor';
+    }
+    public function cambiarVista(string $vista): void
+    {
+        abort_unless(in_array($vista, ['honor', 'comparativas', 'proyecto', 'estudiantes'], true), 422);
+        $this->cerrarDetalle();
+        $this->vista = $vista;
+    }
     public function comprobarConexion(): void
     {
         abort_unless(auth()->user()->can('orientacion.ver.institucional'), 403);
@@ -65,7 +97,7 @@ class Calificaciones extends Component
     }
     public function limpiarFiltros(): void
     {
-        $this->reset('search', 'gradoFiltro', 'periodoFiltro', 'seguimiento', 'seleccionado');
+        $this->reset('search', 'gradoFiltro', 'periodoFiltro', 'seguimiento', 'seleccionado', 'detalleHonor');
         $this->resetPage();
     }
     // Consulta administrativa: las llamadas directas tampoco pueden alterar notas.
@@ -90,6 +122,24 @@ class Calificaciones extends Component
             fclose($salida);
         }, 'seguimiento-academico.csv', ['Content-Type'=>'text/csv; charset=UTF-8']);
     }
+    public function descargarHonor()
+    {
+        $honor = app(CuadroHonorAcademico::class)->resumen($this->gestionFiltro, false);
+        return response()->streamDownload(function () use ($honor) {
+            $salida = fopen('php://output', 'w');
+            fwrite($salida, "\xEF\xBB\xBF");
+            fputcsv($salida, ['Propuesta académica · requiere revisión', 'Gestión', 'Grado', 'Paralelo', 'Puesto', 'Estudiante', 'Promedio observado / 100', 'Notas', 'Empate', 'Estado de evidencia'], ';', '"', '');
+            $grupos = $honor['grados']->map(fn ($g) => ['tipo' => 'Reconocimiento por grado', 'estudiantes' => $g['estudiantes']]);
+            $grupos->push(['tipo' => 'Candidatura de promoción', 'estudiantes' => $honor['promocion']['estudiantes']]);
+            foreach ($grupos as $grupo) foreach ($grupo['estudiantes'] as $e) {
+                $fila = [$grupo['tipo'], $e->ani_gea, $e->nom_cur, $e->nom_par, $e->puesto,
+                    trim($e->nom_per.' '.$e->ape_pat_per.' '.$e->ape_mat_per), number_format((float)$e->promedio, 2, '.', ''), $e->notas, $e->empatado ? 'Sí' : 'No', $e->estado_honor];
+                $fila = array_map(fn ($v) => preg_match('/^[=+@\-\t\r\n]/', (string)$v) ? "'".$v : $v, $fila);
+                fputcsv($salida, $fila, ';', '"', '');
+            }
+            fclose($salida);
+        }, 'cuadro-honor-propuestas.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
     private function filtros(): array
     {
         $verOrientacion = auth()->user()->can('orientacion.ver.institucional');
@@ -101,7 +151,8 @@ class Calificaciones extends Component
         $consulta = $panel->consulta($this->filtros());
         $detalle = null;
         if ($this->seleccionado) {
-            $registro = (clone $consulta)->where('i.cod_ins', $this->seleccionado)->first();
+            $detalleConsulta = $this->detalleHonor ? app(CuadroHonorAcademico::class)->consulta($this->gestionFiltro) : clone $consulta;
+            $registro = $detalleConsulta->where('i.cod_ins', $this->seleccionado)->first();
             if ($registro) {
                 $notas = Calificacion::with(['asignatura', 'planEspecialidad.especialidad', 'periodoEvaluacion', 'inscripcionEstudiante.gestionAcademica'])
                     ->whereHas('inscripcionEstudiante', fn ($q) => $q->where('cod_est', $registro->cod_est))
@@ -111,10 +162,68 @@ class Calificaciones extends Component
                 $detalle = compact('registro', 'notas', 'actividades');
             }
         }
-        $grados = $panel->grados($consulta);
+        return view('livewire.admin.calificaciones', $this->datosLectura() + ['detalle' => $detalle]);
+    }
+    private function claveLectura(string $vista): string
+    {
+        $conexion = config('database.default');
+        return 'calificaciones:lectura:v2:'.hash('sha256', json_encode([
+            $conexion, config('database.connections.'.$conexion.'.database'),
+            auth()->id(), auth()->user()->can('orientacion.ver.institucional'), $vista,
+        ]));
+    }
+    private function datosLectura(): array
+    {
+        $cache = Cache::store(config('calificaciones.cache_store', 'file'));
+        $clave = $this->claveLectura($this->vista);
+        $firma = hash('sha256', json_encode([$this->filtros(), $this->orden, $this->perPage, $this->getPage()]));
+        $lectura = $cache->get($clave);
+        if (!is_array($lectura) || ($lectura['firma'] ?? '') !== $firma) {
+            // El FileStore vigente restringe la deserialización de clases: guardar sólo JSON y escalares.
+            $lectura = ['firma' => $firma, 'datos' => json_encode($this->construirDatosPanel(), JSON_THROW_ON_ERROR), 'fecha' => now()->format('H:i:s')];
+            // Cuatro entradas máximas por actor/ámbito; la búsqueda reemplaza la lectura anterior.
+            $cache->put($clave, $lectura, 20);
+        }
+        $this->datosLeidos = $lectura['fecha'];
+        return $this->restaurarLectura($lectura['datos']);
+    }
+    private function restaurarLectura(string $json): array
+    {
+        $datos = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        $registros = fn ($filas) => collect($filas)->map(fn ($fila) => (object)$fila);
+        $datos['resumen'] = (object)$datos['resumen'];
+        foreach (['grados','trayectoria','gestiones','perfiles','years','cursos','periodos'] as $campo) $datos[$campo] = $registros($datos[$campo]);
+        $p = $datos['estudiantes'];
+        $datos['estudiantes'] = new LengthAwarePaginator($registros($p['data']), $p['total'], $p['per_page'], $p['current_page'], ['path'=>$p['path'],'pageName'=>'page']);
+        foreach ($datos['destacados'] as &$destacado) {
+            $destacado['registro'] = (object)$destacado['registro'];
+            if ($destacado['fecha']) $destacado['fecha'] = \Carbon\Carbon::parse($destacado['fecha']);
+        }
+        unset($destacado);
+        if ($datos['honor']) {
+            foreach (['grados','historial'] as $campo) {
+                $datos['honor'][$campo] = collect($datos['honor'][$campo])->map(function ($grupo) use ($registros) {
+                    $grupo['estudiantes'] = $registros($grupo['estudiantes']);
+                    return $grupo;
+                });
+            }
+            $datos['honor']['promocion']['estudiantes'] = $registros($datos['honor']['promocion']['estudiantes']);
+        }
+        return $datos;
+    }
+    public function actualizarDatos(): void
+    {
+        $cache = Cache::store(config('calificaciones.cache_store', 'file'));
+        foreach (['honor', 'comparativas', 'proyecto', 'estudiantes'] as $vista) $cache->forget($this->claveLectura($vista));
+    }
+    private function construirDatosPanel(): array
+    {
+        $panel = app(PanelResultadosAcademicos::class);
+        $consulta = $panel->consulta($this->filtros());
+        $grados = $this->vista === 'honor' ? collect() : $panel->grados($consulta);
         $resumen = $panel->resumen($consulta);
-        $trayectoria = $panel->periodos($this->filtros());
-        $gestiones = $panel->gestiones($this->filtros());
+        $trayectoria = $this->vista === 'comparativas' ? $panel->periodos($this->filtros()) : collect();
+        $gestiones = $this->vista === 'comparativas' ? $panel->gestiones($this->filtros()) : collect();
         $graficos = [
             'promedios' => ['labels' => $grados->pluck('nom_cur')->all(), 'tipo' => 'radar', 'unidad' => 'puntos / 100', 'maximo' => 100,
                 'series' => [['label' => 'Promedio individual del grado', 'token' => 'primary', 'data' => $grados->map(fn ($g) => $g->promedio === null ? null : round((float) $g->promedio, 2))->all()]]],
@@ -129,16 +238,25 @@ class Calificaciones extends Component
                     ['label' => 'Retiros documentados', 'token' => 'warning', 'data' => $gestiones->map(fn ($g) => (int)$g->retirados)->all()],
                 ]],
         ];
-        return view('livewire.admin.calificaciones', [
-            'estudiantes' => (clone $consulta)->orderBy('p.ape_pat_per')->orderBy('p.ape_mat_per')->orderBy('p.nom_per')->paginate($this->perPage),
+        $listado = (clone $consulta)->when($this->orden !== 'nombre', fn ($q) => $q->orderByRaw('CASE WHEN n.promedio IS NULL THEN 1 ELSE 0 END')->orderByDesc('n.promedio'))
+            ->orderBy('p.ape_pat_per')->orderBy('p.ape_mat_per')->orderBy('p.nom_per')->orderBy('i.cod_ins');
+        $cantidad = in_array($this->perPage, [10,20,50], true) ? $this->perPage : 10;
+        $pagina = max(1, (int)$this->getPage());
+        // El resumen ya contó la misma consulta; no repetir el COUNT de paginate().
+        $estudiantes = new LengthAwarePaginator($listado->forPage($pagina, $cantidad)->get(), (int)$resumen->total, $cantidad, $pagina,
+            ['path' => LengthAwarePaginator::resolveCurrentPath(), 'pageName' => 'page']);
+        return [
+            'estudiantes' => $estudiantes,
             'resumen' => $resumen, 'grados' => $grados,
-            'destacados' => $panel->destacados($consulta, auth()->user()->can('orientacion.ver.institucional')),
+            'destacados' => $this->vista === 'honor' ? [] : $panel->destacados($consulta, auth()->user()->can('orientacion.ver.institucional')),
+            'honor' => $this->vista === 'honor' ? app(CuadroHonorAcademico::class)->resumen($this->gestionFiltro, auth()->user()->can('orientacion.ver.institucional')) : null,
             'trayectoria' => $trayectoria, 'gestiones' => $gestiones, 'graficos' => $graficos,
-            'perfiles' => $panel->perfiles($this->filtros()),
+            'perfiles' => $this->vista === 'honor' ? collect() : $panel->perfiles($this->filtros()),
             'proyecto' => $this->vista === 'proyecto' ? $panel->estudios($this->filtros()) : null,
             'years' => GestionAcademica::orderByDesc('ani_gea')->get(), 'cursos' => Curso::orderBy('ord_cur')->get(),
-            'periodos' => PeriodoEvaluacion::orderBy('ord_pev')->get(), 'detalle' => $detalle,
+            'periodos' => PeriodoEvaluacion::orderBy('ord_pev')->get(),
             'puedeVerOrientacion' => auth()->user()->can('orientacion.ver.institucional'),
-        ]);
+        ];
     }
+
 }

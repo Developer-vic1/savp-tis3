@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="QA_SYNTHETIC_ONLY"><title>Prueba visual · Mi análisis</title><link rel="stylesheet" href="/build/assets/app-C1LONlFc.css"><link rel="stylesheet" href="/build/assets/app-zvyyYlg5.css"><style>[x-cloak]{display:none!important}body{background:var(--ui-bg);color:var(--ui-text);font-family:Figtree,system-ui,sans-serif;padding:1rem}.qa-banner{padding:1rem;border:1px solid var(--ui-warning-border);background:var(--ui-warning-soft);border-radius:1rem;max-width:80rem;margin:0 auto 1rem}.qa-header{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}.qa-main{max-width:80rem;margin:auto}</style></head><body><header class="qa-banner"><strong>Datos de prueba, no un resultado personal</strong><p>Respuestas y trayectoria artificiales. Puntajes, estudio y fuentes calculados por el servicio real. Ninguna escritura institucional.</p><nav class="qa-header"><a class="ui-btn-secondary" href="/__qa/intereses">Cuestionario</a><a class="ui-btn-secondary" href="/__qa/analisis">Mi análisis</a><a class="ui-btn-secondary" href="/__qa/futuro">Carreras y universidades</a><a class="ui-btn-secondary" href="/__qa/plan">Mi plan</a><button class="ui-btn-secondary" id="qa-tema">Cambiar tema</button></nav></header><main class="qa-main"><div class="intereses-espacio">
+    <section class="intereses-hero" aria-labelledby="analisis-cabecera"><div><div class="intereses-etiqueta"><i class="ph-duotone ph-fingerprint" aria-hidden="true"></i>2 · Comprender</div><h1 id="analisis-cabecera">Entiende tu perfil. Encuentra tu siguiente paso.</h1><p>Lee qué expresan tus respuestas, cómo aporta tu trayectoria y qué referencias puedes investigar para explorar carreras.</p><div class="intereses-acciones"><a class="ui-btn-primary" href="/__qa/intereses">Completar mi cuestionario<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a><a class="ui-btn-secondary" href="/__qa/futuro">Explorar carreras y universidades</a></div></div><div class="intereses-ilustracion" aria-hidden="true"><div class="intereses-orbita"><i class="ph-duotone ph-fingerprint"></i><span>Tus intereses</span></div><div class="intereses-orbita"><i class="ph-duotone ph-path"></i><span>Tu trayectoria</span></div><div class="intereses-orbita"><i class="ph-duotone ph-lightbulb"></i><span>Tus motivos</span></div></div></section>
+    <nav class="intereses-ruta" aria-label="Tu recorrido de orientación">
+            <a href="/__qa/intereses" ><span class="intereses-ruta-numero">1</span><span><strong>Responder</strong><small>Cuestionario de intereses</small></span></a>
+            <a href="/__qa/analisis"  aria-current="step" ><span class="intereses-ruta-numero">2</span><span><strong>Comprender</strong><small>Mi perfil y sus motivos</small></span></a>
+            <a href="/__qa/futuro" ><span class="intereses-ruta-numero">3</span><span><strong>Explorar</strong><small>Carreras y universidades</small></span></a>
+            <a href="#qa-fuera-de-alcance" ><span class="intereses-ruta-numero">4</span><span><strong>Prepararme</strong><small>Una meta, un primer paso</small></span></a>
+    </nav>
+                    <section class="intereses-panel"><p class="intereses-etiqueta">Tu primer paso</p><h2 class="mt-2">Tu perfil anterior necesita actualizarse</h2><p class="intereses-texto mt-3">El resultado anterior sigue guardado. Necesitamos respuestas del cuestionario actual para explicar tu perfil sin mezclar escalas.</p><a class="ui-btn-primary mt-4" href="/__qa/intereses">Ir al cuestionario<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a></section>
+        <section class="intereses-panel intereses-estudio" id="mi-analisis" aria-labelledby="analisis-titulo">
+    <div class="intereses-cabecera"><div><p class="intereses-etiqueta">Tu estudio, tu punto de partida</p><h2 id="analisis-titulo" class="mt-2">Mi análisis</h2><p class="intereses-texto mt-2">Descubre cómo se relacionan tus intereses con las opciones que quieres estudiar. Después elige una meta y prepara tu siguiente paso.</p></div>
+        <form method="POST" action="/__qa/enviar" x-data="crearEstudioIntereses()" @submit.prevent="analizar($event)" :aria-busy="enviando" class="w-full lg:w-auto">
+            <input type="hidden" name="_token" value="utjcatk00i27hqpyh7kBp8DjE01G8g9oMWKZlLkR" autocomplete="off">            <button class="ui-btn-primary" type="submit" disabled :disabled="enviando || true"><i class="ph-duotone ph-sparkle" aria-hidden="true"></i><span x-text="enviando ? 'Preparando tu estudio…' : 'Generar mi análisis'">Generar mi análisis</span></button>
+            <div class="intereses-carga" x-show="enviando" x-cloak role="status" aria-live="polite"><span class="intereses-spinner" aria-hidden="true"></span><div><h3>Tu estudio está en curso</h3><p class="intereses-texto">Estamos revisando tus respuestas y la información disponible. El resultado aparecerá cuando esté guardado.</p></div></div>
+            <div class="intereses-aviso mt-3" x-ref="aviso" tabindex="-1" x-show="aviso" x-cloak role="alert"><h3 x-text="aviso?.title"></h3><p x-text="aviso?.message"></p><p x-text="aviso?.preserved"></p><p x-text="aviso?.next_step"></p></div>
+        </form>
+    </div>
+            <div class="intereses-aviso mt-4"><h3>Esto falta para generar tu análisis</h3><ul class="mt-2 list-inside list-disc"><li>Cuestionario RIASEC oficial: completa y guarda el cuestionario actual.</li></ul></div>
+        </section>
+        <details class="ui-plegable" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-student" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Tus notas y tu trayectoria</span>
+            <span class="ui-plegable-descripcion">Consulta tus calificaciones por gestión y compara los promedios de tus materias.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><section class="intereses-panel trayectoria-estudiante" id="mi-trayectoria" aria-labelledby="trayectoria-titulo" x-data="{ gestion: 'QA_2026', vista: 'notas' }">
+    <div class="intereses-cabecera">
+        <div><p class="intereses-etiqueta">Tu punto de partida</p><h2 id="trayectoria-titulo" class="mt-2">Tus notas por gestión y materia</h2><p class="intereses-texto mt-2">Revisa cada nota, compara las materias y descubre de dónde sale su promedio. Tus intereses se interpretan por separado.</p></div>
+        <a class="ui-btn-secondary" href="#qa-fuera-de-alcance">Ver Mi preparación<i class="ph-duotone ph-arrow-right" aria-hidden="true"></i></a>
+    </div>
+            <div class="trayectoria-filtro"><div class="ui-selector" x-data="selectorInstitucional(null, JSON.parse('[{\u0022valor\u0022:\u0022QA_2026\u0022,\u0022etiqueta\u0022:\u0022Gestión 2026 · Actual\u0022},{\u0022valor\u0022:\u0022QA_2025\u0022,\u0022etiqueta\u0022:\u0022Gestión 2025 · Histórica\u0022}]'), 'trayectoria-gestion', false, false, 'QA_2026')" x-modelable="valor"  x-model="gestion"  x-on:keydown="teclado($event)" wire:key="selector-trayectoria-gestion-fef22eca0ff38ec741568ceecc4f6595">
+    <label id="trayectoria-gestion-etiqueta" for="trayectoria-gestion" class="ui-label">Gestión que quieres revisar</label>
+    <button id="trayectoria-gestion" x-ref="control" type="button" class="ui-selector-control ui-input mt-2" role="combobox" aria-haspopup="listbox" aria-controls="trayectoria-gestion-lista" aria-labelledby="trayectoria-gestion-etiqueta" aria-required="false"  aria-describedby="trayectoria-gestion-ayuda"   :aria-expanded="abierto" :aria-activedescendant="abierto && filtradas[indice] ? identificador+'-opcion-'+indice : null" x-on:click="abrir()" ><span x-text="seleccionada"></span><i class="ph-duotone ph-caret-down" :class="{'ui-selector-flecha-abierta':abierto}" aria-hidden="true"></i></button>
+        <div x-ref="panel" popover="manual" x-show="abierto" x-cloak :style="posicion" class="ui-selector-panel" x-on:click.outside="if(!$refs.control.contains($event.target)) cerrar()" x-transition.opacity.duration.140ms>
+        <div class="ui-selector-buscar" x-show="mostrarBusqueda" x-cloak><i class="ph-duotone ph-magnifying-glass" aria-hidden="true"></i><input x-ref="buscar" type="search" x-model="busqueda" x-on:input.stop="indice=primerIndice()" x-on:change.stop aria-label="Buscar opción: Gestión que quieres revisar" :aria-controls="identificador+'-lista'" :aria-activedescendant="abierto && filtradas[indice] ? identificador+'-opcion-'+indice : null" placeholder="Buscar opción…" autocomplete="off" /></div>
+        <div id="trayectoria-gestion-lista" role="listbox"  aria-labelledby="trayectoria-gestion-etiqueta" class="ui-selector-lista"><template x-for="(opcion,i) in filtradas" :key="String(opcion.valor)"><button type="button" role="option" :id="identificador+'-opcion-'+i" :data-indice="i" :aria-selected="estaElegida(opcion)" :disabled="!!opcion.deshabilitada" :class="{'ui-selector-opcion-activa':indice===i}" x-on:mouseenter="indice=i" x-on:click="elegir(opcion)"><span x-text="opcion.etiqueta"></span><i class="ph-duotone ph-check" x-show="estaElegida(opcion)" aria-hidden="true"></i></button></template><p class="ui-muted p-3 text-sm" x-show="!filtradas.length">No hay opciones con esa búsqueda.</p></div>
+    </div>
+        </div>
+<p id="trayectoria-gestion-ayuda" class="intereses-texto">Cada gestión conserva sus propias materias y períodos. Cambiar la selección solo cambia esta consulta.</p></div>
+        <div class="trayectoria-vistas" role="group" aria-label="Cómo quieres revisar tus materias">
+            <button type="button" class="ui-btn-secondary" @click="vista = 'notas'" :aria-pressed="vista === 'notas'"><i class="ph-duotone ph-table" aria-hidden="true"></i>Ver notas y cálculo</button>
+            <button type="button" class="ui-btn-secondary" @click="vista = 'comparar'" :aria-pressed="vista === 'comparar'"><i class="ph-duotone ph-chart-bar" aria-hidden="true"></i>Comparar materias</button>
+        </div>
+                    <div x-show="gestion === 'QA_2026'"  class="trayectoria-gestion">
+                <div class="trayectoria-resumen"><h3>Gestión 2026 · Actual</h3><div class="trayectoria-conteos"><span><strong>2</strong> materias</span><span><strong>2</strong> notas disponibles</span><span><strong>1</strong> períodos registrados</span><span><strong>1</strong> trimestres identificados</span></div></div>
+                                    <div x-show="vista === 'comparar'" x-cloak class="trayectoria-comparacion"><h4>Compara los promedios de tus materias</h4><p class="intereses-texto mt-2">Promedio de notas disponibles, sin ponderación. Una materia con menos notas no resume el mismo recorrido que otra con más registros.</p><ul class="trayectoria-barras" aria-label="Comparación de promedios por materia"><li><div class="trayectoria-barra-cabecera"><strong>Física</strong><span>68<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 68%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li><li><div class="trayectoria-barra-cabecera"><strong>Matemática</strong><span>72<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 72%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li></ul></div>
+                    <details class="ui-plegable mt-5" x-show="vista === 'notas'"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-table" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Tus notas y el promedio de cada materia</span>
+            <span class="ui-plegable-descripcion">Consulta los valores de cada período y cómo se obtiene el promedio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="trayectoria-tabla-contenedor" tabindex="0" role="region" aria-label="Notas por materia de Gestión 2026 · Actual">
+                            <table class="trayectoria-tabla"><caption>Gestión 2026 · Actual · Notas disponibles por período y promedio simple</caption><thead><tr><th scope="col">Materia</th><th scope="col">Primer trimestre</th><th scope="col">Promedio de notas disponibles</th><th scope="col">Cómo se calcula</th></tr></thead><tbody>
+                            <tr><th scope="row">Física</th><td><span class="trayectoria-nota">68</span> </td><td><strong>68</strong><small>1 nota(s)</small></td><td><span>(68) ÷ 1</span><small>Suma 68 ÷ 1 = 68</small> </td></tr><tr><th scope="row">Matemática</th><td><span class="trayectoria-nota">72</span> </td><td><strong>72</strong><small>1 nota(s)</small></td><td><span>(72) ÷ 1</span><small>Suma 72 ÷ 1 = 72</small> </td></tr>                            </tbody></table>
+                        </div>
+                        <p class="intereses-texto mt-3">«—» significa que no hay una nota disponible; una nota de 0 sí participa del cálculo. Los períodos mostrados son los que aparecen en los registros de esta gestión: no sabemos si faltan otros períodos por registrar.</p></div>
+</details>
+                                <p class="trayectoria-limite">Este promedio describe las notas que puedes ver aquí. No es un promedio anual oficial, no aplica ponderaciones institucionales y no determina aprobación, aptitud ni una carrera para ti.</p>
+            </div>
+                    <div x-show="gestion === 'QA_2025'"  x-cloak  class="trayectoria-gestion">
+                <div class="trayectoria-resumen"><h3>Gestión 2025 · Histórica</h3><div class="trayectoria-conteos"><span><strong>2</strong> materias</span><span><strong>2</strong> notas disponibles</span><span><strong>1</strong> períodos registrados</span><span><strong>1</strong> trimestres identificados</span></div></div>
+                                    <div x-show="vista === 'comparar'" x-cloak class="trayectoria-comparacion"><h4>Compara los promedios de tus materias</h4><p class="intereses-texto mt-2">Promedio de notas disponibles, sin ponderación. Una materia con menos notas no resume el mismo recorrido que otra con más registros.</p><ul class="trayectoria-barras" aria-label="Comparación de promedios por materia"><li><div class="trayectoria-barra-cabecera"><strong>Lenguaje</strong><span>77<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 77%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li><li><div class="trayectoria-barra-cabecera"><strong>Matemática</strong><span>65<small> · escala 0–100</small></span></div><div class="trayectoria-barra-pista" aria-hidden="true"><span style="width: 65%"></span></div><p>1 nota(s) · 1 período(s) con nota </p></li></ul></div>
+                    <details class="ui-plegable mt-5" x-show="vista === 'notas'"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-table" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Tus notas y el promedio de cada materia</span>
+            <span class="ui-plegable-descripcion">Consulta los valores de cada período y cómo se obtiene el promedio.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><div class="trayectoria-tabla-contenedor" tabindex="0" role="region" aria-label="Notas por materia de Gestión 2025 · Histórica">
+                            <table class="trayectoria-tabla"><caption>Gestión 2025 · Histórica · Notas disponibles por período y promedio simple</caption><thead><tr><th scope="col">Materia</th><th scope="col">Primer trimestre</th><th scope="col">Promedio de notas disponibles</th><th scope="col">Cómo se calcula</th></tr></thead><tbody>
+                            <tr><th scope="row">Lenguaje</th><td><span class="trayectoria-nota">77</span> </td><td><strong>77</strong><small>1 nota(s)</small></td><td><span>(77) ÷ 1</span><small>Suma 77 ÷ 1 = 77</small> </td></tr><tr><th scope="row">Matemática</th><td><span class="trayectoria-nota">65</span> </td><td><strong>65</strong><small>1 nota(s)</small></td><td><span>(65) ÷ 1</span><small>Suma 65 ÷ 1 = 65</small> </td></tr>                            </tbody></table>
+                        </div>
+                        <p class="intereses-texto mt-3">«—» significa que no hay una nota disponible; una nota de 0 sí participa del cálculo. Los períodos mostrados son los que aparecen en los registros de esta gestión: no sabemos si faltan otros períodos por registrar.</p></div>
+</details>
+                                <p class="trayectoria-limite">Este promedio describe las notas que puedes ver aquí. No es un promedio anual oficial, no aplica ponderaciones institucionales y no determina aprobación, aptitud ni una carrera para ti.</p>
+            </div>
+            </section></div>
+</details>
+</div>
+
+</main><script type="module">import "/build/assets/app-dlW34FkG.js";await import("/__qa/alpine.js");document.querySelector("#qa-tema").addEventListener("click",()=>document.documentElement.classList.toggle("dark"));</script></body></html>

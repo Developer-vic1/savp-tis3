@@ -1,0 +1,273 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="csrf-token" content="QA_SYNTHETIC_ONLY"><title>Prueba visual · Mi plan</title><link rel="stylesheet" href="/build/assets/app-C1LONlFc.css"><link rel="stylesheet" href="/build/assets/app-zvyyYlg5.css"><style>[x-cloak]{display:none!important}body{background:var(--ui-bg);color:var(--ui-text);font-family:Figtree,system-ui,sans-serif;padding:1rem}.qa-banner{padding:1rem;border:1px solid var(--ui-warning-border);background:var(--ui-warning-soft);border-radius:1rem;max-width:80rem;margin:0 auto 1rem}.qa-header{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.5rem}.qa-main{max-width:80rem;margin:auto}</style></head><body><header class="qa-banner"><strong>Datos de prueba, no un resultado personal</strong><p>Respuestas y trayectoria artificiales. Puntajes, estudio y fuentes calculados por el servicio real. Ninguna escritura institucional.</p><nav class="qa-header"><a class="ui-btn-secondary" href="/__qa/intereses">Cuestionario</a><a class="ui-btn-secondary" href="/__qa/analisis">Mi análisis</a><a class="ui-btn-secondary" href="/__qa/futuro">Carreras y universidades</a><a class="ui-btn-secondary" href="/__qa/plan">Mi plan</a><button class="ui-btn-secondary" id="qa-tema">Cambiar tema</button></nav></header><main class="qa-main"><div class="mx-auto max-w-6xl space-y-6">
+    <section class="ui-panel">
+        <p class="ui-kicker">Planificación personal</p>
+        <h1 class="ui-title mt-2 text-3xl font-black">Define metas claras y acciones alcanzables</h1>
+        <p class="ui-subtitle mt-3 max-w-3xl leading-7">
+            Tú eliges qué carrera quieres explorar. Convertimos sus materias documentadas y tus refuerzos disponibles en acciones personales; el avance depende de lo que declares haber realizado.
+        </p>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-3" aria-label="Pasos para construir un plan académico">
+                    <article class="ui-panel">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl font-black text-white" style="background: var(--ui-primary);">1</span>
+                <h2 class="ui-title mt-4 text-lg font-black">Define una meta</h2>
+                <p class="ui-subtitle mt-2 text-sm leading-6">Escribe un resultado concreto que quieras alcanzar.</p>
+            </article>
+                    <article class="ui-panel">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl font-black text-white" style="background: var(--ui-primary);">2</span>
+                <h2 class="ui-title mt-4 text-lg font-black">Elige una acción</h2>
+                <p class="ui-subtitle mt-2 text-sm leading-6">Indica el primer paso que depende de ti.</p>
+            </article>
+                    <article class="ui-panel">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl font-black text-white" style="background: var(--ui-primary);">3</span>
+                <h2 class="ui-title mt-4 text-lg font-black">Revisa tu avance</h2>
+                <p class="ui-subtitle mt-2 text-sm leading-6">Actualiza el estado y explica cada cambio importante.</p>
+            </article>
+            </section>
+
+                    <section class="ui-panel space-y-4"><h2 class="ui-title text-xl font-bold">Elegir una carrera para mi plan</h2><p class="ui-subtitle">Puedes elegir una opción de tu estudio aunque no sea la más cercana a tus intereses. Revisa sus materias y fuentes antes de comprometerte.</p>
+                            <form method="POST" action="/__qa/enviar" class="space-y-4" x-data="JSON.parse('{\u0022carrera\u0022:\u0022\u0022,\u0022meta\u0022:\u0022\u0022,\u0022accion\u0022:\u0022\u0022,\u0022compromiso\u0022:false,\u0022enviando\u0022:false}')" @submit="enviando = true">
+                    <input type="hidden" name="_token" value="utjcatk00i27hqpyh7kBp8DjE01G8g9oMWKZlLkR" autocomplete="off">                    <div class="ui-selector" x-data="selectorInstitucional(null, JSON.parse('[{\u0022valor\u0022:\u0022\u0022,\u0022etiqueta\u0022:\u0022Elige un programa\u0022},{\u0022valor\u0022:\u0022BO-UCB-LP-ING-AMBIENTAL\u0022,\u0022etiqueta\u0022:\u0022Ingeniería Ambiental · Universidad Católica Boliviana San Pablo, Sede La Paz\u0022},{\u0022valor\u0022:\u0022BO-UCB-LP-ING-CIVIL\u0022,\u0022etiqueta\u0022:\u0022Ingeniería Civil · Universidad Católica Boliviana San Pablo, Sede La Paz\u0022},{\u0022valor\u0022:\u0022BO-UCB-LP-ING-SISTEMAS\u0022,\u0022etiqueta\u0022:\u0022Ingeniería de Sistemas · Universidad Católica Boliviana San Pablo, Sede La Paz\u0022},{\u0022valor\u0022:\u0022BO-UCB-LP-PSICOLOGIA\u0022,\u0022etiqueta\u0022:\u0022Psicología · Universidad Católica Boliviana San Pablo, Sede La Paz\u0022},{\u0022valor\u0022:\u0022BO-UMSA-LP-ING-CIVIL\u0022,\u0022etiqueta\u0022:\u0022Ingeniería Civil · Universidad Mayor de San Andrés, La Paz\u0022},{\u0022valor\u0022:\u0022BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL\u0022,\u0022etiqueta\u0022:\u0022Ingenieria de Sistemas e Innovacion Digital · Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz\u0022},{\u0022valor\u0022:\u0022BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES\u0022,\u0022etiqueta\u0022:\u0022Ingenieria de Sistemas Computacionales · Universidad Privada Boliviana - UPB, Campus La Paz\u0022}]'), 'plan-elegir-carrera', false, false, '')" x-modelable="valor"  x-model="carrera"  x-on:keydown="teclado($event)" wire:key="selector-plan-elegir-carrera-9ff211cdb3a16fe9fc6bf3cae76f9c46">
+    <label id="plan-elegir-carrera-etiqueta" for="plan-elegir-carrera" class="ui-label">Carrera para mi enfoque *</label>
+    <button id="plan-elegir-carrera" x-ref="control" type="button" class="ui-selector-control ui-input mt-2" role="combobox" aria-haspopup="listbox" aria-controls="plan-elegir-carrera-lista" aria-labelledby="plan-elegir-carrera-etiqueta" aria-required="true"   :aria-expanded="abierto" :aria-activedescendant="abierto && filtradas[indice] ? identificador+'-opcion-'+indice : null" x-on:click="abrir()" ><span x-text="seleccionada"></span><i class="ph-duotone ph-caret-down" :class="{'ui-selector-flecha-abierta':abierto}" aria-hidden="true"></i></button>
+    <input x-ref="campo" type="hidden" name="career_id" value="" :value="valor ?? ''" required>    <div x-ref="panel" popover="manual" x-show="abierto" x-cloak :style="posicion" class="ui-selector-panel" x-on:click.outside="if(!$refs.control.contains($event.target)) cerrar()" x-transition.opacity.duration.140ms>
+        <div class="ui-selector-buscar" x-show="mostrarBusqueda" x-cloak><i class="ph-duotone ph-magnifying-glass" aria-hidden="true"></i><input x-ref="buscar" type="search" x-model="busqueda" x-on:input.stop="indice=primerIndice()" x-on:change.stop aria-label="Buscar opción: Carrera para mi enfoque" :aria-controls="identificador+'-lista'" :aria-activedescendant="abierto && filtradas[indice] ? identificador+'-opcion-'+indice : null" placeholder="Buscar opción…" autocomplete="off" /></div>
+        <div id="plan-elegir-carrera-lista" role="listbox"  aria-labelledby="plan-elegir-carrera-etiqueta" class="ui-selector-lista"><template x-for="(opcion,i) in filtradas" :key="String(opcion.valor)"><button type="button" role="option" :id="identificador+'-opcion-'+i" :data-indice="i" :aria-selected="estaElegida(opcion)" :disabled="!!opcion.deshabilitada" :class="{'ui-selector-opcion-activa':indice===i}" x-on:mouseenter="indice=i" x-on:click="elegir(opcion)"><span x-text="opcion.etiqueta"></span><i class="ph-duotone ph-check" x-show="estaElegida(opcion)" aria-hidden="true"></i></button></template><p class="ui-muted p-3 text-sm" x-show="!filtradas.length">No hay opciones con esa búsqueda.</p></div>
+    </div>
+        </div>
+                                        <div x-show="!carrera" class="ui-alert-info">Elige un programa para revisar sus materias y las acciones de tu plan.</div>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UCB-LP-ING-AMBIENTAL'" x-cloak>
+                            <h3 class="ui-title font-bold">Ingeniería Ambiental · Universidad Católica Boliviana San Pablo, Sede La Paz</h3><p class="ui-subtitle">Se muestran las materias iniciales documentadas en el catálogo. La malla completa debe verificarse en la fuente oficial enlazada.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"><li>Materia documentada: Biología General y Laboratorio</li><li>Materia documentada: Cálculo I</li><li>Materia documentada: Química General I y Laboratorio</li><li>Materia documentada: Desarrollo Sostenible e Integral</li><li>Materia documentada: Ecología Integral y Gestión Sociocomunitaria</li> <li><strong>Contenido para revisar: Comprensión de ecosistemas y ciclos biológicos</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Prácticas técnico-productivas y educación ambiental</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Estequiometría, enlaces y reacciones químicas</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li></ul></div>
+</details>
+                        </article>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UCB-LP-ING-CIVIL'" x-cloak>
+                            <h3 class="ui-title font-bold">Ingeniería Civil · Universidad Católica Boliviana San Pablo, Sede La Paz</h3><p class="ui-subtitle">Se muestran las materias iniciales documentadas en el catálogo. La malla completa debe verificarse en la fuente oficial enlazada.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"><li>Materia documentada: Química General I y Laboratorio</li><li>Materia documentada: Física I y Laboratorio</li><li>Materia documentada: Álgebra Lineal</li><li>Materia documentada: Cálculo I</li><li>Materia documentada: Dibujo Técnico Computarizado</li> <li><strong>Contenido para revisar: Representación y procesos constructivos básicos</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Estructura de la materia, enlaces y reacciones químicas</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li></ul></div>
+</details>
+                        </article>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UCB-LP-ING-SISTEMAS'" x-cloak>
+                            <h3 class="ui-title font-bold">Ingeniería de Sistemas · Universidad Católica Boliviana San Pablo, Sede La Paz</h3><p class="ui-subtitle">Se muestran las materias iniciales documentadas en el catálogo. La malla completa debe verificarse en la fuente oficial enlazada.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"><li>Materia documentada: Álgebra Lineal</li><li>Materia documentada: Matemáticas Discretas</li><li>Materia documentada: Introducción a la Programación</li><li>Materia documentada: Ingeniería de Sistemas</li><li>Materia documentada: Pensamiento Crítico</li> <li><strong>Contenido para revisar: Fundamentos de programación y algoritmos</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Comprensión, argumentación y análisis discursivo</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li></ul></div>
+</details>
+                        </article>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UCB-LP-PSICOLOGIA'" x-cloak>
+                            <h3 class="ui-title font-bold">Psicología · Universidad Católica Boliviana San Pablo, Sede La Paz</h3><p class="ui-subtitle">Se muestran las materias iniciales documentadas en el catálogo. La malla completa debe verificarse en la fuente oficial enlazada.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"><li>Materia documentada: Introducción a la Psicología</li><li>Materia documentada: Teorías y Paradigmas Actuales de la Psicología</li><li>Materia documentada: Psicología del Desarrollo Infantil</li><li>Materia documentada: Psicofisiología</li><li>Materia documentada: Escritura Académica</li> <li><strong>Contenido para revisar: Comprensión de sistemas biológicos y fisiología</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Lectura comprensiva y escritura formal</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Análisis social y comprensión del comportamiento humano en contexto</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li></ul></div>
+</details>
+                        </article>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UMSA-LP-ING-CIVIL'" x-cloak>
+                            <h3 class="ui-title font-bold">Ingeniería Civil · Universidad Mayor de San Andrés, La Paz</h3><p class="ui-subtitle">Se muestran las materias iniciales documentadas en el catálogo. La malla completa debe verificarse en la fuente oficial enlazada.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"><li>Materia documentada: Cálculo I</li><li>Materia documentada: Química General para Ingeniería Civil y Laboratorio</li><li>Materia documentada: Álgebra Lineal y Teoría Matricial</li><li>Materia documentada: Diseño Técnico I</li><li>Materia documentada: Redacción y Preparación de Informes</li> <li><strong>Contenido para revisar: Representación técnica y normas de dibujo</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li><li><strong>Contenido para revisar: Estequiometría, estructura atómica y reacciones químicas</strong><details class="ui-plegable ui-plegable-compacto mt-2" >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-lightbulb" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Por qué conviene revisar este contenido</span>
+            <span class="ui-plegable-descripcion">Consulta la información que respalda esta sugerencia.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><p>Existe contenido relacionado, pero no se observó evidencia académica comparable; no se calcula una brecha numérica.</p></div>
+</details>
+</li></ul></div>
+</details>
+                        </article>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL'" x-cloak>
+                            <h3 class="ui-title font-bold">Ingenieria de Sistemas e Innovacion Digital · Universidad Privada Franz Tamayo - UNIFRANZ, Sede La Paz</h3><p class="ui-subtitle">Existe una malla oficial en las fuentes revisadas, pero este resumen no publica una lista de materias suficientemente estructurada. Consulta la fuente original.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"> </ul></div>
+</details>
+                        </article>
+                                            <article class="ui-card-soft space-y-3 p-4" x-show="carrera === 'BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES'" x-cloak>
+                            <h3 class="ui-title font-bold">Ingenieria de Sistemas Computacionales · Universidad Privada Boliviana - UPB, Campus La Paz</h3><p class="ui-subtitle">Se muestran las materias iniciales documentadas en el catálogo. La malla completa debe verificarse en la fuente oficial enlazada.</p>
+                            <details class="ui-plegable"  open >
+    <summary class="ui-plegable-resumen">
+        <span class="ui-plegable-icono"><i class="ph-duotone ph-books" aria-hidden="true"></i></span>
+        <span class="ui-plegable-texto">
+            <span class="ui-plegable-titulo">Materias y refuerzos de esta opción</span>
+            <span class="ui-plegable-descripcion">Referencias del estudio para comenzar tu exploración; no representan una malla completa.</span>        </span>
+                <i class="ph-duotone ph-caret-down ui-plegable-flecha" aria-hidden="true"></i>
+    </summary>
+    <div class="ui-plegable-contenido"><ul class="space-y-3"><li>Materia documentada: Algebra Lineal</li><li>Materia documentada: Matematicas para Ingenieria I</li><li>Materia documentada: Programacion I</li> </ul></div>
+</details>
+                        </article>
+                                        <label class="ui-label">Mi meta personal<textarea class="ui-textarea" name="meta" x-model="meta" minlength="10" maxlength="1000" required></textarea></label>
+                    <p class="ui-muted" x-show="meta.length > 0 && meta.trim().length < 10">Escribe una meta concreta con al menos 10 caracteres.</p>                    <label class="ui-label">El primer paso que haré esta semana<textarea class="ui-textarea" name="accion_personal" x-model="accion" minlength="10" maxlength="500" required></textarea></label>
+                    <p class="ui-muted" x-show="accion.length > 0 && accion.trim().length < 10">Describe una acción que dependa de ti con al menos 10 caracteres.</p>                    <label class="ui-card-soft flex items-start gap-3 p-4"><input class="mt-1 h-5 w-5 accent-[var(--ui-primary)]" type="checkbox" name="compromiso" value="1" x-model="compromiso" required><span>Elijo este enfoque personalmente. Revisaré las fuentes y registraré solo las acciones que realice.</span></label>
+                    <button class="ui-btn-primary" type="submit" :disabled="enviando || !carrera || meta.trim().length < 10 || accion.trim().length < 10 || !compromiso">Confirmar mi plan y comenzar</button>
+                    <p class="ui-muted" role="status" x-show="enviando" x-cloak>Guardando tu enfoque y tu primera acción…</p>
+                </form>
+                    </section>
+        
+    <section class="ui-panel">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="ui-title text-xl font-black">¿Necesitas revisar tus pendientes?</h2>
+                <p class="ui-subtitle mt-2">
+                    Tienes 0 actividad(es) pendiente(s) registrada(s) en tus materias.
+                </p>
+            </div>
+            <a class="ui-btn-secondary inline-flex shrink-0" href="#qa-fuera-de-alcance">
+                <i class="ph ph-brain" aria-hidden="true"></i>Ver Mi preparación
+            </a>
+        </div>
+    </section>
+</div>
+
+</main><script type="module">import "/build/assets/app-dlW34FkG.js";await import("/__qa/alpine.js");document.querySelector("#qa-tema").addEventListener("click",()=>document.documentElement.classList.toggle("dark"));</script></body></html>

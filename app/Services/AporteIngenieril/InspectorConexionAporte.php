@@ -25,7 +25,7 @@ final class InspectorConexionAporte
                 ['label' => 'FastAPI responde al servidor Laravel', 'available' => $salud->available],
                 ['label' => 'La credencial interna permite consultar las fuentes', 'available' => (bool) $conocimiento?->available],
                 ['label' => 'El índice documental permite recuperar conocimiento', 'available' => (bool) $recuperacion?->available],
-                ['label' => 'El tutor responde usando el servicio conectado', 'available' => (bool) $tutor?->available],
+                ['label' => 'El asistente documental responde usando el servicio conectado', 'available' => (bool) $tutor?->available],
             ],
             'message' => $conectado ? 'Conexión completa comprobada desde Laravel.' : 'Hay una conexión pendiente. Revise el servicio y su configuración; no se muestra una conexión ficticia.',
         ];

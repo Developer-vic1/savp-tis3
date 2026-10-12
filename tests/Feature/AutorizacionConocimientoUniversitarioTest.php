@@ -11,6 +11,18 @@ use Tests\TestCase;
 
 class AutorizacionConocimientoUniversitarioTest extends TestCase
 {
+    public function test_actualizaciones_exigen_administrador_y_cadencia_validada(): void
+    {
+        $this->getJson('/conocimiento/actualizaciones')->assertUnauthorized();
+        $this->postJson('/conocimiento/actualizaciones/configurar', [])->assertUnauthorized();
+        $this->actingAs($this->actor('Director'))->getJson('/conocimiento/actualizaciones')->assertForbidden();
+        $this->postJson('/conocimiento/actualizaciones/revisar', ['source_id' => 'BO-UPB-SIS'])->assertForbidden();
+        $this->actingAs($this->actor('Administrador'))->postJson('/conocimiento/actualizaciones/configurar', [
+            'source_id' => 'BO-UPB-SIS', 'cadence' => 'cada minuto',
+        ])->assertUnprocessable()->assertJsonValidationErrors('cadence');
+        $this->postJson('/conocimiento/actualizaciones/revisar', ['source_id' => '../../privado'])->assertUnprocessable();
+    }
+
     public function test_invitado_no_accede_a_operaciones_de_gestion_de_conocimiento(): void
     {
         $this->getJson('/conocimiento/fuentes')->assertUnauthorized();
@@ -20,6 +32,8 @@ class AutorizacionConocimientoUniversitarioTest extends TestCase
         $this->postJson('/conocimiento/fuentes', $this->sourcePayload())->assertUnauthorized();
         $this->postJson('/conocimiento/tutor/probar', ['question' => 'Hola'])->assertUnauthorized();
         $this->postJson('/conocimiento/fuentes/KGI-ABCDEF123456/revision', [])->assertUnauthorized();
+        $this->postJson('/conocimiento/fuentes/KGI-ABCDEF123456/extraccion', [])->assertUnauthorized();
+        $this->getJson('/conocimiento/fuentes/KGI-ABCDEF123456/extraccion')->assertUnauthorized();
     }
 
     public function test_otros_actores_permanecen_bloqueados_aunque_tengan_permisos_forzados(): void
@@ -131,6 +145,145 @@ class AutorizacionConocimientoUniversitarioTest extends TestCase
                 'review_note' => 'Debe bloquearse antes de llamar al servicio.',
             ])
             ->assertForbidden();
+    }
+
+    public function test_extraccion_exige_administrador_y_propuesta_aprobada(): void
+    {
+        $ruta = '/conocimiento/fuentes/KGI-ABCDEF123456/extraccion';
+        $this->actingAs($this->actor('Director'))->postJson($ruta, [])->assertForbidden();
+        $this->getJson($ruta)->assertForbidden();
+        $this->actingAs($this->actor('Estudiante'))->postJson($ruta, [])->assertForbidden();
+        $this->getJson($ruta)->assertForbidden();
+
+        $cliente = Mockery::mock(AporteIngenierilClient::class);
+        $cliente->shouldReceive('knowledgeGovernance')->twice()->andReturn(new AporteResponse(true, [
+            'proposals' => [[
+                'proposal_id' => 'KGI-ABCDEF123456', 'status' => 'PENDIENTE_REVISION',
+                'url' => 'https://www.upb.edu/carreras/sistemas',
+            ]],
+        ]));
+        $cliente->shouldNotReceive('extractKnowledgeSource');
+        $cliente->shouldNotReceive('readKnowledgeExtraction');
+        $this->app->instance(AporteIngenierilClient::class, $cliente);
+        $this->actingAs($this->actor('Administrador'))->postJson($ruta, [])->assertStatus(409);
+        $this->getJson($ruta)->assertStatus(409);
+    }
+
+    public function test_consulta_guardada_revalida_propuesta_y_lee_sin_iniciar_otra_extraccion(): void
+    {
+        $ruta = '/conocimiento/fuentes/KGI-ABCDEF123456/extraccion';
+        $url = 'https://www.upb.edu/carreras/sistemas';
+        $cliente = Mockery::mock(AporteIngenierilClient::class);
+        $cliente->shouldReceive('knowledgeGovernance')->once()->andReturn(new AporteResponse(true, [
+            'proposals' => [['proposal_id' => 'KGI-ABCDEF123456', 'status' => 'APROBADA_PENDIENTE_INGESTA', 'url' => $url]],
+        ]));
+        $cliente->shouldNotReceive('extractKnowledgeSource');
+        $cliente->shouldReceive('readKnowledgeExtraction')->once()->with('KGI-ABCDEF123456')
+            ->andReturn(new AporteResponse(true, [
+                'proposal_id' => 'KGI-ABCDEF123456', 'source_url' => $url,
+                'status' => 'EXTRAIDA_PENDIENTE_REVISION',
+                'embeddings' => ['status' => 'GENERADOS_PENDIENTES_PUBLICACION', 'model' => 'modelo-local', 'vectors' => 1, 'reason' => 'Pendiente de publicación.'],
+            ]));
+        $this->app->instance(AporteIngenierilClient::class, $cliente);
+        $this->actingAs($this->actor('Administrador'));
+        $this->getJson($ruta.'?url=https://www.ucb.edu.bo/otra')->assertUnprocessable();
+        $this->getJson($ruta)->assertOk()->assertHeader('Cache-Control', 'no-store, private')
+            ->assertJsonPath('embeddings.status', 'GENERADOS_PENDIENTES_PUBLICACION');
+    }
+
+    public function test_extraccion_solo_acepta_la_fuente_de_la_propuesta_y_muestra_lectura_pendiente(): void
+    {
+        $ruta = '/conocimiento/fuentes/KGI-ABCDEF123456/extraccion';
+        $url = 'https://www.upb.edu/carreras/sistemas';
+        $cliente = Mockery::mock(AporteIngenierilClient::class);
+        $cliente->shouldReceive('knowledgeGovernance')->once()->andReturn(new AporteResponse(true, [
+            'proposals' => [[
+                'proposal_id' => 'KGI-ABCDEF123456', 'status' => 'APROBADA_PENDIENTE_INGESTA', 'url' => $url,
+            ]],
+        ]));
+        $cliente->shouldReceive('extractKnowledgeSource')->once()->with('KGI-ABCDEF123456')
+            ->andReturn(new AporteResponse(true, [
+                'proposal_id' => 'KGI-ABCDEF123456', 'source_url' => $url,
+                'status' => 'EXTRAIDA_PENDIENTE_REVISION', 'facts' => [['kind' => 'MATERIA', 'value' => 'Álgebra']],
+            ]));
+        $this->app->instance(AporteIngenierilClient::class, $cliente);
+        $this->actingAs($this->actor('Administrador'))->postJson($ruta, [])
+            ->assertOk()->assertJsonPath('status', 'EXTRAIDA_PENDIENTE_REVISION')
+            ->assertJsonPath('facts.0.value', 'Álgebra');
+    }
+
+    public function test_operaciones_de_fuentes_no_consumen_el_limite_de_tres_extracciones_por_minuto(): void
+    {
+        $propuestas = array_map(fn (int $numero): array => [
+            'proposal_id' => 'KGI-ABCDEF12345'.$numero,
+            'status' => 'APROBADA_PENDIENTE_INGESTA',
+            'url' => $this->sourcePayload()['url'],
+        ], range(1, 4));
+        $cliente = Mockery::mock(AporteIngenierilClient::class);
+        $cliente->shouldReceive('knowledgeGovernance')->times(7)
+            ->andReturn(new AporteResponse(true, ['proposals' => $propuestas]));
+        $cliente->shouldReceive('readKnowledgeExtraction')->twice()->with('KGI-ABCDEF123451')
+            ->andReturn(new AporteResponse(true, [
+                'proposal_id' => 'KGI-ABCDEF123451', 'source_url' => $this->sourcePayload()['url'],
+                'status' => 'EXTRAIDA_PENDIENTE_REVISION',
+            ]));
+        $this->mockVerifiedPreview($cliente);
+        $cliente->shouldReceive('analyzeKnowledgeSource')->once()
+            ->andReturn(new AporteResponse(true, ['can_submit' => true]));
+        $cliente->shouldReceive('reviewKnowledgeSource')->once()->with('KGI-ABCDEF123451', [
+            'approved' => true,
+            'review_note' => 'Documento oficial revisado.',
+            'reviewed_by_role' => 'Administrador',
+        ])->andReturn(new AporteResponse(true, ['message' => 'Propuesta aprobada.']));
+        $cliente->shouldReceive('extractKnowledgeSource')->times(3)
+            ->withArgs(fn (string $id): bool => in_array($id, array_column(array_slice($propuestas, 0, 3), 'proposal_id'), true))
+            ->andReturnUsing(fn (string $id): AporteResponse => new AporteResponse(true, [
+                'proposal_id' => $id,
+                'source_url' => $this->sourcePayload()['url'],
+                'status' => 'EXTRAIDA_PENDIENTE_REVISION',
+            ]));
+        $this->app->instance(AporteIngenierilClient::class, $cliente);
+        $this->actingAs($this->actor('Administrador'));
+
+        $this->get('/conocimiento/fuentes')->assertOk();
+        $this->postJson('/conocimiento/fuentes/comprobar-url', ['url' => $this->sourcePayload()['url']])->assertOk();
+        $this->postJson('/conocimiento/fuentes/analizar', $this->sourcePayload())->assertOk();
+        $this->post('/conocimiento/fuentes/KGI-ABCDEF123451/revision', [
+            'approved' => true, 'review_note' => 'Documento oficial revisado.',
+        ])->assertRedirect('/conocimiento/fuentes');
+
+        $this->getJson('/conocimiento/fuentes/KGI-ABCDEF123451/extraccion')
+            ->assertOk()->assertHeader('X-RateLimit-Remaining', '29');
+
+        foreach (array_slice($propuestas, 0, 3) as $indice => $propuesta) {
+            $this->postJson('/conocimiento/fuentes/'.$propuesta['proposal_id'].'/extraccion', [])
+                ->assertOk()->assertHeader('X-RateLimit-Remaining', (string) (2 - $indice));
+        }
+
+        $this->get('/conocimiento/fuentes')->assertOk()->assertHeader('X-RateLimit-Remaining', '58');
+        $this->postJson('/conocimiento/fuentes/KGI-ABCDEF123454/extraccion', [])
+            ->assertTooManyRequests()->assertHeader('Retry-After');
+        $this->getJson('/conocimiento/fuentes/KGI-ABCDEF123451/extraccion')
+            ->assertOk()->assertHeader('X-RateLimit-Remaining', '28');
+    }
+
+    public function test_extraccion_rechaza_url_del_navegador_y_respuesta_de_otra_fuente(): void
+    {
+        $ruta = '/conocimiento/fuentes/KGI-ABCDEF123456/extraccion';
+        $cliente = Mockery::mock(AporteIngenierilClient::class);
+        $cliente->shouldReceive('knowledgeGovernance')->once()->andReturn(new AporteResponse(true, [
+            'proposals' => [[
+                'proposal_id' => 'KGI-ABCDEF123456', 'status' => 'APROBADA_PENDIENTE_INGESTA',
+                'url' => 'https://www.upb.edu/carreras/sistemas',
+            ]],
+        ]));
+        $cliente->shouldReceive('extractKnowledgeSource')->once()->andReturn(new AporteResponse(true, [
+            'proposal_id' => 'KGI-ABCDEF123456', 'source_url' => 'https://www.ucb.edu.bo/otra',
+        ]));
+        $this->app->instance(AporteIngenierilClient::class, $cliente);
+        $this->actingAs($this->actor('Administrador'));
+        $this->postJson($ruta, ['url' => 'https://www.ucb.edu.bo/otra'])->assertUnprocessable();
+        $this->postJson($ruta, [])->assertServiceUnavailable();
     }
 
     public function test_token_de_analisis_expira_y_no_puede_reutilizarse(): void

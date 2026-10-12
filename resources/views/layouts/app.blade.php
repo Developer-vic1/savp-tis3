@@ -262,6 +262,7 @@
                     </div>
                 </header>
 
+                <div class="savp-navegacion-estado" role="status" aria-live="polite"><div class="savp-navegacion-progreso" aria-hidden="true"></div><span class="sr-only">Cargando la página solicitada…</span></div>
                 <main class="savp-workspace-main min-w-0 flex-1">
                     <div class="savp-workspace-container">
                     @if (session('status'))<p class="ui-alert-success mb-4" role="status">{{ session('status') }}</p>@endif

@@ -1,0 +1,8 @@
+PHPUnit 12.5.17 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.13
+Configuration: C:\laragon\www\savp-reestructuracion\phpunit.xml
+
+Time: 00:14.831, Memory: 66.00 MB
+
+[30;42mOK (76 tests, 419 assertions)[0m

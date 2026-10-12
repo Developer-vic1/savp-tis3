@@ -1,3 +1,16 @@
+window.calificacionesNavegacion = () => ({
+    ...window.paginacionInstitucional(),
+    cambiandoVista: false,
+    vistaSolicitada: '',
+    async irVista(vista) {
+        if (this.cambiandoVista || vista === this.$wire.vista) return;
+        this.cambiandoVista = true;
+        this.vistaSolicitada = vista;
+        try { await this.$wire.cambiarVista(vista); }
+        catch { this.avisar('error', 'No pudimos cargar la vista. Los filtros se conservan; vuelve a intentarlo.'); }
+        finally { this.cambiandoVista = false; this.vistaSolicitada = ''; }
+    },
+});
 // Chart.js queda fuera del proxy de Alpine y se libera al retirar el componente.
 window.graficoResultados = datos => {
     let grafico;

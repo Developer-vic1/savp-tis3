@@ -9,10 +9,17 @@
         <p class="ui-kicker">Preparación académica</p>
         <h1 class="ui-title mt-2 text-3xl font-black">Organiza lo que necesitas reforzar ahora</h1>
         <p class="ui-subtitle mt-3 max-w-3xl leading-7">
-            Esta ventana reúne únicamente tu carga académica y tus actividades pendientes.
-            No modifica tu análisis de intereses ni elige una carrera o universidad por ti.
+            Revisa tus actividades académicas y las acciones de tu enfoque personal. Los pendientes escolares y el avance que declaras en tu plan aportan información diferente.
         </p>
     </section>
+    @if($planPersonal)
+        <section class="ui-panel space-y-4"><p class="ui-kicker">Tu enfoque personal</p><h2 class="ui-title text-2xl font-bold">Preparación para {{ $planPersonal['carrera'] }}</h2><p>{{ $planPersonal['meta'] }}</p><p class="ui-subtitle">{{ $progresoPlan }}% de acciones personales declaradas completas. Este avance no representa admisión, dominio de las materias ni compatibilidad profesional.</p>
+            @if($planPersonal['cambio_pendiente'])<p class="ui-alert-warning">Solicitaste un cambio de enfoque. Tus acciones y el avance actual se conservan hasta confirmar el nuevo plan; tus registros académicos permanecen en su trayectoria.</p>@endif
+            <x-plegable-institucional etiqueta="Acciones de preparación de mi enfoque" descripcion="Materias documentadas, refuerzos disponibles y el compromiso que escribiste." icono="ph-list-checks"><ul>@foreach($planPersonal['acciones'] as $accion)<li>{{ $accion['titulo'] }} · {{ $accion['completada'] ? 'Declarada completa' : 'Pendiente' }}@if(isset($accion['motivo']))<p class="ui-subtitle">{{ $accion['motivo'] }}</p>@endif</li>@endforeach</ul></x-plegable-institucional><a class="ui-btn-secondary" href="{{ route('estudiante.plan') }}">Revisar acciones en Mi plan</a>
+        </section>
+    @else
+        <section class="ui-panel"><h2 class="ui-title font-bold">Todavía no elegiste un enfoque personal</h2><p class="ui-subtitle mt-2">Puedes revisar tus pendientes y, cuando estés listo, convertir una carrera de tu estudio en una meta con acciones.</p><a class="ui-btn-secondary mt-3" href="{{ route('estudiante.plan') }}">Elegir mi enfoque en Mi plan</a></section>
+    @endif
 
     <section class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Resumen de preparación académica">
         @foreach ([

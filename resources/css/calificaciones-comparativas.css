@@ -14,3 +14,7 @@
 
 .resultados-destacados{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}@media(max-width:750px){.resultados-destacados{grid-template-columns:1fr}}
 .resultados-destacado{position:relative;border-top:3px solid var(--ui-primary);overflow:hidden}.resultados-medalla{display:flex;align-items:center;gap:.5rem;color:var(--ui-primary);font-weight:900;margin-bottom:1rem}.resultados-medalla i{font-size:2.2rem}.resultados-lienzo-destacado{position:relative;height:12rem}.resultados-grafico .resultados-lienzo{height:21rem}
+.resultados-vistas{grid-template-columns:repeat(4,minmax(0,1fr))}.resultados-transicion{animation:resultados-cambio .28s ease-out}.resultados-pagina .personas-modal-panel{animation:resultados-cambio .22s ease-out}
+@keyframes resultados-cambio{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.resultados-lectura{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}.resultados-transicion{min-height:20rem;animation-duration:.18s;transition:opacity .12s ease}.resultados-esperando{opacity:.6;pointer-events:none}.resultados-vista:disabled{cursor:wait;opacity:.8}
+@media(max-width:1000px){.resultados-vistas{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.resultados-vistas{grid-template-columns:1fr}}@media(prefers-reduced-motion:reduce){.resultados-transicion,.resultados-pagina .personas-modal-panel{animation:none}}

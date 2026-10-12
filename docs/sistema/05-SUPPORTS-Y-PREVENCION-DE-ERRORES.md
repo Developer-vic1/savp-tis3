@@ -8,6 +8,8 @@ Este documento establece el contrato que deben cumplir los Supports de Administr
 
 Referencia visual: [DESIGN.md](../../DESIGN.md). Referencia operativa: [03-DATOS-Y-OPERACION.md](03-DATOS-Y-OPERACION.md). Gobernanza concreta: [ROLES-Y-ACCESOS-PROGRAMADOS.md](ROLES-Y-ACCESOS-PROGRAMADOS.md).
 
+Fuentes universitarias: [Support, casos extremos y flujo de páginas/PDF](SUPPORT-FUENTES-UNIVERSITARIAS.md). `FuenteUniversitariaInteligente` valida localmente y conserva la comprobación documental independiente, sin modelos de IA.
+
 ## Tres capas obligatorias
 
 | Capa | Responsabilidad | No debe hacer |

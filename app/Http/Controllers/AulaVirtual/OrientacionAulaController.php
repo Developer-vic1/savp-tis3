@@ -24,7 +24,7 @@ class OrientacionAulaController extends Controller
         $seccion = $request->query('section', 'perfil');
         abort_unless(in_array($seccion, ['perfil', 'riasec', 'analisis', 'fuentes', 'tutor'], true), 404);
         if ($seccion === 'analisis') {
-            return to_route('estudiante.intereses');
+            return to_route('estudiante.analisis');
         }
         if ($seccion === 'tutor') {
             return to_route('estudiante.asistente');

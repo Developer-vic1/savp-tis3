@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between gap-3"><div><h2 class="ui-title font-bold">Tus notificaciones</h2><p class="ui-muted text-xs mt-1">Avisos y pendientes para ti.</p></div><button type="button" class="ui-btn-secondary" @click="open=false" aria-label="Cerrar notificaciones"><i class="ph-duotone ph-x" aria-hidden="true"></i></button></div>
         <p wire:loading.delay wire:target="abierta" class="ui-muted mt-3" role="status"><i class="ph-duotone ph-circle-notch animate-spin" aria-hidden="true"></i> Consultando avisos…</p>
         @if(!$available)<p class="ui-muted mt-3 text-sm" role="status">Aquí verás los avisos de las acciones que realices en esta pantalla.</p>
-        @else
+        @elseif($abierta)
         <nav class="flex flex-wrap gap-1 mt-4" aria-label="Filtrar notificaciones">
             @foreach(['TODAS'=>'Bandeja','NO_LEIDAS'=>'No leídas','LEIDAS'=>'Leídas','ARCHIVADAS'=>'Archivadas'] as $valor=>$etiqueta)
             <button type="button" class="ui-btn {{ $filtro === $valor ? 'ui-btn-primary' : 'ui-btn-secondary' }} text-xs" wire:click="$set('filtro', '{{ $valor }}')" aria-pressed="{{ $filtro === $valor ? 'true' : 'false' }}" wire:loading.attr="disabled">{{ $etiqueta }}</button>

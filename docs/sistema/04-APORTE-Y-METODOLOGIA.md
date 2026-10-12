@@ -1,5 +1,7 @@
 # Aporte académico vocacional y metodología
 
+Para el flujo administrativo de incorporación, conversación local y revisión periódica, consulte [Actualizaciones de fuentes](../aporte-ingenieril/ACTUALIZACIONES-FUENTES.md) y [Conversación documental](../aporte-ingenieril/CONVERSACION-DOCUMENTAL.md). Estas funciones reutilizan el gobierno documental y las notificaciones existentes; no agregan tablas institucionales ni activan un modelo generativo.
+
 ## 1. Límite entre sistemas
 
 Laravel conserva identidad, autorización y hechos escolares. `StudentOrientationService` reúne únicamente los datos necesarios del estudiante autorizado: notas, historial, evidencia técnica, asistencia y actividad existente. `OrientationReadiness` indica si el perfil contiene evidencia suficiente. `AporteIngenierilClient` valida contrato, configuración, host permitido, tiempo de espera y respuesta; transforma `student_id` en referencia HMAC antes del envío. FastAPI en `ai-service/` procesa JSON; no consulta PostgreSQL ni recibe modelos Eloquent.
@@ -42,6 +44,7 @@ Dos caminos de entrada actuales comparten la integración: `/estudiante/interese
 | Modelo y límites de análisis | [ARCHITECTURE.md](../peter3/ARCHITECTURE.md), [AFFINITY_VS_PREPARATION.md](../peter3/AFFINITY_VS_PREPARATION.md). |
 | Instrumento RIASEC | [RIASEC_IMPLEMENTATION.md](../peter3/RIASEC_IMPLEMENTATION.md). |
 | Fuentes, corpus y tutor | [SOURCE_GOVERNANCE.md](../peter3/SOURCE_GOVERNANCE.md), [TUTOR_ARCHITECTURE.md](../peter3/TUTOR_ARCHITECTURE.md). |
+| Extracción nacional, chunks, embeddings y estudio del estudiante | [Mapa con código y líneas verificadas](../aporte-ingenieril/EXTRACCION-NACIONAL-Y-ESTUDIO.md). |
 | Ejecución Python | [ai-service/README.md](../../ai-service/README.md). |
 
 Los informes de fase describen el estado de su fecha. Antes de afirmar que un endpoint, corpus o runtime está disponible hoy, comprobar código, configuración y salud del servicio.

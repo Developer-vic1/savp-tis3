@@ -57,6 +57,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('rendimiento.recursos_compilados') && is_file(public_path('build/manifest.json'))) {
+            // No detener Vite ni borrar public/hot: permite recuperar HMR mediante la configuración.
+            app(\Illuminate\Foundation\Vite::class)->useHotFile(storage_path('framework/vite-operacion.hot'));
+        }
         \Laravel\Sanctum\Sanctum::usePersonalAccessTokenModel(\App\Models\Oficial\Sistema\PersonalAccessToken::class);
         Livewire::componentHook(InstitutionalAuthorization::class);
         $this->loadMigrationsFrom([

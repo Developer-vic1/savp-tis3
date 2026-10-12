@@ -102,7 +102,10 @@ final class EstudioCalendarioMinisterial
         $citar = fn (string $valor) => "'".str_replace("'", "''", $valor)."'";
         $temporal = $this->directorio().'/temporal';
         File::ensureDirectoryExists($temporal);
-        $script = '$env:TEMP = '.$citar($temporal).'; $env:TMP = '.$citar($temporal).'; Start-Process -WindowStyle Hidden -FilePath '.$citar($php).' -ArgumentList @('.$citar('"'.base_path('artisan').'"').", 'academica:estudiar-calendario', '--seguir') -WorkingDirectory ".$citar(base_path()).' -RedirectStandardOutput '.$citar($this->directorio().'/trabajador.log').' -RedirectStandardError '.$citar($this->directorio().'/trabajador-error.log');
+        // ShellExecute separa el trabajador del servidor HTTP en Windows. Las redirecciones
+        // de Start-Process pueden heredar su socket y mantener el puerto ocupado al reiniciar.
+        // Los errores del estudio continúan en el logger de Laravel y en los estados privados.
+        $script = '$env:TEMP = '.$citar($temporal).'; $env:TMP = '.$citar($temporal).'; $inicioSavp = New-Object System.Diagnostics.ProcessStartInfo; $inicioSavp.UseShellExecute = $true; $inicioSavp.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden; $inicioSavp.FileName = '.$citar($php).'; $inicioSavp.Arguments = '.$citar('"'.base_path('artisan').'" academica:estudiar-calendario --seguir').'; $inicioSavp.WorkingDirectory = '.$citar(base_path()).'; [System.Diagnostics.Process]::Start($inicioSavp) | Out-Null;';
         try {
             $comando = base64_encode(mb_convert_encoding($script, 'UTF-16LE', 'UTF-8'));
             (new Process([config('calendario-estudio.powershell'), '-NoProfile', '-NonInteractive', '-EncodedCommand', $comando]))->setTimeout(5)->mustRun();
