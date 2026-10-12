@@ -1,0 +1,3778 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-08T18:49:15.887569+00:00",
+  "country": "Bolivia",
+  "coverage_note": "Universo nominal histórico de 60 instituciones de la guía ministerial 2016, con 51 identidades de dominios oficiales contrastadas el 08/10/2026. No certifica 60 universidades vigentes. CPE2024 declara 57 sin reconciliación nominal; 58 no se adopta como total impuesto. La exhaustividad actual y la vigencia legal requieren un registro ministerial nominal reciente. Identidad del sitio web y vigencia legal son estados independientes.",
+  "evidence_sources": [
+    {
+      "source_id": "minedu_guia_2016",
+      "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf",
+      "title": "Guía de Universidades del Estado Plurinacional de Bolivia 2016",
+      "publication_year": 2016,
+      "publisher": "Ministerio de Educación de Bolivia",
+      "local_file": "data/catalog/fuentes_oficiales/guia_universidades_minedu_2016.pdf",
+      "scope": "60 instituciones únicas en índice ministerial; incluye suspensiones y sedes históricas.",
+      "sha256": "34e3f2d3e608b0ade8a4c42c19a647480dccbdcb54e5cb00ff088fbd5e089f54"
+    },
+    {
+      "source_id": "minedu_cpe_2024",
+      "url": "https://cpe.minedu.gob.bo/doc/documentoCPE2024.pdf",
+      "title": "Conclusiones del Congreso Plurinacional de Educación 2024",
+      "publication_year": 2024,
+      "publisher": "Ministerio de Educación de Bolivia",
+      "local_file": "data/catalog/fuentes_oficiales/documento_cpe_minedu_2024.pdf",
+      "pages": [
+        110,
+        307
+      ],
+      "scope": "Declara 57 universidades y 38 privadas; no provee en esas páginas censo nominal vigente.",
+      "sha256": "a49e4667b1c3b1fe7ec429afa116d38860e7fd2f77667dc126db833354c0168a"
+    },
+    {
+      "source_id": "ucb_modelo_2023",
+      "url": "https://www.ucb.edu.bo/wp-content/uploads/2023/09/Modelo-Institucional-DIGITAL.pdf",
+      "title": "Modelo Institucional de la Universidad Católica Boliviana San Pablo",
+      "publication_year": 2023,
+      "publisher": "Universidad Católica Boliviana San Pablo",
+      "local_file": "data/catalog/fuentes_oficiales/modelo_institucional_ucb_2023.pdf",
+      "scope": "Naturaleza pública canónica y régimen propio de la UCB.",
+      "sha256": "ed2dc5d3714c90f0fea38a751d6ba0822b61fe56680b7a7b39b38021743addc5"
+    },
+    {
+      "source_id": "emi_estatuto_2021",
+      "url": "https://www.emi.edu.bo/images/normativa/estatuto_organico_2021.pdf",
+      "title": "Estatuto Orgánico de la Escuela Militar de Ingeniería",
+      "publication_year": 2021,
+      "publisher": "Escuela Militar de Ingeniería",
+      "scope": "Naturaleza pública; índice web oficial consultado, descarga respondió 403."
+    }
+  ],
+  "coverage_discrepancies": [
+    {
+      "issue": "TOTAL_HISTORICO_VS_RECIENTE",
+      "detail": "Guía2016: 60 instituciones (11 autónomas, 3 adscritasCEUB, 40 privadas, 3 indígenas, 3 especiales). Incluye CEFI SaintPaul con suspensión definitiva y UTA con suspensión matrícula2015-2018. CPE2024: 57 y 38 privadas; no deducir identidades excluidas por resta."
+    },
+    {
+      "issue": "CEUB_NO_EQUIVALE_PUBLICA_ESTATAL",
+      "detail": "Guía2016 agrupa UCB,EMI,UASB como privadas adscritas. EMI es pública; UCB pública canónica con régimen propio; UASB internacional de derecho público. REGIMEN_ESPECIAL aquí registra pertenencia diferenciada y no determina financiación."
+    },
+    {
+      "issue": "CONTINUIDAD_DOCUMENTAL",
+      "detail": "Listado CEUB y catálogo privado2019 no accesibles por DNS/error web; DGESU reinicia conexión. Fallos técnicos no prueban suspensión ni invalidez institucional."
+    },
+    {
+      "issue": "UNIVERSO_FUERA_DEL_PAIS",
+      "detail": "Universidades extranjeras que operan con estudiantes de Bolivia, rankings, escuelas docentes e institutos no se incorporan como instituciones bolivianas sin autorización primaria."
+    },
+    {
+      "issue": "CONTENIDO_AJENO_EN_DOMINIO_INSTITUCIONAL",
+      "detail": "UBI LaPaz contiene casinos/enlaces ajenos: fuente en cuarentena y sin semillas automáticas. UEB contiene textos de plantilla ajena: semilla limitada a historia institucional. No atribuir contenido ajeno a carreras institucionales."
+    }
+  ],
+  "verification_attempts": [
+    {
+      "url": "https://ceub.edu.bo/universidades-del-sistema/",
+      "accessed_at": "2026-10-08",
+      "result": "FETCH_FAILED_DNS_OR_WEB_ERROR"
+    },
+    {
+      "url": "https://biblioteca.minedu.gob.bo/biblio/book/58316",
+      "accessed_at": "2026-10-08",
+      "result": "FETCH_FAILED_DNS_OR_WEB_ERROR"
+    },
+    {
+      "url": "https://dgesu.minedu.gob.bo/",
+      "accessed_at": "2026-10-08",
+      "result": "CONNECTION_RESET_OR_EMPTY_WEB_BODY"
+    }
+  ],
+  "institutions": [
+    {
+      "institution_id": "usfx",
+      "name": "Universidad Mayor, Real y Pontificia de San Francisco Xavier",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "usfx.bo"
+      ],
+      "seed_urls": [
+        "https://usfx.bo/mapa-del-sitio/"
+      ],
+      "departments": [
+        "Chuquisaca"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Sucre",
+          "source_location": "CHUQUISACA - SUCRE",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=17",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=17",
+          "year": 2016,
+          "page": 17,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://usfx.bo/mapa-del-sitio/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "USFX",
+      "historical_domains_2016": [
+        "usfx.info"
+      ],
+      "official_url": "https://usfx.bo/"
+    },
+    {
+      "institution_id": "umsa",
+      "name": "Universidad Mayor de San Andrés",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "umsa.bo"
+      ],
+      "seed_urls": [
+        "https://www.umsa.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=20",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=20",
+          "year": 2016,
+          "page": 20,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.umsa.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UMSA",
+      "historical_domains_2016": [
+        "umsa.bo"
+      ],
+      "official_url": "https://www.umsa.bo/"
+    },
+    {
+      "institution_id": "umss",
+      "name": "Universidad Mayor de San Simón",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "umss.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.umss.edu.bo/carreras/"
+      ],
+      "departments": [
+        "Cochabamba"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=26",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=26",
+          "year": 2016,
+          "page": 26,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.umss.edu.bo/carreras/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UMSS",
+      "historical_domains_2016": [
+        "umss.edu.bo"
+      ],
+      "official_url": "https://www.umss.edu.bo/"
+    },
+    {
+      "institution_id": "uatf",
+      "name": "Universidad Autónoma Tomás Frías",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "uatf.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uatf.edu.bo/"
+      ],
+      "departments": [
+        "Potosí"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Potosí",
+          "source_location": "POTOSÍ",
+          "department": "Potosí",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=32",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=32",
+          "year": 2016,
+          "page": 32,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uatf.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UATF",
+      "historical_domains_2016": [
+        "uatf.edu.bo"
+      ],
+      "official_url": "https://www.uatf.edu.bo/"
+    },
+    {
+      "institution_id": "uto",
+      "name": "Universidad Técnica de Oruro",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "uto.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uto.edu.bo/"
+      ],
+      "departments": [
+        "Oruro"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Oruro",
+          "source_location": "ORURO",
+          "department": "Oruro",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=34",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=34",
+          "year": 2016,
+          "page": 34,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uto.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UTO",
+      "historical_domains_2016": [
+        "uto.edu.bo"
+      ],
+      "official_url": "https://www.uto.edu.bo/"
+    },
+    {
+      "institution_id": "uagrm",
+      "name": "Universidad Autónoma Gabriel René Moreno",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "uagrm.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uagrm.edu.bo/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=37",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=37",
+          "year": 2016,
+          "page": 37,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uagrm.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UAGRM",
+      "historical_domains_2016": [
+        "uagrm.edu.bo"
+      ],
+      "official_url": "https://www.uagrm.edu.bo/"
+    },
+    {
+      "institution_id": "uajms",
+      "name": "Universidad Autónoma Juan Misael Saracho",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "uajms.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uajms.edu.bo/page/7/"
+      ],
+      "departments": [
+        "Tarija"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Tarija",
+          "source_location": "TARIJA",
+          "department": "Tarija",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=41",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=41",
+          "year": 2016,
+          "page": 41,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uajms.edu.bo/page/7/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UAJMS",
+      "historical_domains_2016": [
+        "uajms.edu.bo"
+      ],
+      "official_url": "https://www.uajms.edu.bo/"
+    },
+    {
+      "institution_id": "uabjb",
+      "name": "Universidad Autónoma del Beni “José Ballivián”",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "uabjb.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uabjb.edu.bo/images/Pdf/MODELO_ACADEMICO_Y_EDUCATIVO_UNIV_BENI.pdf"
+      ],
+      "departments": [
+        "Beni"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Trinidad",
+          "source_location": "BENI – TRINIDAD",
+          "department": "Beni",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=43",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=43",
+          "year": 2016,
+          "page": 43,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uabjb.edu.bo/images/Pdf/MODELO_ACADEMICO_Y_EDUCATIVO_UNIV_BENI.pdf",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UABJB",
+      "historical_domains_2016": [
+        "uabjb.edu.bo"
+      ],
+      "official_url": "https://www.uabjb.edu.bo/"
+    },
+    {
+      "institution_id": "unsxx",
+      "name": "Universidad Nacional “Siglo Xx”",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "unsxx.bo"
+      ],
+      "seed_urls": [
+        "https://unsxx.bo/index.php"
+      ],
+      "departments": [
+        "Potosí"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Llallagua",
+          "source_location": "POTOSÍ – LLALLAGUA",
+          "department": "Potosí",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=45",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=45",
+          "year": 2016,
+          "page": 45,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://unsxx.bo/index.php",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNSXX",
+      "historical_domains_2016": [
+        "unsxx.edu.bo"
+      ],
+      "official_url": "https://unsxx.bo/"
+    },
+    {
+      "institution_id": "uap",
+      "name": "Universidad Amazónica de Pando",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "uap.edu.bo"
+      ],
+      "seed_urls": [
+        "https://uap.edu.bo/"
+      ],
+      "departments": [
+        "Pando"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cobija",
+          "source_location": "PANDO COBIJA",
+          "department": "Pando",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=47",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=47",
+          "year": 2016,
+          "page": 47,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://uap.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UAP",
+      "historical_domains_2016": [
+        "uap.bo",
+        "uap.edu.bo"
+      ],
+      "official_url": "https://uap.edu.bo/"
+    },
+    {
+      "institution_id": "upea",
+      "name": "Universidad Pública de El Alto",
+      "regime": "PUBLICA_AUTONOMA",
+      "source_category_2016": "Universidades Públicas Autónomas",
+      "official_domains": [
+        "dicyt.upea.bo"
+      ],
+      "seed_urls": [
+        "https://dicyt.upea.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "El Alto",
+          "source_location": "LA PAZ - EL ALTO",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=49",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=49",
+          "year": 2016,
+          "page": 49,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://dicyt.upea.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad pública de la Dirección de Investigación de Ciencia y Tecnología UPEA; utiliza dominio upea.bo, distinto al histórico upea.edu.bo."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión.",
+        "Semilla corresponde a la dirección pública de investigación. No se habilitan sistemas estudiantiles ni portales con autenticación."
+      ],
+      "acronym": "UPEA",
+      "historical_domains_2016": [
+        "upea.edu.bo"
+      ],
+      "official_url": "https://dicyt.upea.bo/"
+    },
+    {
+      "institution_id": "ucb",
+      "name": "Universidad Católica Boliviana “San Pablo”",
+      "regime": "REGIMEN_ESPECIAL",
+      "source_category_2016": "Universidades Privadas Adscritas Al Ceub",
+      "official_domains": [
+        "ucb.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.ucb.edu.bo/"
+      ],
+      "departments": [
+        "Chuquisaca",
+        "Cochabamba",
+        "La Paz",
+        "Oruro",
+        "Santa Cruz",
+        "Tarija"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=53",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Sede La Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Santa Cruz",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Tarija",
+          "city": "Tarija",
+          "department": "Tarija",
+          "evidence_url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede La Plata",
+          "city": "Sucre",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Virgen del Socavón",
+          "city": "Oruro",
+          "department": "Oruro",
+          "evidence_url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=53",
+          "year": 2016,
+          "page": 53,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.ucb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        },
+        {
+          "url": "https://www.ucb.edu.bo/wp-content/uploads/2023/09/Modelo-Institucional-DIGITAL.pdf#page=92",
+          "year": 2023,
+          "page": 92,
+          "scope": "Naturaleza pública canónica, autonomía académica y régimen administrativo financiero propio."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UCB",
+      "official_url": "https://www.ucb.edu.bo/",
+      "classification_note": "Universidad integrada al Sistema de la Universidad Boliviana, de naturaleza pública canónica y régimen administrativo propio. Su modelo institucional advierte que no corresponde reducirla a pública estatal o privada empresarial.",
+      "legal_nature": "PUBLICA_CANONICA"
+    },
+    {
+      "institution_id": "emi",
+      "name": "Escuela Militar de Ingeniería “Mariscal Antonio Jose de Sucre”",
+      "regime": "REGIMEN_ESPECIAL",
+      "source_category_2016": "Universidades Privadas Adscritas Al Ceub",
+      "official_domains": [
+        "emi.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.emi.edu.bo/"
+      ],
+      "departments": [
+        "Beni",
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=58",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Unidad Académica La Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.emi.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Unidad Académica Santa Cruz de la Sierra",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.emi.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Unidad Académica Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.emi.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Unidad Académica Riberalta",
+          "city": "Riberalta",
+          "department": "Beni",
+          "evidence_url": "https://www.emi.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=58",
+          "year": 2016,
+          "page": 58,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.emi.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        },
+        {
+          "url": "https://www.emi.edu.bo/images/normativa/estatuto_organico_2021.pdf",
+          "year": 2021,
+          "scope": "Naturaleza jurídica pública y pertenencia al Sistema de la Universidad Boliviana."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "EMI",
+      "historical_domains_2016": [
+        "emi.edu.bo"
+      ],
+      "official_url": "https://www.emi.edu.bo/",
+      "classification_note": "Entidad pública descentralizada bajo tuición del Ministerio de Defensa, integrante del Sistema de la Universidad Boliviana. La sección privada adscrita de 2016 no refleja su naturaleza pública.",
+      "legal_nature": "PUBLICA_DESCENTRALIZADA"
+    },
+    {
+      "institution_id": "uasb",
+      "name": "Universidad Andina Simón Bolívar",
+      "regime": "REGIMEN_ESPECIAL",
+      "source_category_2016": "Universidades Privadas Adscritas Al Ceub",
+      "official_domains": [
+        "uasb.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uasb.edu.bo/"
+      ],
+      "departments": [
+        "Chuquisaca"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Sucre",
+          "source_location": "SUCRE",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=60",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=60",
+          "year": 2016,
+          "page": 60,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uasb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        },
+        {
+          "url": "https://www.ceub.edu.bo/portal/sicyt/PLAN_NACIONAL_DE_CIENCIA_Y_TECNOLOGIA.pdf",
+          "scope": "CEUB describe naturaleza jurídica internacional; fecha del documento por verificar."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UASB",
+      "historical_domains_2016": [
+        "uasb.edu.bo"
+      ],
+      "official_url": "https://www.uasb.edu.bo/",
+      "classification_note": "Organismo académico internacional de derecho público de la Comunidad Andina. Pertenencia al CEUB no determina financiación estatal boliviana ni gestión empresarial privada.",
+      "legal_nature": "ORGANISMO_INTERNACIONAL_DERECHO_PUBLICO"
+    },
+    {
+      "institution_id": "uab",
+      "name": "Universidad Adventista de Bolivia",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "uab.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uab.edu.bo/"
+      ],
+      "departments": [
+        "Cochabamba"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Vinto",
+          "source_location": "SEDE CENTRAL: COCHABAMBA; DIRECCIÓN: AV. SIMON I. PATIÑO KM. 1, VINTO",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=65",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=65",
+          "year": 2016,
+          "page": 65,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uab.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UAB",
+      "historical_domains_2016": [
+        "uab.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1190 DE 11/04/2012",
+      "official_url": "https://www.uab.edu.bo/"
+    },
+    {
+      "institution_id": "unibeth",
+      "name": "Universidad Bethesda",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=66",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=66",
+          "year": 2016,
+          "page": 66,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "unibeth.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1192 de 11/04/2012"
+    },
+    {
+      "institution_id": "ubi",
+      "name": "Universidad Boliviana de Informática",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "Chuquisaca",
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Sucre",
+          "source_location": "SUCRE - CHUQUISACA",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=66",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede El Alto",
+          "city": "El Alto",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=67",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=67",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=66",
+          "year": 2016,
+          "page": 66,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.ubilapaz.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Inspección de contenido ajeno en página con identidad institucional; cuarentena de la fuente, sin inferir suspensión de la universidad."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "HISTORICAL_DOMAIN_WITH_CURRENT_UNRELATED_CONTENT",
+      "limitations": [
+        "Subsede La Paz: página principal consultada el 08/10/2026 muestra publicidad de casino en francés y enlaces ajenos. La fuente requiere revisión manual; no se habilita ingestión automática.",
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión.",
+        "Guía2016 sede Sucre imprime www.ubi.edu-bo con formato inválido; no se corrige ni autoriza automáticamente."
+      ],
+      "legal_listing_2016": "No. 1189 DE 11/04/2012",
+      "ingestion_status": "QUARANTINE_SITE_REVIEW_REQUIRED",
+      "historical_domains_2016": [
+        "ubilapaz.edu.bo"
+      ]
+    },
+    {
+      "institution_id": "cefi_saint_paul",
+      "name": "Universidad Cefi Saint Paul",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=67",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=67",
+          "year": 2016,
+          "page": 67,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_DEFINITIVE_PROGRAM_SUSPENSION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "Guía 2016: suspensión definitiva de programas académicos. No ofrecer como matrícula vigente.",
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "usp.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1067 DE 28/11/2011"
+    },
+    {
+      "institution_id": "unicen",
+      "name": "Universidad Central",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "unicen.edu.bo"
+      ],
+      "seed_urls": [
+        "https://unicen.edu.bo/carreras/"
+      ],
+      "departments": [
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=68",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=69",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Santa Cruz",
+          "city": "Santa Cruz",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=70",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=68",
+          "year": 2016,
+          "page": 68,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://unicen.edu.bo/carreras/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNICEN",
+      "historical_domains_2016": [
+        "unicen.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1064 DE 28/11/2011",
+      "official_url": "https://unicen.edu.bo/"
+    },
+    {
+      "institution_id": "ucebol",
+      "name": "Universidad Cristiana de Bolivia",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "ucebol.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.ucebol.edu.bo/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=70",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=70",
+          "year": 2016,
+          "page": 70,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.ucebol.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UCEBOL",
+      "historical_domains_2016": [
+        "ucebol.edu.bo"
+      ],
+      "official_url": "https://www.ucebol.edu.bo/"
+    },
+    {
+      "institution_id": "udabol",
+      "name": "Universidad de Aquino Bolivia",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "udabol.edu.bo"
+      ],
+      "seed_urls": [
+        "https://udabol.edu.bo/acerca-de-udabol/nuestra-historia"
+      ],
+      "departments": [
+        "Cochabamba",
+        "La Paz",
+        "Oruro",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=71",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=72",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Santa Cruz",
+          "city": "Santa Cruz",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=73",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Oruro",
+          "city": "Oruro",
+          "department": "Oruro",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=74",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=71",
+          "year": 2016,
+          "page": 71,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://udabol.edu.bo/acerca-de-udabol/nuestra-historia",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión.",
+        "Principal devuelve título genérico; identidad corroborada en historia institucional. Revisar contenido individual antes de ingerirlo."
+      ],
+      "acronym": "UDABOL",
+      "historical_domains_2016": [
+        "udabol.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1076 DE 28/11/2011",
+      "official_url": "https://udabol.edu.bo/"
+    },
+    {
+      "institution_id": "amazonia_boliviana",
+      "name": "Universidad de la Amazonía Boliviana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "unab.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.unab.edu.bo/requisitos/"
+      ],
+      "departments": [
+        "Beni"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Riberalta",
+          "source_location": "BENI – RIBERALTA",
+          "department": "Beni",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=74",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Guayaramerín",
+          "city": "Guayaramerín",
+          "department": "Beni",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=75",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=74",
+          "year": 2016,
+          "page": 74,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.unab.edu.bo/requisitos/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "legal_listing_2016": "N° 1078 DE 28/11/2011",
+      "official_url": "https://www.unab.edu.bo/"
+    },
+    {
+      "institution_id": "cordillera",
+      "name": "Universidad de la Cordillera",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=75",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=75",
+          "year": 2016,
+          "page": 75,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "ucordillera.edu.bo"
+      ],
+      "legal_listing_2016": "N°1191 DE 11/04/2012, R. S. DE APERTURA Y FUNCIONAMIENTO: No 351 DE 05/08/1997"
+    },
+    {
+      "institution_id": "unandes",
+      "name": "Universidad de Los Andes",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "udelosandes.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.udelosandes.edu.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=76",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=76",
+          "year": 2016,
+          "page": 76,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.udelosandes.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNANDES",
+      "historical_domains_2016": [
+        "udelosandes.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1059 DE 28/11/2011",
+      "official_url": "https://www.udelosandes.edu.bo/"
+    },
+    {
+      "institution_id": "ueb",
+      "name": "Universidad Evangélica Boliviana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "ueb.edu.bo"
+      ],
+      "seed_urls": [
+        "https://ueb.edu.bo/quienes-somos/historia/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=76",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=76",
+          "year": 2016,
+          "page": 76,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://ueb.edu.bo/quienes-somos/historia/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión.",
+        "Principal contiene textos de plantilla ajena en inglés; identidad validada mediante historia institucional. No usar esos textos como evidencia de oferta."
+      ],
+      "acronym": "UEB",
+      "historical_domains_2016": [
+        "ueb.edu.bo"
+      ],
+      "legal_listing_2016": "N°1082 DEL 28/11/2011",
+      "official_url": "https://ueb.edu.bo/",
+      "ingestion_status": "PUBLIC_SEED_PAGE_REVIEW_REQUIRED"
+    },
+    {
+      "institution_id": "la_salle",
+      "name": "Universidad la Salle",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "ulasalle.edu.bo"
+      ],
+      "seed_urls": [
+        "https://ulasalle.edu.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=77",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede El Alto",
+          "city": "El Alto",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=78",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=77",
+          "year": 2016,
+          "page": 77,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://ulasalle.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "ulasalle.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1079 DE 28/11/2011",
+      "official_url": "https://ulasalle.edu.bo/"
+    },
+    {
+      "institution_id": "ulat",
+      "name": "Universidad Latinoamericana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "Cochabamba"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=78",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=78",
+          "year": 2016,
+          "page": 78,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "ulat.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1062 DE 28/11/2011"
+    },
+    {
+      "institution_id": "loyola",
+      "name": "Universidad Loyola",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "loyola.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.loyola.edu.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=78",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=78",
+          "year": 2016,
+          "page": 78,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.loyola.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "loyola.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1074 DE 28/11/2011 RESOLUCIÓN SECRETARIAL DE APERTURA: Nº 219 de 20/02/1995",
+      "official_url": "https://www.loyola.edu.bo/"
+    },
+    {
+      "institution_id": "uno",
+      "name": "Universidad Nacional del Oriente",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "uno.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uno.edu.bo/web/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=80",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Montero",
+          "city": "Montero",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=80",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=80",
+          "year": 2016,
+          "page": 80,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uno.edu.bo/web/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "uno.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1083 DE 28/11/2011",
+      "official_url": "https://www.uno.edu.bo/"
+    },
+    {
+      "institution_id": "une",
+      "name": "Universidad Nacional Ecológica",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "uecologica.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.uecologica.edu.bo/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=80",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=80",
+          "year": 2016,
+          "page": 80,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.uecologica.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "uecologica.edu.bo"
+      ],
+      "legal_listing_2016": "Nº 1063 de 28/11/2011",
+      "official_url": "https://www.uecologica.edu.bo/"
+    },
+    {
+      "institution_id": "unslp",
+      "name": "Universidad Nuestra Señora de la Paz",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "unslp.edu.bo"
+      ],
+      "seed_urls": [
+        "https://unslp.edu.bo/?lang=es"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=81",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=81",
+          "year": 2016,
+          "page": 81,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://unslp.edu.bo/?lang=es",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "unslp.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1073 DE 28/11/2011",
+      "official_url": "https://unslp.edu.bo/"
+    },
+    {
+      "institution_id": "nur",
+      "name": "Universidad Nur",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "nur.edu"
+      ],
+      "seed_urls": [
+        "https://www.nur.edu/"
+      ],
+      "departments": [
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=82",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=83",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=84",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Sede Santa Cruz",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.nur.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede La Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.nur.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=82",
+          "year": 2016,
+          "page": 82,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.nur.edu/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "NUR",
+      "historical_domains_2016": [
+        "nur.edu"
+      ],
+      "official_url": "https://www.nur.edu/"
+    },
+    {
+      "institution_id": "udi",
+      "name": "Universidad Para El Desarrollo y la Innovación",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "udi.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.udi.edu.bo/wp-content/uploads/2025/12/REBID-2025-1.pdf"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=85",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=85",
+          "year": 2016,
+          "page": 85,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.udi.edu.bo/wp-content/uploads/2025/12/REBID-2025-1.pdf",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UDI",
+      "historical_domains_2016": [
+        "udi.edu.bo"
+      ],
+      "official_url": "https://www.udi.edu.bo/"
+    },
+    {
+      "institution_id": "upieb",
+      "name": "Universidad Para la Investigación Estratégica en Bolivia",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=86",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=86",
+          "year": 2016,
+          "page": 86,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UPIEB",
+      "historical_domains_2016": [
+        "upieb.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1077 de 28/11/2011"
+    },
+    {
+      "institution_id": "upal",
+      "name": "Universidad Privada Abierta Latinoamericana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "upal.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.upal.edu.bo/inicio/"
+      ],
+      "departments": [
+        "Cochabamba",
+        "Oruro"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=86",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Oruro",
+          "city": "Oruro",
+          "department": "Oruro",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=87",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Sede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.upal.edu.bo/inicio/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Oruro",
+          "city": "Oruro",
+          "department": "Oruro",
+          "evidence_url": "https://www.upal.edu.bo/inicio/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=86",
+          "year": 2016,
+          "page": 86,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.upal.edu.bo/inicio/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UPAL",
+      "historical_domains_2016": [
+        "upal.edu"
+      ],
+      "legal_listing_2016": "N° 1085 DE 28/11/2011",
+      "official_url": "https://www.upal.edu.bo/"
+    },
+    {
+      "institution_id": "upb",
+      "name": "Universidad Privada Boliviana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "upb.edu"
+      ],
+      "seed_urls": [
+        "https://www.upb.edu/programas/pregrado"
+      ],
+      "departments": [
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=87",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=88",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Campus Julio León Prado",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.upb.edu/programas/pregrado",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Campus Fernando Illanes de la Riva",
+          "city": "Achocalla",
+          "department": "La Paz",
+          "evidence_url": "https://www.upb.edu/programas/pregrado",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Campus Santa Cruz",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.upb.edu/programas/pregrado",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=87",
+          "year": 2016,
+          "page": 87,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.upb.edu/programas/pregrado",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UPB",
+      "historical_domains_2016": [
+        "upb.edu"
+      ],
+      "legal_listing_2016": "N° 1060 DE 28/11/2011",
+      "official_url": "https://www.upb.edu/"
+    },
+    {
+      "institution_id": "cumbre",
+      "name": "Universidad Privada Cumbre",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "cumbre.edu.bo"
+      ],
+      "seed_urls": [
+        "https://cumbre.edu.bo/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=89",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=89",
+          "year": 2016,
+          "page": 89,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://cumbre.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "cumbre.edu.bo"
+      ],
+      "legal_listing_2016": "No. 1084 DE 28/11/2011",
+      "official_url": "https://cumbre.edu.bo/"
+    },
+    {
+      "institution_id": "ucatec",
+      "name": "Universidad Privada de Ciencias Administrativas y Tecnológicas",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "web.ucatec.edu.bo"
+      ],
+      "seed_urls": [
+        "https://web.ucatec.edu.bo/"
+      ],
+      "departments": [
+        "Cochabamba"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=89",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=89",
+          "year": 2016,
+          "page": 89,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://web.ucatec.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UCATEC",
+      "historical_domains_2016": [
+        "ucatec.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1081 DE 28/11/2011",
+      "official_url": "https://web.ucatec.edu.bo/"
+    },
+    {
+      "institution_id": "unior",
+      "name": "Universidad Privada de Oruro",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "unior.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.unior.edu.bo/"
+      ],
+      "departments": [
+        "Oruro"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Oruro",
+          "source_location": "ORURO",
+          "department": "Oruro",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=90",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=90",
+          "year": 2016,
+          "page": 90,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.unior.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNIOR",
+      "historical_domains_2016": [
+        "unior.edu.bo"
+      ],
+      "legal_listing_2016": "No. 1187 DE 11/04/2012",
+      "official_url": "https://www.unior.edu.bo/"
+    },
+    {
+      "institution_id": "upsa",
+      "name": "Universidad Privada de Santa Cruz de la Sierra",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "upsa.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.upsa.edu.bo/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=90",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=90",
+          "year": 2016,
+          "page": 90,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.upsa.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UPSA",
+      "historical_domains_2016": [
+        "upsa.edu.bo"
+      ],
+      "official_url": "https://www.upsa.edu.bo/"
+    },
+    {
+      "institution_id": "unichaco",
+      "name": "Universidad Privada del Chaco",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "Tarija"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Yacuiba",
+          "source_location": "YACUIBA – TARIJA",
+          "department": "Tarija",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=92",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=92",
+          "year": 2016,
+          "page": 92,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "unichaco.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1188 DE 11/04/2012"
+    },
+    {
+      "institution_id": "univalle",
+      "name": "Universidad Privada del Valle",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "univalle.edu"
+      ],
+      "seed_urls": [
+        "https://www.univalle.edu/"
+      ],
+      "departments": [
+        "Beni",
+        "Chuquisaca",
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=92",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=94",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Sucre",
+          "city": "Sucre",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=95",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Trinidad",
+          "city": "Trinidad",
+          "department": "Beni",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=96",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Sede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.univalle.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede La Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.univalle.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Santa Cruz de la Sierra",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.univalle.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Trinidad",
+          "city": "Trinidad",
+          "department": "Beni",
+          "evidence_url": "https://www.univalle.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Sucre",
+          "city": "Sucre",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.univalle.edu/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=92",
+          "year": 2016,
+          "page": 92,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.univalle.edu/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNIVALLE",
+      "historical_domains_2016": [
+        "univalle.edu"
+      ],
+      "legal_listing_2016": "R.Spr. No. 205336 DE 04/11/1988 HOMOLOGADA POR D. Spr. No. 23527 DE 17/06/1993",
+      "official_url": "https://www.univalle.edu/"
+    },
+    {
+      "institution_id": "upds",
+      "name": "Universidad Privada Domingo Savio",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "upds.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.upds.edu.bo/"
+      ],
+      "departments": [
+        "Beni",
+        "Chuquisaca",
+        "Cochabamba",
+        "La Paz",
+        "Oruro",
+        "Pando",
+        "Potosí",
+        "Santa Cruz",
+        "Tarija"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=97",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Tarija",
+          "city": "Tarija",
+          "department": "Tarija",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=98",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Potosí",
+          "city": "Potosí",
+          "department": "Potosí",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=98",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=99",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=99",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Trinidad",
+          "city": "Trinidad",
+          "department": "Beni",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=99",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Sucre",
+          "city": "Sucre",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=100",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Oruro",
+          "city": "Oruro",
+          "department": "Oruro",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=100",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Sede Santa Cruz de la Sierra",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Tarija",
+          "city": "Tarija",
+          "department": "Tarija",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Potosí",
+          "city": "Potosí",
+          "department": "Potosí",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede La Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Trinidad",
+          "city": "Trinidad",
+          "department": "Beni",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Sucre",
+          "city": "Sucre",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Oruro",
+          "city": "Oruro",
+          "department": "Oruro",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Sede Cobija",
+          "city": "Cobija",
+          "department": "Pando",
+          "evidence_url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=97",
+          "year": 2016,
+          "page": 97,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.upds.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UPDS",
+      "historical_domains_2016": [
+        "upds.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1071 DE 28/11/2011",
+      "official_url": "https://www.upds.edu.bo/"
+    },
+    {
+      "institution_id": "unifranz",
+      "name": "Universidad Privada Franz Tamayo",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "unifranz.edu.bo"
+      ],
+      "seed_urls": [
+        "https://unifranz.edu.bo/"
+      ],
+      "departments": [
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=101",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=102",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Santa Cruz",
+          "city": "Santa Cruz",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=103",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede El Alto",
+          "city": "El Alto",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=103",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=101",
+          "year": 2016,
+          "page": 101,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://unifranz.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNIFRANZ",
+      "historical_domains_2016": [
+        "unifranz.edu.bo"
+      ],
+      "legal_listing_2016": "N°1069 DE 28/11/2011",
+      "official_url": "https://unifranz.edu.bo/"
+    },
+    {
+      "institution_id": "uta",
+      "name": "Universidad Privada Indígena Tawantinsuyu Axlla – Uta",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Laja",
+          "source_location": "LAJA – LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=104",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=104",
+          "year": 2016,
+          "page": 104,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        }
+      ],
+      "verification_status": "HISTORICAL_TEMPORARY_ADMISSION_SUSPENSION_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "RM 783 de 15/10/2014 suspendió matrícula nueva 01/01/2015 a 01/01/2018. El plazo transcurrido no demuestra reapertura.",
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UTA",
+      "legal_listing_2016": "R. M. No. 238 DEL 05/08/2005"
+    },
+    {
+      "institution_id": "ureal",
+      "name": "Universidad Real de la Cámara Nacional de Comercio",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "ureal.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.ureal.edu.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=104",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=104",
+          "year": 2016,
+          "page": 104,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.ureal.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "ureal.edu.bo"
+      ],
+      "legal_listing_2016": "Nº 1799, 20 DE NOVIEMBRE DE 2013,",
+      "official_url": "https://www.ureal.edu.bo/"
+    },
+    {
+      "institution_id": "salesiana",
+      "name": "Universidad Salesiana de Bolivia",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "usalesiana.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.usalesiana.edu.bo/principal/es"
+      ],
+      "departments": [
+        "Chuquisaca",
+        "Cochabamba",
+        "La Paz",
+        "Santa Cruz",
+        "Tarija"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=105",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Camiri (Santa Cruz)",
+          "city": "Camiri (Santa Cruz)",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=105",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=106",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Yacuiba, Tarija",
+          "city": "Yacuiba, Tarija",
+          "department": "Tarija",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=106",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Monteagudo, Chuquisaca",
+          "city": "Monteagudo, Chuquisaca",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=106",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede San Carlos, Yapacaní, Santa Cruz",
+          "city": "San Carlos, Yapacaní, Santa Cruz",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=106",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=105",
+          "year": 2016,
+          "page": 105,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.usalesiana.edu.bo/principal/es",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "usalesiana.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1066 DE 28/11/2011",
+      "official_url": "https://www.usalesiana.edu.bo/"
+    },
+    {
+      "institution_id": "usfa",
+      "name": "Universidad San Francisco de Asís",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "usfa.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.usfa.edu.bo/"
+      ],
+      "departments": [
+        "La Paz",
+        "Potosí"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=107",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Tupiza (Potosí)",
+          "city": "Tupiza (Potosí)",
+          "department": "Potosí",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=107",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=107",
+          "year": 2016,
+          "page": 107,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.usfa.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "USFA",
+      "historical_domains_2016": [
+        "usfa.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1068 DE 28/11/2011",
+      "official_url": "https://www.usfa.edu.bo/"
+    },
+    {
+      "institution_id": "usip",
+      "name": "Universidad Simón I. Patiño",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "usip.edu.bo"
+      ],
+      "seed_urls": [
+        "https://usip.edu.bo/universidad/"
+      ],
+      "departments": [
+        "Cochabamba"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=107",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=107",
+          "year": 2016,
+          "page": 107,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://usip.edu.bo/universidad/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "USIP",
+      "historical_domains_2016": [
+        "usip.edu.bo"
+      ],
+      "legal_listing_2016": "No. 1075 DE 28/11/2011, R. M. DE APERTURA: No. 470 DE 19/07/2007",
+      "official_url": "https://usip.edu.bo/"
+    },
+    {
+      "institution_id": "unitepc",
+      "name": "Universidad Técnica Privada Cosmos",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "unitepc.edu.bo"
+      ],
+      "seed_urls": [
+        "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article"
+      ],
+      "departments": [
+        "Beni",
+        "Cochabamba",
+        "La Paz",
+        "Pando",
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Cochabamba",
+          "source_location": "COCHABAMBA",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=108",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede El Alto",
+          "city": "El Alto",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=109",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede la Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=110",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Cobija",
+          "city": "Cobija",
+          "department": "Pando",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=110",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Subsede Santa Cruz",
+          "city": "Santa Cruz",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=111",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        },
+        {
+          "name": "Cochabamba",
+          "city": "Cochabamba",
+          "department": "Cochabamba",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Ivirgarzama",
+          "city": "Ivirgarzama",
+          "department": "Cochabamba",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "La Paz",
+          "city": "La Paz",
+          "department": "La Paz",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "El Alto",
+          "city": "El Alto",
+          "department": "La Paz",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Santa Cruz de la Sierra",
+          "city": "Santa Cruz de la Sierra",
+          "department": "Santa Cruz",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Guayaramerín",
+          "city": "Guayaramerín",
+          "department": "Beni",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Puerto Quijarro",
+          "city": "Puerto Quijarro",
+          "department": "Santa Cruz",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        },
+        {
+          "name": "Cobija",
+          "city": "Cobija",
+          "department": "Pando",
+          "evidence_url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "verification_status": "CURRENT_PUBLIC_PAGE_EVIDENCE"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=108",
+          "year": 2016,
+          "page": 108,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://unitepc.edu.bo/index.php?Itemid=30&id=63&option=com_content&view=article",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNITEPC",
+      "historical_domains_2016": [
+        "unitepc.edu.bo"
+      ],
+      "legal_listing_2016": "RESOLUCION MINISTERIAL Nº 527 DE 1993 RATIFICACIÓN DE APERTURA DE FUNCIONAMIENTO: D.SPR. N° 1190 DE 11/04/2012",
+      "official_url": "https://unitepc.edu.bo/"
+    },
+    {
+      "institution_id": "utb",
+      "name": "Universidad Tecnológica Boliviana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "utb.edu.bo"
+      ],
+      "seed_urls": [
+        "https://utb.edu.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=112",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=112",
+          "year": 2016,
+          "page": 112,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://utb.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UTB",
+      "historical_domains_2016": [
+        "utb.edu.bo"
+      ],
+      "legal_listing_2016": "No. 1072 DE 28/11/2011",
+      "official_url": "https://utb.edu.bo/"
+    },
+    {
+      "institution_id": "utepsa",
+      "name": "Universidad Tecnológica Privada de Santa Cruz",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "utepsa.edu"
+      ],
+      "seed_urls": [
+        "https://www.utepsa.edu/"
+      ],
+      "departments": [
+        "Santa Cruz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Santa Cruz de la Sierra",
+          "source_location": "SANTA CRUZ DE LA SIERRA",
+          "department": "Santa Cruz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=113",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=113",
+          "year": 2016,
+          "page": 113,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.utepsa.edu/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UTEPSA",
+      "historical_domains_2016": [
+        "utepsa.edu"
+      ],
+      "legal_listing_2016": "No. 1070 DE 28/11/2011",
+      "official_url": "https://www.utepsa.edu/"
+    },
+    {
+      "institution_id": "unidad",
+      "name": "Universidad Unidad",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "uunidad.edu.bo"
+      ],
+      "seed_urls": [
+        "https://uunidad.edu.bo/inicio/"
+      ],
+      "departments": [
+        "Chuquisaca"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Sucre",
+          "source_location": "SUCRE",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=114",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=114",
+          "year": 2016,
+          "page": 114,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://uunidad.edu.bo/inicio/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "uunidad.edu.bo"
+      ],
+      "legal_listing_2016": "N° 1080 DE 28/11/2011",
+      "official_url": "https://uunidad.edu.bo/"
+    },
+    {
+      "institution_id": "union_bolivariana",
+      "name": "Universidad Unión Bolivariana",
+      "regime": "PRIVADA",
+      "source_category_2016": "Universidades Privadas",
+      "official_domains": [
+        "ub.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.ub.edu.bo/carreras/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=114",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=114",
+          "year": 2016,
+          "page": 114,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.ub.edu.bo/carreras/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "ub.edu.bo"
+      ],
+      "legal_listing_2016": "No. 1065 DE 28/11/2011",
+      "official_url": "https://www.ub.edu.bo/"
+    },
+    {
+      "institution_id": "unibol_aymara",
+      "name": "Universidad Indígena Aymara “Tupak Katari”",
+      "regime": "INDIGENA",
+      "source_category_2016": "Universidades Indígenas",
+      "official_domains": [
+        "utupakkatari.edu.bo"
+      ],
+      "seed_urls": [
+        "https://utupakkatari.edu.bo/wp-content/uploads/2025/02/IDENTIDAD-CULTURAL-LIBRO-COPIA-1.pdf"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Warisata",
+          "source_location": "LA PAZ – WARISATA",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=117",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=117",
+          "year": 2016,
+          "page": 117,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://utupakkatari.edu.bo/wp-content/uploads/2025/02/IDENTIDAD-CULTURAL-LIBRO-COPIA-1.pdf",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión.",
+        "La principal del dominio muestra sitio en construcción; identidad contrastada en publicación institucional. No tomar esa publicación como oferta actual."
+      ],
+      "historical_domains_2016": [
+        "utupakktari.edu.bo"
+      ],
+      "legal_listing_2016": "DECRETO SUPREMO No. 29664 DEL 02/08/2008",
+      "official_url": "https://utupakkatari.edu.bo/"
+    },
+    {
+      "institution_id": "unibol_quechua",
+      "name": "Universidad Indígena Quechua “Casimiro Huanca”",
+      "regime": "INDIGENA",
+      "source_category_2016": "Universidades Indígenas",
+      "official_domains": [
+        "unibolquechua.edu.bo"
+      ],
+      "seed_urls": [
+        "https://unibolquechua.edu.bo/maestrias/"
+      ],
+      "departments": [
+        "Cochabamba"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Chimoré",
+          "source_location": "COCHABAMBA – CHIMORÉ",
+          "department": "Cochabamba",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=117",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=117",
+          "year": 2016,
+          "page": 117,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://unibolquechua.edu.bo/maestrias/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "unibolquechua.edu.bo"
+      ],
+      "legal_listing_2016": "DECRETO SUPREMO No. 29664 DEL 02/08/2008",
+      "official_url": "https://unibolquechua.edu.bo/"
+    },
+    {
+      "institution_id": "unibol_guarani",
+      "name": "Universidad Indígena Guaraní “Apiagüaiki Tüpa”",
+      "regime": "INDIGENA",
+      "source_category_2016": "Universidades Indígenas",
+      "official_domains": [
+        "unibolguarani.edu.bo"
+      ],
+      "seed_urls": [
+        "https://www.unibolguarani.edu.bo/"
+      ],
+      "departments": [
+        "Chuquisaca"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Ivo",
+          "source_location": "CHUQUISACA - IVO (MUNICIPIO DE MACHARETI)",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=117",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=117",
+          "year": 2016,
+          "page": 117,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.unibolguarani.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "unibolguarani.edu.bo"
+      ],
+      "legal_listing_2016": "DECRETO SUPREMO No. 29664 DEL 02/08/2008",
+      "official_url": "https://www.unibolguarani.edu.bo/"
+    },
+    {
+      "institution_id": "militar",
+      "name": "Universidad Militar “Mariscal Bernardino Bilbao Rioja”",
+      "regime": "REGIMEN_ESPECIAL",
+      "source_category_2016": "Universidades de Régimen Especial",
+      "official_domains": [],
+      "seed_urls": [],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=121",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=121",
+          "year": 2016,
+          "page": 121,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://www.minedu.gob.bo/files/documentos-normativos/VESFP/2024/resoluciones/0044.pdf",
+          "year": 2024,
+          "scope": "Referencia ministerial reciente a la creación por RS216782 de la Universidad Militar de las Fuerzas Armadas; no confirma dominio institucional ni oferta completa."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "PENDING_CURRENT_VERIFICATION",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "legal_listing_2016": "R. Spr. Nº 216782 DEL 05/08/1996"
+    },
+    {
+      "institution_id": "unipol",
+      "name": "Universidad Policial “Mcal. Antonio José de Sucre”",
+      "regime": "REGIMEN_ESPECIAL",
+      "source_category_2016": "Universidades de Régimen Especial",
+      "official_domains": [
+        "web.unipol.edu.bo"
+      ],
+      "seed_urls": [
+        "https://web.unipol.edu.bo/"
+      ],
+      "departments": [
+        "La Paz"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "La Paz",
+          "source_location": "LA PAZ",
+          "department": "La Paz",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=123",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=123",
+          "year": 2016,
+          "page": 123,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://web.unipol.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "acronym": "UNIPOL",
+      "historical_domains_2016": [
+        "unipol.edu.bo"
+      ],
+      "legal_listing_2016": "R.M. No. 408 DEL 28/11/2006",
+      "official_url": "https://web.unipol.edu.bo/"
+    },
+    {
+      "institution_id": "pedagogica",
+      "name": "Universidad Pedagógica",
+      "regime": "REGIMEN_ESPECIAL",
+      "source_category_2016": "Universidades de Régimen Especial",
+      "official_domains": [
+        "upedagogica.edu.bo"
+      ],
+      "seed_urls": [
+        "https://upedagogica.edu.bo/"
+      ],
+      "departments": [
+        "Chuquisaca"
+      ],
+      "campuses": [
+        {
+          "name": "Sede central (guía 2016)",
+          "city": "Sucre",
+          "source_location": "CHUQUISACA – SUCRE",
+          "department": "Chuquisaca",
+          "evidence_url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=123",
+          "evidence_year": 2016,
+          "verification_status": "HISTORICAL_PENDING_CURRENT_VERIFICATION"
+        }
+      ],
+      "evidence": [
+        {
+          "url": "https://www.minedu.gob.bo/files/GUIA-UNIVERSIDADES.pdf#page=123",
+          "year": 2016,
+          "page": 123,
+          "scope": "Registro institucional, categoría histórica y sede central; no acredita vigencia actual."
+        },
+        {
+          "url": "https://upedagogica.edu.bo/",
+          "accessed_at": "2026-10-08",
+          "scope": "Identidad institucional en dominio oficial contrastada; no certifica vigencia legal de toda su oferta."
+        }
+      ],
+      "verification_status": "HISTORICAL_REGISTER_PENDING_CURRENT_VERIFICATION",
+      "website_verification_status": "OFFICIAL_DOMAIN_VERIFIED",
+      "limitations": [
+        "La guía de 2016 no confirma autorización ni matrícula vigente en 2026.",
+        "Las sedes históricas listadas no constituyen una enumeración completa de campus actuales.",
+        "Carreras, mallas, requisitos y costos requieren verificación por sede, grado y gestión."
+      ],
+      "historical_domains_2016": [
+        "upedagogica.edu.bo"
+      ],
+      "legal_listing_2016": "D. Spr. No. 25386 DEL 21/05/1999",
+      "official_url": "https://upedagogica.edu.bo/"
+    }
+  ],
+  "counts": {
+    "institutions": 60,
+    "by_regime": {
+      "PUBLICA_AUTONOMA": 11,
+      "REGIMEN_ESPECIAL": 6,
+      "PRIVADA": 40,
+      "INDIGENA": 3
+    },
+    "official_domains_verified": 51,
+    "pending_official_domain_verification": 9,
+    "current_legal_status_verified": 0,
+    "historical_definitive_program_suspensions": 1,
+    "historical_temporary_admission_suspensions": 1,
+    "campus_evidence_records": 136,
+    "current_campus_evidence_records": 39,
+    "quarantined_sources": 1
+  }
+}

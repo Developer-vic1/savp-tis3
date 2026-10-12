@@ -1,0 +1,666 @@
+{
+  "schema_version": "1.0",
+  "checked_on": "2026-10-11",
+  "scope": "Mallas vinculadas a las 12 ofertas del catálogo local; no es un censo de todas las carreras de Bolivia.",
+  "source_catalog_version": "bo-careers-1.3.0",
+  "publication_status": "TRANSCRIPCION_VISUAL_UNIFRANZ_CONSUMIDA_POR_TUTOR_CON_FUENTE",
+  "limitations": [
+    "La integridad del PDF no demuestra vigencia actual, disponibilidad de matrícula ni validez por sede.",
+    "Las materias iniciales no sustituyen una malla completa.",
+    "Las transcripciones literales que siguen pendientes conservan códigos y requisitos, pero no son listas de materias aprobadas.",
+    "Los datos por sede se conservan del catálogo original y no se trasladan entre universidades."
+  ],
+  "statistics": {
+    "programs": 12,
+    "programs_with_document": 7,
+    "pending": 5,
+    "semester_transcriptions": 45
+  },
+  "curricula": [
+    {
+      "career_id": "BO-UCB-LP-ING-SISTEMAS",
+      "career_name": "Ingeniería de Sistemas",
+      "university_id": "BO-UCB-LP",
+      "university_name": "Universidad Católica Boliviana San Pablo",
+      "campus": "Sede La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UCB-LP-SIS-MALLA-2026",
+          "title": "Ingeniería de Sistemas — Malla Curricular, Gestión 2026",
+          "official_url": "https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/SIS-2026.pdf",
+          "local_path": "data/raw/ucb_ingenieria_sistemas_2026.pdf",
+          "document_hash": "sha256:dc5710e7015b0475c03239e35175f63af58faa69820720fe5085a31fb7ae51c2",
+          "pages": 1,
+          "curriculum_pages": [
+            1
+          ],
+          "declared_version": "Gestión 2026",
+          "retrieved_at": "2026-09-28",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "PENDIENTE_REVISION",
+          "semester_transcriptions": [
+            {
+              "semester": 1,
+              "page": 1,
+              "literal_text": "MAT-123 / UVE 5\nÁlgebra Lineal\n▪  Req: Ninguno\nMAT-122 / UVE 5\nMatemáticas \nDiscretas\n▪  Req: Ninguno\nSIS-111 / UVE 6\nIntroducción a la \nProgramación\n▪  Req: Ninguno\nSIS-123 / UVE 5\nIngeniería de \nSistemas\n▪  Req: Ninguno\nFIL-107 / UVE 2\nPensamiento Crítico\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 2,
+              "page": 1,
+              "literal_text": "MAT-132 / UVE 5\nCálculo I\n▪  Req: MAT-030\nMAT-251 / UVE 5\nInvestigación \nOperativa I\n▪  Req: MAT-123\nMAT-142 / UVE 5\nProbabilidad y \nEstadística I\n▪  Req: MAT-123\nSIS-112 / UVE 6\nProgramación I\n▪  Req: SIS-111\nSIS-133 / UVE 6\nArquitectura \nComputacional y \nSistemas Operativos\n▪  Req: MAT-122 / SIS-123\nFHC-102 / UVE 5\nFormación Humano \nCristiana I\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 3,
+              "page": 1,
+              "literal_text": "MAT-133 / UVE 5\nCálculo II\n▪  Req: MAT-132\nFIS-111 / UVE 7\nFísica I y Laboratorio\n▪  Req: MAT-132\nMAT-143 / UVE 5\nProbabilidad y \nEstadística II\n▪  Req: MAT-142\nSIS-113 / UVE 6\nProgramación II\n▪  Req: SIS-112\nSIS-122 / UVE 6\nBases de Datos I\n▪  Req: SIS-112\nIND-260  / UVE5\nMetodología de la \nInvestigación\n▪  Req: Ninguno\nFIL-207 / UVE 2\nEpistemología\n▪  Req: Ninguno\nSEGUNDO CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 4,
+              "page": 1,
+              "literal_text": "MAT-252 / UVE 7\nInvestigación \nOperativa II \ny Laboratorio\n▪  Req: MAT-251\nSIS-211 / UVE 6\nEstructuras de Datos\n▪  Req: SIS-113\nSIS-214 / UVE 6\nTecnologías Web I\n▪  Req: SIS-113 / SIS-122\nSIS-221 / UVE 6\nBases de Datos II\n▪  Req: SIS-122\nSIS-225 / UVE 6\nSistemas de \nInformación\n▪  Req: SIS-122\nFHC-202 / UVE 5\nFormación Humano \nCristiana II\n▪  Req: FHC-102",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 5,
+              "page": 1,
+              "literal_text": "MAT-361 / UVE 6\nAnálisis de \nAlgoritmos\nReq: SIS-211\nSIS-212 / UVE 5\nProgramación de \nDispositivos Móviles\n▪  Req: SIS-113 / SIS-122\nSIS-215 / UVE 6\nTecnologías Web II\n▪  Req: SIS-214 / SIS-221\nSIS-251 / UVE 6\nIngeniería de Datos\n▪  Req: MAT-133 / MAT-123\nSIS-226 / UVE 6\nSistemas de Soporte \na las Decisiones \nGerenciales\n▪  Req: SIS-225 / SIS-221\nSIS-231 / UVE 6\nRedes de \nComputadoras I\n▪  Req: SIS-133\nUVE 5\nLibre I",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 6,
+              "page": 1,
+              "literal_text": "SIS-213 / UVE 6\nIngeniería de Software\n▪  Req: SIS-215 / SIS-225\nSIS-216 / UVE 5\nModelado, Dinámica de \nSistemas y Simulación\n▪  Req: MAT-252 / MAT-143\nSIS-252 / UVE 6\nInteligencia Artificial\n▪  Req: SIS-251\nDER-394 / UVE 5\nDerecho de las TIC\n▪  Req: SIS-226\nSIS-323 / UVE 5\nTaller de Sistemas \nde Información\n▪  Req: SIS-215 / SIS-226\nSIS-233 / UVE 6\nRedes de \nComputadoras II\n▪  Req: SIS-231\nLIBRE  / UVE 5\nLibre II\nTERCER CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 7,
+              "page": 1,
+              "literal_text": "SIS-311 / UVE 6\nArquitectura de \nSoftware\n▪  Req: SIS-213\nSIS-312 / UVE 6\nGestión de Calidad \nde Sistemas\n▪  Req: SIS-213\nSIS-351 / UVE 6\nMachine Learning\n▪  Req: SIS-252\nSIS-325 / UVE 6\nÉtica y Seguridad \nde Sistemas\n▪  Req: SIS-323\nSIS-331 / UVE 6\nComputación \nen la Nube\n▪  Req: SIS-233\nFHC-302 / UVE 5\nFormación Humano \nCristiana III\nReq: FHC-202\nSIS-234 / UVE 6\nInternet de\n las Cosas\n▪  Req: SIS-233",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 8,
+              "page": 1,
+              "literal_text": "SIS-313 / UVE 5\nGerencia de las TIC\n▪  Req: SIS-226\nSIS-352 / UVE 5\nTaller de Sistemas \nInteligentes\n▪  Req: SIS-351\nSIS-324 / UVE 5\nAuditoría de \nSistemas\n▪  Req: SIS-312\nSIS-361 / UVE 2\nPráctica \nPreprofesional\n▪  Req: SIS-312 / SIS-331\nSIS-362 / UVE 15\nTaller de Grado I\n▪  Req: SIS-312 / SIS-331",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 9,
+              "page": 1,
+              "literal_text": "SIS-363 / UVE 15\nTaller de Grado II\n▪  Req: SIS-362",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            }
+          ],
+          "limitations": []
+        }
+      ]
+    },
+    {
+      "career_id": "BO-UCB-LP-PSICOLOGIA",
+      "career_name": "Psicología",
+      "university_id": "BO-UCB-LP",
+      "university_name": "Universidad Católica Boliviana San Pablo",
+      "campus": "Sede La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UCB-LP-PSI-MALLA-2026",
+          "title": "Psicología — Malla Curricular, Gestión 2026",
+          "official_url": "https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/PSI-2026.pdf",
+          "local_path": "data/raw/ucb_psicologia_2026.pdf",
+          "document_hash": "sha256:b0123e032f4475fbf1dbd03802f34a9cebbc5e833827c4d756da5113fc38eb4a",
+          "pages": 1,
+          "curriculum_pages": [
+            1
+          ],
+          "declared_version": "Gestión 2026",
+          "retrieved_at": "2026-09-28",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "PENDIENTE_REVISION",
+          "semester_transcriptions": [
+            {
+              "semester": 1,
+              "page": 1,
+              "literal_text": "PSI-106/ UVE 5\nIntroducción a la Psicología\n▪  Req: Ninguno\nPSI-107/ UVE 5\n Teorías y Paradigmas \nActuales de la Psicología\n▪  Req: Ninguno\nPSI-110/ UVE 7\n Psicología del Desarrollo \nInfantil (Taller)\n▪  Req: Ninguno\nPSI-108/ UVE 5\nPsicofisiología\n▪  Req: Ninguno\nPSI-109/ UVE 2\nTaller de Psicofisiología\n▪  Req: Ninguno\nCAR-109/ UVE 5\nEscritura Académica\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 2,
+              "page": 1,
+              "literal_text": "PSI-206/ UVE 5\nEpistemología de las \nCiencias Humanas y Sociales\n▪  Req:  PSI-106\nPSI-209/ UVE 5 \nPsicobiología y Neurociencia\n▪  Req: PSI-108\nPSI-207/ UVE 7\nPsicología del Desarrollo del \nAdolescente y Adulto (Taller)\n▪  Req: PSI-110\nCAE-204/ UVE 5\nAntropología Cultural de la \nIdentidad\n▪  Req: Ninguno\nPSI-210/ UVE 5\nPsicología Cognitiva\n▪  Req: PSI-107\nFHC-102/ UVE 5\nFormación Humano \nCristiana I\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 3,
+              "page": 1,
+              "literal_text": "PSI-303/ UVE 5\nPsicolingüística\n▪  Req: PSI-207\nPSI-304/ UVE 5\nTeorías de la Personalidad\n▪  Req:  PSI-207\nPSI-302/ UVE 5\nPsicología Social\n▪  Req:  PSI-206\nPSI-308/ UVE 7\nAnálisis de la Conducta \nAplicada (Taller)\n▪  Req: PSI-209/ PSI-210\nPSI-161/ UVE 5\nMetodologías de la \ninvestigación en Psicología\n▪  Req: Ninguno\nPSI-409/ UVE 5 \nÉtica, Responsabilidad Legal \ny Social\n▪  Req: Ninguno\nLibre I\nSEGUNDO CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 4,
+              "page": 1,
+              "literal_text": "PSI-405/ UVE 5\nPsicología de Grupos\n▪  Req: PSI-302\nPSI-407/ UVE 5\nPsicoanálisis\n▪  Req: PSI-304\nPSI-408/ UVE 5\nPsicopatología Psiquiátrica\n▪  Req: PSI-209/PSI-304\nPSI-410/ UVE 7\nPsicología Educativa y \ndel Aprendizaje\n▪  Req: PSI-308\nPSI-310/ UVE 5\n Psicoestadística\n▪  Req: PSI-161\nLibre II\nFHC-202/ UVE 5\nFormación Humano \nCristiana II\n▪  Req: FHC-102",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 5,
+              "page": 1,
+              "literal_text": "PSI-506/ UVE 7\nEvaluación Psicológica y \nTécnicas Proyectivas (Taller)\n▪  Req: PSI-407/ PSI-408\nPSI-509/ UVE 5\n Psicopatología \nPsicodinámica\n▪  Req: PSI-407/ PSI-408\nPSI-511/ UVE 7\nMedición en Psicología \n(Taller)\n▪  Req: PSI-409/ PSI-410\nPSI-510/ UVE 5\nPsicología y Salud\n▪  Req: PSI-408\nPSI-513/ UVE 5\n Investigación Cuantitativa\n▪  Req: PSI-310\nLibre III",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 6,
+              "page": 1,
+              "literal_text": "PSI-606/ UVE 5\nPsicosociología Aplicada\n▪  Req: PSI-405\nPSI-607/ UVE 7\nModelos de Psicodiagnóstico \n(Taller)                                \n▪  Req: PSI-506/ \nPSI-511/ PSI-509\nPSI-610/ UVE 5\nEducación Inclusiva\n▪  Req: PSI-410\nPSI-611/ UVE 5\n Investigación Cualitativa\n▪  Req: PSI-513\nFHC-302/ UVE 5\nFormación Humano \nCristiana III\n▪  Req: FHC-202\nPSI-608/ UVE 5\nPsicología del Trabajo y las \nOrganizaciones           \n▪  Req: PSI-405\nPSI-909/ UVE 5\nPsicología Forense\n▪  Req: Ninguno\nTERCER CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 7,
+              "page": 1,
+              "literal_text": "PSI-707/ UVE 7\nProyectos Sociales y \nComunitarios\n▪  Req: PSI-606\nPSI-709/ UVE 7 \nTerapia Sistémica\n▪  Req: PSI-408\nPSI–710/ UVE 5\nNeuropsicología\n▪  Req: PSI-408\nPSI-711/ UVE 5\n Intervención Psicoeducativa\n▪  Req: PSI-511\nPSI-708/ UVE 5\n Recursos Humanos y \nRelaciones Laborales\n▪  Req: PSI-608\nPSI-812/ UVE 6\nTerapia Cognitiva\n▪  Req: PSI-210/ PSI-209",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 8,
+              "page": 1,
+              "literal_text": "PSI-808/ UVE 7\n Intervención en Psicología \nComunitaria\n▪  Req: PSI-707\nPSI-809/ UVE 7\n Intervención en Clínica \nPsicoanalítica\n▪  Req: PSI-407/ PSI-509\nPSI-810/ UVE 7\nPrácticas Preprofesionales\n▪  Req: Asignaturas hasta\n 7mo semestre\nPSI-811/ UVE 15\nTaller de Grado  I\n▪  Req: PSI-513/ PSI-611",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 9,
+              "page": 1,
+              "literal_text": "PSI-910/ UVE 15\n Taller de Grado  II\n▪  Req: PSI-810/ PSI-811",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            }
+          ],
+          "limitations": []
+        }
+      ]
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-CIVIL",
+      "career_name": "Ingeniería Civil",
+      "university_id": "BO-UCB-LP",
+      "university_name": "Universidad Católica Boliviana San Pablo",
+      "campus": "Sede La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UCB-LP-CIV-MALLA-2026",
+          "title": "Ingeniería Civil — Malla Curricular, Gestión 2026",
+          "official_url": "https://lpz.ucb.edu.bo/wp-content/uploads/2025/11/CIV-2026.pdf",
+          "local_path": "data/raw/ucb_ingenieria_civil_2026.pdf",
+          "document_hash": "sha256:831af84148a2dae9a909f84318dffaa43fa55bada1ad0da7ef24d022d7c7e8d9",
+          "pages": 1,
+          "curriculum_pages": [
+            1
+          ],
+          "declared_version": "Gestión 2026",
+          "retrieved_at": "2026-09-28",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "PENDIENTE_REVISION",
+          "semester_transcriptions": [
+            {
+              "semester": 1,
+              "page": 1,
+              "literal_text": "QMC-111/ UVE 7 \nQuímica General I \ny Laboratorio \n▪  Req: Ninguno\nFIS-111/ UVE 7\nFísica I y Laboratorio\n▪  Req: Ninguno\nMAT-123/ UVE 5\nÁlgebra Lineal\n▪  Req: Ninguno\n \n \n \n \n \n \n \nMAT-132/ UVE 5\nCálculo I\n▪  Req: Ninguno\nCIV-111/ UVE 5\nDibujo Técnico \nComputarizado           \n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 2,
+              "page": 1,
+              "literal_text": "MAT-133/ UVE 5\nCálculo II\n▪  Req: MAT-132\nMAT-142/ UVE 5    \nProbabilidad y \nEstadística I                 \n▪  Req: MAT-132\n \n \n \n \n \n \n \n \nFIS-112/UVE 7\nFísica II y Laboratorio\n▪  Req: FIS-111\n \n \nCIV-110/ UVE 7\nTopografía                   \n▪  Req: CIV-111 \n \n \n \nCAR-109/ UVE 5\nEscritura Académica\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 3,
+              "page": 1,
+              "literal_text": "MAT-135/ UVE 5   \nEcuaciones \nDiferenciales Ordinarias\n▪  Req: MAT-133\nCIV-116/ UVE 5      \nComputación para \nIngeniería Civil\n▪  Req: MAT-142\n CIV-220/ UVE 5\nSistemas de \nInformación Geográfica\n▪  Req: CIV-110\nCIV-123/ UVE 5\nGeología\n▪  Req: QMC-111\nCIV-230/ UVE 7\nEstructuras Isostáticas   \n▪  Req: FIS-111/ MAT-133\nCIV-151/UVE 5\nTráfico y Vialidad\n▪  Req: MAT-142\n \n \nFHC-102/ UVE 5\nFormación Humano \nCristiana I\n▪  Req: Ninguno\nSEGUNDO CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 4,
+              "page": 1,
+              "literal_text": "MAT-262/ UVE 5\nAnálisis Numérico\n▪  Req: MAT-135\n \n \nCIV-221/ UVE 7\nMecánica de Suelos \ny Laboratorio\n▪  Req: CIV-123\nCIV-131/ UVE 7     \nResistencia de \nMateriales              \n▪  Req: CIV-230\nCIV-141/ UVE 5\nHidrología\n▪  Req: MAT-142\nCIV-240/ UVE 5\nHidráulica I\n▪  Req: FIS-112\n \n \n \n \n \n \nCIV-222/ UVE 5     \nMateriales de \nConstrucción              \n▪  Req: CIV-123",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 5,
+              "page": 1,
+              "literal_text": "CIV-223/UVE 7\nGeotécnia y Laboratorio \n▪  Req: CIV-221\nCIV-233/ UVE 6     \nEstructuras \nHiperestáticas I             \n▪  Req: CIV-131\nCIV-234/ UVE 5\nEstructuras de Madera   \n▪  Req: CIV-131\nCIV-244/ UVE 5\nHidráulica II\n▪  Req: CIV-240\nCIV-245/ UVE 5\nIngeniería Sanitaria I     \n▪  Req: CIV-240/ CIV-141\nCIV-250/ UVE 5\nCarreteras\n▪  Req: CIV-151/ CIV-110\n \n \nFHC-202/ UVE 5\nFormación Humano \nCristiana II\n▪  Req: FHC-102",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 6,
+              "page": 1,
+              "literal_text": "CIV-211/ UVE 6\nElementos Finitos\n▪  Req: MAT-262/ CIV-116\n \n \n \nCIV-235/ UVE 5     \nEstructuras \nHiperestáticas II          \n▪  Req: CIV-233\nCIV-236/ UVE 5\nEstructuras Metálicas     \n▪  Req: CIV-233\nCIV-246/ UVE 5\nIngeniería Sanitaria II    \n▪  Req: CIV-244/ CIV-245\nCIV-254/ UVE 7     \nPavimentos y \nLaboratorio               \n▪  Req: CIV-250\nCIV-162/ UVE 5     \nMetodología de la \nInvestigación         \n▪  Req: Ninguno\n \nUVE 5\nLibre I\n \nTERCER CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 7,
+              "page": 1,
+              "literal_text": "CIV-321/ UVE 7\nTecnología del \nHormigón y Laboratorio\n▪  Req: CIV-222\nCIV-331/ UVE 7\nEstructuras de \nHormigón Armado I\n▪  Req: CIV-235\nCIV-341/ UVE 6    \nInstalación en Edificios  \n▪  Req: CIV-246\nCIV-342/ UVE 5\nGestión Ambiental de \nProyectos Civiles\n▪  Req: CIV-246\nCIV-351/ UVE 5     \nMaquinaria de \nConstrucción             \n▪  Req: CIV-254",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 8,
+              "page": 1,
+              "literal_text": "CIV-336/ UVE 7\nEstructuras de \nHormigón Armado II\n▪  Req: CIV-331\nCIV-337/UVE 5\nHormigón Pretensado    \n▪  Req: CIV-331\nCIV-343/ UVE 7\nObras Hidráulicas\n▪  Req: CIV-246\n \nCIV-372/ UVE 6\nGestión de Proyectos\n▪  Req: CIV-342\nCIV-362/ UVE 5\nConstrucciones Civiles    \n▪  Req: CIV-342 \nFHC-302/ UVE 5\nFormación Humano \nCristiana III   \n▪  Req: FHC-202",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 9,
+              "page": 1,
+              "literal_text": "CIV-332/ UVE 5 \nFundaciones\n▪  Req: CIV-211/ CIV-235\nCIV-335/ UVE 5\nPuentes\n▪  Req: CIV-336/ CIV-337\n \nCIV-370/ UVE 5\nPráctica Preprofesional  \n▪  Req: CIV-336/ CIV-337\nCIV-361/UVE 5\nDirección y \nAdministración de Obras\n▪  Req: CIV-372\nUVE 5\nLibre II\n \n \n \n \n \n \n \n \nCIV-371/ UVE 15\nTaller de Grado I \n▪  Req: CIV- 372\n \n \n10\n \n \n \n \n \n \n \nCIV-373/ UVE 15\nTaller de Grado II           \n▪  Req: CIV-370/ CIV-371",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            }
+          ],
+          "limitations": []
+        }
+      ]
+    },
+    {
+      "career_id": "BO-UCB-LP-ING-AMBIENTAL",
+      "career_name": "Ingeniería Ambiental",
+      "university_id": "BO-UCB-LP",
+      "university_name": "Universidad Católica Boliviana San Pablo",
+      "campus": "Sede La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UCB-LP-IAM-MALLA-2026",
+          "title": "Ingeniería Ambiental — Malla Curricular, Gestión 2026",
+          "official_url": "https://lpz.ucb.edu.bo/wp-content/uploads/2025/12/IAM-2026.pdf",
+          "local_path": "data/raw/ucb_ingenieria_ambiental_2026.pdf",
+          "document_hash": "sha256:6f53c96223e67ba897f4684f0709150221d4fcc8680cb8adf39d7046f16a98e4",
+          "pages": 1,
+          "curriculum_pages": [
+            1
+          ],
+          "declared_version": "Gestión 2026",
+          "retrieved_at": "2026-09-28",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "PENDIENTE_REVISION",
+          "semester_transcriptions": [
+            {
+              "semester": 1,
+              "page": 1,
+              "literal_text": "IMA-111/ UVE 6\nBiología General y \nLaboratorio\n▪  Req: Ninguno\nMAT-132/ UVE 5\nCálculo I\n▪  Req: Ninguno\nQMC-111/ UVE 7\nQuímica General I \ny Laboratorio\n▪  Req: Ninguno\nIMA-112/ UVE 4\nDesarrollo Sostenible \ne Integral \n▪  Req: Ninguno\nIMA-113/ UVE 4\nEcología Integral \ny Gestión \nsociocomunitaria\n(Laudato Si)\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 2,
+              "page": 1,
+              "literal_text": "MAT-142/ UVE 5\nProbabilidad y \nEstadística I\n▪  Req: MAT-132\nMAT-133/ UVE 5\nCálculo II\n▪  Req: MAT-132\nQMC-112/ UVE 7\nQuímica General II y \nLaboratorio\n▪  Req: QMC-111\nIMA-113/ UVE 4\nEcología General\n▪  Req: IMA-111\nFIS-111/ UVE 7\nFísica I y Laboratorio\n▪  Req: Ninguno\nFHC-102/ UVE 5\nFormación Humano \nCristiana I\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 3,
+              "page": 1,
+              "literal_text": "MAT-135/ UVE 5\nEcuaciones \nDiferenciales \nOrdinarias\n▪  Req: MAT-133\nQMC-131/ UVE 7\n Química Física y \nLaboratorio\n▪  Req: QMC-112\nQMC-121/ UVE 7\nQuímica Orgánica I \ny Laboratorio\n▪  Req: QMC-112\nCIV-215/ UVE 5\nSistemas de \nInformación \nGeográfica\n▪  Req: Ninguno\nIMA-232/ UVE 4\nClimatología y \nCambio Climático\n▪  Req: IMA-113\nSEGUNDO CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 4,
+              "page": 1,
+              "literal_text": "IMA-231/ UVE 6\nQuímica Ambiental y \nLaboratorio\n▪  Req: QMC-121\nMAT-143/ UVE 5\nProbabilidad y \nEstadística II\n▪  Req: MAT-142\nIMA-115/ UVE 4\nLegislación Ambiental\n▪  Req: IMA-112\nCIV-141/ UVE 5\nHidrología\n▪  Req: CIV-215\nIMA-114/ UVE 6\nMicrobiología y \nLaboratorio\n▪  Req: IMA-111\nCIV-162/ UVE 5\nMetodología de la\nInvestigación\n▪  Req: Ninguno",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 5,
+              "page": 1,
+              "literal_text": "IMA-211/ UVE 6\nEdafología, \nGeomorfología y \nLaboratorio\n▪  Req: IMA-232\nIMA-212/ UVE 6\nProcesos Físicos \nQuímicos\n▪  Req: QMC-131\nIMA-224/ UVE 4\nEconomía Ambiental\n▪  Req: IMA-112\nIMA-225/ UVE 4\nGestión Integral de \nResiduos Sólidos\n▪  Req: IMA-115\nIMA-232/ UVE 4\nDinámica de \nContaminantes\n▪  Req: IMA-231\nFHC-202/ UVE 5\nFormación Humano \nCristiana II\n▪  Req: FHC - 140",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 6,
+              "page": 1,
+              "literal_text": "IMA-223/ UVE 4\nCalidad del Aire\n▪  Req: IMA-231\nIMA-226/ UVE 4\nEvaluación del \nImpacto Ambiental\n▪  Req: IMA-115\nIMA-342/ UVE 4\nEvaluación y Gestión \ndel Riesgo de \nDesastres\n▪  Req: CIV-141\nIMA-337/ UVE 4\nTratamiento de Aguas \nResiduales I\n▪  Req: IMA-212\nIMA-335/ UVE 4\nRestauración \nEcológica\n▪  Req: IMA-211\nUVE 5\nLibre I\nTERCER CICLO",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 7,
+              "page": 1,
+              "literal_text": "IMA-322/ UVE 4\nGestión Ambiental\n▪  Req: IMA-115\nIMA-343/ UVE 6\nProcesamiento de \nImágenes Satelitales\ny Modelación \nAmbiental\n▪  Req: CIV-215\nIMA-234/ UVE 4\nRemediación \nAmbiental\n▪  Req: IMA-232\nIMA-338/ UVE 4\nTratamiento de Aguas \nResiduales II\n▪  Req: IMA-337\nIMA-233/ UVE 4\nEcotoxicología\n▪  Req: IMA-232\nIND-330/ UVE 6\nPreparación y \nEvaluación de \nProyectos para \nIngeniería\n▪  IMA-226",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 8,
+              "page": 1,
+              "literal_text": "IMA-331/ UVE 4\nInstrumentos de \nRegulación Ambiental \n▪  Req: IMA-322\nIMA-326/ UVE 6\nSistemas Integrados \nde Gestión\n▪  Req: IMA-322\nIMA-351/ UVE 5\nPráctica \nPreprofesional\n▪  Req: IND-330\nFHC-302/ UVE 5\nFormación Humano \nCristiana III\n▪  Req: FHC-240\nUVE 5\nLibre II",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            },
+            {
+              "semester": 9,
+              "page": 1,
+              "literal_text": "IMA-336/ UVE 4\nAgroecología y \nSistemas Alimentarios\n▪  Req: IMA-335\nIMA-327/ UVE 4\nGestión Integral del \nAgua y Manejo de \nCuencas\n▪  Req: IMA-343\nIMA-328/ UVE 4\nPlanificación Integral \ndel Territorio\n▪  Req: IMA-343\nIMA-352/ UVE 15\nTaller de Grado I\n▪  Req: Asignaturas \nde 8vo semestre \naprobadas \n10\nIMA-353/ UVE 15\nTaller de Grado II\n▪  Req: IMA-352",
+              "status": "TRANSCRIPCION_LITERAL_PENDIENTE_ESTRUCTURACION"
+            }
+          ],
+          "limitations": []
+        }
+      ]
+    },
+    {
+      "career_id": "BO-UMSA-LP-ING-CIVIL",
+      "career_name": "Ingeniería Civil",
+      "university_id": "BO-UMSA-LP",
+      "university_name": "Universidad Mayor de San Andrés",
+      "campus": "La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UMSA-LP-CIV-PLAN-2023",
+          "title": "Carrera de Ingeniería Civil — Nuevo Plan de Estudios 2023",
+          "official_url": "https://ingenieriacivil.umsa.bo/documents/1745551/9098109/NUEVO%2BPLAN%2BDE%2BESTUDIOS%2B2023.pdf/c6b244fb-a759-ed77-3bd0-e8585934f6ae",
+          "local_path": "data/raw/umsa_ingenieria_civil_plan_2023.pdf",
+          "document_hash": "sha256:750f43d245f1e87a9314fd7a260ed19defe60d2385acc06a0ff4d07cb8b8e582",
+          "pages": 12,
+          "curriculum_pages": [
+            2,
+            3,
+            4,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "declared_version": "Plan 2023",
+          "retrieved_at": "2026-09-28",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "PENDIENTE_REVISION",
+          "semester_transcriptions": [],
+          "limitations": []
+        }
+      ]
+    },
+    {
+      "career_id": "BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL",
+      "career_name": "Ingenieria de Sistemas e Innovacion Digital",
+      "university_id": "BO-UNIFRANZ-LP",
+      "university_name": "Universidad Privada Franz Tamayo - UNIFRANZ",
+      "campus": "Sede La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UNIFRANZ-LP-SISID-MALLA-2026",
+          "title": "Ingenieria de Sistemas e Innovacion Digital - Malla Curricular",
+          "official_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/ingenieria-de-sistemas-e-innovacion-digital.pdf",
+          "local_path": "data/raw/unifranz_ingenieria_sistemas_innovacion_digital_2026.pdf",
+          "document_hash": "sha256:42997e9b1b9390087be054ab96ef9cc99e568f90dc1cd2faf4c90e1b4f59e72c",
+          "pages": 8,
+          "curriculum_pages": [
+            3,
+            4
+          ],
+          "declared_version": null,
+          "retrieved_at": "2026-10-01",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "VERIFICADO_VISUALMENTE",
+          "semester_transcriptions": [
+            {
+              "semester": 1,
+              "page": 3,
+              "subjects": [
+                "Fundamentos de Bases de Datos",
+                "Programación Fundamental",
+                "Ética y Sostenibilidad Empresarial",
+                "Fundamentos de Emprendimiento e Innovación",
+                "Matemática para Ingeniería",
+                "Proyecto Integrador I"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 2,
+              "page": 3,
+              "subjects": [
+                "Gestión de Bases de Datos",
+                "Programación en la Web",
+                "Sistemas Operativos",
+                "Transformación Digital en la Empresa",
+                "Matemáticas para la Modelización y Simulación Avanzada",
+                "Proyecto Integrador II"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 3,
+              "page": 3,
+              "subjects": [
+                "Electiva I: Liderazgo y Gestión de Proyectos Ágiles",
+                "Electiva II: Estructuras de Datos",
+                "Programación Avanzada",
+                "Fundamentos de Redes",
+                "Inteligencia Artificial Aplicada",
+                "Estrategias de Comunicación en Contextos Digitales",
+                "Proyecto Integrador III"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 4,
+              "page": 3,
+              "subjects": [
+                "Arquitectura y Desarrollo de Sistemas Avanzados",
+                "Programación de Dispositivos Móviles",
+                "Ingeniería de Software",
+                "Seguridad en Redes",
+                "Modelado y Construcción de Sistemas Complejos",
+                "Proyecto Integrador IV"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 5,
+              "page": 3,
+              "subjects": [
+                "Animación 3D",
+                "Aplicaciones Móviles con Tecnologías Emergentes",
+                "Sistemas Distribuidos",
+                "Fundamentos de IoT",
+                "Electiva III: Liderazgo y Ética Digital",
+                "Electiva IV: Lean Startup y Modelos de Negocio",
+                "Proyecto Integrador V"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 6,
+              "page": 4,
+              "subjects": [
+                "Ingeniería de Aplicaciones Web Avanzadas",
+                "Programación de Entornos Interactivos y Videojuegos",
+                "UI Design y Sistemas de Interfaces Visuales",
+                "Optimización de Procesos con IA",
+                "Metodología de la Investigación Aplicada",
+                "Proyecto Integrador VI"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 7,
+              "page": 4,
+              "subjects": [
+                "Desarrollo de Programación Inmersiva y Realidad Aumentada",
+                "Testing, Quality Assurance",
+                "Electiva V: Ethical Hacking y Pen Testing",
+                "Gestión de Infraestructuras de Red y Servidores",
+                "Electiva VI: Seguridad Avanzada en Redes y Sistemas",
+                "Gestión de Proyectos Tecnológicos",
+                "Proyecto Integrador VII"
+              ],
+              "mention_subjects": {},
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 8,
+              "page": 4,
+              "subjects": [
+                "Auditoría Informática",
+                "Práctica Profesional",
+                "Proyecto Integrador VIII"
+              ],
+              "mention_subjects": {
+                "Inteligencia Artificial y Ciencia de Datos": [
+                  "Modelado Predictivo y Minería de Datos",
+                  "Aprendizaje Profundo y Redes Neuronales",
+                  "Visualización Avanzada y Analítica Predictiva"
+                ],
+                "Ciberseguridad y Blockchain": [
+                  "Smart Contracts para la Ciberseguridad",
+                  "Fundamentos Avanzados de Blockchain y Seguridad Digital",
+                  "Evaluación y Regulación de Blockchain en Entornos Seguros"
+                ]
+              },
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            },
+            {
+              "semester": 9,
+              "page": 4,
+              "subjects": [
+                "Taller de Grado",
+                "Proyecto Integrador Final"
+              ],
+              "mention_subjects": {
+                "Inteligencia Artificial y Ciencia de Datos": [
+                  "Procesamiento del Lenguaje Natural y Análisis de Sentimientos",
+                  "Ética y Gobernanza en Ciencia de Datos",
+                  "Sistemas Distribuidos para Big Data e Inteligencia Artificial"
+                ],
+                "Ciberseguridad y Blockchain": [
+                  "Innovación en Ciberseguridad a Través de Tecnologías Descentralizadas",
+                  "Integración de Soluciones Blockchain en Sistemas Legados",
+                  "Respuesta a Incidentes y Forense Digital"
+                ]
+              },
+              "status": "TRANSCRIPCION_VISUAL_VERIFICADA"
+            }
+          ],
+          "limitations": [
+            "La gestión no se deduce del nombre del archivo ni de la fecha de descarga.",
+            "La codificación de fuentes dificulta extraer texto fiable; las asignaturas se contrastaron visualmente con las páginas 3 y 4 del PDF local de hash verificado.",
+            "En octavo y noveno semestre se elige una de dos menciones; las materias de ambas no son obligatorias simultáneamente."
+          ]
+        }
+      ]
+    },
+    {
+      "career_id": "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES",
+      "career_name": "Ingenieria de Sistemas Computacionales",
+      "university_id": "BO-UPB-LP",
+      "university_name": "Universidad Privada Boliviana - UPB",
+      "campus": "Campus La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "DOCUMENTO_OFICIAL_LOCAL_DISPONIBLE",
+      "documents": [
+        {
+          "source_id": "BO-UPB-LP-SISC-MALLA-2026",
+          "title": "Ingenieria de Sistemas Computacionales - Malla Curricular",
+          "official_url": "https://drive.google.com/file/d/1-L3bgVEVb5RkkIMVGd04BXybMeNnIBa7/view?usp=sharing",
+          "local_path": "data/raw/upb_ingenieria_sistemas_computacionales_2026.pdf",
+          "document_hash": "sha256:705b13e1f02dce35edfe3e2d4a9dd82a9eec6d0621e6a94681651d30b9e6f971",
+          "pages": 2,
+          "curriculum_pages": [
+            1
+          ],
+          "declared_version": null,
+          "retrieved_at": "2026-10-01",
+          "document_integrity": "HASH_VERIFICADO_CON_MANIFIESTO",
+          "visual_review": "TABLAS_CURRICULARES_CONTRASTADAS",
+          "structured_subjects_status": "PENDIENTE_REVISION",
+          "semester_transcriptions": [],
+          "limitations": [
+            "La gestión no se deduce del nombre del archivo ni de la fecha de descarga."
+          ]
+        }
+      ]
+    },
+    {
+      "career_id": "BO-EMI-LP-ING-SISTEMAS",
+      "career_name": "Ingeniería de Sistemas",
+      "university_id": "BO-EMI-LP",
+      "university_name": "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre",
+      "campus": "Unidad Academica La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "MALLA_PENDIENTE_LOCALIZACION_Y_REVISION",
+      "documents": []
+    },
+    {
+      "career_id": "BO-UPEA-EA-ING-SISTEMAS",
+      "career_name": "Ingeniería de Sistemas",
+      "university_id": "BO-UPEA-EA",
+      "university_name": "Universidad Pública de El Alto",
+      "campus": "El Alto",
+      "city": "El Alto",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "MALLA_PENDIENTE_LOCALIZACION_Y_REVISION",
+      "documents": []
+    },
+    {
+      "career_id": "BO-UPEA-EA-ING-CIVIL",
+      "career_name": "Ingeniería Civil",
+      "university_id": "BO-UPEA-EA",
+      "university_name": "Universidad Pública de El Alto",
+      "campus": "El Alto",
+      "city": "El Alto",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "MALLA_PENDIENTE_LOCALIZACION_Y_REVISION",
+      "documents": []
+    },
+    {
+      "career_id": "BO-UPEA-EA-PSICOLOGIA",
+      "career_name": "Psicología",
+      "university_id": "BO-UPEA-EA",
+      "university_name": "Universidad Pública de El Alto",
+      "campus": "El Alto",
+      "city": "El Alto",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "MALLA_PENDIENTE_LOCALIZACION_Y_REVISION",
+      "documents": []
+    },
+    {
+      "career_id": "BO-UNIFRANZ-LP-PSI",
+      "career_name": "Psicología",
+      "university_id": "BO-UNIFRANZ-LP",
+      "university_name": "Universidad Privada Franz Tamayo - UNIFRANZ",
+      "campus": "Sede La Paz",
+      "city": "La Paz",
+      "campus_basis": "VINCULO_DEL_CATALOGO_PREEXISTENTE_NO_REVERIFICADO",
+      "status": "MALLA_PENDIENTE_LOCALIZACION_Y_REVISION",
+      "documents": []
+    }
+  ]
+}

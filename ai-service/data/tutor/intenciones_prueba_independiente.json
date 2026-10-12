@@ -1,0 +1,22 @@
+{
+  "version":"1.0",
+  "provenance":"Frases de prueba reservadas tras cerrar reglas; no se incorporan al entrenamiento ni se ajustan umbrales con ellas",
+  "examples":[
+    {"text":"Hola, un gusto saludarte","intent":"SOCIAL"},
+    {"text":"Buenas noches asistente","intent":"SOCIAL"},
+    {"text":"Gracias, eso era todo","intent":"SOCIAL"},
+    {"text":"Adiós hasta la próxima","intent":"SOCIAL"},
+    {"text":"¿Me recuerdas cuando vuelva otro día?","intent":"CAPABILITIES"},
+    {"text":"Dime qué puedes hacer aquí","intent":"CAPABILITIES"},
+    {"text":"¿Guardas datos de otras conversaciones?","intent":"CAPABILITIES"},
+    {"text":"¿Cómo puedes ayudar al administrador?","intent":"CAPABILITIES"},
+    {"text":"Quiero las asignaturas de semestre 4 en Derecho UNIFRANZ","intent":"EVIDENCE_GROUNDED"},
+    {"text":"Busca requisitos de matrícula en UMSA","intent":"EVIDENCE_GROUNDED"},
+    {"text":"¿En qué universidad puedo estudiar Turismo?","intent":"EVIDENCE_GROUNDED"},
+    {"text":"Compara becas y costos de UNIFRANZ y UPB","intent":"EVIDENCE_GROUNDED"},
+    {"text":"Necesito entender una ecuación diferencial","intent":"GENERAL_PEDAGOGICAL"},
+    {"text":"Quiero organizar ejercicios de lectura","intent":"GENERAL_PEDAGOGICAL"},
+    {"text":"Enséñame a resolver un problema de proporciones","intent":"GENERAL_PEDAGOGICAL"},
+    {"text":"Ayúdame a repasar química","intent":"GENERAL_PEDAGOGICAL"}
+  ]
+}

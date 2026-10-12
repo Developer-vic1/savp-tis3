@@ -30,6 +30,7 @@ def _render_page(page: pymupdf.Page, dpi: int = OCR_DPI) -> Image.Image:
 def extract_pdf(
     path: Path,
     source_id: str,
+    max_pages: int | None = None,
 ) -> DocumentExtraction:
     import pymupdf
 
@@ -37,8 +38,16 @@ def extract_pdf(
     digital_pages: list[int] = []
     ocr_pages: list[int] = []
     warnings: list[str] = []
+    if max_pages is not None and max_pages < 1:
+        raise ValueError("max_pages debe ser mayor que cero")
     with pymupdf.open(path) as document:  # type: ignore[no-untyped-call]
         for index, page in enumerate(document):
+            if max_pages is not None and index >= max_pages:
+                warnings.append(
+                    f"Se revisaron {max_pages} de {document.page_count} páginas; "
+                    "el resto requiere otra revisión documental."
+                )
+                break
             page_number = index + 1
             digital_text = _clean_text(page.get_text("text"))
             alphanumeric_count = sum(character.isalnum() for character in digital_text)
@@ -77,7 +86,9 @@ def extract_html(path: Path, source_id: str) -> DocumentExtraction:
 
     def flush() -> None:
         if not paragraphs:
-            return
+            if section is None:
+                return
+            paragraphs.append(section)
         segments.append(
             ExtractedSegment(
                 text=_clean_text("\n".join(paragraphs)),
@@ -87,13 +98,20 @@ def extract_html(path: Path, source_id: str) -> DocumentExtraction:
         )
         paragraphs.clear()
 
-    for node in root.find_all(["h1", "h2", "h3", "h4", "p", "li"]):
+    headings = {"h1", "h2", "h3", "h4", "h5", "h6"}
+    blocks = [*sorted(headings), "p", "li", "div"]
+    for node in root.find_all(blocks):
+        if node.name == "div" and (
+            node.find(blocks) is not None or node.find_parent(["p", "li"]) is not None
+        ):
+            continue
         text = _clean_text(node.get_text(" ", strip=True))
         if not text:
             continue
-        if node.name in {"h1", "h2", "h3", "h4"}:
+        if node.name in headings:
             flush()
             if text.casefold() in stop_sections:
+                section = None
                 break
             section = text
             continue

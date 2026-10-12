@@ -1,6 +1,6 @@
 {
-  "manifest_version": "2.2.0",
-  "retrieved_at": "2026-10-01",
+  "manifest_version": "2.3.0",
+  "retrieved_at": "2026-10-08",
   "default_evidence_layer": "CORPUS_VALIDADO",
   "governance_policy": "OFFICIAL_SOURCES_ONLY_WITH_EXPLICIT_AUTHORITY_TIER",
   "sources": [
@@ -490,6 +490,37 @@
       "evidence_layer": "CORPUS_VALIDADO",
       "limitations": [
         "El archivo se sirve desde Google Drive, pero el enlace fue capturado dentro del snapshot oficial UPB; no documenta notas escolares minimas ni garantias de aprobacion."
+      ]
+    },
+    {
+      "source_id": "KGI-76078B069EFC",
+      "institution": "Universidad Privada Franz Tamayo - UNIFRANZ, sedes publicadas",
+      "title": "Psicología",
+      "source_type": "OFFICIAL_CAREER_HTML",
+      "url": "https://unifranz.edu.bo/carreras/psicologia/",
+      "official": true,
+      "publication_date": null,
+      "retrieved_at": "2026-10-08",
+      "valid_from": null,
+      "valid_until": null,
+      "document_hash": "sha256:541f1e56aab02ff523d2a75eef3c6fe17c0d718f3cc60160bede3d499d6d720d",
+      "sha256": "541f1e56aab02ff523d2a75eef3c6fe17c0d718f3cc60160bede3d499d6d720d",
+      "section": null,
+      "page": null,
+      "version": "Consulta 08/10/2026; edición sin declarar",
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "local_path": "data/raw/unifranz_psicologia_perfil_20261008.html",
+      "country": "Bolivia",
+      "authority_tier": "TIER_2_OFFICIAL_UNIVERSITY_CURRICULUM",
+      "scope": "Perfil, cuatro años y sedes de Psicología; malla y aranceles requieren otra revisión.",
+      "verification_status": "VALID",
+      "snapshot_timestamp": "2026-10-08T17:59:37.497265+00:00",
+      "final_url": "https://unifranz.edu.bo/carreras/psicologia/",
+      "content_type": "text/html",
+      "limitations": [
+        "No declara fecha de publicación ni aranceles.",
+        "La malla PDF enlazada sigue en revisión y no acredita materias en este perfil.",
+        "La aplicación y las condiciones de ingreso deben confirmarse con cada sede."
       ]
     }
   ]

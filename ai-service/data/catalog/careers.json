@@ -1,6 +1,6 @@
 {
-  "catalog_version": "bo-careers-1.1.0",
-  "generated_at": "2026-10-01",
+  "catalog_version": "bo-careers-1.3.0",
+  "generated_at": "2026-10-08",
   "scope_note": "Catalogo institucional trazable. Recommendation V2 solo usa carreras con CORPUS_VALIDADO; las fuentes oficiales externas se muestran separadas.",
   "universities": [
     {
@@ -32,6 +32,12 @@
       "name": "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre",
       "campus": "Unidad Academica La Paz",
       "city": "La Paz"
+    },
+    {
+      "university_id": "BO-UPEA-EA",
+      "name": "Universidad Pública de El Alto",
+      "campus": "El Alto",
+      "city": "El Alto"
     }
   ],
   "careers": [
@@ -39,7 +45,10 @@
       "career_id": "BO-UCB-LP-ING-SISTEMAS",
       "university_id": "BO-UCB-LP",
       "name": "Ingeniería de Sistemas",
-      "aliases": ["Sistemas", "Ingeniería de Sistemas Informáticos"],
+      "aliases": [
+        "Sistemas",
+        "Ingeniería de Sistemas Informáticos"
+      ],
       "degree": "Licenciatura",
       "duration_semesters": 9,
       "valid_from": "2026",
@@ -62,13 +71,18 @@
         "Ingeniería de Sistemas",
         "Pensamiento Crítico"
       ],
-      "source_ids": ["BO-UCB-LP-SIS-MALLA-2026", "BO-UCB-LP-SIS-PROFILE-2026"]
+      "source_ids": [
+        "BO-UCB-LP-SIS-MALLA-2026",
+        "BO-UCB-LP-SIS-PROFILE-2026"
+      ]
     },
     {
       "career_id": "BO-UCB-LP-PSICOLOGIA",
       "university_id": "BO-UCB-LP",
       "name": "Psicología",
-      "aliases": ["Carrera de Psicología"],
+      "aliases": [
+        "Carrera de Psicología"
+      ],
       "degree": "Licenciatura",
       "duration_semesters": 9,
       "valid_from": "2026",
@@ -91,13 +105,18 @@
         "Psicofisiología",
         "Escritura Académica"
       ],
-      "source_ids": ["BO-UCB-LP-PSI-MALLA-2026", "BO-UCB-LP-PSI-PROFILE-2026"]
+      "source_ids": [
+        "BO-UCB-LP-PSI-MALLA-2026",
+        "BO-UCB-LP-PSI-PROFILE-2026"
+      ]
     },
     {
       "career_id": "BO-UCB-LP-ING-CIVIL",
       "university_id": "BO-UCB-LP",
       "name": "Ingeniería Civil",
-      "aliases": ["Civil"],
+      "aliases": [
+        "Civil"
+      ],
       "degree": "Licenciatura",
       "duration_semesters": 10,
       "valid_from": "2026",
@@ -121,13 +140,18 @@
         "Cálculo I",
         "Dibujo Técnico Computarizado"
       ],
-      "source_ids": ["BO-UCB-LP-CIV-MALLA-2026", "BO-UCB-LP-CIV-PROFILE-2026"]
+      "source_ids": [
+        "BO-UCB-LP-CIV-MALLA-2026",
+        "BO-UCB-LP-CIV-PROFILE-2026"
+      ]
     },
     {
       "career_id": "BO-UCB-LP-ING-AMBIENTAL",
       "university_id": "BO-UCB-LP",
       "name": "Ingeniería Ambiental",
-      "aliases": ["Ambiental"],
+      "aliases": [
+        "Ambiental"
+      ],
       "degree": "Licenciatura",
       "duration_semesters": 10,
       "valid_from": "2026",
@@ -150,13 +174,18 @@
         "Desarrollo Sostenible e Integral",
         "Ecología Integral y Gestión Sociocomunitaria"
       ],
-      "source_ids": ["BO-UCB-LP-IAM-MALLA-2026", "BO-UCB-LP-IAM-PROFILE-2026"]
+      "source_ids": [
+        "BO-UCB-LP-IAM-MALLA-2026",
+        "BO-UCB-LP-IAM-PROFILE-2026"
+      ]
     },
     {
       "career_id": "BO-UMSA-LP-ING-CIVIL",
       "university_id": "BO-UMSA-LP",
       "name": "Ingeniería Civil",
-      "aliases": ["Civil"],
+      "aliases": [
+        "Civil"
+      ],
       "degree": "Licenciatura",
       "duration_semesters": 10,
       "valid_from": "2023",
@@ -179,13 +208,18 @@
         "Diseño Técnico I",
         "Redacción y Preparación de Informes"
       ],
-      "source_ids": ["BO-UMSA-LP-CIV-PLAN-2023"]
+      "source_ids": [
+        "BO-UMSA-LP-CIV-PLAN-2023"
+      ]
     },
     {
       "career_id": "BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL",
       "university_id": "BO-UNIFRANZ-LP",
       "name": "Ingenieria de Sistemas e Innovacion Digital",
-      "aliases": ["Sistemas", "Innovacion Digital"],
+      "aliases": [
+        "Sistemas",
+        "Innovacion Digital"
+      ],
       "degree": null,
       "duration_semesters": null,
       "duration_text": "4 anos y medio",
@@ -214,7 +248,10 @@
       "career_id": "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES",
       "university_id": "BO-UPB-LP",
       "name": "Ingenieria de Sistemas Computacionales",
-      "aliases": ["Sistemas Computacionales", "Sistemas"],
+      "aliases": [
+        "Sistemas Computacionales",
+        "Sistemas"
+      ],
       "degree": null,
       "duration_semesters": 9,
       "duration_text": "9 semestres",
@@ -246,8 +283,10 @@
     {
       "career_id": "BO-EMI-LP-ING-SISTEMAS",
       "university_id": "BO-EMI-LP",
-      "name": "Ingenieria de Sistemas",
-      "aliases": ["Sistemas"],
+      "name": "Ingeniería de Sistemas",
+      "aliases": [
+        "Sistemas"
+      ],
       "degree": null,
       "duration_semesters": null,
       "duration_text": null,
@@ -259,9 +298,113 @@
       "professional_profile": null,
       "official_knowledge_areas": [],
       "initial_subjects": [],
-      "source_ids": ["BO-EMI-LP-SIS-PROFILE-EXTERNAL-2026"],
+      "source_ids": [
+        "BO-EMI-LP-SIS-PROFILE-EXTERNAL-2026"
+      ],
       "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
       "recommendation_eligible": false
+    },
+    {
+      "career_id": "BO-UPEA-EA-ING-SISTEMAS",
+      "university_id": "BO-UPEA-EA",
+      "name": "Ingeniería de Sistemas",
+      "aliases": [
+        "Sistemas"
+      ],
+      "degree": null,
+      "duration_semesters": null,
+      "duration_text": null,
+      "valid_from": null,
+      "valid_until": null,
+      "status": "EXTERNAL_INFORMATION_ONLY",
+      "entry_profile": null,
+      "entry_profile_status": "SOURCE_UNSNAPSHOTTED",
+      "professional_profile": null,
+      "official_knowledge_areas": [],
+      "initial_subjects": [],
+      "source_ids": [
+        "BO-UPEA-EA-SIS-PROFILE-EXTERNAL-2026"
+      ],
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "recommendation_eligible": false
+    },
+    {
+      "career_id": "BO-UPEA-EA-ING-CIVIL",
+      "university_id": "BO-UPEA-EA",
+      "name": "Ingeniería Civil",
+      "aliases": [
+        "Civil"
+      ],
+      "degree": null,
+      "duration_semesters": null,
+      "duration_text": null,
+      "valid_from": null,
+      "valid_until": null,
+      "status": "EXTERNAL_INFORMATION_ONLY",
+      "entry_profile": null,
+      "entry_profile_status": "SOURCE_UNSNAPSHOTTED",
+      "professional_profile": null,
+      "official_knowledge_areas": [],
+      "initial_subjects": [],
+      "source_ids": [
+        "BO-UPEA-EA-CIV-PROFILE-EXTERNAL-2026"
+      ],
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "recommendation_eligible": false
+    },
+    {
+      "career_id": "BO-UPEA-EA-PSICOLOGIA",
+      "university_id": "BO-UPEA-EA",
+      "name": "Psicología",
+      "aliases": [
+        "Carrera de Psicología"
+      ],
+      "degree": null,
+      "duration_semesters": null,
+      "duration_text": null,
+      "valid_from": null,
+      "valid_until": null,
+      "status": "EXTERNAL_INFORMATION_ONLY",
+      "entry_profile": null,
+      "entry_profile_status": "SOURCE_UNSNAPSHOTTED",
+      "professional_profile": null,
+      "official_knowledge_areas": [],
+      "initial_subjects": [],
+      "source_ids": [
+        "BO-UPEA-EA-PSI-PROFILE-EXTERNAL-2026"
+      ],
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "recommendation_eligible": false
+    },
+    {
+      "career_id": "BO-UNIFRANZ-LP-PSI",
+      "university_id": "BO-UNIFRANZ-LP",
+      "name": "Psicología",
+      "aliases": [
+        "Psicologia"
+      ],
+      "degree": null,
+      "duration_semesters": null,
+      "duration_text": "4 años publicados en la ficha; confirmar condiciones de la sede",
+      "valid_from": null,
+      "valid_until": null,
+      "status": "ACTIVE_AT_RETRIEVAL",
+      "entry_profile": null,
+      "entry_profile_status": "NOT_PUBLISHED_IN_REVIEWED_SOURCES",
+      "professional_profile": "Formación para comprender y atender problemas psicológicos y sociales mediante evaluación, intervención e investigación, con competencias prácticas, digitales y éticas.",
+      "official_knowledge_areas": [
+        "Procesos cognitivos, neurociencia y evaluación psicológica",
+        "Psicología clínica y de salud",
+        "Psicología social, organizacional y del bienestar",
+        "Psicología educativa, desarrollo humano y aprendizaje",
+        "Ciencia psicológica, tecnología e investigación aplicada"
+      ],
+      "initial_subjects": [],
+      "source_ids": [
+        "KGI-76078B069EFC"
+      ],
+      "evidence_layer": "CORPUS_VALIDADO",
+      "recommendation_eligible": true
     }
   ]
 }

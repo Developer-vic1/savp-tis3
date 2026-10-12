@@ -35,6 +35,7 @@ from app.recommendation.evidence_models import (
     EvidenceQuality,
     EvidenceRelation,
     MatchBasis,
+    OccupationalInterestReference,
     PreparationEvidence,
     PreparationEvidenceProfile,
     RecommendationV2Result,
@@ -415,6 +416,16 @@ def _vocational_relation(
         evidence=evidence,
         sources=_source_references(source_ids),
         limitations=limitations,
+        occupational_references=[
+            OccupationalInterestReference(
+                occupation_id=relation.occupation_id,
+                occupation_title=relation.occupation_title,
+                holland_code=relation.riasec_occupational_profile,
+                evidence_status=relation.evidence_status,
+                sources=_source_references(relation.source_ids),
+            )
+            for relation in comparable
+        ],
     )
 
 

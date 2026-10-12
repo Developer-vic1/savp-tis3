@@ -49,6 +49,14 @@ def tokenize(value: str) -> list[str]:
     ]
 
 
+def _fold_institution(value: str) -> str:
+    return "".join(
+        character
+        for character in unicodedata.normalize("NFD", value.casefold())
+        if unicodedata.category(character) != "Mn"
+    )
+
+
 def _searchable_text(chunk: KnowledgeChunk) -> str:
     return " ".join((chunk.title, chunk.section or "", chunk.text))
 
@@ -125,7 +133,10 @@ class LexicalRetriever:
             for score, chunk in zip(self.lexical_index.scores(query), self.chunks, strict=True)
             if score > 0
             and (not official_only or chunk.official)
-            and (not institution or institution.casefold() in chunk.institution.casefold())
+            and (
+                not institution
+                or _fold_institution(institution) in _fold_institution(chunk.institution)
+            )
             and (not source_type or source_type.casefold() == chunk.source_type.casefold())
         ]
         candidates.sort(key=lambda item: (-item[0], item[1].chunk_id))

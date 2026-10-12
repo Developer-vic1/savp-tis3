@@ -49,6 +49,27 @@ def _candidate(**overrides: object) -> dict[str, object]:
     } | overrides
 
 
+def test_direct_api_cannot_propose_a_portal_as_curricular_evidence(client, monkeypatch, tmp_path):
+    from app.knowledge import governance
+
+    registry = tmp_path / "fuentes.json"
+    monkeypatch.setattr(governance, "SOURCE_INTAKE_REGISTRY", registry)
+    candidate = _candidate(
+        url="https://academico.udabol.edu.bo/estudiante/solicitud/mostrar",
+        declared_institution="UDABOL",
+    )
+    response = client.post("/api/v1/knowledge/governance/analyze", json=candidate)
+    assert response.status_code == 200
+    assert response.json()["can_submit"] is False
+    response = client.post(
+        "/api/v1/knowledge/governance/proposals", json=candidate | {"submitted_by_role": "Director"}
+    )
+    assert response.status_code == 200
+    assert response.json()["accepted"] is False
+    assert response.json()["proposal"] is None
+    assert not registry.exists()
+
+
 def test_governance_exposes_only_staged_source_workflow(client: TestClient) -> None:
     response = client.get("/api/v1/knowledge/governance")
 
@@ -57,6 +78,11 @@ def test_governance_exposes_only_staged_source_workflow(client: TestClient) -> N
     assert body["source_count"] >= 1
     assert "ucb.edu.bo" in {item["domain"] for item in body["trusted_universities"]}
     assert "instantánea local" in " ".join(body["workflow"])
+    malla = next(
+        item for item in body["sources"] if item["source_id"] == "BO-UCB-LP-SIS-MALLA-2026"
+    )
+    assert malla["source_type"] == "OFFICIAL_CURRICULUM_PDF"
+    assert malla["authority_tier"].startswith("TIER_2_OFFICIAL_UNIVERSITY")
 
 
 def test_governance_rejects_california_source_without_creating_proposal(

@@ -132,7 +132,7 @@ def test_tutor_answers_from_retrieved_sources(
     assert body["insufficient_evidence"] is False
     assert "Álgebra Lineal" in body["answer"]
     assert body["sources"][0]["source_id"] == "BO-UCB-LP-SIS-MALLA-2026"
-    assert body["provider_version"] == "structured-answer-v3.0.0"
+    assert body["provider_version"] == "structured-answer-v3.2.0"
     assert "curso 6to" in body["answer"]
     assert "dato-no-autorizado" not in body["answer"]
 

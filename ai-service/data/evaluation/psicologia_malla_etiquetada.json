@@ -1,0 +1,941 @@
+{
+  "schema_version": "1.0",
+  "institution": "UNIFRANZ",
+  "career": "Psicología",
+  "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+  "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+  "reviewed_at": "2026-10-09",
+  "review_method": "Inspección visual humana de renders completos de las páginas 3 y 4 y cotejo de coordenadas de bloques digitales.",
+  "scope": "Referencia de evaluación; no aprobación ni publicación curricular.",
+  "expected_total": 54,
+  "semester_counts": {
+    "1": 6,
+    "2": 6,
+    "3": 7,
+    "4": 6,
+    "5": 7,
+    "6": 9,
+    "7": 10,
+    "8": 3
+  },
+  "subjects": [
+    {
+      "name": "Fundamentos de Neurocognición",
+      "semester": 1,
+      "page": 3,
+      "bbox": [
+        104.56,
+        131.56,
+        179.27,
+        155.23
+      ],
+      "evidence_text": "Fundamentos de \nNeurocognición",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Introducción a la Psicología",
+      "semester": 1,
+      "page": 3,
+      "bbox": [
+        104.56,
+        160.06,
+        221.25,
+        173.73
+      ],
+      "evidence_text": "Introducción a la Psicología",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Ética y Responsabilidad Social",
+      "semester": 1,
+      "page": 3,
+      "bbox": [
+        104.56,
+        178.56,
+        234.87,
+        192.23
+      ],
+      "evidence_text": "Ética y Responsabilidad Social",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Desarrollo Humano",
+      "semester": 1,
+      "page": 3,
+      "bbox": [
+        104.56,
+        197.06,
+        187.82,
+        210.73
+      ],
+      "evidence_text": "Desarrollo Humano",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Estadística y Análisis de Datos en Psicología",
+      "semester": 1,
+      "page": 3,
+      "bbox": [
+        104.56,
+        215.56,
+        207.71,
+        239.23
+      ],
+      "evidence_text": "Estadística y Análisis de \nDatos en Psicología",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador I",
+      "semester": 1,
+      "page": 3,
+      "bbox": [
+        104.56,
+        244.01,
+        206.43,
+        258.01
+      ],
+      "evidence_text": "Proyecto Integrador I",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Instrumentos Psicométricos y Proyectivos",
+      "semester": 2,
+      "page": 3,
+      "bbox": [
+        104.56,
+        321.03,
+        225.97,
+        344.7
+      ],
+      "evidence_text": "Instrumentos Psicométricos \ny Proyectivos",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Teorías de la Personalidad",
+      "semester": 2,
+      "page": 3,
+      "bbox": [
+        104.56,
+        349.53,
+        216.63,
+        363.2
+      ],
+      "evidence_text": "Teorías de la Personalidad",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Realidad Psicosocial y Diversidad Cultural",
+      "semester": 2,
+      "page": 3,
+      "bbox": [
+        104.56,
+        368.03,
+        201.27,
+        391.7
+      ],
+      "evidence_text": "Realidad Psicosocial y \nDiversidad Cultural",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología del Aprendizaje",
+      "semester": 2,
+      "page": 3,
+      "bbox": [
+        104.56,
+        396.53,
+        217.91,
+        410.2
+      ],
+      "evidence_text": "Psicología del Aprendizaje",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Metodología de la Investigación",
+      "semester": 2,
+      "page": 3,
+      "bbox": [
+        104.56,
+        415.03,
+        239.83,
+        428.7
+      ],
+      "evidence_text": "Metodología de la Investigación",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador II",
+      "semester": 2,
+      "page": 3,
+      "bbox": [
+        104.56,
+        433.48,
+        209.43,
+        447.48
+      ],
+      "evidence_text": "Proyecto Integrador II",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Neuropsicología Clínica",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        106.31,
+        435.16,
+        119.98
+      ],
+      "evidence_text": "Neuropsicología Clínica",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología Social e Intervención en Grupos Vulnerables",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        124.81,
+        436.03,
+        158.48
+      ],
+      "evidence_text": "Psicología Social e \nIntervención en Grupos \nVulnerables",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Electiva II (Psicogerontología)",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        163.31,
+        417.84,
+        186.98
+      ],
+      "evidence_text": "Electiva II \n(Psicogerontología)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Electiva I (Psicología del Deporte)",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        191.81,
+        436.81,
+        215.48
+      ],
+      "evidence_text": "Electiva I  \n(Psicología del Deporte)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Estrategias de Comunicación en Contextos Digitales",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        220.31,
+        461.1,
+        243.98
+      ],
+      "evidence_text": "Estrategias de Comunicación \nen Contextos Digitales",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Inteligencia Artificial Aplicada",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        248.81,
+        459.66,
+        262.48
+      ],
+      "evidence_text": ".SYJQNLJSHNF\u0005&WYNȁHNFQ\u0005&UQNHFIF",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador III",
+      "semester": 3,
+      "page": 3,
+      "bbox": [
+        333.78,
+        267.26,
+        441.65,
+        281.26
+      ],
+      "evidence_text": "Proyecto Integrador III",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicopatología",
+      "semester": 4,
+      "page": 3,
+      "bbox": [
+        333.78,
+        344.49,
+        397.76,
+        358.16
+      ],
+      "evidence_text": "Psicopatología",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Enfoque Cognitivo Conductual",
+      "semester": 4,
+      "page": 3,
+      "bbox": [
+        333.78,
+        362.99,
+        415.45,
+        386.66
+      ],
+      "evidence_text": "Enfoque Cognitivo \nConductual",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Enfoque Sistémico en Psicología",
+      "semester": 4,
+      "page": 3,
+      "bbox": [
+        333.78,
+        391.49,
+        418.43,
+        415.16
+      ],
+      "evidence_text": "Enfoque Sistémico  \nen Psicología",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Gestión de Conflictos y Manejo de Crisis",
+      "semester": 4,
+      "page": 3,
+      "bbox": [
+        333.78,
+        419.99,
+        434.5,
+        443.66
+      ],
+      "evidence_text": ",JXYN·S\u0005IJ\u0005(TSȂNHYTX\u0005^ \nManejo de Crisis",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología Educativa",
+      "semester": 4,
+      "page": 3,
+      "bbox": [
+        333.78,
+        448.49,
+        422.47,
+        462.16
+      ],
+      "evidence_text": "Psicología Educativa",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador IV",
+      "semester": 4,
+      "page": 3,
+      "bbox": [
+        333.78,
+        466.94,
+        442.9,
+        480.94
+      ],
+      "evidence_text": "Proyecto Integrador IV",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Clínica Psicoanalítica",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        68.81,
+        161.43,
+        82.48
+      ],
+      "evidence_text": "Clínica Psicoanalítica",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Técnicas en Psicología Clínica",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        87.31,
+        199.73,
+        100.98
+      ],
+      "evidence_text": "Técnicas en Psicología Clínica",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología Organizacional",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        105.81,
+        182.49,
+        119.48
+      ],
+      "evidence_text": "Psicología Organizacional",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Electiva III (Psicología Política)",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        124.31,
+        154.83,
+        147.98
+      ],
+      "evidence_text": "Electiva III  \n(Psicología Política)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Electiva IV (Educación Inclusiva en Psicología)",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        152.81,
+        170.41,
+        176.48
+      ],
+      "evidence_text": "Electiva IV (Educación  \nInclusiva en Psicología)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Investigación e Intervenciones Contemporáneas en Psicología",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        181.31,
+        206.27,
+        204.98
+      ],
+      "evidence_text": "Investigación e Intervenciones \nContemporáneas en Psicología",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador V",
+      "semester": 5,
+      "page": 4,
+      "bbox": [
+        71.81,
+        209.76,
+        177.93,
+        223.76
+      ],
+      "evidence_text": "Proyecto Integrador V",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología de la Sexualidad",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        286.8,
+        188.2,
+        300.47
+      ],
+      "evidence_text": "Psicología de la Sexualidad",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Terapias de Tercera Generación y Mindfulness Aplicado",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        305.3,
+        184.94,
+        338.97
+      ],
+      "evidence_text": "Terapias de Tercera \nGeneración y Mindfulness \nAplicado",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicodiagnóstico y Evaluación Clínica",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        343.8,
+        154.55,
+        367.47
+      ],
+      "evidence_text": "Psicodiagnóstico y \nEvaluación Clínica",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Tendencias Innovadoras en Psicología Clínica Digital",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        372.3,
+        190.73,
+        395.97
+      ],
+      "evidence_text": "Tendencias Innovadoras en \nPsicología Clínica Digital",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Gestión del Talento Humano",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        400.8,
+        192.93,
+        414.47
+      ],
+      "evidence_text": "Gestión del Talento Humano",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología Positiva, del Bienestar y la Felicidad",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        419.3,
+        170.42,
+        442.97
+      ],
+      "evidence_text": "Psicología Positiva, del \nBienestar y la Felicidad",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Psicología Aplicada al Liderazgo Personal",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        447.8,
+        167.35,
+        471.47
+      ],
+      "evidence_text": "Psicología Aplicada al \nLiderazgo Personal",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Modelos Terapéuticos Emergentes en Salud Mental",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        476.3,
+        194.74,
+        499.97
+      ],
+      "evidence_text": "Modelos Terapéuticos \nEmergentes en Salud Mental",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador VI",
+      "semester": 6,
+      "page": 4,
+      "bbox": [
+        71.81,
+        504.75,
+        180.93,
+        518.75
+      ],
+      "evidence_text": "Proyecto Integrador VI",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Electiva VI (Psicologia del consumidor)",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        101.29,
+        372.65,
+        124.96
+      ],
+      "evidence_text": "Electiva VI (Psicologia \ndel consumidor)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Taller de Práctica Clínica Supervisada",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        129.79,
+        363.04,
+        153.46
+      ],
+      "evidence_text": "Taller de Práctica  \nClínica Supervisada",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Terapias de Tercera Generación",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        158.29,
+        414.04,
+        171.96
+      ],
+      "evidence_text": "Terapias de Tercera Generación",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto de Bienestar Psicológico (Individual o Comunitario)",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        176.79,
+        426.22,
+        200.46
+      ],
+      "evidence_text": "Proyecto de Bienestar Psicológico \n(Individual o Comunitario)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Programas de Bienestar y Salud Integral",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        205.29,
+        383.24,
+        228.96
+      ],
+      "evidence_text": "Programas de Bienestar \ny Salud Integral",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Orientación Educativa y Laboral",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        233.79,
+        412.9,
+        247.46
+      ],
+      "evidence_text": "Orientación Educativa y Laboral",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Acompañamiento Psicológico al Cambio",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        252.29,
+        373.14,
+        275.96
+      ],
+      "evidence_text": "Acompañamiento  \nPsicológico al Cambio",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Electiva V (Psicología Jurídica – Forense)",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        280.79,
+        370.61,
+        304.46
+      ],
+      "evidence_text": "Electiva V (Psicología \nJurídica – Forense)",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Seminario Avanzado en Psicopatología y Tratamientos Innovadores",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        309.29,
+        408.18,
+        342.96
+      ],
+      "evidence_text": "Seminario Avanzado en \nPsicopatología y Tratamientos \nInnovadores",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador VII",
+      "semester": 7,
+      "page": 4,
+      "bbox": [
+        277.8,
+        347.74,
+        389.92,
+        361.74
+      ],
+      "evidence_text": "Proyecto Integrador VII",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Taller de Grado",
+      "semester": 8,
+      "page": 4,
+      "bbox": [
+        277.8,
+        423.37,
+        343.34,
+        437.04
+      ],
+      "evidence_text": "Taller de Grado",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Prácticas Profesionales",
+      "semester": 8,
+      "page": 4,
+      "bbox": [
+        277.8,
+        441.87,
+        377.32,
+        455.54
+      ],
+      "evidence_text": "Prácticas Profesionales",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    },
+    {
+      "name": "Proyecto Integrador Final",
+      "semester": 8,
+      "page": 4,
+      "bbox": [
+        277.8,
+        460.32,
+        399.68,
+        474.32
+      ],
+      "evidence_text": "Proyecto Integrador Final",
+      "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf",
+      "document_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+      "label_source": "REVISION_VISUAL_HUMANA",
+      "status": "ETIQUETA_DE_EVALUACION_NO_PUBLICADA",
+      "category": "ASIGNATURA_SEMESTRAL"
+    }
+  ]
+}

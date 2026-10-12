@@ -11,3 +11,7 @@
 tmp/
 /data/knowledge/source_intake.json
 /data/knowledge/source_intake.tmp
+/data/knowledge/staged/
+/data/knowledge/nacional/
+/data/knowledge/colecciones/
+/data/knowledge/herramientas/

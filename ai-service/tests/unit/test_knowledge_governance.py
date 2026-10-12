@@ -40,6 +40,46 @@ def test_known_bolivian_university_domain_is_accepted() -> None:
     assert assessment.recognized_institution == "Universidad Privada Boliviana"
 
 
+def test_udabol_identity_is_recognized_without_claiming_subpage_evidence() -> None:
+    assessment = assess_bolivian_university_url("https://academico.udabol.edu.bo/estudiante")
+    assert assessment.status == "ACEPTADA"
+    assert assessment.recognized_institution == "Universidad de Aquino Bolivia"
+    assert assess_bolivian_university_url("https://udabol.edu.bo.evil.bo/").status != "ACEPTADA"
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/estudiante/solicitud/mostrar",
+        "/login",
+        "/auth/acceso",
+        "/notas/malla",
+        "/deudas",
+        "/%73olicitud/mostrar",
+    ],
+)
+def test_direct_candidate_analysis_blocks_explicit_operational_routes(path):
+    result = analyze_source_candidate(
+        SourceCandidateRequest.model_validate(_candidate(url="https://www.upb.edu" + path))
+    )
+    assert result.can_submit is False
+    assert (
+        next(check for check in result.checks if check.code == "PUBLIC_SOURCE_ROUTE").status
+        == "BLOQUEA"
+    )
+
+
+def test_public_student_career_path_is_not_blocked_as_private():
+    result = analyze_source_candidate(
+        SourceCandidateRequest.model_validate(
+            _candidate(
+                url="https://www.upb.edu/estudiante/carrera", source_type="OFFICIAL_CAREER_HTML"
+            )
+        )
+    )
+    assert result.can_submit is True
+
+
 @pytest.mark.parametrize(
     "url",
     [

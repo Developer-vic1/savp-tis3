@@ -1,11 +1,23 @@
-from typing import Annotated
+from typing import Annotated, Any
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import Response
 
 from app.api.dependencies import knowledge_retriever, verify_api_key
 from app.contracts.errors import DomainError, ErrorCode
 from app.contracts.requests import KnowledgeSearchRequest
 from app.contracts.responses import KnowledgeSearchResponse
+from app.knowledge.academic_ingestion import (
+    AcademicIngestionResponse,
+    extract_approved_proposal,
+    read_approved_extraction,
+)
+from app.knowledge.actualizacion_fuentes import SourceRefreshRequest, check_registered_source
+from app.knowledge.analisis_curricular import iniciar_analisis
+from app.knowledge.catalogo_nacional import NationalDirectoryResponse, national_directory
+from app.knowledge.coleccion_universitaria import read_collection, start_collection
+from app.knowledge.documento_coleccion import documento_guardado
 from app.knowledge.governance import (
     KnowledgeGovernanceOverview,
     SourceAnalysisResponse,
@@ -32,6 +44,62 @@ from app.retrieval.service import (
 )
 
 router = APIRouter(prefix="/api/v1", tags=["knowledge"], dependencies=[Depends(verify_api_key)])
+
+
+@router.post("/knowledge/governance/check-update")
+def check_source_update(payload: SourceRefreshRequest, request: Request) -> dict[str, Any]:
+    try:
+        return check_registered_source(payload.source_id) | {
+            "schema_version": "1.0", "trace_id": request.state.trace_id,
+        }
+    except ValueError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+
+
+@router.get("/knowledge/collections/unifranz")
+def read_unifranz_collection(request: Request) -> dict[str, Any]:
+    return read_collection() | {"trace_id": request.state.trace_id}
+
+
+@router.post("/knowledge/collections/unifranz")
+def start_unifranz_collection(request: Request) -> dict[str, Any]:
+    try:
+        return start_collection() | {"trace_id": request.state.trace_id}
+    except RuntimeError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+
+
+@router.get("/knowledge/collections/unifranz/documents/{digest}")
+def download_unifranz_document(digest: str) -> Response:
+    try:
+        content, name = documento_guardado(digest)
+    except (OSError, ValueError) as error:
+        raise HTTPException(
+            status_code=404, detail="La copia guardada no está disponible o requiere verificación."
+        ) from error
+    return Response(
+        content,
+        media_type="application/pdf",
+        headers={
+            "X-SAVP-Document-Name": quote(name),
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Disposition": "attachment; filename*=UTF-8''" + quote(name),
+        },
+    )
+
+
+@router.post("/knowledge/collections/unifranz/analyze")
+def analyze_unifranz_collection(request: Request) -> dict[str, Any]:
+    try:
+        return iniciar_analisis() | {"trace_id": request.state.trace_id}
+    except RuntimeError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+
+
+@router.get("/knowledge/national-directory", response_model=NationalDirectoryResponse)
+def directory(request: Request) -> NationalDirectoryResponse:
+    return national_directory(request.state.trace_id)
 
 
 @router.get("/knowledge/governance", response_model=KnowledgeGovernanceOverview)
@@ -62,7 +130,9 @@ def preview_source(payload: SourceUrlValidationRequest, request: Request) -> Sou
 
 
 @router.post("/knowledge/governance/university-preview", response_model=UniversityPreviewResponse)
-def preview_university(payload: SourceUrlValidationRequest, request: Request) -> UniversityPreviewResponse:
+def preview_university(
+    payload: SourceUrlValidationRequest, request: Request
+) -> UniversityPreviewResponse:
     result = inspect_university_url(payload.url)
     return result.model_copy(update={"trace_id": request.state.trace_id})
 
@@ -97,6 +167,36 @@ def review_source(
         ),
         proposal=proposal,
     )
+
+
+@router.post(
+    "/knowledge/governance/proposals/{proposal_id}/extract",
+    response_model=AcademicIngestionResponse,
+)
+def extract_source_proposal(proposal_id: str, request: Request) -> AcademicIngestionResponse:
+    try:
+        result = extract_approved_proposal(proposal_id)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except ValueError as error:
+        raise HTTPException(status_code=409, detail=str(error)) from error
+    return result.model_copy(update={"trace_id": request.state.trace_id})
+
+
+@router.get(
+    "/knowledge/governance/proposals/{proposal_id}/extract",
+    response_model=AcademicIngestionResponse,
+)
+def read_source_extraction(proposal_id: str, request: Request) -> AcademicIngestionResponse:
+    try:
+        result = read_approved_extraction(proposal_id)
+    except LookupError as error:
+        raise HTTPException(status_code=404, detail=str(error)) from error
+    except (ValueError, OSError) as error:
+        raise HTTPException(
+            status_code=409, detail="La extracción guardada no está disponible o requiere revisión."
+        ) from error
+    return result.model_copy(update={"trace_id": request.state.trace_id})
 
 
 @router.post("/knowledge/search", response_model=KnowledgeSearchResponse)

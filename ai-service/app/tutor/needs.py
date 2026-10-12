@@ -67,8 +67,5 @@ def system_needs_for_question(question: str) -> list[SystemProgramNeed]:
     return [
         program
         for program in _system_programs()
-        if any(
-            university_id in program.source_id
-            for university_id in requested_universities
-        )
+        if any(university_id in program.source_id for university_id in requested_universities)
     ]

@@ -104,6 +104,7 @@ def test_v2_uses_documented_occupational_crosswalk_without_composite_score() -> 
     )
     by_career = {profile.career_id: profile for profile in result.profiles}
     new_without_crosswalk = {
+        "BO-UNIFRANZ-LP-PSI",
         "BO-UNIFRANZ-LP-ING-SISTEMAS-INNOVACION-DIGITAL",
         "BO-UPB-LP-ING-SISTEMAS-COMPUTACIONALES",
     }
@@ -111,9 +112,20 @@ def test_v2_uses_documented_occupational_crosswalk_without_composite_score() -> 
         if career_id in new_without_crosswalk:
             assert profile.riasec_reference_status == "UNAVAILABLE_PENDING_OCCUPATIONAL_CROSSWALK"
             assert profile.vocational_interest_relation.evidence == []
+            assert profile.vocational_interest_relation.occupational_references == []
         else:
             assert profile.riasec_reference_status == "AVAILABLE_DOCUMENTED_OCCUPATIONAL_CROSSWALK"
             assert profile.vocational_interest_relation.evidence
+            references = profile.vocational_interest_relation.occupational_references
+            assert references
+            for reference in references:
+                assert reference.occupation_id
+                assert reference.occupation_title
+                assert 1 <= len(reference.holland_code) <= 3
+                assert len(set(reference.holland_code)) == len(reference.holland_code)
+                assert reference.sources
+                assert {source.source_id for source in reference.sources}
+                assert reference.evidence_status in {"DIRECTLY_DOCUMENTED", "DOCUMENT_SUPPORTED_INFERENCE", "HYPOTHESIS"}
 
 
 def test_v2_without_crosswalk_marks_riasec_career_relation_unavailable() -> None:

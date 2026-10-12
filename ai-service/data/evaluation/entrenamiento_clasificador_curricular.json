@@ -1,0 +1,35 @@
+{
+  "version": "bloques-curriculares-v1",
+  "method": "Regresión logística supervisada local",
+  "weights": [
+    -2.247736710539562,
+    7.216432038685252,
+    -0.5175204719018365,
+    -0.7557290303977018,
+    -0.960776138057908,
+    -1.0882917662049365,
+    -0.5797242763721073,
+    -0.8073274877371478,
+    -0.6407270217760357
+  ],
+  "epochs": 400,
+  "threshold": 0.5,
+  "seed": 20261009,
+  "training_seconds": 0.201,
+  "examples": 147,
+  "train_examples": 117,
+  "holdout_examples": 30,
+  "positive_examples": 54,
+  "gold_hash": "sha256:af003eb7451851e1a824cc390ffef561711e5cf80951852bf941dc45e8ae3c0d",
+  "labels_hash": "6336df8842390ed0c618902bba3c8df98d137a870538c2e4e9b1383433313b4d",
+  "confusion_matrix": {
+    "tp": 6,
+    "fp": 1,
+    "fn": 0,
+    "tn": 23
+  },
+  "precision": 0.8571428571428571,
+  "recall": 1.0,
+  "scope": "Reserva fija de bloques de un único folleto. No acredita generalización a otras universidades ni reentrena Tesseract.",
+  "source_url": "https://unifranz.edu.bo/wp-content/uploads/2026/07/psicologia.pdf"
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "institution": "Universidad Privada Franz Tamayo - UNIFRANZ",
+  "institution_key": "unifranz",
+  "source_url": "https://unifranz.edu.bo/carreras/",
+  "checked_at": "2026-10-11T20:51:44.565271+00:00",
+  "source_sha256": "f90e1c23d33ae61026792ddead13342e12a8ecb1c20468150a3e507c0bbe78f7",
+  "scope": "Índice institucional; no confirma oferta por sede, malla, costo ni vigencia legal.",
+  "careers": [
+    {
+      "name": "Derecho",
+      "url": "https://unifranz.edu.bo/carreras/derecho/"
+    },
+    {
+      "name": "Psicología",
+      "url": "https://unifranz.edu.bo/carreras/psicologia/"
+    },
+    {
+      "name": "Comunicación y Periodismo Digital",
+      "url": "https://unifranz.edu.bo/carreras/comunicacion-y-periodismo-digital/"
+    },
+    {
+      "name": "Negocios y Gestión Empresarial",
+      "url": "https://unifranz.edu.bo/carreras/negocios-y-gestion-empresarial/"
+    },
+    {
+      "name": "Turismo y Hotelería",
+      "url": "https://unifranz.edu.bo/carreras/turismo-y-hoteleria/"
+    },
+    {
+      "name": "Gastronomía y Artes Culinarias",
+      "url": "https://unifranz.edu.bo/carreras/gastronomia-y-artes-culinarias/"
+    },
+    {
+      "name": "Auditoría Financiera y Control de Gestión",
+      "url": "https://unifranz.edu.bo/carreras/auditoria-financiera-y-control-de-gestion/"
+    },
+    {
+      "name": "Ingeniería Comercial",
+      "url": "https://unifranz.edu.bo/carreras/ingenieria-comercial/"
+    },
+    {
+      "name": "Ingeniería Económica y Financiera",
+      "url": "https://unifranz.edu.bo/carreras/ingenieria-economica-y-financiera/"
+    },
+    {
+      "name": "Arquitectura",
+      "url": "https://unifranz.edu.bo/carreras/arquitectura/"
+    },
+    {
+      "name": "Diseño Digital y Producción Transmedia",
+      "url": "https://unifranz.edu.bo/carreras/diseno-digital-y-produccion-transmedia/"
+    },
+    {
+      "name": "Publicidad y Marketing",
+      "url": "https://unifranz.edu.bo/carreras/publicidad-y-marketing/"
+    },
+    {
+      "name": "Bioquímica y Farmacia",
+      "url": "https://unifranz.edu.bo/carreras/bioquimica-y-farmacia/"
+    },
+    {
+      "name": "Enfermería",
+      "url": "https://unifranz.edu.bo/carreras/enfermeria/"
+    },
+    {
+      "name": "Medicina",
+      "url": "https://unifranz.edu.bo/carreras/medicina/"
+    },
+    {
+      "name": "Odontología",
+      "url": "https://unifranz.edu.bo/carreras/odontologia/"
+    },
+    {
+      "name": "Ingeniería de Sistemas e Innovación Digital",
+      "url": "https://unifranz.edu.bo/carreras/ingenieria-de-sistemas-e-innovacion-digital/"
+    }
+  ]
+}

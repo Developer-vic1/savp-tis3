@@ -1,0 +1,263 @@
+{
+  "created_at": "2026-10-11T20:32:45.616371+00:00",
+  "model_version": "intenciones-es-local-1.1",
+  "training_examples": 72,
+  "vocabulary_terms": 389,
+  "training_seconds": 0.001769,
+  "total_seconds": 0.042932,
+  "dataset_roles": {
+    "development": "Ajustes conocidos; no prueba reservada",
+    "previously_reviewed_test": "Prueba histórica inspeccionada antes de esta revisión; retest, no ciego",
+    "adversarial_diagnostic": "Casos sintéticos nuevos de seguimiento y confusión; diagnóstico exploratorio"
+  },
+  "datasets": {
+    "development": {
+      "examples": 30,
+      "model_correct": 27,
+      "deployed_correct": 28,
+      "model_accuracy": 0.9,
+      "deployed_accuracy": 0.9333,
+      "per_class": {
+        "CAPABILITIES": {
+          "support": 6,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "EVIDENCE_GROUNDED": {
+          "support": 8,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889
+        },
+        "GENERAL_PEDAGOGICAL": {
+          "support": 10,
+          "precision": 1.0,
+          "recall": 0.8,
+          "f1": 0.8889
+        },
+        "SOCIAL": {
+          "support": 6,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "confusion": [
+        {
+          "expected": "CAPABILITIES",
+          "predicted": "CAPABILITIES",
+          "count": 6
+        },
+        {
+          "expected": "EVIDENCE_GROUNDED",
+          "predicted": "EVIDENCE_GROUNDED",
+          "count": 8
+        },
+        {
+          "expected": "GENERAL_PEDAGOGICAL",
+          "predicted": "EVIDENCE_GROUNDED",
+          "count": 2
+        },
+        {
+          "expected": "GENERAL_PEDAGOGICAL",
+          "predicted": "GENERAL_PEDAGOGICAL",
+          "count": 8
+        },
+        {
+          "expected": "SOCIAL",
+          "predicted": "SOCIAL",
+          "count": 6
+        }
+      ],
+      "unsafe_evidence_to_social_or_capabilities": 0,
+      "errors": [
+        {
+          "text": "¿Es correcto escribir Psicología con tilde?",
+          "intent": "GENERAL_PEDAGOGICAL",
+          "model_prediction": "EVIDENCE_GROUNDED",
+          "deployed_prediction": "EVIDENCE_GROUNDED"
+        },
+        {
+          "text": "¿Cómo se escribe bioquímica?",
+          "intent": "GENERAL_PEDAGOGICAL",
+          "model_prediction": "GENERAL_PEDAGOGICAL",
+          "deployed_prediction": "EVIDENCE_GROUNDED"
+        }
+      ]
+    },
+    "previously_reviewed_test": {
+      "examples": 16,
+      "model_correct": 15,
+      "deployed_correct": 16,
+      "model_accuracy": 0.9375,
+      "deployed_accuracy": 1.0,
+      "per_class": {
+        "CAPABILITIES": {
+          "support": 4,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "EVIDENCE_GROUNDED": {
+          "support": 4,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "GENERAL_PEDAGOGICAL": {
+          "support": 4,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        },
+        "SOCIAL": {
+          "support": 4,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0
+        }
+      },
+      "confusion": [
+        {
+          "expected": "CAPABILITIES",
+          "predicted": "CAPABILITIES",
+          "count": 4
+        },
+        {
+          "expected": "EVIDENCE_GROUNDED",
+          "predicted": "EVIDENCE_GROUNDED",
+          "count": 4
+        },
+        {
+          "expected": "GENERAL_PEDAGOGICAL",
+          "predicted": "GENERAL_PEDAGOGICAL",
+          "count": 4
+        },
+        {
+          "expected": "SOCIAL",
+          "predicted": "SOCIAL",
+          "count": 4
+        }
+      ],
+      "unsafe_evidence_to_social_or_capabilities": 0,
+      "errors": []
+    },
+    "adversarial_diagnostic": {
+      "examples": 32,
+      "model_correct": 27,
+      "deployed_correct": 26,
+      "model_accuracy": 0.8438,
+      "deployed_accuracy": 0.8125,
+      "per_class": {
+        "CAPABILITIES": {
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571
+        },
+        "EVIDENCE_GROUNDED": {
+          "support": 8,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.8889
+        },
+        "GENERAL_PEDAGOGICAL": {
+          "support": 8,
+          "precision": 0.6,
+          "recall": 0.75,
+          "f1": 0.6667
+        },
+        "SOCIAL": {
+          "support": 8,
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571
+        }
+      },
+      "confusion": [
+        {
+          "expected": "CAPABILITIES",
+          "predicted": "CAPABILITIES",
+          "count": 6
+        },
+        {
+          "expected": "CAPABILITIES",
+          "predicted": "GENERAL_PEDAGOGICAL",
+          "count": 2
+        },
+        {
+          "expected": "EVIDENCE_GROUNDED",
+          "predicted": "EVIDENCE_GROUNDED",
+          "count": 8
+        },
+        {
+          "expected": "GENERAL_PEDAGOGICAL",
+          "predicted": "EVIDENCE_GROUNDED",
+          "count": 2
+        },
+        {
+          "expected": "GENERAL_PEDAGOGICAL",
+          "predicted": "GENERAL_PEDAGOGICAL",
+          "count": 6
+        },
+        {
+          "expected": "SOCIAL",
+          "predicted": "GENERAL_PEDAGOGICAL",
+          "count": 2
+        },
+        {
+          "expected": "SOCIAL",
+          "predicted": "SOCIAL",
+          "count": 6
+        }
+      ],
+      "unsafe_evidence_to_social_or_capabilities": 0,
+      "errors": [
+        {
+          "text": "Qué gusto saludarte",
+          "intent": "SOCIAL",
+          "model_prediction": "SOCIAL",
+          "deployed_prediction": "GENERAL_PEDAGOGICAL"
+        },
+        {
+          "text": "Excelente, eso era lo que necesitaba",
+          "intent": "SOCIAL",
+          "model_prediction": "SOCIAL",
+          "deployed_prediction": "GENERAL_PEDAGOGICAL"
+        },
+        {
+          "text": "¿En qué puedes ayudarme dentro de SAVP?",
+          "intent": "CAPABILITIES",
+          "model_prediction": "EVIDENCE_GROUNDED",
+          "deployed_prediction": "GENERAL_PEDAGOGICAL"
+        },
+        {
+          "text": "Hola, ¿mantienes un historial personal?",
+          "intent": "CAPABILITIES",
+          "model_prediction": "SOCIAL",
+          "deployed_prediction": "GENERAL_PEDAGOGICAL"
+        },
+        {
+          "text": "¿Lleva tilde la palabra psicología?",
+          "intent": "GENERAL_PEDAGOGICAL",
+          "model_prediction": "EVIDENCE_GROUNDED",
+          "deployed_prediction": "EVIDENCE_GROUNDED"
+        },
+        {
+          "text": "Explícame qué significa prerrequisito",
+          "intent": "GENERAL_PEDAGOGICAL",
+          "model_prediction": "CAPABILITIES",
+          "deployed_prediction": "EVIDENCE_GROUNDED"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Frases sintéticas pequeñas: no miden comprensión ni calidad de respuesta",
+    "El clasificador aprende etiquetas; no materias, instituciones ni respuestas",
+    "La predicción del modelo y la decisión del flujo con reglas son resultados distintos",
+    "El flujo acepta SOCIAL/CAPABILITIES del modelo; evidencia usa reglas",
+    "El conjunto histórico ya fue examinado; no es un test ciego futuro"
+  ]
+}

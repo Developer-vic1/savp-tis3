@@ -8,7 +8,7 @@ import threading
 import unicodedata
 from datetime import UTC, datetime
 from typing import Annotated, Literal
-from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urlsplit, urlunsplit
 from uuid import uuid4
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -17,6 +17,7 @@ from app.config import get_settings
 from app.knowledge.registry import SERVICE_ROOT, load_source_manifest
 
 SOURCE_INTAKE_REGISTRY = SERVICE_ROOT / "data" / "knowledge" / "source_intake.json"
+NATIONAL_UNIVERSITY_REGISTRY = SERVICE_ROOT / "data/catalog/universidades_bolivia.json"
 _REGISTRY_LOCK = threading.Lock()
 MAX_SOURCE_PROPOSALS = 1_000
 LimitedText = Annotated[str, Field(min_length=3, max_length=500)]
@@ -30,6 +31,40 @@ class UniversityDomain(GovernanceModel):
     domain: str
     institution: str
     aliases: list[str] = Field(default_factory=list)
+
+
+def trusted_university_domains() -> list[UniversityDomain]:
+    """Identidad web contrastada; la propuesta aún requiere revisión de contenido."""
+    domains = {item.domain: item for item in TRUSTED_BOLIVIAN_UNIVERSITY_DOMAINS}
+    if not NATIONAL_UNIVERSITY_REGISTRY.exists():
+        return list(domains.values())
+    registry = json.loads(NATIONAL_UNIVERSITY_REGISTRY.read_text(encoding="utf-8"))
+    for institution in registry.get("institutions", []):
+        if institution.get("ingestion_status") == "QUARANTINE_SITE_REVIEW_REQUIRED":
+            for blocked in [
+                *institution.get("official_domains", []),
+                *institution.get("historical_domains_2016", []),
+            ]:
+                domains.pop(blocked, None)
+            continue
+        if institution.get("website_verification_status") != "OFFICIAL_DOMAIN_VERIFIED":
+            continue
+        for domain in institution.get("official_domains", []):
+            if not isinstance(domain, str) or not re.fullmatch(
+                r"(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}",
+                domain,
+            ):
+                raise ValueError("Dominio nacional inválido; requiere revisión del registro.")
+            previous = domains.get(domain)
+            aliases = [*(previous.aliases if previous else []), institution["name"]]
+            if institution.get("acronym"):
+                aliases.append(institution["acronym"])
+            domains[domain] = UniversityDomain(
+                domain=domain,
+                institution=previous.institution if previous else institution["name"],
+                aliases=list(dict.fromkeys(aliases)),
+            )
+    return list(domains.values())
 
 
 TRUSTED_BOLIVIAN_UNIVERSITY_DOMAINS = (
@@ -58,6 +93,19 @@ TRUSTED_BOLIVIAN_UNIVERSITY_DOMAINS = (
         institution="Escuela Militar de Ingeniería",
         aliases=["EMI"],
     ),
+    # Identidad publicada en https://www.udabol.edu.bo/; no acredita cada subpágina.
+    UniversityDomain(
+        domain="udabol.edu.bo",
+        institution="Universidad de Aquino Bolivia",
+        aliases=["UDABOL"],
+    ),
+    # Identidad institucional corroborada por su portal de admisión 2026.
+    # No acredita por sí sola la vigencia de cada malla ni sus costos.
+    UniversityDomain(
+        domain="upea.bo",
+        institution="Universidad Pública de El Alto",
+        aliases=["UPEA"],
+    ),
 )
 
 
@@ -75,6 +123,8 @@ class KnowledgeSourceSummary(GovernanceModel):
     title: str
     url: str
     verification_status: str
+    source_type: str | None = None
+    authority_tier: str | None = None
 
 
 class SourceAnalysisCheck(GovernanceModel):
@@ -251,7 +301,7 @@ def assess_bolivian_university_url(url: str) -> SourceUrlAssessment:
             message="No se aceptan direcciones IP como fuente universitaria.",
         )
 
-    for university in TRUSTED_BOLIVIAN_UNIVERSITY_DOMAINS:
+    for university in trusted_university_domains():
         if host == university.domain or host.endswith(f".{university.domain}"):
             return SourceUrlAssessment(
                 host=host,
@@ -337,6 +387,27 @@ def analyze_source_candidate(payload: SourceCandidateRequest) -> SourceAnalysisR
 
     url_rejected = assessment.status == "RECHAZADA"
     parsed = urlsplit("") if url_rejected else urlsplit(payload.url)
+    private_path = bool(
+        re.search(
+            r"/(?:login|signin|auth|solicitud(?:es)?|notas|calificaciones|deudas|"
+            r"datos-personales|estado-de-cuenta)(?:[/_.-]|$)",
+            unquote(parsed.path).casefold(),
+        )
+    )
+    checks.append(
+        SourceAnalysisCheck(
+            code="PUBLIC_SOURCE_ROUTE",
+            label="Ruta de la fuente pública",
+            status="BLOQUEA" if private_path else "CUMPLE",
+            message=(
+                "La ruta corresponde a acceso, solicitudes o servicios estudiantiles. "
+                "Comparte una página académica pública o un documento publicado."
+                if private_path
+                else "No se detectó una ruta operativa explícita. "
+                "Esto no acredita su contenido ni reemplaza la vista previa."
+            ),
+        )
+    )
     is_pdf_url = parsed.path.casefold().endswith(".pdf")
     expects_pdf = payload.source_type.endswith("_PDF")
     format_matches = not expects_pdf or is_pdf_url
@@ -464,6 +535,8 @@ def governance_overview(trace_id: str) -> KnowledgeGovernanceOverview:
             title=source.title,
             url=source.url,
             verification_status=source.verification_status,
+            source_type=source.source_type,
+            authority_tier=source.authority_tier,
         )
         for source in manifest.sources
     ]
@@ -471,7 +544,7 @@ def governance_overview(trace_id: str) -> KnowledgeGovernanceOverview:
         trace_id=trace_id,
         source_count=len(sources),
         sources=sources,
-        trusted_universities=list(TRUSTED_BOLIVIAN_UNIVERSITY_DOMAINS),
+        trusted_universities=trusted_university_domains(),
         proposals=sorted(
             registry.proposals,
             key=lambda proposal: proposal.submitted_at,
@@ -577,7 +650,7 @@ def _trusted_university_for_host(host: str | None) -> UniversityDomain | None:
     return next(
         (
             university
-            for university in TRUSTED_BOLIVIAN_UNIVERSITY_DOMAINS
+            for university in trusted_university_domains()
             if host == university.domain or host.endswith(f".{university.domain}")
         ),
         None,

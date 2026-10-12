@@ -114,11 +114,20 @@ class NumericGap(EvidenceModel):
     source_id: str
 
 
+class OccupationalInterestReference(EvidenceModel):
+    occupation_id: str
+    occupation_title: str
+    holland_code: str = Field(pattern=r"^[RIASEC]{1,3}$")
+    evidence_status: BridgeRelationStatus
+    sources: list[SourceReference]
+
+
 class EvidenceRelation(EvidenceModel):
     status: AvailabilityStatus
     evidence: list[EvidenceStatement]
     sources: list[SourceReference]
     limitations: list[Limitation]
+    occupational_references: list[OccupationalInterestReference] = Field(default_factory=list)
 
 
 class PreparationEvidenceProfile(EvidenceModel):

@@ -1,5 +1,5 @@
 from collections.abc import Callable
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, Request
 
@@ -9,6 +9,12 @@ from app.contracts.requests import TutorQueryRequest
 from app.contracts.responses import TutorResponse
 from app.retrieval.hybrid import LexicalRetriever
 from app.retrieval.service import selected_retrieval_metadata
+from app.tutor.consulta_documental import (
+    institution_registry_request,
+    is_career_list_question,
+    is_institution_review_question,
+    requested_institutions,
+)
 from app.tutor.providers import STRUCTURED_PROVIDER_VERSION
 from app.tutor.service import answer_structured, classify_tutor_intent
 
@@ -32,16 +38,25 @@ def tutor(
         raise DomainError(
             ErrorCode.UNSUPPORTED_SCHEMA_VERSION,
             "La versión de esquema solicitada no está soportada.",
-    )
+        )
     intent = classify_tutor_intent(payload.question)
+    direct_registry_question = (
+        bool(institution_registry_request(payload.question))
+        or is_institution_review_question(payload.question)
+        or (
+            is_career_list_question(payload.question)
+            and requested_institutions(payload.question)
+            == [("unifranz", "universidad franz tamayo")]
+        )
+    )
     retriever = (
         retriever_factory()
-        if intent not in {"SOCIAL", "CAPABILITIES"}
+        if intent not in {"SOCIAL", "CAPABILITIES"} and not direct_registry_question
         else None
     )
     provider_answer, material = answer_structured(payload, retriever)
     metadata = selected_retrieval_metadata()
-    answer_mode = "STRUCTURED"
+    answer_mode: Literal["STRUCTURED"] = "STRUCTURED"
     provider_version = STRUCTURED_PROVIDER_VERSION
     return TutorResponse(
         trace_id=request.state.trace_id,

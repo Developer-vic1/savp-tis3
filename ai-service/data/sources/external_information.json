@@ -1,6 +1,6 @@
 {
-  "registry_version": "1.0.0",
-  "retrieved_at": "2026-10-01",
+  "registry_version": "1.1.0",
+  "retrieved_at": "2026-10-08",
   "purpose": "Fuentes informativas externas separadas del corpus validado y de Recommendation V2.",
   "entries": [
     {
@@ -9,16 +9,67 @@
       "institution": "Escuela Militar de Ingenieria Mcal. Antonio Jose de Sucre, Unidad Academica La Paz",
       "title": "Ingenieria de Sistemas - pagina oficial de licenciatura",
       "country": "Bolivia",
-      "url": "https://emi.edu.bo/index.php/universidad/licenciatura/ingenieria-de-sistemas",
+      "url": "https://www.emi.edu.bo/universidad/licenciatura/ingenieria-de-sistemas",
       "official": true,
-      "retrieval_attempted_at": "2026-10-01T19:38:00-04:00",
-      "snapshot_status": "UNAVAILABLE_AT_RETRIEVAL",
-      "http_status": 403,
+      "retrieval_attempted_at": "2026-10-08T13:31:00-04:00",
+      "snapshot_status": "PENDING_LOCAL_VALIDATION",
+      "http_status": null,
       "recommendation_eligible": false,
       "limitations": [
-        "El dominio oficial respondio HTTP 403 desde https y http, con y sin www, durante la recuperacion local.",
+        "La ficha oficial actual se localizo en una ruta nueva; la ruta anterior dejo de ser segura para mostrar.",
         "No existe snapshot local validado ni malla curricular recuperable para incorporarla al corpus o a Recommendation V2.",
-        "La informacion solo puede mostrarse como enlace oficial informativo hasta que una captura local sea validada."
+        "La pagina solo puede mostrarse como enlace oficial informativo hasta validar una captura local."
+      ]
+    },
+    {
+      "external_id": "BO-UPEA-EA-SIS-PROFILE-EXTERNAL-2026",
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "institution": "Universidad Pública de El Alto",
+      "title": "Ingeniería de Sistemas - ficha oficial del Vicerrectorado",
+      "country": "Bolivia",
+      "url": "https://vicerrectorado.upea.bo/admin/controlador_carreras/view_carrera/1",
+      "official": true,
+      "retrieval_attempted_at": "2026-10-08T13:31:00-04:00",
+      "snapshot_status": "PENDING_LOCAL_VALIDATION",
+      "http_status": null,
+      "recommendation_eligible": false,
+      "limitations": [
+        "La ficha oficial enlaza una malla en PDF de imagen, pero su vigencia curricular no se pudo establecer.",
+        "Falta extraer, revisar y fechar el contenido de la malla antes de incorporarlo al corpus o a Recommendation V2."
+      ]
+    },
+    {
+      "external_id": "BO-UPEA-EA-CIV-PROFILE-EXTERNAL-2026",
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "institution": "Universidad Pública de El Alto",
+      "title": "Ingeniería Civil - ficha oficial del Vicerrectorado",
+      "country": "Bolivia",
+      "url": "https://vicerrectorado.upea.bo/admin/controlador_carreras/view_carrera/11",
+      "official": true,
+      "retrieval_attempted_at": "2026-10-08T13:31:00-04:00",
+      "snapshot_status": "PENDING_LOCAL_VALIDATION",
+      "http_status": null,
+      "recommendation_eligible": false,
+      "limitations": [
+        "La ficha oficial enlaza una malla en PDF de imagen, pero su vigencia curricular no se pudo establecer.",
+        "Falta extraer, revisar y fechar el contenido de la malla antes de incorporarlo al corpus o a Recommendation V2."
+      ]
+    },
+    {
+      "external_id": "BO-UPEA-EA-PSI-PROFILE-EXTERNAL-2026",
+      "evidence_layer": "FUENTE_OFICIAL_EXTERNA",
+      "institution": "Universidad Pública de El Alto",
+      "title": "Psicología - ficha oficial del Vicerrectorado",
+      "country": "Bolivia",
+      "url": "https://vicerrectorado.upea.bo/admin/controlador_carreras/view_carrera/35",
+      "official": true,
+      "retrieval_attempted_at": "2026-10-08T13:31:00-04:00",
+      "snapshot_status": "PENDING_LOCAL_VALIDATION",
+      "http_status": null,
+      "recommendation_eligible": false,
+      "limitations": [
+        "La ficha oficial enlaza una malla en PDF de imagen, pero su vigencia curricular no se pudo establecer.",
+        "Falta extraer, revisar y fechar el contenido de la malla antes de incorporarlo al corpus o a Recommendation V2."
       ]
     }
   ]

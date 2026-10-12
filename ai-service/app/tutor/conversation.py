@@ -35,6 +35,13 @@ def load_conversation_catalog() -> ConversationCatalog:
 
 
 def conversation_entry(intent: ConversationIntent) -> ConversationEntry:
+    if intent == "KNOWLEDGE_GAP":
+        return ConversationEntry(
+            answer="No encontré evidencia oficial suficiente en las publicaciones revisadas. "
+            "Indica la universidad y carrera; podemos revisar una publicación oficial "
+            "para comprobar el dato que buscas.",
+            suggested_topics=["Precisar universidad y carrera", "Revisar publicación oficial"],
+        )
     return load_conversation_catalog().entries[intent]
 
 
@@ -48,4 +55,11 @@ def social_conversation_entry(question: str) -> ConversationEntry:
         return conversation_entry("FAREWELL")
     if any(marker in normalized for marker in ("como estas", "que tal")):
         return conversation_entry("WELLBEING")
-    return conversation_entry("SOCIAL")
+    return conversation_entry("SOCIAL").model_copy(
+        update={
+            "answer": "¡Hola! Soy el asistente documental de SAVP. "
+            "Puedo revisar las fuentes validadas sobre carreras, universidades y materias. "
+            "Para una consulta de materias, indica universidad y carrera; "
+            "puedes precisar el semestre si buscas una parte de la malla.",
+        }
+    )

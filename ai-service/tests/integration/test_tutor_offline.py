@@ -17,7 +17,7 @@ def test_tutor_and_real_local_corpus_work_without_external_network(
     )
     assert greeting.status_code == 200
     assert greeting.json()["answer"]
-    assert greeting.json()["provider_version"] == "structured-answer-v3.0.0"
+    assert greeting.json()["provider_version"] == "structured-answer-v3.2.0"
     response = client.post(
         "/api/v1/knowledge/search",
         json={
