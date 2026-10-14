@@ -3,6 +3,9 @@
 .env
 .env.backup
 .env.production
+.env.iniciador-respaldo
+.env.iniciador.tmp
+/output/iniciador/
 .phpactor.json
 .phpunit.result.cache
 /.fleet

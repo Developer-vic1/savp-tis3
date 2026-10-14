@@ -6,6 +6,7 @@ Este índice indica qué leer para cada tarea. Empieza aquí; abre solo el docum
 
 | Necesidad | Leer | Luego consultar |
 |---|---|---|
+| Abrir una copia clonada en Windows | [INICIADOR-LOCAL.md](INICIADOR-LOCAL.md) | `ABRIR-SAVP.cmd`, conexión y modo de datos. |
 | Entender todo el sistema en diez minutos | [01-MAPA-FUNCIONAL.md](01-MAPA-FUNCIONAL.md) | Ruta o servicio del flujo concreto. |
 | Cambiar vistas, estilos o componentes | [02-RECURSOS-Y-COMPONENTES.md](02-RECURSOS-Y-COMPONENTES.md) | [DESIGN.md](../../DESIGN.md), vista y CSS/JS cercanos. |
 | Consultar entidades, inscripción, notas o datos | [03-DATOS-Y-OPERACION.md](03-DATOS-Y-OPERACION.md) | [Inventario de 104 tablas](../../database/seeders/Oficial/INVENTARIO_104_TABLAS.md). |
